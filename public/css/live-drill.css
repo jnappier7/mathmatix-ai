@@ -689,14 +689,6 @@ tr.none td{opacity:.62}
 .fx-smoke .sb,.fx-smoke .crew,.fx-smoke #heist-feed,.fx-smoke #p-card,.fx-smoke #p-choices,.fx-smoke #p-pad,.fx-smoke #fb,.fx-smoke .myheist .vault{filter:blur(7px);transition:filter .4s}
 .fx-flip{transform:rotate(180deg);transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
 .fx-flip .fxbanner{animation:none;transform:rotate(180deg)} /* the banner naming the culprit stays readable */
-.fx-blackout .sb,.fx-blackout .crew,.fx-blackout #heist-feed,.fx-blackout #p-choices,.fx-blackout #p-pad,.fx-blackout #fb,.fx-blackout .myheist .vault{filter:brightness(.12);transition:filter .3s}
-.alarm.jail{background:#2a1a0a;border-color:#e0a030}
-.alarm.jail .big{color:#e0a030}
-.alarm.jail .drain span{background:#e0a030}
-.alarm.blackout{background:#05080c;border-color:#5a6478;animation:none}
-.alarm.blackout .big{color:#9fb3c8}
-.alarm.blackout .drain span{background:#5a6478}
-.alarm.blackout .sweep{display:none}
 .mode-heist .mvps{grid-template-columns:minmax(0,1fr)}
 @media (max-width:1000px){.heistpane{grid-template-columns:minmax(0,1fr)}}
 

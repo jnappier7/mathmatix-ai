@@ -353,7 +353,6 @@
       if (fresh.some((f) => f.type === 'jackpot')) { SND.safe(); SND.cheer(false); }
       else if (fresh.some((f) => f.type === 'safe' || f.type === 'crack') && t - (cue.safeAt || 0) > 900) { cue.safeAt = t; SND.safe(); }
       if (fresh.some((f) => f.type === 'grab' || f.type === 'switch' || f.type === 'shakedown') && t - (cue.grabAt || 0) > 1200) { cue.grabAt = t; SND.blitz(); }
-      if (fresh.some((f) => f.type === 'jail') && t - (cue.jailAt || 0) > 1200) { cue.jailAt = t; SND.rumble(); }
       if (fresh.some((f) => f.type === 'gadget')) SND.smoke();
     }
     if (st.mode === 'drive') {
@@ -895,7 +894,7 @@
       const lead = c.rank === 1 && c.cash > 0;
       li.className = `${lead ? 'lead' : ''}${c.hit ? ' hit' : ''}${c.alarm ? ' alarm' : ''}${c.cracking ? ' cracking' : ''}`;
       li.children[0].textContent = c.rank;
-      const nm = `${esc(c.name)}${lead ? ' 🏆' : ''}${c.gadgets ? ' 🧰' : ''}${c.lock === 'jail' ? ' 🔒' : c.lock === 'blackout' ? ' 🌑' : c.alarm ? ' 🚨' : c.cracking ? ' 🔐' : ''}`;
+      const nm = `${esc(c.name)}${lead ? ' 🏆' : ''}${c.gadgets ? ' 🧰' : ''}${c.alarm ? ' 🚨' : c.cracking ? ' 🔐' : ''}`;
       if (li.dataset.nm !== nm) { li.children[1].innerHTML = nm; li.dataset.nm = nm; }
       li.children[2].firstChild.style.width = `${Math.round((100 * c.cash) / top)}%`;
       countCash(li.children[3], c.cash);
@@ -929,7 +928,6 @@
         if (f.type === 'jackpot') { jackpotDoor(f.who, f.amount); floatGain(byName[f.who], `+${money(f.amount)}`, 'jackpot'); }
         if (f.type === 'grab') flyChip(byName[f.target] && byName[f.target].querySelector('.cv'), byName[f.who] && byName[f.who].querySelector('.cv'), `💵 ${money(f.amount)}`);
         if (f.type === 'switch') [byName[f.who], byName[f.target]].forEach((li) => { if (li && !calm()) li.animate([{ boxShadow: '0 0 0 3px var(--led)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 900 }); });
-        if (f.type === 'jail' && byName[f.target] && !calm()) byName[f.target].animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'translateX(-4px)' }, { transform: 'translateX(0)' }], { duration: 500 });
         if (f.type === 'shakedown') { floatGain(byName[f.who], `+${money(f.amount)}`); H.crew.filter((c) => c.cash > 0 && c.name !== f.who).forEach((c) => { const li = byName[c.name]; if (li && !calm()) li.animate([{ boxShadow: '0 0 0 3px var(--miss)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 900 }); }); }
       });
     }
@@ -939,9 +937,8 @@
     const fx = (H.effects || []).find((e) => e.until > serverNow());
     $('live-body').classList.toggle('fx-smoke', !!fx && fx.kind === 'smoke');
     $('live-body').classList.toggle('fx-flip', !!fx && fx.kind === 'flip');
-    $('live-body').classList.toggle('fx-blackout', !!fx && fx.kind === 'blackout');
     $('heist-fx').hidden = !fx;
-    if (fx) $('heist-fx').innerHTML = `${{ smoke: '💨', flip: '🙃', blackout: '🌑' }[fx.kind] || '🧰'} <b>${esc(fx.by)}</b> ${{ smoke: 'dropped a smoke bomb', flip: 'flipped every screen', blackout: 'cut the lights' }[fx.kind] || 'fired a gadget'}!`;
+    if (fx) $('heist-fx').innerHTML = `${fx.kind === 'smoke' ? '💨' : '🙃'} <b>${esc(fx.by)}</b> ${fx.kind === 'smoke' ? 'dropped a smoke bomb' : 'flipped every screen'}!`;
     $('heist-feed').innerHTML = st.feed.slice(0, 6).map((f) => {
       const id = `${f.at}|${f.type}|${f.who || ''}`;
       const fresh = seenFeed.has(id) ? '' : ' new';
@@ -951,9 +948,8 @@
       if (f.type === 'crack') return `<span class="it${fresh}">🔐 ${esc(f.who)} cracked the vault</span>`;
       if (f.type === 'grab') return `<span class="it ev${fresh}">🕶 ${esc(f.who)} grabbed ${money(f.amount)} from ${esc(f.target)}</span>`;
       if (f.type === 'switch') return `<span class="it ev${fresh}">🔁 ${esc(f.who)} switched piles with ${esc(f.target)}</span>`;
-      if (f.type === 'jail') return `<span class="it ev${fresh}">🔒 ${esc(f.who)} locked up ${esc(f.target)}</span>`;
       if (f.type === 'shakedown') return `<span class="it ev${fresh}">💸 ${esc(f.who)} shook down ${f.count === 1 ? 'the player' : `${f.count} players`} above · ${money(f.amount)}</span>`;
-      if (f.type === 'gadget') return `<span class="it ev${fresh}">${{ smoke: '💨', flip: '🙃', blackout: '🌑' }[f.kind] || '🧰'} ${esc(f.who)} fired ${{ smoke: 'a smoke bomb', flip: 'a flip', blackout: 'a blackout' }[f.kind] || 'a gadget'}</span>`;
+      if (f.type === 'gadget') return `<span class="it ev${fresh}">${f.kind === 'smoke' ? '💨' : '🙃'} ${esc(f.who)} fired ${f.kind === 'smoke' ? 'a smoke bomb' : 'a flip'}</span>`;
       if (f.type === 'heist') return `<span class="it ev${fresh}">THE HEIST IS ON</span>`;
       return '';
     }).join('') || '<span class="muted">Safes, grabs and gadgets show up here.</span>';

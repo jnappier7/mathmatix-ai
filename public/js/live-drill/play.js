@@ -124,7 +124,7 @@
     if (prev && prev.phase !== 'lobby') watchTouchdowns(prev, next);
     st = next;
     // Back to the lobby — a "Run it back" — so nothing from the last game stays on screen.
-    if (st.phase === 'lobby') { cur = null; huddleKey = ''; heistWait = null; fxShown = ''; lockShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip', 'fx-blackout'); }
+    if (st.phase === 'lobby') { cur = null; huddleKey = ''; heistWait = null; fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip'); }
     if (st.phase === 'lobby') { show('lobby'); renderLobby(); }
     else if (st.phase === 'over') { show('final'); renderFinal(); }
     else { show('live'); renderLive(); }
@@ -205,9 +205,8 @@
   const money = (x) => `$${Number(x || 0).toLocaleString()}`;
   let heistWait = null; // 'alarm' | 'safe' while the phone is held off the next play
   let fxShown = ''; // the effect banner on screen (kind|until), so it isn't rebuilt every state
-  let lockShown = ''; // the lock card on screen (kind|until): an alarm can turn into a jail mid-lock
-  const GADGET_ICON = { smoke: '💨', flip: '🙃', blackout: '🌑' };
-  const GADGET_DID = { smoke: 'dropped a smoke bomb', flip: 'flipped your screen', blackout: 'cut the lights' };
+  const GADGET_ICON = { smoke: '💨', flip: '🙃' };
+  const GADGET_DID = { smoke: 'dropped a smoke bomb', flip: 'flipped your screen' };
 
   /** Heist: cash, rank, who's above, the safe meter, held gadgets, and anything done to this screen. */
   function renderMyHeist() {
@@ -220,8 +219,7 @@
     const gadgets = h.gadgets.length ? `<div class="gadgets">${h.gadgets.map((g) => `<button type="button" class="gadget" data-id="${esc(g.id)}" title="${esc(g.blurb)}">${GADGET_ICON[g.kind] || '🧰'} Fire ${esc(g.label)}</button>`).join('')}</div>` : '';
     const hitLine = (x) => (x.kind === 'grab' ? `🕶 ${esc(x.by)} grabbed ${money(x.amount)} from you!`
       : x.kind === 'switch' ? `🔁 ${esc(x.by)} switched piles with you!`
-        : x.kind === 'jail' ? `🔒 ${esc(x.by)} locked you up!`
-          : `💸 ${esc(x.by)} shook you down for ${money(x.amount)}!`);
+        : `💸 ${esc(x.by)} shook you down for ${money(x.amount)}!`);
     const status = h.hit ? `<div class="hit">${hitLine(h.hit)}</div>`
       : h.leader && h.leader.me ? '<div class="crownline">🏆 You\'re in the lead. Keep answering — a Grab can only come from below.</div>'
       : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${money(h.above.gap)} ahead of you${h.leader && h.leader.name !== h.above.name ? ` · 🏆 ${esc(h.leader.name)} ${money(h.leader.cash)}` : ''}</div>`
@@ -236,17 +234,53 @@
       fxShown = key;
       $('live').classList.toggle('fx-smoke', !!fx && fx.kind === 'smoke');
       $('live').classList.toggle('fx-flip', !!fx && fx.kind === 'flip');
-      $('live').classList.toggle('fx-blackout', !!fx && fx.kind === 'blackout');
       $('p-fx').hidden = !fx;
       if (fx) $('p-fx').innerHTML = `${GADGET_ICON[fx.kind] || '🧰'} <b>${esc(fx.by)}</b> ${GADGET_DID[fx.kind] || 'fired a gadget'}! <span class="left" id="fx-left"></span>`;
     }
     // the server's view of the alarm / an open crack wins over whatever this phone thought
     if (st.phase === 'live') {
       // (a play still on screen with its tell is left alone: the answer handler brings the alarm up after it)
-      const lockKey = h.alarmUntil ? `${(h.lock || {}).kind || 'alarm'}|${h.alarmUntil}` : '';
-      if (h.alarmUntil && (heistWait !== 'alarm' || lockKey !== lockShown) && !(cur && cur.locked)) showAlarm(h.alarmUntil, h.lock);
+      if (h.alarmUntil && heistWait !== 'alarm' && !(cur && cur.locked)) showAlarm(h.alarmUntil);
       else if (!h.alarmUntil && heistWait === 'alarm') { heistWait = null; cur = null; nextDrivePlay(); }
       if (h.safe && heistWait !== 'safe' && !cur) showSafes(h.safe);
+      if (h.pick && heistWait !== 'pick' && !cur) showTargets(h.pick.kind, h.pick.options);
+    }
+  }
+
+  /** 🕶 / 🔁 Your pick: the classmates above you. The server takes only a name that is still above you. */
+  function showTargets(kind, options) {
+    heistWait = 'pick';
+    cur = { wait: true };
+    closePad();
+    const grab = kind === 'grab';
+    $('p-card').innerHTML = `<div class="vaultcard"><div class="big">${grab ? '🕶 Grab — who are you robbing?' : '🔁 Switch — whose pile do you want?'}</div><div class="sub">${grab ? 'You take 20% of their cash.' : 'You trade piles with them.'} Only classmates ahead of you.</div></div>`;
+    $('p-choices').innerHTML = options.map((t) => `<button class="ch target" data-id="${esc(t.id)}"><span class="lab">${esc(t.name)}</span><span class="cnt">${money(t.cash)}</span></button>`).join('');
+    $('fb').className = 'fb';
+    $('fb').innerHTML = '<span class="muted">Tap a name.</span>';
+    $('p-choices').querySelectorAll('.target').forEach((b) => { b.onclick = () => pickTarget(b.dataset.id); });
+  }
+
+  async function pickTarget(id) {
+    const btns = [...$('p-choices').querySelectorAll('.target')];
+    btns.forEach((b) => { b.disabled = true; });
+    try {
+      const r = await api(`/${encodeURIComponent(seat.code)}/target`, { method: 'POST', body: JSON.stringify({ id }) });
+      btns.forEach((b) => b.classList.toggle('picked', b.dataset.id === id));
+      let call; let why;
+      if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}.`; }
+      else if (r.kind === 'switch') { call = `🔁 Switch · ${money(r.cash)}`; why = `You traded piles with ${esc(r.target)} (+${money(r.amount)}).`; }
+      else { call = `+${money(r.amount)}`; why = 'Nobody was ahead of you any more — the safe paid cash instead.'; }
+      $('fb').className = 'fb good';
+      $('fb').innerHTML = `<span class="bigtxt">${call}</span><span class="why">${why}</span>`;
+      heistWait = null;
+      setTimeout(() => { cur = null; nextDrivePlay(); }, 2000);
+    } catch (err) {
+      if (err.status === 401) return gone('You are no longer in this game.');
+      // 400: that classmate is no longer ahead of you — the next fetch brings the fresh list;
+      // 409: the clock ran out, or the server has moved on — fall in line either way
+      heistWait = null; cur = null;
+      if (err.status === 400) $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`;
+      setTimeout(() => nextDrivePlay(), 600);
     }
   }
 
@@ -262,28 +296,19 @@
     if (fxShown) {
       const fx = h.effect;
       const left = fx ? fx.until - serverNow() : 0;
-      if (left <= 0) { fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip', 'fx-blackout'); $('p-fx').hidden = true; }
+      if (left <= 0) { fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip'); $('p-fx').hidden = true; }
       else if ($('fx-left')) $('fx-left').textContent = `${Math.ceil(left / 1000)}s`;
     }
   }
 
-  /**
-   * 🚨 The screen is held: your own alarm (a wrong answer), a jail someone put you in, or a
-   * blackout someone fired. No play until it clears — the server won't deal one either.
-   */
-  function showAlarm(until, lock) {
-    const kind = (lock && lock.kind) || 'alarm';
-    const by = lock && lock.by ? esc(lock.by) : '';
+  /** 🚨 The alarm: no play until it clears. The server won't deal one either. (Your own wrong
+   *  answer is the only thing that ever holds a screen — nothing another player does.) */
+  function showAlarm(until) {
     heistWait = 'alarm';
-    lockShown = `${kind}|${until}`;
     cur = { wait: true };
     closePad();
     $('p-choices').innerHTML = '';
-    const secs = Math.max(0, (until - serverNow()) / 1000).toFixed(1);
-    const face = { alarm: ['🚨', 'ALARM', `Wrong answer. Locked for <b id="al-left">${secs}</b> s — think before the next one.`],
-      jail: ['🔒', 'JAIL', `<b>${by}</b> locked you up. Out in <b id="al-left">${secs}</b> s — then go get them.`],
-      blackout: ['🌑', 'BLACKOUT', `<b>${by}</b> cut the lights. Back on in <b id="al-left">${secs}</b> s.`] }[kind] || ['🚨', 'LOCKED', `<b id="al-left">${secs}</b> s`];
-    $('p-card').innerHTML = `<div class="alarm ${kind}"><span class="sweep" aria-hidden="true"></span><div class="siren">${face[0]}</div><div class="big">${face[1]}</div><span class="drain" aria-hidden="true"><span style="animation-duration:${Math.max(0.1, (until - serverNow()) / 1000).toFixed(2)}s"></span></span><div class="sub">${face[2]}</div></div>`;
+    $('p-card').innerHTML = `<div class="alarm"><span class="sweep" aria-hidden="true"></span><div class="siren">🚨</div><div class="big">ALARM</div><span class="drain" aria-hidden="true"><span style="animation-duration:${Math.max(0.1, (until - serverNow()) / 1000).toFixed(2)}s"></span></span><div class="sub">Wrong answer. Locked for <b id="al-left">${Math.max(0, (until - serverNow()) / 1000).toFixed(1)}</b> s — think before the next one.</div></div>`;
   }
 
   /** The vault: three safes, one tap. What's inside is already decided on the server. */
@@ -294,7 +319,7 @@
     $('p-card').innerHTML = `<div class="vaultcard"><div class="big">🔐 You cracked the vault!</div><div class="sub">Safe ${safe.n} · pick one</div></div>`;
     $('p-choices').innerHTML = Array.from({ length: safe.count }, (_, i) => `<button class="ch safe" data-i="${i}" style="--i:${i}"><span class="box"><span class="loot"></span><span class="door"><span class="dial"></span><span class="handle"></span></span></span><span class="lab">Safe ${i + 1}</span></button>`).join('');
     $('fb').className = 'fb';
-    $('fb').innerHTML = '<span class="muted">Cash, a jackpot, a grab, a switch, a jail, a shakedown, a gadget… or a decoy.</span>';
+    $('fb').innerHTML = '<span class="muted">Cash, a jackpot, a grab, a switch, a shakedown, a gadget… or a decoy.</span>';
     $('p-choices').querySelectorAll('.safe').forEach((b) => { b.onclick = () => openSafe(Number(b.dataset.i)); });
   }
 
@@ -304,19 +329,18 @@
     if (btns[i]) btns[i].classList.add('cracking'); // the dial spins until the server says what's inside
     try {
       const r = await api(`/${encodeURIComponent(seat.code)}/safe`, { method: 'POST', body: JSON.stringify({ pick: i }) });
-      const LOOT = { decoy: '🕳', gadget: '🧰', grab: '🕶', switch: '🔁', jail: '🔒', shakedown: '💸' };
+      const LOOT = { decoy: '🕳', gadget: '🧰', grab: '🕶', switch: '🔁', shakedown: '💸' };
       btns.forEach((b, j) => { b.classList.remove('cracking'); b.classList.toggle('opened', j === i); b.classList.toggle('fade', j !== i); if (j === i) { b.classList.toggle('rich', r.kind !== 'decoy'); b.classList.toggle('jackpot', r.label === 'JACKPOT'); } if (j === i) b.querySelector('.loot').textContent = LOOT[r.kind] || '💰'; });
       let call; let why = ''; let cls = 'good';
       if (r.kind === 'cash') { call = `${r.label === 'JACKPOT' ? '💎 JACKPOT ' : ''}+${money(r.amount)}`; why = r.label === 'JACKPOT' ? 'The big one.' : 'Cash.'; }
-      else if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}, who was ahead of you.`; }
-      else if (r.kind === 'switch') { call = `🔁 Switch · ${money(r.cash)}`; why = `You traded piles with ${esc(r.target)}, who was ahead of you (+${money(r.amount)}).`; }
-      else if (r.kind === 'jail') { call = `🔒 Jail · ${esc(r.target)}`; why = `${esc(r.target)} was ahead of you — they're locked out for ${Math.round(Math.max(0, r.until - serverNow()) / 1000)} s, and they know it was you.`; }
+      else if (r.choose) { call = r.kind === 'grab' ? '🕶 Grab!' : '🔁 Switch!'; why = 'Pick who — anyone ahead of you.'; }
       else if (r.kind === 'shakedown') { call = `💸 Shakedown · +${money(r.amount)}`; why = `A cut from ${r.count === 1 ? 'the one player' : `each of the ${r.count} players`} ahead of you.`; }
       else if (r.kind === 'gadget') { call = `🧰 ${esc(r.gadget.label)}`; why = `Yours to fire when you like: ${esc(r.gadget.blurb)}. The button is above.`; }
       else { call = 'Decoy'; why = 'Empty. The streak was the price.'; cls = ''; }
       $('fb').className = `fb ${cls}`;
       $('fb').innerHTML = `<span class="bigtxt">${call}</span><span class="why">${why}</span>`;
       heistWait = null;
+      if (r.choose) { setTimeout(() => { cur = null; showTargets(r.kind, r.choose); }, 1200); return; }
       setTimeout(() => { cur = null; nextDrivePlay(); }, r.kind === 'decoy' ? 1400 : 2000);
     } catch (err) {
       if (err.status === 401) return gone('You are no longer in this game.');
@@ -427,8 +451,9 @@
     try {
       const r = await api(`/${encodeURIComponent(seat.code)}/play`);
       // heist: the server holds the play back while the alarm rings or a crack is open
-      if (r.alarm) { showAlarm(r.alarm, { kind: r.lock, by: r.by }); return; }
+      if (r.alarm) { showAlarm(r.alarm); return; }
       if (r.safe) { showSafes(r.safe); return; }
+      if (r.pick) { showTargets(r.pick.kind, r.pick.options); return; }
       heistWait = null;
       cur = { n: r.n, play: r.play, locked: false };
       $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);

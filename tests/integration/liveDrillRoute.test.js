@@ -188,6 +188,34 @@ describe('live drill over HTTP', () => {
     expect(pv.heist).toMatchObject({ cash: 450, rank: 1, effect: null, gadgets: [] }); // the finder's own screen is clear
   });
 
+  test('a grab is the opener\'s own pick — offered only the classmates above, and the server refuses a name below', async () => {
+    const g = await host({ drill: 'geometry', playbook: 'all', mode: 'heist', seconds: 120 });
+    const amy = await join(g.code, 'Amy'); const ben = await join(g.code, 'Ben'); const cal = await join(g.code, 'Cal');
+    const tok = { 'X-Live-Drill-Token': ben.token };
+    await req.post(`/api/live-drill/host/games/${g.code}/start`);
+    const game = G.getGame(g.code);
+    game.players.get(amy.playerId).cash = 5000; game.players.get(cal.playerId).cash = 20; // Amy above Ben, Cal below
+    const pb = game.players.get(ben.playerId);
+    pb.streak = 2;
+    let cur = (await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body;
+    await req.post(`/api/live-drill/play/${g.code}/answer`).set(tok).send({ n: cur.n, k: G.playAt(game, cur.n).answer });
+    pb.safe.dealt[0] = { kind: 'grab', label: 'Grab' };
+    const opened = await req.post(`/api/live-drill/play/${g.code}/safe`).set(tok).send({ pick: 0 });
+    expect(opened.body.kind).toBe('grab');
+    expect(opened.body.choose.map((t) => t.name)).toEqual(['Amy']); // never Cal, never Ben himself
+    cur = (await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body;
+    expect(cur.pick).toMatchObject({ kind: 'grab' });
+    expect(cur.play).toBeUndefined();
+    expect((await req.post(`/api/live-drill/play/${g.code}/target`).set(tok).send({ id: cal.playerId })).status).toBe(400);
+    expect((await req.post(`/api/live-drill/play/${g.code}/target`).set(tok).send({ id: ben.playerId })).status).toBe(400);
+    const hit = await req.post(`/api/live-drill/play/${g.code}/target`).set(tok).send({ id: amy.playerId });
+    expect(hit.body).toMatchObject({ kind: 'grab', target: 'Amy', amount: 1000 });
+    expect(game.players.get(amy.playerId).cash).toBe(4000);
+    expect(game.players.get(cal.playerId).cash).toBe(20);
+    expect((await req.post(`/api/live-drill/play/${g.code}/target`).set(tok).send({ id: amy.playerId })).status).toBe(409); // nothing pending
+    expect((await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body.play).toBeDefined();
+  });
+
   test('the Arcade catalogue is public, and /me tells the page whether a teacher is looking', async () => {
     const cat = await req.get('/api/live-drill/solo/arcade');
     expect(cat.status).toBe(200);
