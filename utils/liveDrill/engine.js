@@ -159,10 +159,11 @@ function sectionsOfLabel(ch) {
 /**
  * The drill's numbered sections in order ("5.1" … "5.5"), each with the playbooks that cover it —
  * the pick a teacher actually makes mid-module ("we did 5.2 today"), derived from the labels the
- * banks already print, never a second catalog. A number between the first and the last that no
- * playbook covers is listed with no books, so a picker can show it as not-yet rather than skip it
- * silently. A drill whose labels carry no N.M (Math Facts, a Test Prep's question ranges, the
- * course pages' modules) has none.
+ * banks already print, never a second catalog. Only sections some playbook covers are listed: a
+ * number the course skips (Module 4 goes 4.1, 4.2, 4.3, 4.5 — there is no 4.4 in the packets, the
+ * notes or the test) is simply not a pick, rather than a greyed button that looks like a bug. A
+ * drill whose labels carry no N.M (Math Facts, a Test Prep's question ranges, the course pages'
+ * modules) has none.
  */
 function listSections(drillId) {
   const books = listPlaybooks(drillId);
@@ -171,13 +172,10 @@ function listSections(drillId) {
     if (!covering.has(s)) covering.set(s, []);
     covering.get(s).push(b);
   }
-  if (!covering.size) return [];
   const num = (s) => s.split('.').map(Number);
   const ids = [...covering.keys()].sort((x, y) => (num(x)[0] - num(y)[0]) || (num(x)[1] - num(y)[1]));
-  const [c0, s0] = num(ids[0]); const [cN, sN] = num(ids[ids.length - 1]);
-  const all = c0 === cN ? Array.from({ length: sN - s0 + 1 }, (_, i) => `${c0}.${s0 + i}`) : ids;
-  return all.map((key) => {
-    const bs = covering.get(key) || [];
+  return ids.map((key) => {
+    const bs = covering.get(key);
     return { key, name: `Section ${key}`, books: bs.map((b) => b.key), topics: bs.map((b) => b.name), blurb: bs.map((b) => b.blurb).filter(Boolean).join(' ') };
   });
 }

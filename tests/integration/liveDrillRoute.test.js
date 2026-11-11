@@ -78,6 +78,7 @@ describe('live drill over HTTP', () => {
     const m5 = r.body.drills.find((d) => d.id === 'alg1m5');
     expect(m5.sections.map((s) => s.key)).toEqual(['5.1', '5.2', '5.3', '5.4', '5.5']);
     expect(m5.sections.find((s) => s.key === '5.2').books).toEqual(['forms', 'parperp']);
+    expect(r.body.drills.find((d) => d.id === 'alg1m4').sections.map((s) => s.key)).toEqual(['4.1', '4.2', '4.3', '4.5']); // the course skips 4.4
     expect(facts.sections).toEqual([]);
   });
 
