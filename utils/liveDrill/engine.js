@@ -182,17 +182,36 @@ function listSections(drillId) {
   });
 }
 
+/** "5.1 & 5.2", "5.1, 5.2 & 5.4" */
+const listOf = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} & ${xs[xs.length - 1]}`);
+
 /**
- * What a playbook key means: a book of the bank, or a numbered section (every book that covers
- * it), or — for anything else — the whole bank. The host and the solo page both send the key.
+ * What a playbook key means: a book of the bank; a numbered section (every book that covers it);
+ * SEVERAL sections or books joined by commas ("5.1,5.2" — a teacher mid-module drills what has
+ * been taught so far: the union of their books, in the bank's order); or, for anything else, the
+ * whole bank. The key comes back canonical (known parts only, sections in order, no repeats), so
+ * a game's `playbook` is the same string however the picker spelled it. The host and the solo
+ * page both send it.
  */
 function resolvePlaybook(drillId, key) {
   const drill = getDrill(drillId);
-  const k = String(key == null ? '' : key);
-  if (drill.bank.BOOKS[k]) return { key: k, name: drill.bank.BOOKS[k].name, books: [k] };
-  const sec = /^\d+\.\d+$/.test(k) ? listSections(drillId).find((s) => s.key === k) : null;
-  if (sec && sec.books.length) return { key: k, name: sec.name, books: sec.books, section: true };
-  return { key: 'all', name: drill.bank.BOOKS.all.name, books: ['all'] };
+  const BOOKS = drill.bank.BOOKS;
+  const secs = listSections(drillId);
+  const secOf = (k) => secs.find((s) => s.key === k && s.books.length);
+  const parts = String(key == null ? '' : key).split(',').map((k) => k.trim()).filter(Boolean);
+  const picked = { secs: [], books: [] };
+  for (const k of parts) {
+    if (BOOKS[k] && k !== 'all') { if (!picked.books.includes(k)) picked.books.push(k); continue; }
+    const sec = /^\d+\.\d+$/.test(k) ? secOf(k) : null;
+    if (sec && !picked.secs.includes(sec)) picked.secs.push(sec);
+  }
+  if (!picked.secs.length && !picked.books.length) return { key: 'all', name: BOOKS.all.name, books: ['all'] };
+  picked.secs.sort((a, b) => secs.indexOf(a) - secs.indexOf(b));
+  const books = Object.keys(BOOKS).filter((b) => picked.books.includes(b) || picked.secs.some((s) => s.books.includes(b)));
+  if (!picked.secs.length) return { key: picked.books.join(','), name: listOf(picked.books.map((b) => BOOKS[b].name)), books };
+  const extra = picked.books.filter((b) => !picked.secs.some((s) => s.books.includes(b))); // books beyond the chosen sections
+  const name = `Section${picked.secs.length > 1 ? 's' : ''} ${listOf(picked.secs.map((s) => s.key))}${extra.length ? ` + ${listOf(extra.map((b) => BOOKS[b].name))}` : ''}`;
+  return { key: [...picked.secs.map((s) => s.key), ...extra].join(','), name, books, section: true };
 }
 
 // ---------- rendering (mirrors the page's rowsHTML / posedHTML / tellFor) ----------
