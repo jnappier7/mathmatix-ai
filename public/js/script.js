@@ -3128,6 +3128,10 @@ document.addEventListener("DOMContentLoaded", () => {
             messageRef.textNode.innerHTML = renderMarkdownMath(fullText);
         }
 
+        // A worked derivation builds each line out of the one above it (math-morph.js).
+        // Presentation only, best-effort: it reads the KaTeX just rendered and changes no content.
+        try { if (window.MathMorph) window.MathMorph.play(messageRef.bubble); } catch { /* never block a reply on an animation */ }
+
         // Add audio playback button
         if (typeof playAudio === 'function') {
             const playBtn = document.createElement("button");
@@ -4187,6 +4191,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(() => {
                         window.inlineChatVisuals.initializeVisuals(latestMessage);
                         renderMathInElement(latestMessage);
+                        // The picture is told in order (visual-motion.js), and the re-render above
+                        // replaced the equations math-morph was building, so it starts over on the new ones.
+                        try {
+                            if (window.VisualMotion) window.VisualMotion.play(latestMessage);
+                            if (window.MathMorph) window.MathMorph.play(latestMessage);
+                        } catch { /* never block a reply on an animation */ }
                     }, 100);
                 }
             }

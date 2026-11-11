@@ -264,7 +264,7 @@
     cur = { wait: true };
     closePad();
     $('p-choices').innerHTML = '';
-    $('p-card').innerHTML = `<div class="alarm"><div class="siren">🚨</div><div class="big">ALARM</div><div class="sub">Wrong answer. Locked for <b id="al-left">${Math.max(0, (until - serverNow()) / 1000).toFixed(1)}</b> s — think before the next one.</div></div>`;
+    $('p-card').innerHTML = `<div class="alarm"><span class="sweep" aria-hidden="true"></span><div class="siren">🚨</div><div class="big">ALARM</div><span class="drain" aria-hidden="true"><span style="animation-duration:${Math.max(0.1, (until - serverNow()) / 1000).toFixed(2)}s"></span></span><div class="sub">Wrong answer. Locked for <b id="al-left">${Math.max(0, (until - serverNow()) / 1000).toFixed(1)}</b> s — think before the next one.</div></div>`;
   }
 
   /** The vault: three safes, one tap. What's inside is already decided on the server. */
@@ -273,7 +273,7 @@
     cur = { wait: true };
     closePad();
     $('p-card').innerHTML = `<div class="vaultcard"><div class="big">🔐 You cracked the vault!</div><div class="sub">Safe ${safe.n} · pick one</div></div>`;
-    $('p-choices').innerHTML = Array.from({ length: safe.count }, (_, i) => `<button class="ch safe" data-i="${i}"><span class="door">🔒</span><span class="lab">Safe ${i + 1}</span></button>`).join('');
+    $('p-choices').innerHTML = Array.from({ length: safe.count }, (_, i) => `<button class="ch safe" data-i="${i}" style="--i:${i}"><span class="box"><span class="loot"></span><span class="door"><span class="dial"></span><span class="handle"></span></span></span><span class="lab">Safe ${i + 1}</span></button>`).join('');
     $('fb').className = 'fb';
     $('fb').innerHTML = '<span class="muted">Cash, a jackpot, a grab, a switch, a gadget… or a decoy.</span>';
     $('p-choices').querySelectorAll('.safe').forEach((b) => { b.onclick = () => openSafe(Number(b.dataset.i)); });
@@ -282,9 +282,10 @@
   async function openSafe(i) {
     const btns = [...$('p-choices').querySelectorAll('.safe')];
     btns.forEach((b) => { b.disabled = true; });
+    if (btns[i]) btns[i].classList.add('cracking'); // the dial spins until the server says what's inside
     try {
       const r = await api(`/${encodeURIComponent(seat.code)}/safe`, { method: 'POST', body: JSON.stringify({ pick: i }) });
-      btns.forEach((b, j) => { b.classList.toggle('opened', j === i); b.classList.toggle('fade', j !== i); if (j === i) b.querySelector('.door').textContent = r.kind === 'decoy' ? '🕳' : r.kind === 'gadget' ? '🧰' : r.kind === 'grab' ? '🕶' : r.kind === 'switch' ? '🔁' : '💰'; });
+      btns.forEach((b, j) => { b.classList.remove('cracking'); b.classList.toggle('opened', j === i); b.classList.toggle('fade', j !== i); if (j === i) { b.classList.toggle('rich', r.kind !== 'decoy'); b.classList.toggle('jackpot', r.label === 'JACKPOT'); } if (j === i) b.querySelector('.loot').textContent = r.kind === 'decoy' ? '🕳' : r.kind === 'gadget' ? '🧰' : r.kind === 'grab' ? '🕶' : r.kind === 'switch' ? '🔁' : '💰'; });
       let call; let why = ''; let cls = 'good';
       if (r.kind === 'cash') { call = `${r.label === 'JACKPOT' ? '💎 JACKPOT ' : ''}+${money(r.amount)}`; why = r.label === 'JACKPOT' ? 'The big one.' : 'Cash.'; }
       else if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}, who was ahead of you.`; }

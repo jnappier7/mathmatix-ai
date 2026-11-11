@@ -1,6 +1,7 @@
 const {
   buildVisualDirective,
   matchTopic,
+  hasInlineVisual,
 } = require('../../utils/pipeline/visualDirective');
 
 // The tutor had the whole visual toolkit and never used it, because nothing
@@ -43,8 +44,9 @@ describe('buildVisualDirective — when the math itself is visual', () => {
       .toContain('CIRCLE_DIAGRAM');
     expect(buildVisualDirective({ action: 'hint', studentText: 'how do I solve this system of equations' }))
       .toContain('SYSTEM_GRAPH');
+    // hops, not the static [DIAGRAM:number_line] figure this used to name
     expect(buildVisualDirective({ action: 'hint', skillName: 'Adding Integers' }))
-      .toContain('number_line');
+      .toMatch(/\[NUMBER_LINE:[^\]]*jumps=/);
     expect(buildVisualDirective({ action: 'hint', skillName: 'Factoring Trinomials' }))
       .toContain('TILES');
   });
@@ -160,7 +162,13 @@ describe('buildVisualDirective — the anti-cheat carve-out', () => {
 // every one of them — which is silence exactly where the ask was needed.
 describe('matchTopic — inflections, and senses that collide', () => {
   it.each([
-    ['Adding Integers', 'number_line'],
+    ['Adding Integers', 'jumps='],
+    ['Subtracting Negative Numbers', 'jumps='],
+    ['Solving Linear Inequalities', 'inequality='],
+    ['Absolute Value', 'points='],
+    ['Slope of a Line', '[SLOPE:rise='],
+    ['Rate of Change', '[SLOPE:rise='],
+    ['Graphing Linear Functions', 'FUNCTION_GRAPH'],
     ['Factoring Trinomials', 'TILES'],
     ['Equivalent Fractions', 'FRACTION'],
     ['Properties of Triangles', 'DIAGRAM:triangle'],
@@ -186,5 +194,42 @@ describe('matchTopic — inflections, and senses that collide', () => {
   it('does not fire on words that merely contain a topic term', () => {
     expect(matchTopic('march was a long month')).toBeNull();
     expect(matchTopic('what should i do next')).toBeNull();
+  });
+});
+
+// With the Work Board off (the default) pictures live in the tutor's message, so the board
+// ledger never says "already drawn". Before this, an integers lesson was asked for a number
+// line on every single turn.
+describe('buildVisualDirective — a picture drawn a moment ago', () => {
+  const base = { skillName: 'Adding Integers', recentInlineVisual: true };
+  it('is pointed at, not redrawn, on an ordinary turn', () => {
+    expect(buildVisualDirective({ ...base, action: 'hint' })).toBeNull();
+    expect(buildVisualDirective({ ...base, action: 'direct_instruction' })).toBeNull();
+    expect(buildVisualDirective({ ...base, action: 'hint', recentInlineVisual: false })).toBeTruthy();
+  });
+  it('is replaced when it plainly did not land', () => {
+    expect(buildVisualDirective({ ...base, action: 'switch_representation' })).toBeTruthy();
+    expect(buildVisualDirective({ ...base, action: 'reteach_misconception' })).toBeTruthy();
+    expect(buildVisualDirective({ ...base, action: 'hint', recentWrongCount: 2 })).toBeTruthy();
+  });
+  it('is drawn again when the student asks', () => {
+    expect(buildVisualDirective({ ...base, action: 'hint', studentText: 'can you show me that again' })).toBeTruthy();
+  });
+});
+
+describe('hasInlineVisual', () => {
+  it('knows a picture tag from a highlight, a step block or interval notation', () => {
+    expect(hasInlineVisual('Look: [NUMBER_LINE:min=0,max=10,jumps=[(0,3,"+3")]]')).toBe(true);
+    expect(hasInlineVisual('[ SLOPE : rise=3,run=4]')).toBe(true);
+    expect(hasInlineVisual('on the interval [0, 3] we [FOCUS:x] and [STEPS]a[/STEPS]')).toBe(false);
+    expect(hasInlineVisual(undefined)).toBe(false);
+  });
+});
+
+describe('buildVisualDirective — number lines must not do the last step', () => {
+  it('tells the tutor to stop short of the landing hop and the solved shading', () => {
+    const d = buildVisualDirective({ action: 'hint', skillName: 'Adding Integers' });
+    expect(d).toMatch(/never the hop that lands on their answer/);
+    expect(d).toMatch(/never shade the solution of an inequality they have not solved/);
   });
 });
