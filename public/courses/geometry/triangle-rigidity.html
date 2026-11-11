@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Triangle Rigidity | St. Charles Preparatory School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+/* ---------------------------------------------------------------------------
+   This page is built ON brand.css rather than against it. brand.css ships the
+   whole token set (--bg, --panel, --ink, --accent, the two fonts, and a dark
+   block), and it is linked LAST on every course page — so the tokens below are
+   a standalone copy of the same values, not a competing palette. When brand.css
+   lands it redefines them identically and nothing moves; without it (a local
+   preview, before applyBrand runs) the page still looks right.
+
+   Consequence: every colour here is a token. Hard-coding one would survive the
+   light theme and vanish in the dark one.
+   --------------------------------------------------------------------------- */
+:root{
+  --sc-red:#EA1D2D; --sc-red-deep:#B8121F; --sc-black:#230E15;
+  --bg:#F6F3F2; --panel:#FFFFFF; --panel-2:#F2EEED;
+  --ink:#230E15; --muted:#6B5C60;
+  --line:rgba(35,14,21,.12); --line-strong:rgba(35,14,21,.24);
+  --accent:#EA1D2D; --accent-ink:#B8121F; --accent-soft:#FCEAEB;
+  --radius:12px;
+  --shadow:0 1px 2px rgba(35,14,21,.06),0 8px 20px rgba(35,14,21,.08);
+  --font-display:"Goudy Old Style","Sorts Mill Goudy",Georgia,"Times New Roman",serif;
+  --font-body:"Avenir Next",Avenir,"Segoe UI",Arial,Helvetica,sans-serif;
+  /* drawing ink, derived so the dark block below moves them together */
+  --tr-grid:rgba(35,14,21,.10);
+  --tr-bar:#230E15;
+  --tr-ghost:rgba(35,14,21,.26);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#170910; --panel:#241017; --panel-2:#2F171E;
+    --ink:#FFFFFF; --muted:#BCA8AD;
+    --line:rgba(255,255,255,.10); --line-strong:rgba(255,255,255,.22);
+    --accent:#FF5A64; --accent-ink:#FF5A64; --accent-soft:rgba(234,29,45,.20);
+    --shadow:0 8px 20px rgba(0,0,0,.45);
+    --tr-grid:rgba(255,255,255,.10);
+    --tr-bar:#FFFFFF;
+    --tr-ghost:rgba(255,255,255,.30);
+  }
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{margin:0;font-family:var(--font-body);font-size:16px;line-height:1.5}
+h1,h2,h3{font-family:var(--font-display);font-weight:700;margin:0;
+  font-variant-numeric:lining-nums;font-feature-settings:"lnum" 1;text-wrap:balance}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- school masthead (layout here, paint from brand.css) ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 20px;background:var(--sc-red);border-bottom:3px solid var(--sc-black)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;color:#fff}
+.brand>span{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.brand strong{font-family:var(--font-display);font-size:18px;letter-spacing:.02em}
+.brand em{font-style:normal;font-size:12px;opacity:.92}
+.brand-logo{height:40px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tutor-top{padding:7px 12px;border-radius:999px;font-size:.9rem;font-weight:700;
+  text-decoration:none;white-space:nowrap;background:#fff;color:var(--sc-red-deep)}
+@media(max-width:560px){.brand-logo{height:32px}.brand em{display:none}}
+
+/* ---------- page ---------- */
+.tr-wrap{max-width:1040px;margin:0 auto;padding:22px 16px 56px;
+  display:flex;flex-direction:column;gap:22px}
+.tr-lede h1{font-size:clamp(2rem,5.5vw,3rem);line-height:1.05}
+.tr-lede p{margin:10px 0 0;color:var(--muted);max-width:66ch}
+.tr-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px 18px 20px}
+.tr-eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent-ink);margin-bottom:4px}
+.tr-card h2{font-size:1.5rem}
+.tr-card>p{margin:8px 0 0;color:var(--muted);max-width:70ch}
+
+/* ---------- station 1 ---------- */
+.tr-stages{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:760px){.tr-stages{grid-template-columns:1fr}}
+.tr-stage{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
+.tr-stage h3{font-size:1.05rem;padding:10px 12px 0}
+.tr-stage .tr-sub{margin:2px 12px 0;color:var(--muted);font-size:.86rem;min-height:2.4em}
+.tr-stage svg{display:block;width:100%;height:auto;touch-action:none;cursor:grab}
+.tr-stage svg.dragging{cursor:grabbing}
+.tr-verdict{margin:0 12px 12px;padding:8px 10px;border-radius:8px;font-size:.88rem;
+  background:var(--panel);border:1px solid var(--line)}
+.tr-verdict b{font-weight:700}
+.tr-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.tr-btn{padding:8px 14px;border-radius:999px;border:1px solid var(--line-strong);
+  background:var(--panel);color:var(--ink);font-weight:600;font-size:.9rem}
+.tr-btn:hover{border-color:var(--accent)}
+.tr-btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ---------- station 2 ---------- */
+.tr-cases{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tr-chip{padding:7px 14px;border-radius:999px;border:1px solid var(--line-strong);
+  background:var(--panel);color:var(--ink);font-weight:700;letter-spacing:.04em;font-size:.9rem}
+.tr-chip:hover{border-color:var(--accent)}
+.tr-chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tr-build{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-top:16px;align-items:start}
+@media(max-width:820px){.tr-build{grid-template-columns:1fr}}
+.tr-knobs{display:flex;flex-direction:column;gap:12px}
+.tr-knob label{display:flex;justify-content:space-between;font-size:.88rem;font-weight:600;gap:8px}
+.tr-knob label span{color:var(--accent-ink);font-variant-numeric:tabular-nums}
+.tr-knob input{width:100%;accent-color:var(--accent);margin-top:4px}
+.tr-plot{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);overflow:hidden}
+.tr-plot svg{display:block;width:100%;height:auto}
+.tr-banner{margin-top:14px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel-2)}
+.tr-banner b{display:block;font-family:var(--font-display);font-size:1.15rem;margin-bottom:2px}
+.tr-banner.is-one{border-color:var(--accent);background:var(--accent-soft)}
+.tr-banner.is-one b{color:var(--accent-ink)}
+.tr-banner small{color:var(--muted);display:block;font-size:.9rem;line-height:1.45}
+table.tr-meas{width:100%;border-collapse:collapse;margin-top:12px;font-size:.88rem;
+  font-variant-numeric:tabular-nums}
+table.tr-meas th,table.tr-meas td{text-align:right;padding:5px 6px;border-bottom:1px solid var(--line)}
+table.tr-meas th:first-child,table.tr-meas td:first-child{text-align:left;font-weight:700}
+/* NOT uppercased: in this table `a` is the side and `A` is the angle opposite
+   it, so transforming the case makes two different quantities read the same. */
+table.tr-meas thead th{color:var(--muted);font-weight:700;font-size:.86rem;
+  text-transform:none;letter-spacing:.04em}
+table.tr-meas thead th.tr-side{font-style:italic}
+
+/* ---------- closing ---------- */
+table.tr-sum{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
+table.tr-sum th,table.tr-sum td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);
+  vertical-align:top}
+table.tr-sum thead th{color:var(--muted);font-weight:600;font-size:.8rem;
+  text-transform:uppercase;letter-spacing:.06em}
+table.tr-sum td:first-child{font-weight:700;letter-spacing:.04em;white-space:nowrap}
+.tr-yes{color:var(--accent-ink);font-weight:700}
+.tr-no{color:var(--muted);font-weight:700}
+.tr-foot{color:var(--muted);font-size:.86rem;text-align:center}
+.tr-foot a{color:var(--accent-ink)}
+/* ---------- drawing ---------- */
+.tr-bar{stroke:var(--tr-bar)}
+.tr-brace{stroke:var(--accent);stroke-dasharray:3 2.2}
+.tr-pin{fill:var(--tr-bar)}
+.tr-hand{fill:var(--accent);stroke:var(--panel);stroke-width:1.4}
+.tr-vlab{fill:var(--ink)}
+.tr-blab{fill:var(--muted)}
+.tr-poly{stroke-width:2.2;stroke-linejoin:round}
+.tr-t1{fill:var(--accent-soft);stroke:var(--accent)}
+.tr-t2{fill:none;stroke:var(--tr-bar);stroke-dasharray:4 2.6}
+.tr-tg{fill:none;stroke:var(--tr-ghost);stroke-dasharray:3 2.4}
+.tr-tag1{fill:var(--accent-ink)}
+.tr-tag2{fill:var(--ink)}
+/* Labels land on top of bars, fills and each other. paint-order:stroke draws a
+   halo of the panel colour behind the glyphs, so they stay readable wherever
+   they fall — and it follows the theme, because the halo is a token. */
+.tr-vlab,.tr-blab,.tr-tag1,.tr-tag2{paint-order:stroke;stroke:var(--panel-2);
+  stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+
+/* ---------- knobs ---------- */
+.tr-knobrow{display:flex;align-items:center;gap:8px}
+.tr-knob.is-locked .tr-klab{color:var(--accent-ink)}
+.tr-knob.is-locked input{opacity:.5}
+.tr-lock{flex:0 0 auto;width:34px;height:30px;border-radius:8px;line-height:1;
+  border:1px solid var(--line-strong);background:var(--panel);font-size:14px}
+.tr-lock:hover{border-color:var(--accent)}
+.tr-lock[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent)}
+#shuffle-note{margin:8px 0 0;color:var(--accent-ink);font-size:.86rem;min-height:1.3em}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:ital@0;1&display=swap">
+<link rel="icon" href="../assets/sc-crest.png">
+<link rel="stylesheet" href="../assets/brand.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="index.html">
+    <img class="brand-logo" src="../assets/sc-logo-hor-white.png" alt="St. Charles Preparatory School">
+    <span><strong>Honors Geometry</strong><em>Triangle Rigidity</em></span>
+  </a>
+  <div class="topbar-right">
+    <a class="tutor-top" href="https://www.mathmatix.ai/chat.html" target="_blank" rel="noopener">Ask your tutor</a>
+  </div>
+</header>
+<div class="tr-wrap">
+
+<div class="tr-lede">
+  <h1>Why a triangle holds and a square does not</h1>
+  <p>Look at a roof truss, a bridge, a bike frame, a crane. They are built out of triangles, and
+     not for decoration. Pull on the two shapes below and you will see the reason — then find out
+     exactly how much you need to know about a triangle before it is pinned down for good.</p>
+</div>
+
+<!-- ======================= STATION 1 ======================= -->
+<section class="tr-card">
+  <div class="tr-eyebrow">Station 1</div>
+  <h2>Pin it and pull</h2>
+  <p>Both shapes are bars joined by pins. The bars cannot stretch, bend or shorten — the numbers on
+     them never change. One corner is pinned to the table (the dark dot); drag any red corner.</p>
+
+  <div class="tr-stages">
+    <div class="tr-stage" id="stage-tri">
+      <h3>Three bars</h3>
+      <p class="tr-sub">Drag B or C.</p>
+      <div class="tr-verdict" id="verdict-tri"></div>
+    </div>
+    <div class="tr-stage" id="stage-quad">
+      <h3>Four bars</h3>
+      <p class="tr-sub">Drag Q, R or S.</p>
+      <div class="tr-verdict" id="verdict-quad"></div>
+    </div>
+  </div>
+
+  <div class="tr-tools">
+    <button class="tr-btn" id="brace" aria-pressed="false">Add a brace</button>
+    <button class="tr-btn" id="reset1">Reset both</button>
+  </div>
+  <p style="margin-top:12px;color:var(--muted);max-width:70ch">
+     The brace is one more bar across the four-bar shape. It does not make the bars any stronger —
+     it cuts the shape into two triangles. That is the whole trick, and it is why you see diagonals
+     in every scaffold and gate you walk past.</p>
+</section>
+
+<!-- ======================= STATION 2 ======================= -->
+<section class="tr-card">
+  <div class="tr-eyebrow">Station 2</div>
+  <h2>How much do you have to know?</h2>
+  <p>A triangle has six parts: three sides and three angles. You rarely get told all six. Pick a
+     set of parts below, then move the sliders and watch how many different triangles can be built
+     from them. <b>Freeze</b> a part with the padlock to hold it still while you change the others.</p>
+
+  <div class="tr-cases" id="cases" role="group" aria-label="which parts you are given"></div>
+  <p id="case-blurb" style="margin-top:10px;font-weight:600"></p>
+
+  <div class="tr-build">
+    <div>
+      <div class="tr-knobs" id="knobs"></div>
+      <div class="tr-tools">
+        <button class="tr-btn" id="shuffle">Shuffle what is not frozen</button>
+      </div>
+      <p id="shuffle-note"></p>
+    </div>
+    <div>
+      <div class="tr-plot" id="plot"></div>
+      <div class="tr-banner" id="banner"></div>
+      <table class="tr-meas" id="meas"></table>
+      <p style="margin:8px 0 0;color:var(--muted);font-size:.82rem">
+         Every number in that table is measured off the drawing, not copied from the sliders.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CLOSING ======================= -->
+<section class="tr-card">
+  <div class="tr-eyebrow">The short version</div>
+  <h2>Five that work, two that do not</h2>
+  <table class="tr-sum">
+    <thead><tr><th>Given</th><th>Proves congruence?</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>SSS</td><td class="tr-yes">Yes</td><td>Three sides leave the angles no freedom — Station 1 in symbols.</td></tr>
+      <tr><td>SAS</td><td class="tr-yes">Yes</td><td>The angle is the hinge between the two sides. Fix all three and the third side is forced.</td></tr>
+      <tr><td>ASA</td><td class="tr-yes">Yes</td><td>The side sets the size; the two angles aim the other sides, and they meet in one place.</td></tr>
+      <tr><td>AAS</td><td class="tr-yes">Yes</td><td>Two angles hand you the third, so you really have ASA.</td></tr>
+      <tr><td>HL</td><td class="tr-yes">Yes</td><td>Right triangles only. The Pythagorean Theorem supplies the missing leg, which makes it SSS.</td></tr>
+      <tr><td>SSA</td><td class="tr-no">No</td><td>The side opposite the angle can usually swing to two different places. Two triangles, same given parts.</td></tr>
+      <tr><td>AAA</td><td class="tr-no">No</td><td>Angles fix the shape but nothing fixes the size. Similar, not congruent.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<p class="tr-foot">Honors Geometry &middot; 5.3 &middot; <a href="chapter-05.html">back to Chapter 5</a></p>
+</div>
+<script>
+/* ---------------------------------------------------------------------------
+   Triangle construction from given parts.
+
+   Naming follows the textbook: vertex A, B, C; side a is opposite A (so a = BC),
+   b = CA, c = AB. Angles are in degrees on the way in and out; radians only
+   inside a function.
+
+   Every builder returns { tris: [...], note } where tris is EVERY triangle the
+   given parts allow — none, one, or two. That is the whole point of the page:
+   SSA returns two and AAA returns a family, and the drawing is honest about it
+   only because the builder is.
+   --------------------------------------------------------------------------- */
+var TriGeom = (function () {
+  var D2R = Math.PI / 180, R2D = 180 / Math.PI;
+  var EPS = 1e-9;
+
+  function dist(p, q) { return Math.hypot(p.x - q.x, p.y - q.y); }
+
+  /* Interior angle at p, in degrees, between rays p->u and p->v. */
+  function angleAt(p, u, v) {
+    var a = Math.atan2(u.y - p.y, u.x - p.x),
+        b = Math.atan2(v.y - p.y, v.x - p.x),
+        d = Math.abs(a - b) * R2D;
+    return d > 180 ? 360 - d : d;
+  }
+
+  function tri(A, B, C) { return { A: A, B: B, C: C }; }
+
+  /* Measure a built triangle back out — used by the page's readouts AND by
+     verify.js, which is the point: the parts are re-derived from the drawing,
+     not echoed from the input. */
+  function measure(t) {
+    return {
+      a: dist(t.B, t.C), b: dist(t.C, t.A), c: dist(t.A, t.B),
+      A: angleAt(t.A, t.B, t.C), B: angleAt(t.B, t.A, t.C), C: angleAt(t.C, t.A, t.B)
+    };
+  }
+
+  /* --- SSS: three sides ------------------------------------------------- */
+  function sss(a, b, c) {
+    if (a + b <= c + EPS || b + c <= a + EPS || a + c <= b + EPS)
+      return { tris: [], note: 'no-close' };
+    var B = { x: 0, y: 0 }, C = { x: a, y: 0 };
+    var x = (c * c - b * b + a * a) / (2 * a);
+    var y2 = c * c - x * x;
+    var y = Math.sqrt(Math.max(0, y2));
+    return { tris: [tri({ x: x, y: y }, B, C)], note: 'one' };
+  }
+
+  /* --- SAS: two sides and the angle BETWEEN them ------------------------ */
+  function sas(b, A, c) {
+    if (A <= 0 || A >= 180) return { tris: [], note: 'no-close' };
+    var Ap = { x: 0, y: 0 }, B = { x: c, y: 0 };
+    var C = { x: b * Math.cos(A * D2R), y: b * Math.sin(A * D2R) };
+    return { tris: [tri(Ap, B, C)], note: 'one' };
+  }
+
+  /* --- ASA: two angles and the side BETWEEN them (side a = BC) ---------- */
+  function asa(B, a, C) {
+    if (B <= 0 || C <= 0 || B + C >= 180) return { tris: [], note: 'no-close' };
+    var Aang = 180 - B - C;
+    var c = a * Math.sin(C * D2R) / Math.sin(Aang * D2R);   // c = AB
+    var Bp = { x: 0, y: 0 }, Cp = { x: a, y: 0 };
+    var Ap = { x: c * Math.cos(B * D2R), y: c * Math.sin(B * D2R) };
+    return { tris: [tri(Ap, Bp, Cp)], note: 'one' };
+  }
+
+  /* --- AAS: two angles and a side NOT between them (side a is opposite A)
+         Two angles give the third, so this is ASA once C is known.        */
+  function aas(A, B, a) {
+    if (A <= 0 || B <= 0 || A + B >= 180) return { tris: [], note: 'no-close' };
+    return asa(B, a, 180 - A - B);
+  }
+
+  /* --- SSA: two sides and an angle NOT between them. The ambiguous case.
+         Given angle A, side b = AC next to it, side a = BC opposite it.
+         B sits on the ray from A at angle A, at distance c, with |BC| = a:
+             c^2 - 2 b cosA c + (b^2 - a^2) = 0
+         so  c = b cosA +/- sqrt(a^2 - b^2 sin^2 A).
+         Both positive roots are real triangles — that is why SSA proves
+         nothing.                                                           */
+  function ssa(a, b, A) {
+    if (A <= 0 || A >= 180 || a <= 0 || b <= 0) return { tris: [], note: 'no-close' };
+    var h = b * Math.sin(A * D2R);              // the altitude from C to ray AB
+    if (a < h - 1e-7) return { tris: [], note: 'ssa-none' };
+    var disc = Math.max(0, a * a - h * h);
+    var root = Math.sqrt(disc), base = b * Math.cos(A * D2R);
+    var cs = [base + root, base - root].filter(function (v) { return v > 1e-7; });
+    // de-duplicate the tangent case, where both roots are the same number
+    if (cs.length === 2 && Math.abs(cs[0] - cs[1]) < 1e-7) cs = [cs[0]];
+    var Ap = { x: 0, y: 0 }, C = { x: b, y: 0 };
+    var tris = cs.map(function (c) {
+      return tri(Ap, { x: c * Math.cos(-A * D2R), y: c * Math.sin(-A * D2R) }, C);
+    });
+    return {
+      tris: tris,
+      note: tris.length === 2 ? 'ssa-two' : tris.length === 1
+        ? (Math.abs(a - h) < 1e-7 ? 'ssa-right' : 'ssa-one') : 'ssa-none'
+    };
+  }
+
+  /* --- AAA: two angles fix the third, and nothing fixes the size -------- */
+  function aaa(A, B, size) {
+    if (A <= 0 || B <= 0 || A + B >= 180) return { tris: [], note: 'no-close' };
+    var r = asa(B, size, 180 - A - B);
+    r.note = 'aaa';
+    return r;
+  }
+
+  /* --- HL: right angle, hypotenuse and one leg -------------------------- */
+  function hl(hyp, leg) {
+    if (leg <= 0 || hyp <= leg + 1e-9) return { tris: [], note: 'no-close' };
+    var other = Math.sqrt(hyp * hyp - leg * leg);
+    // right angle at B; leg = AB, other = BC, hyp = AC
+    return { tris: [tri({ x: 0, y: 0 }, { x: leg, y: 0 }, { x: leg, y: other })],
+             note: 'one' };
+  }
+
+  return { dist: dist, angleAt: angleAt, measure: measure,
+           sss: sss, sas: sas, asa: asa, aas: aas, ssa: ssa, aaa: aaa, hl: hl };
+})();
+
+if (typeof module !== 'undefined') module.exports = TriGeom;
+/* =========================================================================
+   Station 1 — bars and pins.
+
+   A linkage is points joined by bars of FIXED length. Dragging is physical,
+   not scripted: the dragged point is pulled a fraction of the way toward the
+   pointer, then every bar length is projected back (position-based dynamics).
+   Nothing in here knows that a triangle is rigid — the rigidity falls out of
+   the bar count, which is the whole argument the station is making.
+   ========================================================================= */
+function Linkage(pts, bars) {
+  this.pts = pts.map(function (p) { return { x: p.x, y: p.y, pin: !!p.pin }; });
+  this.home = pts.map(function (p) { return { x: p.x, y: p.y }; });
+  this.bars = bars.map(function (b) {
+    return { i: b.i, j: b.j, len: Math.hypot(pts[b.i].x - pts[b.j].x,
+                                             pts[b.i].y - pts[b.j].y), brace: !!b.brace };
+  });
+}
+Linkage.prototype.reset = function () {
+  var self = this;
+  this.home.forEach(function (h, k) { self.pts[k].x = h.x; self.pts[k].y = h.y; });
+};
+Linkage.prototype.relax = function (iters, useBrace) {
+  var pts = this.pts, bars = this.bars;
+  for (var k = 0; k < iters; k++) {
+    for (var n = 0; n < bars.length; n++) {
+      var b = bars[n];
+      if (b.brace && !useBrace) continue;
+      var p = pts[b.i], q = pts[b.j];
+      var dx = q.x - p.x, dy = q.y - p.y, d = Math.hypot(dx, dy);
+      if (d < 1e-9) continue;
+      var wp = p.pin ? 0 : 1, wq = q.pin ? 0 : 1, w = wp + wq;
+      if (!w) continue;
+      var f = (d - b.len) / d;
+      p.x += dx * f * (wp / w); p.y += dy * f * (wp / w);
+      q.x -= dx * f * (wq / w); q.y -= dy * f * (wq / w);
+    }
+  }
+};
+Linkage.prototype.pull = function (idx, tx, ty, useBrace) {
+  var p = this.pts[idx];
+  if (p.pin) return;
+  p.x += (tx - p.x) * 0.35;
+  p.y += (ty - p.y) * 0.35;
+  // Two passes: a coarse one to follow the pointer, then a tighter one so the
+  // bars land back on their exact lengths. The page tells students the bars
+  // never change, and a visible 0.03-unit creep would make that a lie.
+  this.relax(140, useBrace);
+  this.relax(360, useBrace);
+};
+/* =========================================================================
+   Wiring. Nothing here decides geometry — it asks TriGeom and draws what
+   comes back, including the cases that come back with two triangles or none.
+   ========================================================================= */
+(function () {
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var el = function (t, c, x) { var n = document.createElement(t);
+  if (c) n.className = c; if (x != null) n.textContent = x; return n; };
+var SVGNS = 'http://www.w3.org/2000/svg';
+function sv(t, at) { var n = document.createElementNS(SVGNS, t);
+  for (var k in at) n.setAttribute(k, at[k]); return n; }
+var fmt = function (v, d) { return (+v).toFixed(d == null ? 1 : d); };
+
+/* ================= STATION 1 — bars and pins ============================ */
+var stages = [
+  { id: 'tri', title: 'Three bars',
+    pts: [{ x: 22, y: 62, pin: true }, { x: 72, y: 62 }, { x: 44, y: 20 }],
+    bars: [{ i: 0, j: 1 }, { i: 1, j: 2 }, { i: 2, j: 0 }],
+    ang: [[0, 1, 2], [1, 0, 2], [2, 0, 1]], names: ['A', 'B', 'C'], drag: [1, 2] },
+  { id: 'quad', title: 'Four bars',
+    pts: [{ x: 22, y: 62, pin: true }, { x: 72, y: 62 }, { x: 76, y: 22 }, { x: 26, y: 22 }],
+    bars: [{ i: 0, j: 1 }, { i: 1, j: 2 }, { i: 2, j: 3 }, { i: 3, j: 0 },
+           { i: 0, j: 2, brace: true }],
+    ang: [[0, 1, 3], [1, 0, 2], [2, 1, 3], [3, 0, 2]], names: ['P', 'Q', 'R', 'S'],
+    drag: [1, 2, 3] }
+];
+var brace = false;
+
+stages.forEach(function (st) {
+  st.L = new Linkage(st.pts, st.bars);
+  st.start = st.ang.map(function (t) { return TriGeom.angleAt(st.L.pts[t[0]], st.L.pts[t[1]], st.L.pts[t[2]]); });
+  var host = $('#stage-' + st.id);
+  var svg = sv('svg', { viewBox: '0 0 96 78', role: 'img',
+    'aria-label': st.title + ' linkage you can drag' });
+  host.insertBefore(svg, $('.tr-verdict', host));
+  st.svg = svg;
+
+  st.gBar = sv('g', {}); st.gPt = sv('g', {}); st.gLab = sv('g', {});
+  svg.appendChild(st.gBar); svg.appendChild(st.gLab); svg.appendChild(st.gPt);
+
+  st.lines = st.bars.map(function (b) {
+    var ln = sv('line', { 'stroke-width': 2.6, 'stroke-linecap': 'round' });
+    st.gBar.appendChild(ln); return ln;
+  });
+  st.dots = st.L.pts.map(function (p, i) {
+    var g = sv('g', {});
+    var c = sv('circle', { r: p.pin ? 3.4 : 3.8 });
+    c.setAttribute('class', p.pin ? 'tr-pin' : 'tr-hand');
+    g.appendChild(c);
+    if (!p.pin) { var h = sv('circle', { r: 7.5, fill: 'transparent' });
+      h.setAttribute('data-i', i); g.appendChild(h); }
+    st.gPt.appendChild(g); return c;
+  });
+  st.labs = st.L.pts.map(function (p, i) {
+    var t = sv('text', { 'font-size': 4.6, 'font-weight': 700, 'text-anchor': 'middle' });
+    t.setAttribute('class', 'tr-vlab'); t.textContent = st.names[i];
+    st.gLab.appendChild(t); return t;
+  });
+  st.blabs = st.bars.map(function () {
+    var t = sv('text', { 'font-size': 3.5, 'text-anchor': 'middle' });
+    t.setAttribute('class', 'tr-blab'); st.gLab.appendChild(t); return t;
+  });
+
+  /* pointer -> svg user units */
+  function toUser(ev) {
+    var r = svg.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) / r.width * 96, y: (ev.clientY - r.top) / r.height * 78 };
+  }
+  var dragging = null;
+  svg.addEventListener('pointerdown', function (ev) {
+    var i = ev.target.getAttribute && ev.target.getAttribute('data-i');
+    if (i == null) {            // grab the nearest draggable joint
+      var u = toUser(ev), best = null, bd = 1e9;
+      st.drag.forEach(function (k) {
+        var d = Math.hypot(st.L.pts[k].x - u.x, st.L.pts[k].y - u.y);
+        if (d < bd) { bd = d; best = k; }
+      });
+      if (bd > 14) return;
+      i = best;
+    }
+    dragging = +i; svg.setPointerCapture(ev.pointerId);
+    svg.classList.add('dragging'); ev.preventDefault();
+  });
+  svg.addEventListener('pointermove', function (ev) {
+    if (dragging == null) return;
+    var u = toUser(ev);
+    st.L.pull(dragging, Math.max(5, Math.min(91, u.x)), Math.max(5, Math.min(73, u.y)), brace);
+    draw(st);
+  });
+  function stop(ev) { if (dragging == null) return;
+    dragging = null; svg.classList.remove('dragging');
+    try { svg.releasePointerCapture(ev.pointerId); } catch (e) {} }
+  svg.addEventListener('pointerup', stop);
+  svg.addEventListener('pointercancel', stop);
+
+  /* keyboard: the joints are reachable without a pointer */
+  st.drag.forEach(function (k) {
+    var h = st.gPt.querySelector('[data-i="' + k + '"]');
+    if (!h) return;
+    h.setAttribute('tabindex', 0); h.setAttribute('role', 'slider');
+    h.setAttribute('aria-label', 'joint ' + st.names[k] + ' — arrow keys to move');
+    h.addEventListener('keydown', function (ev) {
+      var d = { ArrowLeft: [-2, 0], ArrowRight: [2, 0], ArrowUp: [0, -2], ArrowDown: [0, 2] }[ev.key];
+      if (!d) return;
+      ev.preventDefault();
+      st.L.pull(k, st.L.pts[k].x + d[0], st.L.pts[k].y + d[1], brace);
+      draw(st);
+    });
+  });
+});
+
+function draw(st) {
+  var P = st.L.pts;
+  st.bars.forEach(function (b, n) {
+    var show = !b.brace || brace;
+    st.lines[n].setAttribute('x1', P[b.i].x); st.lines[n].setAttribute('y1', P[b.i].y);
+    st.lines[n].setAttribute('x2', P[b.j].x); st.lines[n].setAttribute('y2', P[b.j].y);
+    st.lines[n].setAttribute('class', b.brace ? 'tr-bar tr-brace' : 'tr-bar');
+    st.lines[n].style.display = show ? '' : 'none';
+    var t = st.blabs[n];
+    t.style.display = show ? '' : 'none';
+    // Offset along the bar's normal, pushed away from the middle of the shape,
+    // so the number sits beside its bar instead of being struck through by it.
+    var mx = (P[b.i].x + P[b.j].x) / 2, my = (P[b.i].y + P[b.j].y) / 2;
+    var vx = P[b.j].x - P[b.i].x, vy = P[b.j].y - P[b.i].y, L = Math.hypot(vx, vy) || 1;
+    var nx = -vy / L, ny = vx / L;
+    var gx = P.reduce(function (s2, q) { return s2 + q.x; }, 0) / P.length;
+    var gy = P.reduce(function (s2, q) { return s2 + q.y; }, 0) / P.length;
+    if ((mx - gx) * nx + (my - gy) * ny < 0) { nx = -nx; ny = -ny; }
+    t.setAttribute('x', mx + nx * 4);
+    t.setAttribute('y', my + ny * 4 + 1.2);
+    t.textContent = fmt(st.L.bars[n].len, 0);
+  });
+  P.forEach(function (p, i) {
+    st.dots[i].setAttribute('cx', p.x); st.dots[i].setAttribute('cy', p.y);
+    var cx = P.reduce(function (s, q) { return s + q.x; }, 0) / P.length;
+    var cy = P.reduce(function (s, q) { return s + q.y; }, 0) / P.length;
+    var dx = p.x - cx, dy = p.y - cy, m = Math.hypot(dx, dy) || 1;
+    st.labs[i].setAttribute('x', p.x + dx / m * 7);
+    st.labs[i].setAttribute('y', p.y + dy / m * 7 + 1.6);
+  });
+  var now = st.ang.map(function (t) { return TriGeom.angleAt(P[t[0]], P[t[1]], P[t[2]]); });
+  var moved = Math.max.apply(null, now.map(function (v, i) { return Math.abs(v - st.start[i]); }));
+  var v = $('#verdict-' + st.id);
+  var list = now.map(function (a, i) { return st.names[i] + ' ' + fmt(a, 1) + '&deg;'; }).join(' &middot; ');
+  if (st.id === 'tri') {
+    v.innerHTML = '<b>Angles:</b> ' + list + '<br>Bars fixed, and the angles have not moved. '
+      + 'It can only turn.';
+  } else if (brace) {
+    v.innerHTML = '<b>Angles:</b> ' + list + '<br>The brace cut it into two triangles. '
+      + 'Now it only turns too.';
+  } else {
+    v.innerHTML = '<b>Angles:</b> ' + list + '<br>Same four bars, '
+      + (moved > 2 ? 'angles moved up to ' + fmt(moved, 0) + '&deg;' : 'and the angles are free to move')
+      + '. The shape is not fixed.';
+  }
+}
+stages.forEach(draw);
+
+$('#brace').addEventListener('click', function () {
+  brace = !brace;
+  this.setAttribute('aria-pressed', brace ? 'true' : 'false');
+  this.textContent = brace ? 'Remove the brace' : 'Add a brace';
+  var q = stages[1]; q.L.relax(400, brace); draw(q);
+});
+$('#reset1').addEventListener('click', function () {
+  stages.forEach(function (st) { st.L.reset(); draw(st); });
+});
+
+/* ================= STATION 2 — what pins a triangle down ================ */
+var G = TriGeom;
+var CASES = {
+  SSS: { name: 'SSS', blurb: 'Three sides.',
+    parts: [{ k: 'a', lab: 'side a (BC)', min: 2, max: 10, step: .1, v: 6 },
+            { k: 'b', lab: 'side b (CA)', min: 2, max: 10, step: .1, v: 5 },
+            { k: 'c', lab: 'side c (AB)', min: 2, max: 10, step: .1, v: 7 }],
+    build: function (v) { return G.sss(v.a, v.b, v.c); } },
+  SAS: { name: 'SAS', blurb: 'Two sides and the angle BETWEEN them. The angle is the hinge: fix it and the third side has nowhere to go.',
+    parts: [{ k: 'b', lab: 'side b (AC)', min: 2, max: 10, step: .1, v: 6 },
+            { k: 'A', lab: 'included angle A', min: 10, max: 170, step: 1, v: 50, deg: 1 },
+            { k: 'c', lab: 'side c (AB)', min: 2, max: 10, step: .1, v: 8 }],
+    build: function (v) { return G.sas(v.b, v.A, v.c); } },
+  ASA: { name: 'ASA', blurb: 'Two angles and the side BETWEEN them.',
+    parts: [{ k: 'B', lab: 'angle B', min: 10, max: 120, step: 1, v: 40, deg: 1 },
+            { k: 'a', lab: 'included side a', min: 2, max: 10, step: .1, v: 7 },
+            { k: 'C', lab: 'angle C', min: 10, max: 120, step: 1, v: 65, deg: 1 }],
+    build: function (v) { return G.asa(v.B, v.a, v.C); } },
+  AAS: { name: 'AAS', blurb: 'Two angles and a side NOT between them. Two angles give you the third, so this is ASA in disguise.',
+    parts: [{ k: 'A', lab: 'angle A', min: 10, max: 120, step: 1, v: 70, deg: 1 },
+            { k: 'B', lab: 'angle B', min: 10, max: 120, step: 1, v: 45, deg: 1 },
+            { k: 'a', lab: 'side a (opposite A)', min: 2, max: 10, step: .1, v: 6 }],
+    build: function (v) { return G.aas(v.A, v.B, v.a); } },
+  HL: { name: 'HL', blurb: 'Right triangles only: the hypotenuse and one leg.',
+    parts: [{ k: 'h', lab: 'hypotenuse', min: 3, max: 12, step: .1, v: 9 },
+            { k: 'l', lab: 'leg', min: 1, max: 10, step: .1, v: 5 }],
+    build: function (v) { return G.hl(v.h, v.l); } },
+  SSA: { name: 'SSA', blurb: 'Two sides and an angle NOT between them. Watch what happens.',
+    parts: [{ k: 'A', lab: 'angle A', min: 10, max: 170, step: 1, v: 35, deg: 1 },
+            { k: 'b', lab: 'side b (next to A)', min: 2, max: 10, step: .1, v: 8 },
+            { k: 'a', lab: 'side a (opposite A)', min: 1, max: 12, step: .1, v: 6 }],
+    build: function (v) { return G.ssa(v.a, v.b, v.A); } },
+  AAA: { name: 'AAA', blurb: 'Three angles and no side at all.',
+    parts: [{ k: 'A', lab: 'angle A', min: 15, max: 120, step: 1, v: 55, deg: 1 },
+            { k: 'B', lab: 'angle B', min: 15, max: 120, step: 1, v: 65, deg: 1 }],
+    build: function (v) {
+      var out = { tris: [], note: 'aaa' };
+      [4, 6.5, 9].forEach(function (s) {
+        var r = G.aaa(v.A, v.B, s); if (r.tris[0]) out.tris.push(r.tris[0]);
+      });
+      return out; } }
+};
+var cur = 'SSS', vals = {}, locks = {};
+
+var knobBox = $('#knobs'), plot = $('#plot'), banner = $('#banner'), meas = $('#meas');
+
+function buildKnobs() {
+  var C = CASES[cur];
+  knobBox.innerHTML = '';
+  C.parts.forEach(function (p) {
+    if (vals[cur] == null) vals[cur] = {};
+    if (vals[cur][p.k] == null) vals[cur][p.k] = p.v;
+    var wrap = el('div', 'tr-knob');
+    var lab = el('label');
+    lab.setAttribute('for', 'k-' + p.k);
+    lab.appendChild(el('span', 'tr-klab', p.lab));
+    var out = el('span', null, fmt(vals[cur][p.k], p.deg ? 0 : 1) + (p.deg ? '°' : ''));
+    lab.appendChild(out);
+    var row = el('div', 'tr-knobrow');
+    var inp = document.createElement('input');
+    inp.type = 'range'; inp.id = 'k-' + p.k;
+    inp.min = p.min; inp.max = p.max; inp.step = p.step; inp.value = vals[cur][p.k];
+    var lk = el('button', 'tr-lock');
+    var key = cur + '.' + p.k;
+    function paint() {
+      var on = !!locks[key];
+      lk.setAttribute('aria-pressed', on ? 'true' : 'false');
+      lk.title = on ? 'Unfreeze ' + p.lab : 'Freeze ' + p.lab;
+      lk.setAttribute('aria-label', lk.title);
+      lk.innerHTML = on ? '&#128274;' : '&#128275;';
+      inp.disabled = on;
+      wrap.classList.toggle('is-locked', on);
+    }
+    lk.addEventListener('click', function () { locks[key] = !locks[key]; paint(); });
+    inp.addEventListener('input', function () {
+      vals[cur][p.k] = +inp.value;
+      out.textContent = fmt(+inp.value, p.deg ? 0 : 1) + (p.deg ? '°' : '');
+      render();
+    });
+    paint();
+    row.appendChild(inp); row.appendChild(lk);
+    wrap.appendChild(lab); wrap.appendChild(row);
+    knobBox.appendChild(wrap);
+  });
+}
+
+/* Shuffle everything that is NOT frozen. With every given part frozen this is
+   the whole argument: press it and the drawing does not change, because the
+   parts left no freedom. Press it on SSA and the two triangles are still two. */
+$('#shuffle').addEventListener('click', function () {
+  var C = CASES[cur], moved = 0;
+  C.parts.forEach(function (p) {
+    if (locks[cur + '.' + p.k]) return;
+    var span = p.max - p.min;
+    vals[cur][p.k] = +(p.min + Math.random() * span).toFixed(p.deg ? 0 : 1);
+    moved++;
+  });
+  buildKnobs(); render();
+  var n = $('#shuffle-note');
+  n.textContent = moved === 0
+    ? 'Every part is frozen, so there is nothing left to change — and that is exactly what congruence means.'
+    : moved + ' unfrozen part' + (moved > 1 ? 's' : '') + ' changed.';
+});
+
+function fit(tris, W, H, pad) {
+  var xs = [], ys = [];
+  tris.forEach(function (t) { ['A', 'B', 'C'].forEach(function (k) { xs.push(t[k].x); ys.push(t[k].y); }); });
+  if (!xs.length) return null;
+  var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+  var y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+  var s = Math.min((W - 2 * pad) / Math.max(x1 - x0, 1e-6), (H - 2 * pad) / Math.max(y1 - y0, 1e-6));
+  return function (p) {
+    return { x: pad + (p.x - x0) * s + ((W - 2 * pad) - (x1 - x0) * s) / 2,
+             y: H - pad - (p.y - y0) * s - ((H - 2 * pad) - (y1 - y0) * s) / 2 };
+  };
+}
+
+function render() {
+  var C = CASES[cur], v = vals[cur], r = C.build(v);
+  var W = 100, H = 72;
+  plot.innerHTML = '';
+  var svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img',
+    'aria-label': 'every triangle the given parts allow' });
+  plot.appendChild(svg);
+  var T = fit(r.tris, W, H, 11);
+
+  r.tris.forEach(function (t, n) {
+    var cls = r.note === 'aaa' ? (n === r.tris.length - 1 ? 'tr-t1' : 'tr-tg')
+            : n === 0 ? 'tr-t1' : 'tr-t2';
+    var pts = ['A', 'B', 'C'].map(function (k) { var q = T(t[k]); return q.x + ',' + q.y; }).join(' ');
+    var poly = sv('polygon', { points: pts });
+    poly.setAttribute('class', 'tr-poly ' + cls);
+    svg.appendChild(poly);
+    if (r.tris.length === 1 || (r.note === 'aaa' && n === r.tris.length - 1)) {
+      ['A', 'B', 'C'].forEach(function (k) {
+        var q = T(t[k]);
+        var cx = (T(t.A).x + T(t.B).x + T(t.C).x) / 3, cy = (T(t.A).y + T(t.B).y + T(t.C).y) / 3;
+        var dx = q.x - cx, dy = q.y - cy, m = Math.hypot(dx, dy) || 1;
+        var lb = sv('text', { x: q.x + dx / m * 6.5, y: q.y + dy / m * 6.5 + 1.7,
+          'font-size': 5, 'font-weight': 700, 'text-anchor': 'middle' });
+        lb.setAttribute('class', 'tr-vlab'); lb.textContent = k;
+        svg.appendChild(lb);
+      });
+    }
+  });
+  if (r.tris.length === 2) {
+    [0, 1].forEach(function (n) {
+      var t = r.tris[n], q = T(t.B);
+      // Clamp inside the viewBox: vertex B can sit hard against an edge, and
+      // the label was being cut in half by the panel.
+      var ty = Math.max(6, Math.min(H - 2.5, q.y + (n ? 9 : -5)));
+      var tx = Math.max(13, Math.min(W - 13, q.x));
+      var tag = sv('text', { x: tx, y: ty, 'font-size': 4.4,
+        'font-weight': 700, 'text-anchor': 'middle' });
+      tag.setAttribute('class', n ? 'tr-tag2' : 'tr-tag1');
+      tag.textContent = n ? 'triangle 2' : 'triangle 1';
+      svg.appendChild(tag);
+    });
+  }
+
+  /* ---- verdict ---- */
+  var one = r.tris.length === 1 && r.note !== 'aaa';
+  banner.className = 'tr-banner' + (one ? ' is-one' : '');
+  var head, body;
+  if (r.note === 'no-close' || r.note === 'ssa-none') {
+    head = 'No triangle closes.';
+    body = cur === 'SSS'
+      ? 'Two of the sides together are no longer than the third, so they cannot meet. Triangle Inequality.'
+      : 'These parts describe no triangle at all. Move a slider until one appears.';
+  } else if (r.note === 'ssa-two') {
+    head = 'Two different triangles.';
+    body = 'Both have the same angle A, the same side b and the same side a — and they are not the same shape. '
+         + 'That is why SSA is not a congruence shortcut. Compare the two rows below: everything given matches, everything else does not.';
+  } else if (r.note === 'aaa') {
+    head = 'Same shape, any size.';
+    body = 'Three angles fix the shape and nothing fixes the size, so there are infinitely many. '
+         + 'These triangles are similar, not congruent — you need at least one side.';
+  } else if (r.note === 'ssa-right') {
+    head = 'Exactly one — but only by luck.';
+    body = 'Side a is exactly the height from C, so the two triangles have collapsed into one right triangle. '
+         + 'Nudge a and SSA goes back to giving two.';
+  } else if (cur === 'SSA') {
+    head = 'Exactly one — this time.';
+    body = 'With side a at least as long as side b there is only one way to close it. SSA still proves nothing in general: '
+         + 'drag a below b and a second triangle appears.';
+  } else if (cur === 'HL') {
+    head = 'Exactly one triangle.';
+    body = 'The right angle plus the hypotenuse and a leg pin it down — the third side follows from the Pythagorean Theorem.';
+  } else {
+    head = 'Exactly one triangle.';
+    body = 'Every triangle with these parts is congruent to this one. ' + C.blurb;
+  }
+  banner.innerHTML = '';
+  banner.appendChild(el('b', null, head));
+  banner.appendChild(el('small', null, body));
+
+  /* ---- measured, not echoed: read the parts back off the drawing ---- */
+  meas.innerHTML = '';
+  if (r.tris.length) {
+    var head2 = el('thead'); var hr = el('tr');
+    [['', ''], ['a', 'tr-side'], ['b', 'tr-side'], ['c', 'tr-side'],
+     ['A', ''], ['B', ''], ['C', '']].forEach(function (h) {
+      hr.appendChild(el('th', h[1], h[0])); });
+    head2.appendChild(hr); meas.appendChild(head2);
+    var tb = el('tbody');
+    r.tris.forEach(function (t, n) {
+      var m = G.measure(t), tr = el('tr');
+      tr.appendChild(el('td', null, r.tris.length > 1 ? 'triangle ' + (n + 1) : 'measured'));
+      [m.a, m.b, m.c].forEach(function (x) { tr.appendChild(el('td', null, fmt(x, 2))); });
+      [m.A, m.B, m.C].forEach(function (x) { tr.appendChild(el('td', null, fmt(x, 1) + '°')); });
+      tb.appendChild(tr);
+    });
+    meas.appendChild(tb);
+  }
+  $('#shuffle-note').textContent = '';
+}
+
+var caseBox = $('#cases');
+Object.keys(CASES).forEach(function (k) {
+  var b = el('button', 'tr-chip', k);
+  b.setAttribute('aria-pressed', k === cur ? 'true' : 'false');
+  b.addEventListener('click', function () {
+    cur = k;
+    [].forEach.call(caseBox.children, function (c) {
+      c.setAttribute('aria-pressed', c.textContent === k ? 'true' : 'false'); });
+    $('#case-blurb').textContent = CASES[k].blurb;
+    buildKnobs(); render();
+  });
+  caseBox.appendChild(b);
+});
+$('#case-blurb').textContent = CASES[cur].blurb;
+buildKnobs(); render();
+})();
+</script>
+</body>
+</html>
