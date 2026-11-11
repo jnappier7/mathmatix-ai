@@ -6,7 +6,7 @@
  * on the right section; and a result always names a course page the picker can open.
  */
 const { search, buildIndex, expand, words, ALIASES, LIMIT } = require('../../utils/liveDrill/search');
-const { DRILLS, listPlaybooks } = require('../../utils/liveDrill/engine');
+const { DRILLS, listPlaybooks, listSections } = require('../../utils/liveDrill/engine');
 const { HUBS } = require('../../utils/liveDrill/solo');
 
 const top = (q, n = 1) => search(q).slice(0, n).map((r) => `${r.drill}/${r.key}`);
@@ -15,9 +15,12 @@ const drillsIn = (q) => [...new Set(search(q).map((r) => r.drill))];
 describe('the index', () => {
   const index = buildIndex();
 
-  test('holds every playbook of every registered drill, once', () => {
+  test('holds every playbook and every covered section of every registered drill, once', () => {
     const expected = [];
-    for (const id of Object.keys(DRILLS)) for (const b of listPlaybooks(id)) expected.push(`${id}/${b.key}`);
+    for (const id of Object.keys(DRILLS)) {
+      for (const b of listPlaybooks(id)) expected.push(`${id}/${b.key}`);
+      for (const s of listSections(id)) if (s.books.length) expected.push(`${id}/${s.key}`);
+    }
     const got = index.map((e) => `${e.drill}/${e.key}`);
     expect(got.sort()).toEqual(expected.sort());
     expect(new Set(got).size).toBe(got.length);
@@ -112,7 +115,7 @@ describe('what people type', () => {
     for (const x of r) {
       expect(Object.keys(x).sort()).toEqual(['blurb', 'ch', 'drill', 'game', 'hub', 'hubTitle', 'key', 'name', 'score', 'title']);
       expect(DRILLS[x.drill]).toBeDefined();
-      expect(listPlaybooks(x.drill).some((b) => b.key === x.key)).toBe(true);
+      expect(listPlaybooks(x.drill).some((b) => b.key === x.key) || listSections(x.drill).some((s) => s.key === x.key)).toBe(true);
     }
   });
 

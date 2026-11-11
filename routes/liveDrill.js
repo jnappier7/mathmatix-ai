@@ -41,7 +41,7 @@ const fluency = require('../utils/liveDrill/fluency');
 const { userHasRole } = require('../utils/roleQuery');
 const logger = require('../utils/logger').child({ route: 'liveDrill' });
 const G = require('../utils/liveDrill/games');
-const { DRILLS, listPlaybooks } = require('../utils/liveDrill/engine');
+const { DRILLS, listPlaybooks, listSections } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 const solo = require('../utils/liveDrill/solo');
 const arcade = require('../utils/liveDrill/arcade');
@@ -105,7 +105,7 @@ hostRouter.get('/drills', (req, res) => {
     const courses = [...Object.entries(solo.HUBS).map(([id, h]) => ({ id, title: h.title })), { id: 'any', title: 'Any class' }];
     const drills = Object.entries(DRILLS).map(([id, d]) => {
       try {
-        const out = { id, title: d.title, ...(named[id] || { name: d.title, blurb: '' }), course: courseOf[id] || { id: 'any', title: 'Any class' }, playbooks: listPlaybooks(id), settings: G.settingsFor(id) };
+        const out = { id, title: d.title, ...(named[id] || { name: d.title, blurb: '' }), course: courseOf[id] || { id: 'any', title: 'Any class' }, playbooks: listPlaybooks(id), sections: listSections(id), settings: G.settingsFor(id) };
         if (d.focus) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
         return out;
       } catch (e) {

@@ -119,12 +119,15 @@ function finish(t, book, books, rand) {
 
 /**
  * The makePlay every prep bank exports: pick a template from the playbook (avoiding the last few
- * dealt, so the same kind of question doesn't come twice in a row), run it, and finish it.
+ * dealt, so the same kind of question doesn't come twice in a row), run it, and finish it. `book`
+ * may be a list of book keys — a numbered section that several books cover pools their templates.
  */
 function makeBank(BOOKS, TEMPLATES) {
   function makePlay(book, recentIds, rand) {
-    const key = BOOKS[book] ? book : 'all';
-    const pool = Object.entries(TEMPLATES).filter(([, t]) => key === 'all' || t.book === key);
+    // one book, or a list of them (a numbered section that several books cover — engine.js listSections)
+    const keys = (Array.isArray(book) ? book : [book]).filter((k) => BOOKS[k]);
+    const all = !keys.length || keys.includes('all');
+    const pool = Object.entries(TEMPLATES).filter(([, t]) => all || keys.includes(t.book));
     const fresh = pool.filter(([id]) => !(recentIds || []).includes(id));
     const [id, tpl] = pick(rand, fresh.length ? fresh : pool);
     // A template can (rarely) land on two choices that say the same thing; deal it again.

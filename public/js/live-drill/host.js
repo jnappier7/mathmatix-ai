@@ -10,7 +10,9 @@
     setScene: noop, setHype: noop, setMuted: noop, setMusic: noop, setCrowd: noop, muted: true, musicOn: false, crowdOn: false };
   let lastTick = null; // the clock second last ticked, so each of the final five ticks once
 
-  const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '', focus: [] };
+  // `playbook` is what the server deals from: a book of the bank, or a numbered section ("5.2",
+  // every book that covers it). `section` is the UI's pick on the Section row ('' = whole module).
+  const S = { drills: [], settings: null, classes: [], drill: 'algebra', playbook: 'all', section: '', mode: 'drive', seconds: 120, plays: 10, spp: 20, classId: '', focus: [] };
   // Math Facts: one-tap focus sets. Anything else is a tap on the numbers themselves.
   const FOCUS_PRESETS = [['All facts', []], ['Easy: 0 1 2 5 10', [0, 1, 2, 5, 10]], ['Tough: 6 7 8 9 12', [6, 7, 8, 9, 12]]];
   let game = null; // latest host state
@@ -92,6 +94,7 @@
       b.onclick = () => {
         const x = results[Number(b.dataset.i)];
         S.drill = x.drill; S.playbook = x.key; S.focus = []; S.course = tabOf(x.drill) || S.course;
+        S.section = sectionOf(x.drill, x.key); // a book's own section lights up on the row
         res.hidden = true; $('q').value = ''; $('dsearch').hidden = true; $('q-toggle').setAttribute('aria-expanded', 'false');
         renderSetup();
         $('books-wrap').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -114,6 +117,13 @@
   ];
   const drillsIn = (tab) => (isAnyTab(tab) ? S.drills.filter((d) => d.id === tab.slice(6)) : S.drills.filter((d) => (d.course || {}).id === tab && !d.unavailable));
   const tabOf = (drillId) => { const d = S.drills.find((x) => x.id === drillId); if (!d) return null; return (d.course || {}).id === 'any' ? `drill:${d.id}` : (d.course || {}).id; };
+  /** The numbered section a playbook key is, or the first one its book covers ('' if none). */
+  function sectionOf(drillId, key) {
+    const d = S.drills.find((x) => x.id === drillId);
+    const secs = (d && d.sections) || [];
+    const s = secs.find((x) => x.key === key) || secs.find((x) => x.books.includes(key));
+    return s ? s.key : '';
+  }
   /** Keep the course tab and the unit consistent: the unit must be on the tab. */
   function settle() {
     const tabs = courseTabs();
@@ -123,7 +133,7 @@
       S.lastUnit = S.lastUnit || {};
       const remembered = S.lastUnit[S.course];
       S.drill = (units.find((d) => d.id === remembered) || units[0] || { id: S.drill }).id;
-      S.playbook = 'all';
+      S.playbook = 'all'; S.section = '';
     }
     S.lastUnit = { ...(S.lastUnit || {}), [S.course]: S.drill };
   }
@@ -137,14 +147,28 @@
     // the unit: a dropdown in teaching order (a tab with one game needs no dropdown)
     $('unit-row').hidden = units.length < 2;
     $('unit').innerHTML = units.map((u) => `<option value="${esc(u.id)}"${u.id === S.drill ? ' selected' : ''}>${esc(u.name || u.title)}</option>`).join('');
-    $('unit').onchange = () => { S.drill = $('unit').value; S.playbook = 'all'; renderSetup(); };
+    $('unit').onchange = () => { S.drill = $('unit').value; S.playbook = 'all'; S.section = ''; renderSetup(); };
     $('unit-bl').textContent = d.blurb || '';
-    // the section within the unit: compact chips, the blurb of the chosen one beneath
-    const books = d.playbooks || [];
+    // the numbered section within the unit (5.1, 5.2, …): the pick a teacher makes mid-module.
+    // Whole module · 5.1 · 5.2 …; a number no bank covers yet is shown, greyed, not skipped.
+    const secs = d.sections || [];
+    if (S.section && !secs.some((x) => x.key === S.section && x.books.length)) { S.section = ''; if (!(d.playbooks || []).some((b) => b.key === S.playbook)) S.playbook = 'all'; }
+    const sec = secs.find((x) => x.key === S.section);
+    const whole = ((d.playbooks || [])[0] || {}).name || 'Whole module';
+    $('sec-row').hidden = !secs.length;
+    $('secs').innerHTML = [`<button type="button" data-k="" aria-pressed="${!S.section}">${esc(whole)}</button>`]
+      .concat(secs.map((x) => `<button type="button" data-k="${esc(x.key)}" aria-pressed="${x.key === S.section}"${x.books.length ? ` title="${esc(x.topics.join(' · '))}"` : ' disabled title="Not in this drill yet"'}>${esc(x.key)}</button>`)).join('');
+    $('secs').querySelectorAll('button').forEach((b) => { b.onclick = () => { S.section = b.dataset.k; S.playbook = S.section || 'all'; renderSetup(); }; });
+    // the topic: compact chips, the blurb of the chosen one beneath. Inside a section, only the
+    // topics that section covers (one topic = the section itself, no chips); otherwise every book.
+    const all = d.playbooks || [];
+    const inSec = sec ? all.filter((b) => sec.books.includes(b.key)) : all;
+    const books = sec && inSec.length > 1 ? [{ key: sec.key, name: `All of ${sec.key}`, blurb: sec.topics.join(' · ') }, ...inSec] : inSec;
+    $('bk-l').textContent = secs.length ? 'Topic' : 'Section';
     $('books-wrap').hidden = books.length < 2;
-    $('books').innerHTML = books.map((b) => `<button type="button" class="chip" data-k="${esc(b.key)}" aria-pressed="${b.key === S.playbook}" title="${esc(b.blurb || '')}">${b.ch ? `<span class="ch">${esc(b.ch)}</span>` : ''}${esc(b.name)}</button>`).join('');
+    $('books').innerHTML = books.map((b) => `<button type="button" class="chip" data-k="${esc(b.key)}" aria-pressed="${b.key === S.playbook}" title="${esc(b.blurb || '')}">${b.ch && !sec ? `<span class="ch">${esc(b.ch)}</span>` : ''}${esc(b.name)}</button>`).join('');
     $('books').querySelectorAll('.chip').forEach((b) => { b.onclick = () => { S.playbook = b.dataset.k; renderSetup(); }; });
-    const book = books.find((b) => b.key === S.playbook);
+    const book = books.find((b) => b.key === S.playbook) || (sec && inSec.length === 1 ? inSec[0] : null);
     $('book-bl').textContent = book && book.blurb ? book.blurb : '';
     // the game type, from the Arcade's catalogue (names and taglines are the same there and here)
     const games = S.games && S.games.length ? S.games : Object.entries(MODE_LABEL).map(([id, name]) => ({ id, name, tagline: '' }));
@@ -167,9 +191,10 @@
     const cls = S.classes.find((c) => c.id === S.classId);
     const game = games.find((g) => g.id === S.mode) || { name: MODE_LABEL[S.mode] || S.mode };
     const when = S.mode === 'huddle' ? `${S.plays} plays · ${S.spp}s each` : mmss(S.seconds * 1000);
-    $('summary').innerHTML = [cls ? esc(cls.name) : 'Join by code', esc(d.name || d.title || ''), book && books.length > 1 ? esc(book.name) : '', esc(game.name), when]
+    const what = sec ? `Section ${sec.key}${book && book.key !== sec.key ? ` · ${book.name}` : ''}` : book && books.length > 1 ? book.name : '';
+    $('summary').innerHTML = [cls ? esc(cls.name) : 'Join by code', esc(d.name || d.title || ''), esc(what), esc(game.name), when]
       .filter(Boolean).map((x) => `<span>${x}</span>`).join('<i>·</i>');
-    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId, focus: S.focus, course: S.course, lastUnit: S.lastUnit })); } catch { /* private mode */ }
+    try { localStorage.setItem('mm-live-drill-setup', JSON.stringify({ drill: S.drill, playbook: S.playbook, section: S.section, mode: S.mode, seconds: S.seconds, plays: S.plays, spp: S.spp, classId: S.classId, focus: S.focus, course: S.course, lastUnit: S.lastUnit })); } catch { /* private mode */ }
   }
   /** Math Facts: which numbers every fact must include ("× 2s, 5s & 10s"). Empty = all of them. */
   function focusApplies(d) { return !!(d.focusable && d.focusable.books.includes(S.playbook)); }

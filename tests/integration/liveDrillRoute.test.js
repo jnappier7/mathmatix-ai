@@ -74,6 +74,20 @@ describe('live drill over HTTP', () => {
     const facts = r.body.drills.find((d) => d.id === 'facts');
     expect(facts.focusable.books).toContain('mul');
     expect(facts.settings.huddle.secondsPerPlay).toContain(10);
+    // the numbered sections a teacher picks mid-module, derived from the banks' own labels
+    const m5 = r.body.drills.find((d) => d.id === 'alg1m5');
+    expect(m5.sections.map((s) => s.key)).toEqual(['5.1', '5.2', '5.3', '5.4', '5.5']);
+    expect(m5.sections.find((s) => s.key === '5.2').books).toEqual(['forms', 'parperp']);
+    expect(facts.sections).toEqual([]);
+  });
+
+  test('a section ("5.2") is a playbook the server deals from every book that covers it', async () => {
+    const r = await req.post('/api/live-drill/host/games').send({ drill: 'alg1m5', playbook: '5.2', mode: 'drive' });
+    expect(r.status).toBe(201);
+    expect(r.body.playbookName).toBe('Section 5.2');
+    const g = G.getGame(r.body.code);
+    expect(g.playbook).toBe('5.2');
+    for (const p of g.deck.slice(0, 15)) expect(['forms', 'parperp']).toContain(p.playbook);
   });
 
   test('a wrong code is a 404, a bad name a 400', async () => {
