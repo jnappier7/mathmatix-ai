@@ -7,7 +7,9 @@
   <meta name="description" content="Free full-length, timed math practice tests for the ACT, SAT, PSAT and PreACT. No sign-up to take one, an instant estimated score, and an AI tutor that walks you through every question you missed." />
 
   <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#764ba2" />
   <link rel="canonical" href="https://www.mathmatix.ai/testprep" />
+  <link rel="icon" href="/images/icon-192x192.png" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.mathmatix.ai/testprep" />
@@ -20,6 +22,40 @@
   <meta name="twitter:title" content="Free Math Practice Tests: ACT, SAT, PSAT, PreACT" />
   <meta name="twitter:description" content="Full-length, timed, instant estimated score. No account needed to take one." />
 
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Which practice test should I take?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Ninth and tenth graders: the PreACT or the PSAT, whichever your school gives. Juniors: the PSAT in the fall, then the SAT or ACT. Seniors: the SAT or ACT. If you have not picked between the SAT and ACT yet, take both practice tests. They are free, and the one you score higher on is usually the one to prepare for." }
+      },
+      {
+        "@type": "Question",
+        "name": "Are the scores official?",
+        "acceptedAnswer": { "@type": "Answer", "text": "No. Each score is an estimate, converted from your raw score the way the real test converts it. It is a good read on where you stand today, not a score a college will see." }
+      },
+      {
+        "@type": "Question",
+        "name": "Do I need an account?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Not to take a test or see your score. A free account saves your results, shows you exactly which questions you missed, and lets your AI tutor review each one with you." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use a calculator?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, on every test, just like the real thing. The SAT and PSAT have Desmos and the reference sheet built in. The ACT and PreACT have a calculator built in." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I take it again?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Each re-test is a new form that leaves out the questions you have already answered, so a higher score means you learned something, not that you remembered the answers." }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet" />
@@ -30,36 +66,154 @@
   <link rel="stylesheet" href="/css/design-system.css" />
   <link rel="stylesheet" href="/css/landing-page.css?v=3" />
   <script src="/js/analytics.js" data-ga="G-EMX73QXF5H" data-fbp=""></script>
+  <!-- Sections start hidden and are revealed by the IntersectionObserver at
+       the foot of the page. Without JS that leaves everything invisible. -->
+  <noscript><style>.lp-reveal{opacity:1 !important;transform:none !important;}</style></noscript>
   <style>
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+    /* ── Hero ─────────────────────────────────────────────── */
+    .tp-hero-section {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(640px 360px at 88% -10%, rgba(118, 75, 162, 0.16) 0%, rgba(118, 75, 162, 0) 70%),
+        radial-gradient(520px 320px at 8% 110%, rgba(18, 179, 179, 0.12) 0%, rgba(18, 179, 179, 0) 70%),
+        var(--clr-bg-light, #fff);
+    }
     .tp-hero, .tp-hero h1, .tp-hero p, .tp-hero .lp-section-eyebrow { text-align: left; }
     .tp-hero p { max-width: 62ch; }
+    .tp-hero h1 { max-width: 22ch; text-wrap: balance; }
+    .tp-jump { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 22px 0 0; padding: 0; list-style: none; }
+    .tp-jump-label { font-size: 13px; font-weight: 600; color: #6b6488; margin-right: 4px; }
+    .tp-jump a {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px;
+      background: #fff; border: 1px solid #e0daf0; color: #3b2d63;
+      font-weight: 600; font-size: 14px; text-decoration: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .tp-jump a i { font-size: 11px; color: #764ba2; }
+    .tp-jump a:hover { border-color: #b9a8ef; box-shadow: 0 4px 14px rgba(118, 75, 162, 0.14); transform: translateY(-1px); }
+    .tp-trust { display: flex; flex-wrap: wrap; gap: 10px 26px; margin: 26px 0 0; padding: 0; list-style: none; }
+    .tp-trust li { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: #4a4560; }
+    .tp-trust li i { color: var(--clr-teal-text, #0c7575); font-size: 13px; }
+
+    /* ── Test cards ───────────────────────────────────────── */
     .tp-family { margin-top: 8px; }
-    .tp-family + .tp-family { margin-top: 36px; }
+    .tp-family + .tp-family { margin-top: 40px; }
     .tp-family h2 { margin: 0 0 4px; font-size: 1.45rem; text-align: left; }
     .tp-family > p { margin: 0 0 16px; color: #5f5a78; max-width: 64ch; text-align: left; }
     .tp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .tp-card { display: flex; flex-direction: column; gap: 12px; background: #fff; border: 1px solid #e6e1f4; border-radius: 16px; padding: 22px; text-align: left; }
+    .tp-card {
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; gap: 12px;
+      background: #fff; border: 1px solid #e6e1f4; border-radius: 16px; padding: 24px 22px 22px;
+      text-align: left; scroll-margin-top: 96px;
+      box-shadow: 0 1px 2px rgba(29, 26, 44, 0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .tp-card::before {
+      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    .tp-card:hover { transform: translateY(-3px); border-color: #cfc3f0; box-shadow: 0 14px 32px rgba(76, 54, 128, 0.12); }
+    .tp-card:focus-within { border-color: #b9a8ef; }
+    @media (prefers-reduced-motion: reduce) { .tp-card, .tp-jump a { transition: none; } .tp-card:hover, .tp-jump a:hover { transform: none; } }
     .tp-card header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .tp-card h3 { margin: 0; font-size: 1.6rem; letter-spacing: -0.01em; }
     .tp-who { font-size: 13px; font-weight: 600; color: #6b5a9a; }
     .tp-card p { margin: 0; line-height: 1.55; color: #4a4560; }
     .tp-facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
-    .tp-facts li { background: rgba(118, 75, 162, 0.08); color: #4d3577; border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
+    .tp-facts li { display: inline-flex; align-items: center; gap: 6px; background: rgba(118, 75, 162, 0.08); color: #4d3577; border-radius: 999px; padding: 6px 12px; font-weight: 600; font-size: 13px; }
+    .tp-facts li i { font-size: 11px; opacity: 0.75; }
     .tp-card .btn { align-self: flex-start; margin-top: auto; }
-    .tp-steps { counter-reset: tp; list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; text-align: left; }
-    .tp-steps li { counter-increment: tp; position: relative; padding-left: 44px; line-height: 1.5; }
-    .tp-steps li::before { content: counter(tp); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #fff; background: linear-gradient(135deg, #667eea, #764ba2); }
-    .tp-section-title { text-align: left; }
+    .tp-card .btn i { font-size: 12px; margin-left: 6px; }
+
+    /* ── How it works ─────────────────────────────────────── */
+    .tp-how { background: var(--clr-bg-light, #fff); padding: 3.5rem var(--page-horizontal-padding); }
+    .tp-section-title { text-align: left; font-size: 1.6rem; margin: 0 0 6px; }
+    .tp-section-sub { text-align: left; margin: 0 0 28px; color: #5f5a78; max-width: 60ch; }
+    .tp-steps { counter-reset: tp; list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; text-align: left; }
+    .tp-steps li { counter-increment: tp; position: relative; padding-left: 48px; line-height: 1.55; color: #4a4560; }
+    .tp-steps li strong { display: block; color: var(--clr-text, #1d1a2c); font-size: 1.02rem; margin-bottom: 2px; }
+    .tp-steps li::before {
+      content: counter(tp); position: absolute; left: 0; top: 0; width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center; font-weight: 700; color: #fff;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      box-shadow: 0 4px 12px rgba(118, 75, 162, 0.25);
+    }
+    @media (min-width: 900px) {
+      .tp-steps { grid-template-columns: repeat(4, 1fr); gap: 28px; }
+      .tp-steps li { padding-left: 0; padding-top: 52px; }
+      .tp-steps li::before { width: 40px; height: 40px; font-size: 1.05rem; }
+      .tp-steps li:not(:last-child)::after {
+        content: ''; position: absolute; top: 19px; left: 52px; right: -16px; height: 2px;
+        background: linear-gradient(90deg, rgba(118, 75, 162, 0.45), rgba(118, 75, 162, 0.08));
+      }
+    }
+
+    /* ── FAQ ──────────────────────────────────────────────── */
+    .tp-faq { background: #f7fbfb; padding: 3.5rem var(--page-horizontal-padding); }
+    .tp-faq-list { max-width: 760px; margin: 0; }
+    .tp-faq details { border-bottom: 1px solid #e3dff0; }
+    .tp-faq details:first-of-type { border-top: 1px solid #e3dff0; }
+    .tp-faq summary {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 18px 0; cursor: pointer; list-style: none;
+      font-weight: 600; font-size: 1rem; color: var(--clr-text, #1d1a2c); line-height: 1.4;
+      transition: color 0.2s ease;
+    }
+    .tp-faq summary::-webkit-details-marker { display: none; }
+    .tp-faq summary:hover { color: #764ba2; }
+    .tp-faq summary:focus-visible { outline: 2px solid #764ba2; outline-offset: 4px; border-radius: 4px; }
+    .tp-faq summary i { flex-shrink: 0; font-size: 0.8rem; color: #8b86a3; transition: transform 0.25s ease; }
+    .tp-faq details[open] summary i { transform: rotate(180deg); }
+    .tp-faq details p { margin: 0; padding: 0 0 18px; color: #4a4560; line-height: 1.65; max-width: 66ch; }
+
+    /* ── Closing band ─────────────────────────────────────── */
+    .tp-cta.lp-final-cta {
+      padding: 4rem var(--page-horizontal-padding);
+      background:
+        radial-gradient(1100px 400px at 50% 0%, rgba(118, 75, 162, 0.35) 0%, rgba(118, 75, 162, 0) 70%),
+        #1a1a2e;
+    }
+    .tp-cta h2 { font-size: 1.9rem; }
+    .tp-cta-actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 20px; }
+    .tp-cta .lp-cta-note { margin-top: 1.1rem; }
+
+    .tp-fine { padding: 1.5rem var(--page-horizontal-padding) 2.5rem; }
+    .tp-fine p { font-size: 0.82rem; line-height: 1.6; max-width: 80ch; margin: 0 auto; }
+
     @media (max-width: 720px) {
       .tp-grid { grid-template-columns: 1fr; }
+      .tp-card .btn { align-self: stretch; text-align: center; white-space: normal; padding-left: 14px; padding-right: 14px; font-size: 15px; }
+      .tp-jump-label { flex-basis: 100%; margin: 0 0 -2px; }
+      .tp-trust { flex-direction: column; gap: 10px; }
+      .tp-how, .tp-faq { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+      .tp-cta.lp-final-cta { padding: 3rem var(--page-horizontal-padding); }
+      .tp-cta h2 { font-size: 1.5rem; }
+      .tp-cta-actions .btn { width: 100%; }
     }
+
     /* Dark only when the site theme is dark (css/dark-mode.css): these pages
        stay light on a dark-mode phone, so an OS-level override put pale text
        on a white page. */
-    [data-theme="dark"] .tp-card { background: #1d1a2c; border-color: #302c45; }
-    [data-theme="dark"] .tp-card p, [data-theme="dark"] .tp-family > p { color: #c4c0d8; }
+    [data-theme="dark"] .tp-hero-section { background: radial-gradient(640px 360px at 88% -10%, rgba(154, 128, 255, 0.18) 0%, rgba(154, 128, 255, 0) 70%), var(--clr-bg-light, #14121f); }
+    [data-theme="dark"] .tp-jump a { background: #1d1a2c; border-color: #302c45; color: #d9d2f5; }
+    [data-theme="dark"] .tp-jump a i { color: #b9a8ef; }
+    [data-theme="dark"] .tp-jump-label, [data-theme="dark"] .tp-section-sub { color: #a9a4c2; }
+    [data-theme="dark"] .tp-trust li { color: #c4c0d8; }
+    [data-theme="dark"] .tp-card { background: #1d1a2c; border-color: #302c45; box-shadow: none; }
+    [data-theme="dark"] .tp-card:hover { border-color: #4a4070; box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35); }
+    [data-theme="dark"] .tp-card p, [data-theme="dark"] .tp-family > p, [data-theme="dark"] .tp-steps li, [data-theme="dark"] .tp-faq details p { color: #c4c0d8; }
     [data-theme="dark"] .tp-who { color: #b9a8ef; }
+    [data-theme="dark"] .tp-family h2, [data-theme="dark"] .tp-section-title, [data-theme="dark"] .tp-steps li strong { color: #f1eefb; }
     [data-theme="dark"] .tp-facts li { background: rgba(154, 128, 255, 0.16); color: #d9d2f5; }
+    [data-theme="dark"] .tp-faq { background: #15131f; }
+    [data-theme="dark"] .tp-faq details, [data-theme="dark"] .tp-faq details:first-of-type { border-color: #302c45; }
+    [data-theme="dark"] .tp-faq summary:hover { color: #b9a8ef; }
   </style>
 </head>
 <body>
@@ -79,38 +233,56 @@
 
   <main id="main-content" class="landing-main">
 
-    <section class="lp-spotlight">
+    <section class="lp-spotlight tp-hero-section">
       <div class="lp-inner">
         <div class="lp-spotlight-content tp-hero" style="max-width: 760px;">
           <p class="lp-section-eyebrow">Free math practice tests</p>
           <h1>Take a real practice test. Find out where you stand.</h1>
           <p>Full-length, timed math sections for the ACT, SAT, PSAT and PreACT, each built to that test&rsquo;s current format. You get an estimated score the moment you finish, with no account needed. Sign up free and your AI tutor walks you through every question you missed, then you re-test on fresh questions.</p>
+          <ul class="tp-jump" aria-label="Jump to a test">
+            <li class="tp-jump-label">Pick your test</li>
+            <li><a href="#sat">SAT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
+            <li><a href="#psat">PSAT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
+            <li><a href="#act">ACT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
+            <li><a href="#preact">PreACT <i class="fas fa-arrow-down" aria-hidden="true"></i></a></li>
+          </ul>
+          <ul class="tp-trust">
+            <li><i class="fas fa-check-circle" aria-hidden="true"></i>No sign-up to take one</li>
+            <li><i class="fas fa-check-circle" aria-hidden="true"></i>Estimated score the moment you finish</li>
+            <li><i class="fas fa-check-circle" aria-hidden="true"></i>Every question original</li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <section class="lp-roles">
+    <section class="lp-roles lp-reveal" id="tests">
       <div class="lp-inner">
 
         <div class="tp-family">
           <h2>SAT and PSAT</h2>
           <p>Both are digital and adaptive: how you do on Module 1 decides whether Module 2 is harder or easier. Desmos and the reference sheet are built in. The PSAT reports on the SAT&rsquo;s scale, so it tells you roughly where you&rsquo;d land on the SAT today.</p>
-          <div class="tp-grid">
-            <article class="tp-card">
+          <div class="tp-grid lp-stagger">
+            <article class="tp-card" id="sat">
               <header><h3>SAT</h3><span class="tp-who">Juniors &amp; seniors</span></header>
               <ul class="tp-facts" aria-label="SAT test details">
-                <li>44 questions</li><li>70 minutes</li><li>Adaptive</li><li>200&ndash;800</li>
+                <li><i class="fas fa-list-ol" aria-hidden="true"></i>44 questions</li>
+                <li><i class="fas fa-clock" aria-hidden="true"></i>70 minutes</li>
+                <li><i class="fas fa-random" aria-hidden="true"></i>Adaptive</li>
+                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 200&ndash;800</li>
               </ul>
               <p>The full digital SAT Math section: two 22-question modules, 35 minutes each.</p>
-              <a class="btn btn-primary" href="/sat-practice-test">Take the SAT practice test</a>
+              <a class="btn btn-primary" href="/sat-practice-test">Take the SAT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
             </article>
-            <article class="tp-card">
+            <article class="tp-card" id="psat">
               <header><h3>PSAT</h3><span class="tp-who">Sophomores &amp; juniors</span></header>
               <ul class="tp-facts" aria-label="PSAT test details">
-                <li>44 questions</li><li>70 minutes</li><li>Adaptive</li><li>160&ndash;760</li>
+                <li><i class="fas fa-list-ol" aria-hidden="true"></i>44 questions</li>
+                <li><i class="fas fa-clock" aria-hidden="true"></i>70 minutes</li>
+                <li><i class="fas fa-random" aria-hidden="true"></i>Adaptive</li>
+                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 160&ndash;760</li>
               </ul>
               <p>The PSAT/NMSQT Math section, the one juniors take for National Merit. Same shape as the SAT, without its hardest questions.</p>
-              <a class="btn btn-primary" href="/psat-practice-test">Take the PSAT practice test</a>
+              <a class="btn btn-primary" href="/psat-practice-test">Take the PSAT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
             </article>
           </div>
         </div>
@@ -118,22 +290,26 @@
         <div class="tp-family">
           <h2>ACT and PreACT</h2>
           <p>One timed section, four answer choices, calculator allowed. The PreACT reports on the ACT&rsquo;s scale, so it tells you roughly where you&rsquo;d land on the ACT today.</p>
-          <div class="tp-grid">
-            <article class="tp-card">
+          <div class="tp-grid lp-stagger">
+            <article class="tp-card" id="act">
               <header><h3>ACT</h3><span class="tp-who">Juniors &amp; seniors</span></header>
               <ul class="tp-facts" aria-label="ACT test details">
-                <li>45 questions</li><li>50 minutes</li><li>1&ndash;36</li>
+                <li><i class="fas fa-list-ol" aria-hidden="true"></i>45 questions</li>
+                <li><i class="fas fa-clock" aria-hidden="true"></i>50 minutes</li>
+                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 1&ndash;36</li>
               </ul>
               <p>The full ACT Math section, built to the current enhanced ACT.</p>
-              <a class="btn btn-primary" href="/act-practice-test">Take the ACT practice test</a>
+              <a class="btn btn-primary" href="/act-practice-test">Take the ACT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
             </article>
-            <article class="tp-card">
+            <article class="tp-card" id="preact">
               <header><h3>PreACT</h3><span class="tp-who">9th&ndash;10th grade</span></header>
               <ul class="tp-facts" aria-label="PreACT test details">
-                <li>36 questions</li><li>45 minutes</li><li>1&ndash;35</li>
+                <li><i class="fas fa-list-ol" aria-hidden="true"></i>36 questions</li>
+                <li><i class="fas fa-clock" aria-hidden="true"></i>45 minutes</li>
+                <li><i class="fas fa-chart-bar" aria-hidden="true"></i>Score 1&ndash;35</li>
               </ul>
               <p>The PreACT 10 Math section: ACT-style questions, limited to the topics a tenth grader has covered.</p>
-              <a class="btn btn-primary" href="/preact-practice-test">Take the PreACT practice test</a>
+              <a class="btn btn-primary" href="/preact-practice-test">Take the PreACT practice test<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
             </article>
           </div>
         </div>
@@ -141,9 +317,10 @@
       </div>
     </section>
 
-    <section class="lp-audience-links">
+    <section class="tp-how lp-reveal" id="how-it-works">
       <div class="lp-inner">
         <h2 class="tp-section-title">How the prep works</h2>
+        <p class="tp-section-sub">Taking a test is free and needs no account. A free account is what turns the score into a plan.</p>
         <ol class="tp-steps">
           <li><strong>Take a test.</strong> Timed and full-length, with no pausing, just like test day.</li>
           <li><strong>See what you missed.</strong> Your score, your likely range, and how you did in each content area. A free account shows you exactly which questions you got wrong.</li>
@@ -153,7 +330,48 @@
       </div>
     </section>
 
-    <section class="lp-audience-links">
+    <section class="tp-faq lp-reveal" id="faq">
+      <div class="lp-inner">
+        <h2 class="tp-section-title">Common questions</h2>
+        <p class="tp-section-sub">Not sure which test is yours? Start here.</p>
+        <div class="tp-faq-list">
+          <details>
+            <summary>Which practice test should I take? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+            <p>Ninth and tenth graders: the <a href="#preact">PreACT</a> or the <a href="#psat">PSAT</a>, whichever your school gives. Juniors: the PSAT in the fall, then the SAT or ACT. Seniors: the <a href="#sat">SAT</a> or <a href="#act">ACT</a>. If you haven&rsquo;t picked between the SAT and ACT yet, take both practice tests. They&rsquo;re free, and the one you score higher on is usually the one to prepare for.</p>
+          </details>
+          <details>
+            <summary>Are the scores official? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+            <p>No. Each score is an estimate, converted from your raw score the way the real test converts it. It&rsquo;s a good read on where you stand today, not a score a college will see.</p>
+          </details>
+          <details>
+            <summary>Do I need an account? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+            <p>Not to take a test or see your score. A free account saves your results, shows you exactly which questions you missed, and lets your AI tutor review each one with you.</p>
+          </details>
+          <details>
+            <summary>Can I use a calculator? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+            <p>Yes, on every test, just like the real thing. The SAT and PSAT have Desmos and the reference sheet built in. The ACT and PreACT have a calculator built in.</p>
+          </details>
+          <details>
+            <summary>Can I take it again? <i class="fas fa-chevron-down" aria-hidden="true"></i></summary>
+            <p>Yes. Each re-test is a new form that leaves out the questions you&rsquo;ve already answered, so a higher score means you learned something, not that you remembered the answers.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-final-cta tp-cta lp-reveal">
+      <div class="lp-inner">
+        <h2>Pick a test and find out where you stand.</h2>
+        <p>Under an hour, start to score. No account needed to begin.</p>
+        <div class="tp-cta-actions">
+          <a href="#tests" class="btn btn-primary btn-lg">Choose a practice test</a>
+          <a href="/signup.html" class="lp-final-cta-link">or create a free account first</a>
+        </div>
+        <p class="lp-cta-note">A free account saves your results and unlocks the review with your tutor.</p>
+      </div>
+    </section>
+
+    <section class="lp-audience-links tp-fine">
       <div class="lp-inner">
         <p>
           Every question is original. Scores are estimates, not official scores. ACT and PreACT are
@@ -175,6 +393,7 @@
         <div class="lp-footer-col">
           <h4>Product</h4>
           <a href="/">Home</a>
+          <a href="/testprep">Practice Tests</a>
           <a href="/pricing.html">Pricing</a>
           <a href="/for-students.html">For Students</a>
           <a href="/signup.html">Start Free</a>
@@ -183,6 +402,7 @@
           <h4>Company</h4>
           <a href="/contact-support.html">Contact Us</a>
           <a href="/safety.html">Safety &amp; Privacy</a>
+          <a href="/accessibility.html">Accessibility</a>
           <a href="/privacy.html">Privacy Policy</a>
           <a href="/terms.html">Terms of Use</a>
         </div>
@@ -192,5 +412,30 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      /* Scroll reveal, same contract as the homepage (css/landing-page.css
+         .lp-reveal / .lp-stagger). Anything above the fold is left visible. */
+      var revealEls = document.querySelectorAll('.lp-reveal');
+      if ('IntersectionObserver' in window) {
+        var revealObs = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('lp-visible');
+            entry.target.querySelectorAll('.lp-stagger').forEach(function (s) { s.classList.add('lp-visible'); });
+            revealObs.unobserve(entry.target);
+          });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(function (el) { revealObs.observe(el); });
+      } else {
+        revealEls.forEach(function (el) {
+          el.classList.add('lp-visible');
+          el.querySelectorAll('.lp-stagger').forEach(function (s) { s.classList.add('lp-visible'); });
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
