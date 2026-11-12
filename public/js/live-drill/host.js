@@ -928,7 +928,7 @@
         if (f.type === 'jackpot') { jackpotDoor(f.who, f.amount); floatGain(byName[f.who], `+${money(f.amount)}`, 'jackpot'); }
         if (f.type === 'grab') flyChip(byName[f.target] && byName[f.target].querySelector('.cv'), byName[f.who] && byName[f.who].querySelector('.cv'), `💵 ${money(f.amount)}`);
         if (f.type === 'switch') [byName[f.who], byName[f.target]].forEach((li) => { if (li && !calm()) li.animate([{ boxShadow: '0 0 0 3px var(--led)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 900 }); });
-        if (f.type === 'shakedown') { floatGain(byName[f.who], `+${money(f.amount)}`); H.crew.filter((c) => c.cash > 0 && c.name !== f.who).forEach((c) => { const li = byName[c.name]; if (li && !calm()) li.animate([{ boxShadow: '0 0 0 3px var(--miss)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 900 }); }); }
+        if (f.type === 'shakedown') { flyChip(byName[f.target] && byName[f.target].querySelector('.cv'), byName[f.who] && byName[f.who].querySelector('.cv'), `💸 ${money(f.gain)}`); if (byName[f.target] && !calm()) byName[f.target].animate([{ boxShadow: '0 0 0 3px var(--miss)' }, { boxShadow: '0 0 0 0 transparent' }], { duration: 900 }); }
       });
     }
     const lamp = $('vault-lamp');
@@ -948,7 +948,7 @@
       if (f.type === 'crack') return `<span class="it${fresh}">🔐 ${esc(f.who)} cracked the vault</span>`;
       if (f.type === 'grab') return `<span class="it ev${fresh}">🕶 ${esc(f.who)} grabbed ${money(f.amount)} from ${esc(f.target)}</span>`;
       if (f.type === 'switch') return `<span class="it ev${fresh}">🔁 ${esc(f.who)} switched piles with ${esc(f.target)}</span>`;
-      if (f.type === 'shakedown') return `<span class="it ev${fresh}">💸 ${esc(f.who)} shook down ${f.count === 1 ? 'the player' : `${f.count} players`} above · ${money(f.amount)}</span>`;
+      if (f.type === 'shakedown') return `<span class="it ev${fresh}">💸 ${esc(f.who)} shook down ${esc(f.target)} · −${money(f.amount)}</span>`;
       if (f.type === 'gadget') return `<span class="it ev${fresh}">${f.kind === 'smoke' ? '💨' : '🙃'} ${esc(f.who)} fired ${f.kind === 'smoke' ? 'a smoke bomb' : 'a flip'}</span>`;
       if (f.type === 'heist') return `<span class="it ev${fresh}">THE HEIST IS ON</span>`;
       return '';

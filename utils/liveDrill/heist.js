@@ -47,7 +47,8 @@ const SAFE_COUNT = 3; // safes offered per crack
 const ALARM_MS_MAX = 6000; // the lockout after a wrong answer (capped at the drill's fast tier — Math Facts plays are 3 s)
 const GADGET_MS = 6000; // how long a smoke bomb / flip lasts on everyone else's screen
 const GRAB_PCT = 0.2; // a grab takes this share of the target's pile
-const SHAKE_PCT = 0.1; // a shakedown takes this share from EVERY richer player
+const SHAKE_LOSS = 0.3; // a shakedown knocks the classmate picked down this share of their pile…
+const SHAKE_TAKE = 0.1; // …and the opener pockets this share (the rest is gone): a spoiler, not a bigger grab
 const MAX_GADGETS = 3; // a student holds at most this many unfired gadgets
 
 /**
@@ -62,7 +63,9 @@ const MAX_GADGETS = 3; // a student holds at most this many unfired gadgets
  * 10-second jail was tried and dropped; a student sitting idle is not in the game):
  *   grab      — GRAB_PCT of one richer player's pile
  *   switch    — trade piles with one richer player
- *   shakedown — SHAKE_PCT from EVERY richer player at once
+ *   shakedown — the classmate picked drops SHAKE_LOSS, the opener pockets SHAKE_TAKE (owner,
+ *               2026-11-12: a pick, like the grab — it hurts them more than it helps you, the move
+ *               for a runaway leader)
  *   gadget    — smoke / flip, held and fired at everyone else (a nuisance, never a lockout)
  */
 const OUTCOMES = [
@@ -82,7 +85,7 @@ const GADGETS = [
   { kind: 'flip', label: 'Flip', blurb: 'turns everyone else\'s screen upside down for 6 seconds' },
 ];
 
-const TUNE = { cashMult: CASH_MULT, safeEvery: SAFE_EVERY, grabPct: GRAB_PCT, shakePct: SHAKE_PCT, gadgetMs: GADGET_MS, alarmMsMax: ALARM_MS_MAX };
+const TUNE = { cashMult: CASH_MULT, safeEvery: SAFE_EVERY, grabPct: GRAB_PCT, shakeLoss: SHAKE_LOSS, shakeTake: SHAKE_TAKE, gadgetMs: GADGET_MS, alarmMsMax: ALARM_MS_MAX };
 
 /** mulberry32, seeded from (game seed, player, safe number): the same three safes every time. */
 function rng(seed, playerId, safeNo) {
@@ -203,25 +206,8 @@ function openSafe(game, player, idx, sc, at, push) {
       player.gadgets.push(g);
       result.gadget = { ...g, ...GADGETS.find((x) => x.kind === g.kind) };
     }
-  } else if (o.kind === 'shakedown') {
-    // SHAKE_PCT from everyone richer, all at once — nobody richer, and the safe pays out instead
-    const pool = above(game, player);
-    if (!pool.length) payCash(2, 'Cash');
-    else {
-      let total = 0;
-      for (const t of pool) {
-        const amt = Math.round(t.cash * SHAKE_PCT);
-        setCash(t, t.cash - amt, at);
-        t.lost += amt; t.lastHit = { by: player.name, kind: 'shakedown', amount: amt, at };
-        total += amt;
-      }
-      setCash(player, player.cash + total, at);
-      player.grabbed += total; player.bigGrab = Math.max(player.bigGrab, total);
-      result.amount = total; result.count = pool.length;
-      push({ type: 'shakedown', who: player.name, count: pool.length, amount: total });
-    }
   } else {
-    // a grab or a switch: the opener picks the target from the classmates above them (pickTarget)
+    // a grab, a switch or a shakedown: the opener picks the target from the classmates above them (pickTarget)
     const pool = above(game, player);
     if (!pool.length) payCash(2, 'Cash'); // nobody richer to rob: the safe pays out instead
     else {
@@ -249,7 +235,7 @@ function pickTarget(game, player, targetId, sc, at, push) {
   const pk = player.pick;
   if (!pk) throw Object.assign(new Error('Nothing to pick.'), { status: 409 });
   const u = unit(sc);
-  const result = { kind: pk.kind, label: pk.kind === 'grab' ? 'Grab' : 'Switch', n: pk.n, amount: 0, target: null };
+  const result = { kind: pk.kind, label: { grab: 'Grab', switch: 'Switch', shakedown: 'Shakedown' }[pk.kind], n: pk.n, amount: 0, lost: 0, target: null };
   const pool = above(game, player);
   if (!pool.length) {
     player.pick = null;
@@ -269,6 +255,13 @@ function pickTarget(game, player, targetId, sc, at, push) {
     player.grabbed += amt; player.bigGrab = Math.max(player.bigGrab, amt);
     result.amount = amt; result.target = t.name;
     push({ type: 'grab', who: player.name, target: t.name, amount: amt });
+  } else if (pk.kind === 'shakedown') {
+    const lost = Math.round(t.cash * SHAKE_LOSS); const gain = Math.round(t.cash * SHAKE_TAKE);
+    setCash(t, t.cash - lost, at); setCash(player, player.cash + gain, at);
+    t.lost += lost; t.lastHit = { by: player.name, kind: 'shakedown', amount: lost, at };
+    player.grabbed += gain; player.bigGrab = Math.max(player.bigGrab, gain);
+    result.amount = gain; result.lost = lost; result.target = t.name;
+    push({ type: 'shakedown', who: player.name, target: t.name, amount: lost, gain });
   } else {
     const mine = player.cash; const theirs = t.cash;
     setCash(player, theirs, at); setCash(t, mine, at);
@@ -362,7 +355,8 @@ function rules(sc) {
     safeCount: SAFE_COUNT,
     cashMin: u, cashMax: 3 * u, jackpot: 6 * u,
     grabPct: Math.round(GRAB_PCT * 100),
-    shakePct: Math.round(SHAKE_PCT * 100),
+    shakeLoss: Math.round(SHAKE_LOSS * 100),
+    shakeTake: Math.round(SHAKE_TAKE * 100),
     gadgetSec: GADGET_MS / 1000,
     gadgets: GADGETS.map((g) => ({ kind: g.kind, label: g.label, blurb: g.blurb })),
     odds: Object.fromEntries(['cash', 'grab', 'switch', 'shakedown', 'decoy', 'gadget'].map((k) => [k, OUTCOMES.filter((o) => o.kind === k).reduce((s, o) => s + o.weight, 0)])),
@@ -371,7 +365,7 @@ function rules(sc) {
 }
 
 module.exports = {
-  CASH_MULT, SAFE_EVERY, SAFE_COUNT, GADGET_MS, GRAB_PCT, SHAKE_PCT, MAX_GADGETS, OUTCOMES, ATTACKS, GADGETS, TUNE,
+  CASH_MULT, SAFE_EVERY, SAFE_COUNT, GADGET_MS, GRAB_PCT, SHAKE_LOSS, SHAKE_TAKE, MAX_GADGETS, OUTCOMES, ATTACKS, GADGETS, TUNE,
   alarmMs, unit, rules, reset, resetPlayer, standings, above, locked, dealSafes,
   onAnswer, openSafe, pickOptions, pickTarget, useGadget, liveEffects, hostHeist, playerHeist, finalHeist,
 };

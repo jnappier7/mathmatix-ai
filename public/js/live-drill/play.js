@@ -252,8 +252,9 @@
     heistWait = 'pick';
     cur = { wait: true };
     closePad();
-    const grab = kind === 'grab';
-    $('p-card').innerHTML = `<div class="vaultcard"><div class="big">${grab ? '🕶 Grab — who are you robbing?' : '🔁 Switch — whose pile do you want?'}</div><div class="sub">${grab ? 'You take 20% of their cash.' : 'You trade piles with them.'} Only classmates ahead of you.</div></div>`;
+    const head = { grab: ['🕶 Grab — who are you robbing?', 'You take 20% of their cash.'], switch: ['🔁 Switch — whose pile do you want?', 'You trade piles with them.'],
+      shakedown: ['💸 Shakedown — who are you shaking down?', 'They drop 30% of their cash; you pocket a third of it.'] }[kind] || ['Pick a classmate', ''];
+    $('p-card').innerHTML = `<div class="vaultcard"><div class="big">${head[0]}</div><div class="sub">${head[1]} Only classmates ahead of you.</div></div>`;
     $('p-choices').innerHTML = options.map((t) => `<button class="ch target" data-id="${esc(t.id)}"><span class="lab">${esc(t.name)}</span><span class="cnt">${money(t.cash)}</span></button>`).join('');
     $('fb').className = 'fb';
     $('fb').innerHTML = '<span class="muted">Tap a name.</span>';
@@ -269,6 +270,7 @@
       let call; let why;
       if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}.`; }
       else if (r.kind === 'switch') { call = `🔁 Switch · ${money(r.cash)}`; why = `You traded piles with ${esc(r.target)} (+${money(r.amount)}).`; }
+      else if (r.kind === 'shakedown') { call = `💸 Shakedown · +${money(r.amount)}`; why = `${esc(r.target)} dropped ${money(r.lost)}.`; }
       else { call = `+${money(r.amount)}`; why = 'Nobody was ahead of you any more — the safe paid cash instead.'; }
       $('fb').className = 'fb good';
       $('fb').innerHTML = `<span class="bigtxt">${call}</span><span class="why">${why}</span>`;
@@ -333,8 +335,7 @@
       btns.forEach((b, j) => { b.classList.remove('cracking'); b.classList.toggle('opened', j === i); b.classList.toggle('fade', j !== i); if (j === i) { b.classList.toggle('rich', r.kind !== 'decoy'); b.classList.toggle('jackpot', r.label === 'JACKPOT'); } if (j === i) b.querySelector('.loot').textContent = LOOT[r.kind] || '💰'; });
       let call; let why = ''; let cls = 'good';
       if (r.kind === 'cash') { call = `${r.label === 'JACKPOT' ? '💎 JACKPOT ' : ''}+${money(r.amount)}`; why = r.label === 'JACKPOT' ? 'The big one.' : 'Cash.'; }
-      else if (r.choose) { call = r.kind === 'grab' ? '🕶 Grab!' : '🔁 Switch!'; why = 'Pick who — anyone ahead of you.'; }
-      else if (r.kind === 'shakedown') { call = `💸 Shakedown · +${money(r.amount)}`; why = `A cut from ${r.count === 1 ? 'the one player' : `each of the ${r.count} players`} ahead of you.`; }
+      else if (r.choose) { call = { grab: '🕶 Grab!', switch: '🔁 Switch!', shakedown: '💸 Shakedown!' }[r.kind] || 'Your move!'; why = 'Pick who — anyone ahead of you.'; }
       else if (r.kind === 'gadget') { call = `🧰 ${esc(r.gadget.label)}`; why = `Yours to fire when you like: ${esc(r.gadget.blurb)}. The button is above.`; }
       else { call = 'Decoy'; why = 'Empty. The streak was the price.'; cls = ''; }
       $('fb').className = `fb ${cls}`;
