@@ -14,14 +14,22 @@
   // Tutors that ship with a custom backdrop asset.
   const TUTORS_WITH_BACKDROP = new Set(['maya', 'bob', 'mr-nappier', 'ms-maria']);
 
-  // Tutors with a refreshed celebration video — keep in sync with the
-  // matching set in modules/gamification.js. Used here to decide whether
-  // to preload the clip when the tutor swaps.
-  const TUTORS_WITH_CELEBRATION_VIDEO = new Set(['bob', 'maya', 'mr-nappier', 'ms-maria']);
+  // Celebration clips each tutor has in the current art style — keep in sync
+  // with CELEBRATION_CLIPS in modules/gamification.js. The in-place hero
+  // celebration prefers levelUp and falls back to smallcele, so a tutor with
+  // either clip still celebrates. Tutors not listed get XP + confetti only.
+  const CELEBRATION_CLIPS = {
+    'bob': ['levelUp', 'smallcele'],
+    'maya': ['levelUp', 'smallcele'],
+    'mr-nappier': ['levelUp', 'smallcele'],
+    'ms-maria': ['levelUp', 'smallcele'],
+    'ms-rashida': ['levelUp', 'smallcele'],
+    'mr-wiggles': ['smallcele']
+  };
 
   // Cache-buster for /videos/* — prod caches static assets 7 days with no
   // hashing, so bump this whenever a clip is re-exported under the same name.
-  const VIDEO_VERSION = '?v=20261109b';
+  const VIDEO_VERSION = '?v=20261112';
 
   // How many idle clips each tutor has on disk ({id}_idle.mp4, {id}_idle2.mp4).
   // Tutors not listed here (and reduced-motion users) keep the static
@@ -363,13 +371,15 @@
   // kid sees motion appear, never a swap.
 
   function celebrationSrcFor(tutorId) {
-    return '/videos/' + tutorId + '_levelUp.mp4' + VIDEO_VERSION;
+    const clips = CELEBRATION_CLIPS[tutorId] || [];
+    const type = clips.indexOf('levelUp') !== -1 ? 'levelUp' : 'smallcele';
+    return '/videos/' + tutorId + '_' + type + '.mp4' + VIDEO_VERSION;
   }
 
   function preloadCelebrationVideo(tutorId) {
     const video = document.getElementById('cr-tutor-celebration-video');
     if (!video) return;
-    if (!TUTORS_WITH_CELEBRATION_VIDEO.has(tutorId)) {
+    if (!CELEBRATION_CLIPS[tutorId]) {
       // Free the previous tutor's clip so we don't leak it.
       if (video.src) { video.removeAttribute('src'); video.load(); }
       return;

@@ -3,15 +3,20 @@
 
 import { triggerConfetti, showToast } from './helpers.js';
 
-// Tutors with refreshed celebration video art. Anyone outside this set
-// gets XP + confetti but no modal, so the legacy art doesn't ship alongside
-// the new style. Re-add the others here once their new videos land.
-const TUTORS_WITH_CELEBRATION_VIDEO = new Set([
-    'bob',
-    'maya',
-    'mr-nappier',
-    'ms-maria',
-]);
+// Celebration clips each tutor has in the current art style. Anyone not
+// listed gets XP + confetti but no modal, so legacy art never ships alongside
+// the new style. A tutor with only one of the two clips plays it for both
+// moments. Keep in sync with CELEBRATION_CLIPS in chat-redesign.js.
+const CELEBRATION_CLIPS = {
+    'bob': ['levelUp', 'smallcele'],
+    'maya': ['levelUp', 'smallcele'],
+    'mr-nappier': ['levelUp', 'smallcele'],
+    'ms-maria': ['levelUp', 'smallcele'],
+    'ms-rashida': ['levelUp', 'smallcele'],
+    'mr-wiggles': ['smallcele'],
+};
+// smallcele has a webm (~5× smaller) only for the original four.
+const SMALLCELE_WEBM = new Set(['bob', 'maya', 'mr-nappier', 'ms-maria']);
 
 /**
  * Show level-up celebration.
@@ -33,7 +38,8 @@ const PHONE_CELEBRATION_MQ = typeof window !== 'undefined' && window.matchMedia
 export function showLevelUpCelebration(currentUser) {
     if (!currentUser || !currentUser.selectedTutorId) return;
     const tutorId = currentUser.selectedTutorId;
-    if (!TUTORS_WITH_CELEBRATION_VIDEO.has(tutorId)) return;
+    const clips = CELEBRATION_CLIPS[tutorId];
+    if (!clips) return;
 
     const isPhone = !!(PHONE_CELEBRATION_MQ && PHONE_CELEBRATION_MQ.matches);
 
@@ -52,12 +58,13 @@ export function showLevelUpCelebration(currentUser) {
 
     const currentLevel = currentUser.level || 1;
     const isMilestone = currentLevel % 5 === 0;
-    const videoType = isMilestone ? 'levelUp' : 'smallcele';
-    // smallcele ships as webm (~5× smaller than the mp4 exports) with the
-    // mp4 kept as the Safari/legacy fallback; levelUp only has mp4.
-    const preferWebm = videoType === 'smallcele' &&
+    const wanted = isMilestone ? 'levelUp' : 'smallcele';
+    const videoType = clips.includes(wanted) ? wanted : clips[0];
+    // smallcele ships as webm (~5× smaller than the mp4 exports) for the
+    // original four, with the mp4 as the Safari/legacy fallback.
+    const preferWebm = videoType === 'smallcele' && SMALLCELE_WEBM.has(tutorId) &&
         video.canPlayType && video.canPlayType('video/webm; codecs="vp9"');
-    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20260717`;
+    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20261112`;
 
     if (titleEl && subtitleEl) {
         if (isMilestone) {
