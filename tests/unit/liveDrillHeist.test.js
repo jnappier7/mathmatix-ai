@@ -322,20 +322,26 @@ describe('gadgets', () => {
   });
 });
 
-describe('shakedown — everyone above you at once', () => {
+describe('shakedown — your pick, a spoiler', () => {
   function crackWith(g, p, outcome) { crack(g, p); p.safe.dealt[0] = outcome; return G.openSafe(g, p, 0); }
 
-  test('a shakedown takes 10% from EVERY richer player at once, and nothing from anyone below', () => {
+  test('the classmate picked drops 30% and the opener pockets 10% — it hurts them more than it helps you', () => {
     const g = heistGame();
     const a = G.join(g, 'A').player; const b = G.join(g, 'B').player; const c = G.join(g, 'C').player; const d = G.join(g, 'D').player;
     G.start(g);
     a.cash = 1000; c.cash = 2000; d.cash = 50; b.cash = 100;
     const r = crackWith(g, b, { kind: 'shakedown', label: 'Shakedown' });
-    expect(r).toMatchObject({ kind: 'shakedown', amount: 300, count: 2 });
-    expect([a.cash, c.cash, d.cash, b.cash]).toEqual([900, 1800, 50, 100 + 3 * U + 300]); // B: the crack paid three fast answers, then the cut
-    expect(a.lastHit).toMatchObject({ by: 'B', kind: 'shakedown', amount: 100 });
-    expect(b.grabbed).toBe(300);
-    expect(g.feed[0]).toMatchObject({ type: 'shakedown', who: 'B', count: 2, amount: 300 });
+    expect(r.kind).toBe('shakedown');
+    expect(r.choose.map((t) => t.name)).toEqual(['C', 'A']); // D is below: not offered
+    expect(G.currentPlay(g, b).pick.kind).toBe('shakedown');
+    expect(() => G.pickTarget(g, b, d.id)).toThrow(/ahead of you/);
+    const got = G.pickTarget(g, b, c.id);
+    expect(got).toMatchObject({ kind: 'shakedown', target: 'C', lost: 600, amount: 200 });
+    expect([a.cash, c.cash, d.cash, b.cash]).toEqual([1000, 1400, 50, 100 + 3 * U + 200]); // only C pays; B: the crack, then the cut
+    expect(c.lastHit).toMatchObject({ by: 'B', kind: 'shakedown', amount: 600 });
+    expect(b.grabbed).toBe(200);
+    expect(g.feed[0]).toMatchObject({ type: 'shakedown', who: 'B', target: 'C', amount: 600, gain: 200 });
+    expect(b.pick).toBeNull();
     // nobody richer: cash instead
     expect(crackWith(g, c, { kind: 'shakedown', label: 'Shakedown' }).kind).toBe('cash');
   });
@@ -410,7 +416,7 @@ describe('views, final, snapshot', () => {
 
   test('the lobby rules come from the constants', () => {
     const r = G.hostView(heistGame()).rules;
-    expect(r.heist).toMatchObject({ pay: [150, 100, 50], alarmCost: 50, alarmSec: 6, safeEvery: 3, safeCount: 3, grabPct: 20, shakePct: 10, gadgetSec: 6 });
+    expect(r.heist).toMatchObject({ pay: [150, 100, 50], alarmCost: 50, alarmSec: 6, safeEvery: 3, safeCount: 3, grabPct: 20, shakeLoss: 30, shakeTake: 10, gadgetSec: 6 });
     expect(r.heist.gadgets.map((x) => x.kind)).toEqual(['smoke', 'flip']);
     expect(r.heist.attackPct).toBeGreaterThanOrEqual(50);
     expect(Object.values(r.heist.odds).reduce((s, x) => s + x, 0)).toBe(100);
