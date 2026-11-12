@@ -36,6 +36,7 @@ const CSRF_EXEMPT_PREFIXES = [
   '/api/demo',         // Public demo endpoints
   '/api/bio',          // Public bio tutor — no user session to protect
   '/api/live-drill/play', // Live drill players — bearer token in a header, no cookie session; own limiter
+  '/api/live-drill/run',  // Solo fluency runs — the unguessable run id is the bearer; nothing is readable cross-origin and nothing harmful can be forged blind
   '/api/phone-upload', // Anonymous phone image upload — authorized by capability token + PIN, rate-limited
 ];
 

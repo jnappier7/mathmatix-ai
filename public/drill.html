@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261111">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261112">
 </head>
 <body class="solo">
 <div class="pwrap">
@@ -48,6 +48,7 @@
       <details class="rules compact"><summary>How scoring works</summary><div id="rules"></div></details>
       <button class="go" id="start" type="button">Play</button>
       <p class="muted best" id="best" aria-live="polite"></p>
+      <div class="lbwrap" id="lb" hidden></div>
     </div>
     <div class="err" id="pick-err" role="alert"></div>
   </section>
@@ -82,6 +83,7 @@
         <button class="go" id="again" type="button">Play again</button>
         <button class="ghost" id="back" type="button">Pick another game</button>
       </div>
+      <div class="lbwrap" id="f-lb" hidden></div>
       <div class="film" id="f-film"></div>
     </div>
   </section>
@@ -91,6 +93,6 @@
 <script src="/js/live-drill/common.js?v=20261106b"></script>
 <script>window.LiveDrillSoundConfig = { defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false };</script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/solo.js?v=20261111"></script>
+<script src="/js/live-drill/solo.js?v=20261112"></script>
 </body>
 </html>

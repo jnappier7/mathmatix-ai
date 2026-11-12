@@ -44,6 +44,7 @@ const HUBS = {
       { drill: 'hgeo3', name: 'Chapter 3 Test Prep', blurb: 'Parallel & perpendicular lines — every question type on the Chapter 3 test.' },
       { drill: 'hgeo4', name: 'Chapter 4 Review', blurb: 'Transformations — translations, reflections, rotations and symmetry, one quick move at a time.' },
       { drill: 'hgeo5', name: 'Chapter 5 Review', blurb: 'Congruent triangles — angles, the criteria, isosceles triangles and CPCTC, one quick move at a time.' },
+      { drill: 'congruence', name: 'Congruence Fluency', blurb: 'SSS, SAS, ASA, AAS, HL — or not congruent. Name the shortcut from the marks, fast. Beat your best; climb the class board.' },
       { drill: 'hgeo6', name: 'Chapter 6 Review', blurb: 'Relationships within triangles — bisectors, the four centers, midsegments, inequalities, one quick move at a time.' },
       { drill: 'hgeo7', name: 'Chapter 7 Review', blurb: 'Quadrilaterals — polygon angles, parallelograms, the special ones, trapezoids and kites, one quick move at a time.' },
       { drill: 'hgeo8', name: 'Chapter 8 Review', blurb: 'Similarity — scale factors, AA / SSS / SAS similarity, proportionality, one quick move at a time.' },
@@ -81,7 +82,7 @@ function hubView(hubId) {
       const { drive } = settingsFor(g.drill);
       const s = scoringOf(g.drill);
       return {
-        drill: g.drill, name: g.name, blurb: g.blurb, typed: !!DRILLS[g.drill].typed,
+        drill: g.drill, name: g.name, blurb: g.blurb, typed: !!DRILLS[g.drill].typed, graded: !!DRILLS[g.drill].graded,
         playbooks: listPlaybooks(g.drill),
         sections: listSections(g.drill),
         clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },

@@ -92,7 +92,7 @@ function proof(ask, given, rows, at, fig, shownReason) {
 
 /**
  * Turn a template's result into the engine's play. `t` = { id, ask, prompt, fig?, choices?/answer?,
- * typed?, neg?, tell, proof? }.
+ * fixed?, typed?, neg?, tell, proof? }.
  */
 function finish(t, book, books, rand) {
   const head = t.ask;
@@ -107,8 +107,10 @@ function finish(t, book, books, rand) {
     return { ...base, card, choices: [], input: 'number', ...(t.neg ? { neg: true } : {}), answer: String(t.typed),
       answerHtml, tell: `<b>${answerHtml}</b> &mdash; ${t.tell}`, revealCard };
   }
-  const keys = ['a', 'b', 'c', 'd', 'e'];
-  const order = shuffle(rand, t.choices.map((html, i) => ({ html, right: i === t.answer })));
+  const keys = ['a', 'b', 'c', 'd', 'e', 'f'];
+  // `fixed`: the choices stay in the order given, every play (a fluency game's buttons never move)
+  const mapped = t.choices.map((html, i) => ({ html, right: i === t.answer }));
+  const order = t.fixed ? mapped : shuffle(rand, mapped);
   const choices = order.map((c, i) => ({ k: keys[i], html: c.html }));
   const answer = keys[order.findIndex((c) => c.right)];
   answerHtml = t.choices[t.answer];

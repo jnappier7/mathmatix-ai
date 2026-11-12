@@ -47,6 +47,7 @@ const solo = require('../utils/liveDrill/solo');
 const arcade = require('../utils/liveDrill/arcade');
 const drillSearch = require('../utils/liveDrill/search');
 const practice = require('../utils/liveDrill/practice');
+const soloRun = require('../utils/liveDrill/soloRun');
 const store = require('../utils/liveDrill/store'); // revives a game this process hasn't seen (after a deploy)
 
 // Every finished Math Facts game folds into its signed-in students' records.
@@ -56,6 +57,7 @@ const hostRouter = express.Router();
 const playRouter = express.Router();
 const mineRouter = express.Router();
 const soloRouter = express.Router();
+const runRouter = express.Router();
 
 // A process that has handed its games off (SIGTERM) must not play them: the phone retries and
 // lands on the new process. Solo practice has no game state and keeps serving.
@@ -68,7 +70,8 @@ mineRouter.use(notHandingOff);
 const TOKEN_HEADER = 'x-live-drill-token';
 
 function send(res, err) {
-  if (err instanceof G.GameError) return res.status(err.status).json({ message: err.message });
+  // a game's own refusal (GameError) or a solo run's (soloRun.RunError): the status is the message
+  if (err instanceof G.GameError || err instanceof soloRun.RunError) return res.status(err.status).json({ message: err.message });
   logger.error('live drill error', { error: err.message, stack: err.stack });
   return res.status(500).json({ message: 'Something went wrong with the game.' });
 }
@@ -613,8 +616,96 @@ soloRouter.post('/result', async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------
+// Server-scored solo runs (the fluency games) and the class leaderboard
+// ---------------------------------------------------------------------------
+// A run is owned by its unguessable id. A signed-in student's run is filed to their account as
+// a GRADED DrillResult when it ends; a guest's is scored the same and saved nowhere. Public and
+// CSRF-exempt like /play (same limiter): nothing here is readable cross-origin, and the worst a
+// blind cross-site POST could do is start a run nobody can play.
+
+const signedIn = (req) => !!(req.isAuthenticated && req.isAuthenticated() && req.user);
+const runUser = (req) => (signedIn(req) && isStudent(req.user) ? req.user : null);
+
+runRouter.use(express.json({ limit: '4kb' }));
+
+runRouter.post('/', playLimiter, (req, res) => {
+  try {
+    const { drill, book, playbook, seconds } = req.body || {};
+    const d = String(drill || '');
+    if (!solo.onAHub(d)) return res.status(400).json({ message: 'No such game.' });
+    res.json(soloRun.start({ drill: d, playbook: String(book || playbook || 'all'), seconds, user: runUser(req) }));
+  } catch (err) { send(res, err); }
+});
+runRouter.get('/:id/play', playLimiter, (req, res) => {
+  try { res.set('Cache-Control', 'no-store'); res.json(soloRun.play(req.params.id)); } catch (err) { send(res, err); }
+});
+runRouter.post('/:id/answer', playLimiter, (req, res) => {
+  try {
+    const { n, k } = req.body || {};
+    res.json(soloRun.answer(req.params.id, n, k));
+  } catch (err) { send(res, err); }
+});
+runRouter.post('/:id/finish', playLimiter, async (req, res) => {
+  try {
+    const out = await soloRun.finish(req.params.id, async (row) => {
+      await DrillResult.create(row);
+      const best = await DrillResult.findOne({ userId: row.userId, drill: row.drill, playbook: row.playbook, seconds: row.seconds, graded: true })
+        .sort({ score: -1 }).lean();
+      return { best: best ? { score: best.score, right: best.right, attempted: best.attempted, playedAt: best.playedAt } : null };
+    });
+    res.json(out);
+  } catch (err) { send(res, err); }
+});
+
+/**
+ * The class leaderboard for one game: for every active class the student is in, their
+ * classmates' best GRADED rounds at this selection, best first, first name + last initial —
+ * what a live game's projector shows the room anyway. A guest, or a student in no class, gets
+ * the shape with nothing in it, never an error: the page says what to do instead.
+ */
+runRouter.get('/leaderboard', async (req, res) => {
+  const out = { signedIn: signedIn(req), saves: false, classes: [], mine: null };
+  if (!runUser(req)) return res.json(out);
+  out.saves = true;
+  try {
+    const drill = String(req.query.drill || '');
+    if (!solo.onAHub(drill) || !soloRun.isGraded(drill)) return res.json(out);
+    const sel = { drill, playbook: String(req.query.book || req.query.playbook || 'all').slice(0, 60), seconds: Math.max(0, Math.min(3600, parseInt(req.query.seconds, 10) || 0)), graded: true };
+    const uid = req.user._id;
+    const classes = await EnrollmentCode.find({ 'enrolledStudents.studentId': uid, isActive: { $ne: false } }, 'className period enrolledStudents.studentId').lean();
+    const ids = [...new Set(classes.flatMap((c) => (c.enrolledStudents || []).map((e) => String(e.studentId))))];
+    if (!ids.includes(String(uid))) ids.push(String(uid));
+    const rows = ids.length ? await DrillResult.aggregate([
+      { $match: { ...sel, userId: { $in: ids.map((id) => (mongoose.isValidObjectId(id) ? new mongoose.Types.ObjectId(id) : id)) } } },
+      { $group: { _id: '$userId', score: { $max: '$score' }, rounds: { $sum: 1 } } },
+    ]) : [];
+    const bestOf = new Map(rows.map((r) => [String(r._id), { score: r.score, rounds: r.rounds }]));
+    const users = await User.find({ _id: { $in: [...bestOf.keys()] } }, 'firstName lastName username').lean();
+    const nameOf = new Map(users.map((u) => [String(u._id), accountName(u)]));
+    const mine = bestOf.get(String(uid)) || null;
+    out.mine = mine ? { score: mine.score, rounds: mine.rounds } : null;
+    out.classes = classes.map((c) => {
+      const members = (c.enrolledStudents || []).map((e) => String(e.studentId)).filter((id) => bestOf.has(id));
+      const board = members.map((id) => ({ id, name: nameOf.get(id) || 'Classmate', score: bestOf.get(id).score, you: id === String(uid) }))
+        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+      const rank = board.findIndex((b) => b.you) + 1;
+      return {
+        id: String(c._id), name: `${c.className || 'Class'}${c.period ? ` · ${c.period}` : ''}`,
+        played: board.length, students: (c.enrolledStudents || []).length,
+        you: rank ? { rank, score: board[rank - 1].score } : null,
+        top: board.slice(0, 10).map((b, i) => ({ rank: i + 1, name: b.name, score: b.score, you: b.you })),
+      };
+    });
+    res.json(out);
+  } catch (err) {
+    logger.error('run /leaderboard failed', { error: err.message });
+    res.json(out); // a board we cannot read must not stop anyone playing
+  }
+});
+
 /** For config/middleware.js: player and solo calls are exempt from the global apiLimiter. */
-const LIVE_DRILL_PLAY_PATH = /^\/live-drill\/(play|solo)\//;
+const LIVE_DRILL_PLAY_PATH = /^\/live-drill\/(play|solo|run)\//;
 function isLiveDrillPlayPath(apiPath) { return LIVE_DRILL_PLAY_PATH.test(String(apiPath || '')); }
 
-module.exports = { hostRouter, playRouter, mineRouter, soloRouter, isLiveDrillPlayPath, TOKEN_HEADER, _accountName: accountName };
+module.exports = { hostRouter, playRouter, mineRouter, soloRouter, runRouter, isLiveDrillPlayPath, TOKEN_HEADER, _accountName: accountName };

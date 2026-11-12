@@ -242,7 +242,32 @@
     renderFocus(g);
     $('rules').innerHTML = rulesHTML(g);
     showBest();
+    renderBoard($('lb'), false);
     local.set(`mm-drill-pick:${hub.id}`, sel);
+  }
+
+  /**
+   * The class leaderboard for a graded game: every class the student is in, best graded rounds
+   * at this selection, you highlighted. A guest or a student in no class is told what it takes.
+   */
+  let boardSeq = 0;
+  async function renderBoard(el, afterRound) {
+    if (!el) return;
+    const g = game();
+    if (!g.graded) { el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    const seq = ++boardSeq;
+    if (!me.signedIn) { el.innerHTML = '<div class="lb-note">Beat your best here — and <a href="/login">sign in</a> as a student in a class to get on the class leaderboard.</div>'; return; }
+    el.innerHTML = '<div class="lb-note muted">Class leaderboard…</div>';
+    let b;
+    try { b = await runCall(`/leaderboard?drill=${encodeURIComponent(g.drill)}&book=${encodeURIComponent(sel.book)}&seconds=${sel.seconds}`); } catch { el.innerHTML = ''; return; }
+    if (seq !== boardSeq) return;
+    if (!b.saves) { el.innerHTML = '<div class="lb-note">The class leaderboard is for students. Your round still counts for you.</div>'; return; }
+    if (!b.classes.length) { el.innerHTML = '<div class="lb-note">Join your class (☰ → My Class on your chat screen) and your scores go on its leaderboard.</div>'; return; }
+    el.innerHTML = b.classes.map((c) => `<div class="lb">
+      <div class="lb-head"><span class="eyebrow">${esc(c.name)}</span><span class="muted">${c.you ? `You're <b>#${c.you.rank}</b> of ${c.played}` : afterRound ? 'Not on the board yet' : `${c.played} of ${c.students} have played`}</span></div>
+      ${c.top.length ? `<ol class="lb-list">${c.top.map((t) => `<li class="${t.you ? 'you' : ''}"><span class="rk">${t.rank}</span><span class="nm">${esc(t.name)}${t.you ? ' <em>you</em>' : ''}</span><span class="sc">${t.score}</span></li>`).join('')}</ol>` : '<p class="muted" style="margin:6px 0 0">Nobody in this class has a score here yet. Be first.</p>'}
+    </div>`).join('');
   }
 
   function renderFocus(g) {
@@ -287,14 +312,19 @@
     const g = game();
     $('start').disabled = true;
     round = { g, book: sel.book, seconds: sel.seconds, focus: focusNow(), seed: newSeed(), plays: [], loading: null,
-      n: 0, score: 0, right: 0, att: 0, streak: 0, longest: 0, misses: [], endsAt: 0, cur: null, over: false };
-    try { await more(); } catch (err) { $('pick-err').textContent = err.message; $('start').disabled = false; return; }
+      n: 0, score: 0, right: 0, att: 0, streak: 0, longest: 0, misses: [], endsAt: 0, cur: null, over: false, run: null };
+    try {
+      // A graded game (the fluency games) is dealt, timed and scored by the SERVER — the only honest
+      // basis for the class leaderboard; an ordinary game is dealt in batches and scored here.
+      if (g.graded) round.run = await startRun();
+      else await more();
+    } catch (err) { $('pick-err').textContent = err.message; $('start').disabled = false; return; }
     $('start').disabled = false;
     $('pick-err').textContent = '';
     $('p-game').textContent = `${g.name} · ${bookName(g, round.book)}${round.focus.length ? ` · ${focusLabel(round.focus)}` : ''}`;
     renderScore();
     show('live');
-    round.endsAt = Date.now() + round.seconds * 1000;
+    round.endsAt = round.run ? Date.now() + (round.run.endsAt - round.run.now) : Date.now() + round.seconds * 1000;
     clearInterval(tick);
     tick = setInterval(renderClock, 200);
     lastTick = null;
@@ -314,6 +344,17 @@
     return round.loading;
   }
 
+  // ---- server-scored runs (utils/liveDrill/soloRun.js via /api/live-drill/run) ----
+  const RUN = '/api/live-drill/run';
+  async function runCall(path, body) {
+    const res = await fetch(`${RUN}${path}`, { method: body ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
+      headers: body ? { 'Content-Type': 'application/json', Accept: 'application/json' } : { Accept: 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) { const e = new Error(data.message || `Request failed (${res.status})`); e.status = res.status; throw e; }
+    return data;
+  }
+  const startRun = () => runCall('', { drill: game().drill, book: sel.book, seconds: sel.seconds });
+
   function renderScore() {
     $('s-score').textContent = round.score;
     $('s-streak').textContent = round.streak;
@@ -331,6 +372,20 @@
 
   async function nextPlay() {
     if (!round || round.over) return;
+    if (round.run) {
+      let r;
+      try { r = await runCall(`/${round.run.id}/play`); } catch (err) { if (err.status === 409) return finish(); $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`; return; }
+      if (!round || round.over) return;
+      round.n = r.n;
+      round.cur = { play: r.play, n: r.n, shownAt: Date.now(), locked: false };
+      $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);
+      if (window.scrollY > 0) window.scrollTo(0, 0);
+      if (r.play.input === 'number') openPad(answer, !!r.play.neg);
+      else { closePad(); $('p-choices').innerHTML = choicesHTML(r.play); bindChoices(answer); }
+      $('fb').className = 'fb';
+      $('fb').innerHTML = `<span class="muted">${r.play.input === 'number' ? 'Type the answer, then press Enter or Go.' : `Tap an answer, or press 1–${r.play.choices.length}.`}</span>`;
+      return;
+    }
     if (round.n >= round.plays.length) {
       try { await more(); } catch (err) { $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`; return; }
       if (round.n >= round.plays.length) return finish(); // the deal cap: a round that long is over
@@ -358,6 +413,7 @@
   function answer(k) {
     const r = round;
     if (!r || r.over || !r.cur || r.cur.locked) return;
+    if (r.run) return answerRun(k);
     const { play } = r.cur;
     r.cur.locked = true;
     const typed = play.input === 'number';
@@ -393,6 +449,53 @@
     }
   }
 
+  /** A graded game: the server grades, times and scores; this screen only shows what it said. */
+  async function answerRun(k) {
+    const r = round; const { play, n } = r.cur;
+    r.cur.locked = true;
+    const typed = play.input === 'number';
+    $('p-choices').querySelectorAll('.ch').forEach((b) => { b.disabled = true; });
+    let g;
+    try { g = await runCall(`/${r.run.id}/answer`, { n, k }); } catch (err) {
+      if (err.status === 400 && typed) { r.cur.locked = false; openPad(answer, !!play.neg); return; }
+      if (err.status === 409) return finish();
+      r.cur.locked = false; $('fb').innerHTML = `<span class="muted">${esc(err.message)}</span>`; return;
+    }
+    if (!round || round.over) return;
+    r.att = g.att; r.right = g.right; r.score = g.score; r.streak = g.streak; r.longest = Math.max(r.longest, g.streak);
+    const full = { ...play, answer: g.answer, answerHtml: g.answerHtml, tell: g.tell, revealCard: g.revealCard };
+    $('p-card').innerHTML = cardHTML(full, g.revealCard, `Play ${n}`);
+    if (typed) padResult(g.picked, g.ok);
+    else $('p-choices').innerHTML = choicesHTML(full, { answer: g.answer, picked: k, disabled: true });
+    renderScore();
+    if (g.ok) {
+      const hot = r.streak % STREAK_EVERY === 0;
+      if (hot) SND.blitz();
+      SND.setHype(Math.min(1, r.streak / 6));
+      $('fb').className = 'fb good';
+      $('fb').innerHTML = `<span class="bigtxt">${hot ? `⚡ ${r.streak} in a row` : g.tier === 0 ? 'Fast' : g.tier === 1 ? 'Right' : 'Got it'} · +${g.gain}</span><span class="why">${(g.ms / 1000).toFixed(1)} s</span>`;
+      setTimeout(nextPlay, typed ? 380 : 650);
+    } else {
+      SND.setHype(0);
+      const pickedHtml = typed ? esc(showNum(g.picked)) : ((play.choices.find((c) => c.k === k) || {}).html || '');
+      r.misses.push({ play: full, pickedHtml });
+      $('fb').className = 'fb bad';
+      $('fb').innerHTML = `<span class="bigtxt">Missed · ${g.gain}</span><span class="why">You ${typed ? 'typed' : 'picked'} ${pickedHtml}. ${g.tell}</span><button class="next" id="nx" type="button">Next</button>`;
+      $('nx').focus({ preventScroll: true });
+      $('nx').onclick = nextPlay;
+      $('fb').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+
+  /** Close a graded run on the server: its totals are the round's, and a student's is filed. */
+  async function finishRun(r) {
+    try {
+      const out = await runCall(`/${r.run.id}/finish`, {});
+      r.score = out.score; r.right = out.right; r.att = out.att; r.longest = out.longest;
+      return out;
+    } catch { return null; }
+  }
+
   /** File a finished round. Best effort and silent on failure: a student who
    *  just played should never be told their practice did not count because a
    *  write failed — the round happened either way, and the local best still
@@ -420,12 +523,13 @@
     } catch { /* silent: see above */ }
   }
 
-  function finish() {
+  async function finish() {
     const r = round;
     if (!r || r.over) return;
     r.over = true;
     clearInterval(tick);
     closePad();
+    const served = r.run ? await finishRun(r) : null; // the server's totals are the round's
     const key = bestKey();
     const prev = local.get(key);
     const isBest = r.att > 0 && (!prev || r.score > prev.score);
@@ -437,7 +541,10 @@
     $('f-game').textContent = $('p-game').textContent;
     $('f-result').textContent = r.att ? `${r.score} points` : 'No answers';
     $('f-best').textContent = isBest && prev ? `New best — up from ${prev.score}.` : isBest ? 'Your first score here. Beat it.' : prev ? `Your best here is ${prev.score}.` : '';
-    saveRound(r);
+    if (r.run) {
+      if (served && served.saved && served.best) $('f-best').textContent = served.best.score > r.score ? `Your best here is ${served.best.score}.` : 'New best — on the board.';
+      renderBoard($('f-lb'), true);
+    } else saveRound(r);
     $('f-score').textContent = r.score;
     $('f-comp').textContent = `${r.right}/${r.att}`;
     $('f-pct').textContent = r.att ? `${Math.round((100 * r.right) / r.att)}%` : '–';
