@@ -21,12 +21,39 @@ jest.mock('../../models/enrollmentCode', () => {
   return { find: (q) => chain(CLASSES.filter(match(q))), findOne: (q) => chain(CLASSES.find(match(q)) || null) };
 });
 
+// Graded solo rounds and accounts, for the class leaderboard: only the shapes the run router uses.
+jest.mock('../../models/drillResult', () => {
+  const ROWS = [];
+  const chain = (v) => ({ lean: () => Promise.resolve(v), sort: () => chain(v) });
+  return {
+    _rows: ROWS,
+    create: async (row) => { ROWS.push({ ...row }); return row; },
+    findOne: (q) => chain([...ROWS].filter((r) => String(r.userId) === String(q.userId) && r.drill === q.drill && (q.graded == null || r.graded === q.graded)).sort((a, b) => b.score - a.score)[0] || null),
+    aggregate: async (pipeline) => {
+      const m = pipeline[0].$match; const ids = m.userId.$in.map(String);
+      const best = new Map();
+      for (const r of ROWS) {
+        if (!ids.includes(String(r.userId)) || r.drill !== m.drill || r.playbook !== m.playbook || r.seconds !== m.seconds || r.graded !== m.graded) continue;
+        const b = best.get(String(r.userId)) || { _id: String(r.userId), score: 0, rounds: 0 };
+        b.score = Math.max(b.score, r.score); b.rounds++; best.set(String(r.userId), b);
+      }
+      return [...best.values()];
+    },
+  };
+});
+jest.mock('../../models/user', () => {
+  const USERS = { 'stu-marcus': { _id: 'stu-marcus', firstName: 'Marcus', lastName: 'Thompson' }, 'stu-other': { _id: 'stu-other', firstName: 'Olivia', lastName: 'Park' } };
+  const chain = (v) => ({ lean: () => Promise.resolve(v), sort: () => chain(v), select: () => chain(v) });
+  return { find: (q) => chain((q._id && q._id.$in ? q._id.$in : []).map(String).filter((id) => USERS[id]).map((id) => USERS[id])), findOne: (q) => chain(USERS[String(q._id)] || null), findById: (id) => chain(USERS[String(id)] || null) };
+});
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const supertest = require('supertest');
 const G = require('../../utils/liveDrill/games');
-const { hostRouter, playRouter, mineRouter, soloRouter, isLiveDrillPlayPath } = require('../../routes/liveDrill');
+const soloRun = require('../../utils/liveDrill/soloRun');
+const { dealPlay, RECENT } = require('../../utils/liveDrill/engine');
+const { hostRouter, playRouter, mineRouter, soloRouter, runRouter, isLiveDrillPlayPath } = require('../../routes/liveDrill');
 
 function makeApp() {
   const app = express();
@@ -34,6 +61,12 @@ function makeApp() {
   app.use('/api/live-drill/host', (req, _res, next) => { req.user = { _id: req.get('X-Test-User') || 'teacher-1' }; next(); }, hostRouter);
   app.use('/api/live-drill/play', playRouter);
   app.use('/api/live-drill/solo', soloRouter); // no user: solo practice is public
+  // Server-scored runs: public; X-Test-Student signs a student in (a session cookie in life)
+  app.use('/api/live-drill/run', (req, _res, next) => {
+    const stu = req.get('X-Test-Student');
+    if (stu) { req.user = { _id: stu, roles: ['student'], firstName: 'Marcus', lastName: 'Thompson' }; req.isAuthenticated = () => true; }
+    next();
+  }, runRouter);
   // Signed-in users: X-Test-Student names a student account; otherwise a teacher is signed in.
   app.use('/api/live-drill/mine', (req, _res, next) => {
     const stu = req.get('X-Test-Student');
@@ -45,7 +78,7 @@ function makeApp() {
   return app;
 }
 
-afterEach(() => G._reset());
+afterEach(() => { G._reset(); soloRun._reset(); });
 
 describe('live drill over HTTP', () => {
   const app = makeApp();
@@ -65,7 +98,7 @@ describe('live drill over HTTP', () => {
   test('the setup lists every drill with its playbooks and its own settings', async () => {
     const r = await req.get('/api/live-drill/host/drills');
     expect(r.status).toBe(200);
-    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m1', 'alg1m2', 'alg1m3', 'alg1m4', 'alg1m5', 'alg1m6', 'alg1m7', 'alg1m8', 'alg1m9', 'alg1m10', 'alg1m11', 'alg1m12', 'alg1m13', 'hgeo1', 'hgeo3', 'hgeo4', 'hgeo5', 'hgeo6', 'hgeo7', 'hgeo8', 'hgeo9', 'hgeo10', 'hgeo11', 'alg2']);
+    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m1', 'alg1m2', 'alg1m3', 'alg1m4', 'alg1m5', 'alg1m6', 'alg1m7', 'alg1m8', 'alg1m9', 'alg1m10', 'alg1m11', 'alg1m12', 'alg1m13', 'hgeo1', 'hgeo3', 'hgeo4', 'hgeo5', 'hgeo6', 'hgeo7', 'hgeo8', 'hgeo9', 'hgeo10', 'hgeo11', 'alg2', 'congruence']);
     expect(r.body.drills.every((d) => d.playbooks.length > 1 && !d.unavailable && d.settings.huddle.secondsPerPlay.length)).toBe(true);
     // the picker groups by course: every drill names one, Math Facts (on every hub) is "Any class", courses come in hub order
     expect(r.body.courses.map((c) => c.id)).toEqual(['algebra', 'geometry', 'algebra2', 'any']);
@@ -214,6 +247,70 @@ describe('live drill over HTTP', () => {
     expect(game.players.get(cal.playerId).cash).toBe(20);
     expect((await req.post(`/api/live-drill/play/${g.code}/target`).set(tok).send({ id: amy.playerId })).status).toBe(409); // nothing pending
     expect((await req.get(`/api/live-drill/play/${g.code}/play`).set(tok)).body.play).toBeDefined();
+  });
+
+  test('a graded fluency run, end to end: the server deals, times and grades; a guest is scored and saved nowhere', async () => {
+    expect(isLiveDrillPlayPath('/live-drill/run/abc/play')).toBe(true); // off the global apiLimiter like /play
+    const hub = await req.get('/api/live-drill/solo/hubs/geometry');
+    expect(hub.body.games.find((g) => g.drill === 'congruence')).toMatchObject({ graded: true, name: 'Congruence Fluency' });
+    expect((await req.post('/api/live-drill/run').send({ drill: 'geometry', book: 'all', seconds: 60 })).status).toBe(400); // not a graded game
+    const start = await req.post('/api/live-drill/run').send({ drill: 'congruence', book: 'basic', seconds: 60 });
+    expect(start.status).toBe(200);
+    expect(start.body).toMatchObject({ drill: 'congruence', playbook: 'basic', seconds: 60, scoring: { gains: [6, 4, 2] } });
+    const id = start.body.id;
+    const seed = soloRun._seedOf(id);
+    const p1 = await req.get(`/api/live-drill/run/${id}/play`);
+    expect(p1.body.n).toBe(1);
+    expect(p1.body.play.answer).toBeUndefined();
+    const full = dealPlay('congruence', 'basic', seed, 1, []);
+    expect(p1.body.play.id).toBe(full.id);
+    const right = await req.post(`/api/live-drill/run/${id}/answer`).send({ n: 1, k: full.answer });
+    expect(right.body).toMatchObject({ ok: true, tier: 0, gain: 6, score: 6, streak: 1 });
+    expect(right.body.revealCard).toMatch(/<svg/);
+    expect((await req.post(`/api/live-drill/run/${id}/answer`).send({ n: 1, k: full.answer })).status).toBe(409);
+    const p2 = await req.get(`/api/live-drill/run/${id}/play`);
+    const full2 = dealPlay('congruence', 'basic', seed, 2, [full.id].slice(0, RECENT));
+    const wrong = await req.post(`/api/live-drill/run/${id}/answer`).send({ n: 2, k: full2.choices.find((c) => c.k !== full2.answer).k });
+    expect(p2.body.n).toBe(2);
+    expect(wrong.body).toMatchObject({ ok: false, gain: -2, score: 4, streak: 0 });
+    const fin = await req.post(`/api/live-drill/run/${id}/finish`).send({});
+    expect(fin.body).toMatchObject({ score: 4, right: 1, att: 2, saved: false });
+    expect((await req.get(`/api/live-drill/run/${id}/play`)).status).toBe(409);
+    expect((await req.get('/api/live-drill/run/nope/play')).status).toBe(404);
+    // a guest gets the empty leaderboard shape, never an error
+    const lb = await req.get('/api/live-drill/run/leaderboard?drill=congruence&book=basic&seconds=60');
+    expect(lb.body).toEqual({ signedIn: false, saves: false, classes: [], mine: null });
+  });
+
+  test('a student\'s graded run is filed and shows on their class leaderboard, classmates by first name and last initial', async () => {
+    const DrillResult = require('../../models/drillResult');
+    DrillResult._rows.length = 0;
+    // a classmate's earlier graded best, and a self-reported round that must NOT count
+    DrillResult._rows.push({ userId: 'stu-other', drill: 'congruence', playbook: 'all', seconds: 60, score: 50, right: 9, attempted: 10, graded: true });
+    DrillResult._rows.push({ userId: 'stu-other', drill: 'congruence', playbook: 'all', seconds: 60, score: 9999, right: 99, attempted: 99, graded: false });
+    const stu = { 'X-Test-Student': 'stu-other' };
+    const start = await req.post('/api/live-drill/run').set(stu).send({ drill: 'congruence', book: 'all', seconds: 60 });
+    const id = start.body.id; const seed = soloRun._seedOf(id);
+    let recent = [];
+    for (let n = 1; n <= 3; n++) {
+      await req.get(`/api/live-drill/run/${id}/play`).set(stu);
+      const full = dealPlay('congruence', 'all', seed, n, recent); recent = [full.id, ...recent].slice(0, RECENT);
+      expect((await req.post(`/api/live-drill/run/${id}/answer`).set(stu).send({ n, k: full.answer })).body.ok).toBe(true);
+    }
+    const fin = await req.post(`/api/live-drill/run/${id}/finish`).set(stu).send({});
+    expect(fin.body).toMatchObject({ score: 18, right: 3, att: 3, saved: true, best: { score: 50 } });
+    const filed = DrillResult._rows.find((r) => r.graded && r.score === 18);
+    expect(filed).toMatchObject({ userId: 'stu-other', hub: 'geometry', drill: 'congruence', playbook: 'all', seconds: 60, graded: true });
+    const lb = await req.get('/api/live-drill/run/leaderboard?drill=congruence&book=all&seconds=60').set(stu);
+    expect(lb.body.saves).toBe(true);
+    expect(lb.body.mine).toEqual({ score: 50, rounds: 2 }); // the graded best, never the 9999
+    expect(lb.body.classes).toHaveLength(1); // class-2, Olivia's class
+    expect(lb.body.classes[0]).toMatchObject({ name: 'Geometry', played: 1, students: 1, you: { rank: 1, score: 50 } });
+    expect(lb.body.classes[0].top).toEqual([{ rank: 1, name: 'Olivia P.', score: 50, you: true }]);
+    // a different selection is a different board
+    const other = await req.get('/api/live-drill/run/leaderboard?drill=congruence&book=right&seconds=60').set(stu);
+    expect(other.body.classes[0].top).toEqual([]);
+    expect(other.body.mine).toBeNull();
   });
 
   test('the Arcade catalogue is public, and /me tells the page whether a teacher is looking', async () => {

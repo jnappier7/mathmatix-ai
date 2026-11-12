@@ -66,6 +66,8 @@ const DRILLS = {
   hgeo11: { native: require('./review/hgeoCh11'), title: 'Honors Geometry · Chapter 11 Review' },
   // Algebra 2 (no Course Planner site yet): one native course drill, a playbook per unit.
   alg2: { native: require('./review/alg2'), title: 'Algebra 2' },
+  // Fluency games: one reflex, fast, on the Math Facts clocks; server-scored solo runs feed a class leaderboard
+  congruence: { native: require('./fluency/congruence'), title: 'Honors Geometry · Triangle Congruence Fluency', scoring: 'facts', graded: true },
 };
 
 const APP_MARKER = '// ===================== app =====================';

@@ -6,7 +6,7 @@
  * best-ever row cannot answer. Guests save nothing; there is no account to save to, and the
  * page keeps its localStorage personal best for them exactly as before.
  *
- * ⚠️ SELF-REPORTED. The round is played entirely in the browser (utils/liveDrill/solo.js deals
+ * ⚠️ SELF-REPORTED unless `graded`. The ordinary round is played entirely in the browser (utils/liveDrill/solo.js deals
  * the questions; nothing is posted back as it goes), so `score`, `right`, `att` and `streak` are
  * whatever the page says they were. That is fine for practice — a student gains nothing real by
  * lying to their own history — but it means this collection must NEVER be treated as assessment
@@ -42,6 +42,10 @@ const drillResultSchema = new Schema({
   right: { type: Number, required: true, min: 0, max: 10000 },
   attempted: { type: Number, required: true, min: 0, max: 10000 },
   streak: { type: Number, min: 0, max: 10000, default: 0 },
+  // TRUE only when the SERVER dealt, timed and graded the round (utils/liveDrill/soloRun.js — the
+  // fluency games). Everything else here is the browser's own word. A class leaderboard reads
+  // graded rounds only; a teacher's practice view may show both, labelled.
+  graded: { type: Boolean, default: false },
 
   playedAt: { type: Date, default: Date.now },
 }, { timestamps: true });
@@ -50,6 +54,8 @@ const drillResultSchema = new Schema({
 // and their best in one game.
 drillResultSchema.index({ userId: 1, playedAt: -1 });
 drillResultSchema.index({ userId: 1, drill: 1, score: -1 });
+// The class leaderboard: a class's students, one game, graded rounds only, best first.
+drillResultSchema.index({ drill: 1, playbook: 1, seconds: 1, graded: 1, userId: 1, score: -1 });
 
 /** Accuracy is derived, never stored — a stored copy is one more thing to disagree. */
 drillResultSchema.virtual('accuracy').get(function accuracy() {

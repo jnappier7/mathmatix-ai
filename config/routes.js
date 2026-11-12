@@ -356,6 +356,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   app.use('/api/live-drill/play', liveDrillRoutes.playRouter);
   // Solo practice (/drill/<hub>): public, GET only, nothing saved — same reason for living up here.
   app.use('/api/live-drill/solo', liveDrillRoutes.soloRouter);
+  // Server-scored solo runs (the fluency games) and their class leaderboard: public like /play,
+  // owned by the run id; a signed-in student's finished run is saved to their account.
+  app.use('/api/live-drill/run', liveDrillRoutes.runRouter);
   // Marketing email opt-out: a signed token in the link is the whole authorization — the
   // reader is in their inbox, not signed in, and mail clients POST here (RFC 8058 one-click).
   // Public, CSRF-exempt (middleware/csrf.js), own limiter. utils/emailUnsubscribe.js.
