@@ -258,6 +258,29 @@ describe('every selectable tutor has current-style art on disk', () => {
             }
         }
     });
+
+    // Celebration clips: the hero (chat-redesign.js) and the phone modal
+    // (gamification.js) each keep a CELEBRATION_CLIPS map. They must agree,
+    // every listed clip must exist, and shop tutors' clips ship silent.
+    const parseClips = (src) => JSON.parse(
+        src.match(/CELEBRATION_CLIPS = (\{[\s\S]*?\});/)[1]
+            .replace(/\/\/.*$/gm, '').replace(/'/g, '"').replace(/,(\s*[}\]])/g, '$1')
+    );
+    const gamification = fs.readFileSync(path.join(__dirname, '../../public/js/modules/gamification.js'), 'utf8');
+    const heroClips = parseClips(redesign);
+    test('hero and phone-modal celebration maps agree', () => {
+        expect(parseClips(gamification)).toEqual(heroClips);
+    });
+    test.each(Object.entries(heroClips))('%s celebration clips are on disk', (id, types) => {
+        expect(types.length).toBeGreaterThan(0);
+        for (const t of types) {
+            const f = path.join(__dirname, '../../public/videos', `${id}_${t}.mp4`);
+            expect(fs.existsSync(f)).toBe(true);
+            if (TUTOR_CONFIG[id] && TUTOR_CONFIG[id].purchasable) {
+                expect(fs.readFileSync(f).includes('soun')).toBe(false);
+            }
+        }
+    });
 });
 
 describe('Dr. G is a gorilla character, never a person of any human heritage', () => {
