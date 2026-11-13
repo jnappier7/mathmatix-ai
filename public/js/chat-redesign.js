@@ -24,12 +24,17 @@
     'mr-nappier': ['levelUp', 'smallcele'],
     'ms-maria': ['levelUp', 'smallcele'],
     'ms-rashida': ['levelUp', 'smallcele'],
-    'mr-wiggles': ['smallcele']
+    'mr-wiggles': ['smallcele'],
+    'mr-lee': ['levelUp', 'smallcele'],
+    'dr-g': ['levelUp', 'smallcele'],
+    'ms-alex': ['levelUp', 'smallcele'],
+    'prof-davies': ['levelUp', 'smallcele'],
+    'mr-sierawski': ['smallcele']
   };
 
   // Cache-buster for /videos/* — prod caches static assets 7 days with no
   // hashing, so bump this whenever a clip is re-exported under the same name.
-  const VIDEO_VERSION = '?v=20261112';
+  const VIDEO_VERSION = '?v=20261113';
 
   // How many idle clips each tutor has on disk ({id}_idle.mp4, {id}_idle2.mp4).
   // Tutors not listed here (and reduced-motion users) keep the static
