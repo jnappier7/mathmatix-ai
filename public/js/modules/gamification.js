@@ -18,7 +18,7 @@ const CELEBRATION_CLIPS = {
     'dr-g': ['levelUp', 'smallcele'],
     'ms-alex': ['levelUp', 'smallcele'],
     'prof-davies': ['levelUp', 'smallcele'],
-    'mr-sierawski': ['smallcele'],
+    'mr-sierawski': ['levelUp', 'smallcele'],
 };
 // smallcele has a webm (~5× smaller) only for the original four.
 const SMALLCELE_WEBM = new Set(['bob', 'maya', 'mr-nappier', 'ms-maria']);
@@ -69,7 +69,7 @@ export function showLevelUpCelebration(currentUser) {
     // original four, with the mp4 as the Safari/legacy fallback.
     const preferWebm = videoType === 'smallcele' && SMALLCELE_WEBM.has(tutorId) &&
         video.canPlayType && video.canPlayType('video/webm; codecs="vp9"');
-    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20261113`;
+    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20261113b`;
 
     if (titleEl && subtitleEl) {
         if (isMilestone) {
