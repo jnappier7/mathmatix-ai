@@ -24,7 +24,7 @@
     'mr-nappier': ['levelUp', 'smallcele'],
     'ms-maria': ['levelUp', 'smallcele'],
     'ms-rashida': ['levelUp', 'smallcele'],
-    'mr-wiggles': ['smallcele'],
+    'mr-wiggles': ['levelUp', 'smallcele'],
     'mr-lee': ['levelUp', 'smallcele'],
     'dr-g': ['levelUp', 'smallcele'],
     'ms-alex': ['levelUp', 'smallcele'],
