@@ -69,7 +69,7 @@ export function showLevelUpCelebration(currentUser) {
     // original four, with the mp4 as the Safari/legacy fallback.
     const preferWebm = videoType === 'smallcele' && SMALLCELE_WEBM.has(tutorId) &&
         video.canPlayType && video.canPlayType('video/webm; codecs="vp9"');
-    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20261113b`;
+    const videoPath = `/videos/${tutorId}_${videoType}.${preferWebm ? 'webm' : 'mp4'}?v=20261115a`;
 
     if (titleEl && subtitleEl) {
         if (isMilestone) {
