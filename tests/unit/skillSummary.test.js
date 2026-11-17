@@ -38,15 +38,35 @@ describe('struggleReason', () => {
 
 describe('summarizeSkillMastery', () => {
   const map = {
-    a: { status: 'mastered', masteryScore: 1, masteredDate: new Date(NOW - 3 * DAY) },   // legacy 0-1 scale
+    a: { status: 'mastered', masteryScore: 1, masteredDate: new Date(NOW - 3 * DAY), totalAttempts: 6 },   // legacy 0-1 scale, practiced
     b: { status: 'learning', masteryScore: 30, lastPracticed: recent },
     c: { status: 'practicing', masteryScore: 50, strugglingAreas: ['distributing'], lastPracticed: recent },
     d: { status: 're-fragile', masteryScore: 70 },
     e: { status: 'ready', masteryScore: 0 },
+    // "Mastered" on paper only: placed out by the screener, inferred from a
+    // prerequisite, or an old seed with no evidence. Prod 2026-11-17: a
+    // roster's 258 "mastered" were 10 practiced + 248 of these.
+    f: { status: 'mastered', masteryScore: 1, provenBy: 'placement', masteredDate: new Date(NOW - DAY) },
+    g: { status: 'mastered', masteryScore: 100, masteryType: 'inferred', masteredDate: new Date(NOW - DAY) },
+    h: { status: 'mastered', masteryScore: 1, masteredDate: new Date(NOW - DAY) },
   };
   test('counts every in-flight state and ignores ready/locked', () => {
     const s = summarizeSkillMastery(map, { c: 'Distributive property' }, NOW);
     expect(s).toMatchObject({ mastered: 1, inProgress: 2, slipping: 1, total: 4 });
+  });
+  test('placed-out mastery is counted apart: not mastered, not a win, not in the average', () => {
+    const s = summarizeSkillMastery(map, {}, NOW);
+    expect(s.placedOut).toBe(3);
+    expect(s.mastered).toBe(1);
+    expect(s.recentlyMastered.map(r => r.skillId)).toEqual(['a']);
+    expect(s.avgMastery).toBe(Math.round((100 + 30 + 50 + 70) / 4));
+  });
+  test('every recent win is listed (no cap of 5)', () => {
+    const many = {};
+    for (let i = 0; i < 9; i++) many['s' + i] = { status: 'mastered', masteryScore: 90, totalAttempts: 3, masteredDate: new Date(NOW - i * DAY) };
+    const s = summarizeSkillMastery(many, {}, NOW);
+    expect(s.recentlyMastered).toHaveLength(9);
+    expect(s.recentlyMasteredCount).toBe(9);
   });
   test('average mastery is normalized to 0-100 (the 287% bug)', () => {
     const s = summarizeSkillMastery(map, {}, NOW);

@@ -2443,7 +2443,12 @@ function updateLearningEngines(user, skillId, diagnosis, observation) {
     bktState = initializeBKT(skillId, 'default');
   }
 
-  bktState = updateBKT(bktState, isCorrect, { hintUsed });
+  // Days since this skill was last observed, so the tracer's temporal decay
+  // actually runs: without it a P(L) from September read the same in
+  // November (16 of 63 prod BKT entries were >30 days stale on 2026-11-17).
+  const lastSeen = bktState.lastObservation ? new Date(bktState.lastObservation).getTime() : 0;
+  const daysSinceLast = lastSeen > 0 ? Math.max(0, (Date.now() - lastSeen) / 86400000) : 0;
+  bktState = updateBKT(bktState, isCorrect, { hintUsed, daysSinceLast });
   writeEngineEntry(user, 'bkt', rawSkillId, bktState);
 
   console.log(`[LearningEngines] BKT ${skillId}: P(L)=${bktState.pLearned.toFixed(3)} (${isCorrect ? '✓' : '✗'})`);

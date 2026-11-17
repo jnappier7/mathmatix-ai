@@ -570,6 +570,18 @@ npm run seed:all:dry   # preflight + plan, no writes
   `dist/page-bundles.manifest.json` for whether the file you touched is bundled, then rebuild and
   commit the regenerated `public/dist/*` alongside the source edit. Pinned by
   `tests/unit/pageBundlesFresh.test.js`, which re-derives each bundle's hash from its sources.
+- **On teacher surfaces, "active" means WORK and "mastered" means PRACTICED.** A conversation's
+  `lastActivity`/`activeMinutes` move whenever the chat page is open, and `status:'mastered'` is also
+  true of placement, inference and evidence-free seeds. Measured on prod 2026-11-17: a roster's 42
+  "active this week" were 4 who had talked to the tutor, and its 258 "mastered" were 10 practiced +
+  248 placed out. `utils/studentActivity.js` carries two clocks (`lastActiveAt`/`weeklyMinutes` =
+  presence, `lastWorkedAt`/`workByWeek` = a message, test module, activity check or drill) and
+  `utils/skillSummary.js` splits `mastered` from `placedOut` via `parentSkillPicture.classifySkill`.
+  Every teacher count — roster, `/classes`, course progress, skill gaps, the Teaching Aide — reads
+  those two, and the live feed's percentage is `firstTryCorrect/firstTryAttempted` (retries and
+  skips excluded). Per-student teacher routes authorize with `teacherHasStudent()` (roster: direct
+  OR class code) — a `{ _id, teacherId }` lookup refuses every class-code student, silently. Pinned
+  by `tests/unit/teacherDataAccuracy.test.js`.
 - **Everything under `public/courses/` is GENERATED — except `public/courses/assets/`.** The course
   site is published from the Course Planner on Mr. Nappier's Mac
   (`~/mathmatix-course-tools/`, `sync_to_repo.sh`), straight to `main`, roughly every two or three

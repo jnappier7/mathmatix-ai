@@ -86,6 +86,55 @@ describe('formatLastActive', () => {
   test('minutes ago', () => expect(TM.formatLastActive(student({ activity: { lastActiveAt: new Date(NOW - 5 * 60e3) } }), NOW)).toBe('5m ago'));
 });
 
+/**
+ * "Active" means WORK. On prod (2026-11-17) 42 "active" students were 4 who
+ * had talked to the tutor, 21 with a few minutes of page time and no
+ * message, and 17 who opened it and left. The work clock (lastWorkedAt /
+ * workByWeek) decides status; presence is reported beside it, never counted.
+ */
+describe('the work clock decides "active"', () => {
+  const opened = student({ activity: { lastActiveAt: new Date(NOW - DAY), lastWorkedAt: null, weeklyMinutes: [3, 0, 0, 0], workByWeek: [0, 0, 0, 0] } });
+  const worked = student({ activity: { lastActiveAt: new Date(NOW - DAY), lastWorkedAt: new Date(NOW - 2 * DAY), weeklyMinutes: [15, 0, 0, 0], workByWeek: [2, 0, 0, 0] } });
+  const lapsed = student({ activity: { lastActiveAt: new Date(NOW - DAY), lastWorkedAt: new Date(NOW - 12 * DAY), weeklyMinutes: [2, 0, 0, 0], workByWeek: [0, 1, 0, 0] } });
+
+  test('opened the tutor this week, did nothing → inactive, and flagged as opened-only', () => {
+    expect(TM.studentStatus(opened, NOW)).toBe('inactive');
+    expect(TM.openedOnly(opened, NOW)).toBe(true);
+    expect(TM.formatLastActive(opened, NOW)).toBe('Opened yesterday, no work yet');
+    expect(TM.daysSinceActive(opened, NOW)).toBeNull();
+  });
+  test('sent a message / took a test this week → active; last active is when they worked', () => {
+    expect(TM.studentStatus(worked, NOW)).toBe('active');
+    expect(TM.openedOnly(worked, NOW)).toBe(false);
+    expect(TM.formatLastActive(worked, NOW)).toBe('2d ago');
+  });
+  test('seen yesterday but last worked 12 days ago → inactive (presence is not engagement)', () => {
+    expect(TM.studentStatus(lapsed, NOW)).toBe('inactive');
+    expect(TM.daysSinceActive(lapsed, NOW)).toBe(12);
+  });
+  test('class tile and its trend agree: activeThisWeek is activeByWeek[0]', () => {
+    const m = TM.classMetrics([opened, worked, lapsed], NOW);
+    expect(m.activeThisWeek).toBe(1);
+    expect(m.activeByWeek).toEqual([1, 1, 0, 0]);
+    expect(m.openedOnly).toBe(2);
+    expect(m.minutesByWeek[0]).toBe(20); // presence minutes still summed, separately
+  });
+  test('the queue says what happened: lapsed by work, not-started by presence', () => {
+    const q = TM.buildActionQueue([opened, lapsed], [], NOW);
+    expect(q.find(i => i.kind === 'not-started')).toMatchObject({ detail: 'opened the tutor yesterday, no work yet' });
+    expect(q.find(i => i.kind === 'lapsed')).toMatchObject({ title: "hasn't worked in 12 days" });
+  });
+  test('payloads without the work clock fall back to presence (old server)', () => {
+    const old = student({ activity: { lastActiveAt: new Date(NOW - DAY), weeklyMinutes: [3, 0, 0, 0] } });
+    expect(TM.studentStatus(old, NOW)).toBe('active');
+    expect(TM.workEvents(old, 0)).toBe(1);
+  });
+  test('placed-out skills are counted apart from mastered', () => {
+    const m = TM.classMetrics([student({ skillSummary: { mastered: 2, placedOut: 18, inProgress: 0, slipping: 0, total: 2, avgMastery: 90, struggling: [], recentlyMastered: [] } })], NOW);
+    expect(m.skills).toMatchObject({ mastered: 2, placedOut: 18, studentsWithData: 1 });
+  });
+});
+
 describe('the dashboard reads these, and invents nothing', () => {
   const src = fs.readFileSync(path.join(__dirname, '../../public/js/teacher-dashboard.js'), 'utf8');
   test('no Math.random() anywhere in the teacher dashboard', () => {

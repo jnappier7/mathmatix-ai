@@ -724,8 +724,12 @@ class TeacherLiveFeed {
 
     renderActivityItem(item) {
         const duration = Math.floor(item.duration || 0);
-        const accuracy = item.problemsAttempted > 0
-            ? Math.round((item.problemsCorrect / item.problemsAttempted) * 100)
+        // Accuracy is first-try: each problem once, scored on the first
+        // attempt. problemsAttempted counts retries and skips too, which
+        // made 64% read as 73% across 62 prod sessions (2026-11-17).
+        const ftAttempted = item.firstTryAttempted || 0;
+        const accuracy = ftAttempted > 0
+            ? Math.round(((item.firstTryCorrect || 0) / ftAttempted) * 100)
             : 0;
 
         // Determine alert class
@@ -763,8 +767,9 @@ class TeacherLiveFeed {
 
                 <div class="activity-meta">
                     ${item.currentTopic ? `<span class="meta-badge topic"><i class="fas fa-book"></i> ${item.currentTopic}</span>` : ''}
-                    ${item.problemsAttempted > 0 ? `<span class="meta-badge problems">${item.problemsCorrect}/${item.problemsAttempted} correct</span>` : ''}
-                    ${accuracy > 0 ? `<span class="meta-badge accuracy"><i class="fas fa-check-circle"></i> ${accuracy}%</span>` : ''}
+                    ${ftAttempted > 0 ? `<span class="meta-badge problems" title="Problems right on the first try">${item.firstTryCorrect || 0}/${ftAttempted} first try</span>` : ''}
+                    ${ftAttempted > 0 ? `<span class="meta-badge accuracy" title="First-try accuracy"><i class="fas fa-check-circle"></i> ${accuracy}%</span>` : ''}
+                    ${item.problemsAttempted > ftAttempted ? `<span class="meta-badge" title="Every attempt, retries and skips included">${item.problemsAttempted} attempts</span>` : ''}
                     ${item.isStruggling && item.strugglingWith ? `<span class="meta-badge struggling"><i class="fas fa-exclamation-triangle"></i> ${item.strugglingWith}</span>` : ''}
                     <span class="meta-badge"><i class="fas fa-clock"></i> ${duration} min</span>
                 </div>
@@ -1426,6 +1431,15 @@ window.addEventListener('beforeunload', () => {
                                from conversations, real lastActiveAt)
      • student.skillSummary  — utils/skillSummary.js (evidence-based struggle)
 
+   "Active" means WORK, not presence. The activity block carries two clocks:
+   lastActiveAt / weeklyMinutes (the chat page was open — a login and a
+   greeting count) and lastWorkedAt / workByWeek (a message to the tutor, a
+   test module, an activity check, a drill). Measured on prod 2026-11-17, 42
+   "active" students were 4 who had talked to the tutor, 21 with a few minutes
+   of page time and no message, and 17 who opened it and left. Status, the
+   active tile, its trend and the lapsed/not-started queue read the work
+   clock; presence is only ever shown as "opened the tutor, no work yet".
+
    Loaded as a plain script in the teacher bundle (window.TeacherMetrics) and
    required directly by jest (module.exports) — no DOM in here, ever.
    ============================================================ */
@@ -1447,19 +1461,38 @@ window.addEventListener('beforeunload', () => {
     return d.getTime();
   }
 
-  /** Real last-active time (activity block first, lastLogin as fallback). */
+  /** Last time the student was SEEN (activity block first, lastLogin as fallback). Presence. */
   function lastActiveAt(student) {
     var a = student && student.activity;
     var t = Math.max(time(a && a.lastActiveAt), time(student && student.lastLogin));
     return t > 0 ? t : null;
   }
 
-  /** Minutes in rolling week i (0 = last 7 days). */
+  /** True when the server sent the work clock (payloads before it fall back to presence). */
+  function hasWorkClock(student) {
+    var a = student && student.activity;
+    return !!(a && Array.isArray(a.workByWeek));
+  }
+
+  /** Last time the student DID WORK: a message, a test, an activity, a drill. */
+  function lastWorkedAt(student) {
+    if (!hasWorkClock(student)) return lastActiveAt(student);
+    var t = time(student.activity.lastWorkedAt);
+    return t > 0 ? t : null;
+  }
+
+  /** Minutes in rolling week i (0 = last 7 days). Presence. */
   function weekMinutes(student, i) {
     var w = student && student.activity && student.activity.weeklyMinutes;
     if (Array.isArray(w)) return Math.max(0, Number(w[i || 0]) || 0);
     // Old payload (no activity block): only "this week" is knowable.
     return (i || 0) === 0 ? Math.max(0, Number(student && student.weeklyActiveTutoringMinutes) || 0) : 0;
+  }
+
+  /** Work events in rolling week i (0 = last 7 days). */
+  function workEvents(student, i) {
+    if (!hasWorkClock(student)) return weekMinutes(student, i) > 0 ? 1 : 0;
+    return Math.max(0, Number(student.activity.workByWeek[i || 0]) || 0);
   }
 
   function strugglingSkills(student) {
@@ -1468,7 +1501,7 @@ window.addEventListener('beforeunload', () => {
   }
 
   /**
-   * 'inactive'   — nothing in 7 days (or never)
+   * 'inactive'   — no WORK in 7 days (or never). Opening the tutor is not work.
    * 'struggling' — active, with recent evidence of struggle on a skill
    *                (string kept for the existing filter/CSS; shown as "Needs help")
    * 'active'     — everyone else
@@ -1477,22 +1510,27 @@ window.addEventListener('beforeunload', () => {
    */
   function studentStatus(student, now) {
     now = now || Date.now();
-    var last = lastActiveAt(student);
+    var last = lastWorkedAt(student);
     if (!last || now - last > INACTIVE_DAYS * DAY_MS) return 'inactive';
     if (strugglingSkills(student).length > 0) return 'struggling';
     return 'active';
   }
 
+  /** Seen in the last 7 days without doing any work: opened the tutor and left. */
+  function openedOnly(student, now) {
+    now = now || Date.now();
+    if (studentStatus(student, now) !== 'inactive') return false;
+    var seen = lastActiveAt(student);
+    return !!seen && now - seen <= INACTIVE_DAYS * DAY_MS;
+  }
+
   function isActiveToday(student, now) {
-    var last = lastActiveAt(student);
+    var last = lastWorkedAt(student);
     return !!last && last >= startOfLocalDay(now || Date.now());
   }
 
-  /** "Today", "Yesterday", "3d ago", "Mar 5", or "Never". */
-  function formatLastActive(student, now) {
-    now = now || Date.now();
-    var last = lastActiveAt(student);
-    if (!last) return 'Never';
+  /** "Just now", "5m ago", "Yesterday", "3d ago", "Mar 5". */
+  function formatAgo(last, now) {
     var today = startOfLocalDay(now);
     if (last >= today) {
       var mins = Math.floor((now - last) / 60000);
@@ -1506,8 +1544,25 @@ window.addEventListener('beforeunload', () => {
     return new Date(last).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: (now - last > 300 * DAY_MS) ? 'numeric' : undefined });
   }
 
+  /**
+   * When the student last WORKED: "Today", "Yesterday", "3d ago", "Mar 5".
+   * A student who has only opened the tutor reads "Opened 2d ago, no work yet",
+   * never "Never" (they were there) and never "2d ago" (they did nothing).
+   */
+  function formatLastActive(student, now) {
+    now = now || Date.now();
+    var worked = lastWorkedAt(student);
+    if (worked) return formatAgo(worked, now);
+    var seen = lastActiveAt(student);
+    if (!seen) return 'Never';
+    var ago = formatAgo(seen, now);
+    if (ago === 'Yesterday' || ago === 'Just now') ago = ago.toLowerCase();
+    return 'Opened ' + ago + ', no work yet';
+  }
+
+  /** Days since the student last WORKED; null if never. */
   function daysSinceActive(student, now) {
-    var last = lastActiveAt(student);
+    var last = lastWorkedAt(student);
     return last ? Math.floor(((now || Date.now()) - last) / DAY_MS) : null;
   }
 
@@ -1521,7 +1576,9 @@ window.addEventListener('beforeunload', () => {
   /**
    * Class-level figures. Every tile reads this one object.
    * minutesByWeek/activeByWeek are REAL history (conversation-backed), so
-   * week-over-week comparisons need no invention.
+   * week-over-week comparisons need no invention. activeByWeek[i] counts
+   * students who did WORK in week i — the same rule as activeThisWeek, so
+   * the tile and its trend agree (activeThisWeek === activeByWeek[0]).
    */
   function classMetrics(students, now) {
     now = now || Date.now();
@@ -1530,6 +1587,7 @@ window.addEventListener('beforeunload', () => {
       total: students.length,
       activeToday: 0,
       activeThisWeek: 0,
+      openedOnly: 0,
       needHelp: 0,
       inactive: 0,
       neverActive: 0,
@@ -1537,30 +1595,32 @@ window.addEventListener('beforeunload', () => {
       activeByWeek: [0, 0, 0, 0],
       avgLevel: null,
       avgMastery: null,
-      skills: { mastered: 0, inProgress: 0, slipping: 0, studentsWithData: 0 }
+      skills: { mastered: 0, placedOut: 0, inProgress: 0, slipping: 0, studentsWithData: 0 }
     };
     var levelSum = 0;
     var masterySum = 0;
     var masteryN = 0;
     students.forEach(function (s) {
       var status = studentStatus(s, now);
-      if (status === 'inactive') m.inactive++;
-      else {
+      if (status === 'inactive') {
+        m.inactive++;
+        if (openedOnly(s, now)) m.openedOnly++;
+      } else {
         m.activeThisWeek++;
         if (status === 'struggling') m.needHelp++;
       }
-      if (!lastActiveAt(s)) m.neverActive++;
+      if (!lastActiveAt(s) && !lastWorkedAt(s)) m.neverActive++;
       if (isActiveToday(s, now)) m.activeToday++;
       for (var i = 0; i < 4; i++) {
-        var mins = weekMinutes(s, i);
-        m.minutesByWeek[i] += mins;
-        if (mins > 0) m.activeByWeek[i]++;
+        m.minutesByWeek[i] += weekMinutes(s, i);
+        if (workEvents(s, i) > 0) m.activeByWeek[i]++;
       }
       levelSum += Number(s.level) || 1;
       var sum = s.skillSummary;
-      if (sum && sum.total > 0) {
+      if (sum && (sum.total > 0 || sum.placedOut > 0)) {
         m.skills.studentsWithData++;
         m.skills.mastered += sum.mastered || 0;
+        m.skills.placedOut += sum.placedOut || 0;
         m.skills.inProgress += sum.inProgress || 0;
         m.skills.slipping += sum.slipping || 0;
         if (typeof sum.avgMastery === 'number') { masterySum += sum.avgMastery; masteryN++; }
@@ -1653,15 +1713,22 @@ window.addEventListener('beforeunload', () => {
       if (status === 'inactive') {
         var days = daysSinceActive(s, now);
         var createdAgo = s.createdAt ? (now - time(s.createdAt)) / DAY_MS : Infinity;
+        var seen = lastActiveAt(s);
+        var seenRecently = !!seen && now - seen <= 30 * DAY_MS;
         if (days !== null && days <= 30) {
           items.push({ kind: 'lapsed', priority: 2, studentId: id, name: name,
-            title: "hasn't been on in " + days + ' days',
-            detail: 'last active ' + formatLastActive(s, now) + (weekMinutes(s, 1) + weekMinutes(s, 2) + weekMinutes(s, 3) > 0 ? ' · was working before' : ''),
-            at: lastActiveAt(s) });
-        } else if (days === null && createdAgo <= 30) {
+            title: "hasn't worked in " + days + ' days',
+            detail: 'last worked ' + formatAgo(lastWorkedAt(s), now)
+              + (seen && seen > lastWorkedAt(s) + DAY_MS ? ' · opened the tutor ' + formatAgo(seen, now).toLowerCase() + ', no work' : '')
+              + (workEvents(s, 1) + workEvents(s, 2) + workEvents(s, 3) > 0 ? ' · was working before' : ''),
+            at: lastWorkedAt(s) });
+        } else if (days === null && (createdAgo <= 30 || seenRecently)) {
           items.push({ kind: 'not-started', priority: 4, studentId: id, name: name,
-            title: "hasn't started yet", detail: 'joined ' + Math.max(0, Math.round(createdAgo)) + ' day' + (Math.round(createdAgo) === 1 ? '' : 's') + ' ago',
-            at: time(s.createdAt) });
+            title: "hasn't started yet",
+            detail: seenRecently
+              ? 'opened the tutor ' + formatAgo(seen, now).toLowerCase() + ', no work yet'
+              : 'joined ' + Math.max(0, Math.round(createdAgo)) + ' day' + (Math.round(createdAgo) === 1 ? '' : 's') + ' ago',
+            at: seenRecently ? seen : time(s.createdAt) });
         }
         return;
       }
@@ -1727,9 +1794,12 @@ window.addEventListener('beforeunload', () => {
   var api = {
     INACTIVE_DAYS: INACTIVE_DAYS,
     lastActiveAt: lastActiveAt,
+    lastWorkedAt: lastWorkedAt,
     weekMinutes: weekMinutes,
+    workEvents: workEvents,
     strugglingSkills: strugglingSkills,
     studentStatus: studentStatus,
+    openedOnly: openedOnly,
     isActiveToday: isActiveToday,
     formatLastActive: formatLastActive,
     daysSinceActive: daysSinceActive,
@@ -2496,7 +2566,9 @@ window.addEventListener('beforeunload', () => {
     }
     var hist = function (arr) { return arr.slice().reverse(); }; // oldest → newest
     el.innerHTML =
-      tile('active', 'Active this week', m.activeThisWeek + '<span class="td-of"> of ' + m.total + '</span>', delta(act), sparkline(hist(m.activeByWeek), { label: 'Students active, last 4 weeks: ' + hist(m.activeByWeek).join(', ') }), 'active') +
+      tile('active', 'Active this week', m.activeThisWeek + '<span class="td-of"> of ' + m.total + '</span>',
+        delta(act) + (m.openedOnly ? '<span class="td-delta td-opened"> · ' + m.openedOnly + ' opened the tutor, no work</span>' : ''),
+        sparkline(hist(m.activeByWeek), { label: 'Students who did work, last 4 weeks: ' + hist(m.activeByWeek).join(', ') }), 'active') +
       tile('minutes', 'Minutes this week', m.minutesByWeek[0].toLocaleString(), delta(mins, 'm'), sparkline(hist(m.minutesByWeek), { label: 'Minutes, last 4 weeks: ' + hist(m.minutesByWeek).join(', ') }), null) +
       tile('help', 'Need help', String(m.needHelp), m.needHelp ? '<span class="td-delta">stuck on a skill, with evidence</span>' : '<span class="td-delta td-up">nobody stuck</span>', '', 'struggling') +
       tile('wins', 'Skills mastered', String(wins.length), '<span class="td-delta">last 30 days</span>', '', null);
@@ -2581,7 +2653,9 @@ window.addEventListener('beforeunload', () => {
       return;
     }
     el.innerHTML = '<ul class="td-live-list">' + live.map(function (l) {
-      var acc = l.problemsAttempted ? Math.round((l.problemsCorrect / l.problemsAttempted) * 100) + '% on ' + l.problemsAttempted : '';
+      // First-try accuracy (each problem once); the raw attempt count includes retries and skips.
+      var acc = l.firstTryAttempted ? Math.round(((l.firstTryCorrect || 0) / l.firstTryAttempted) * 100) + '% first try on ' + l.firstTryAttempted
+        : (l.problemsAttempted ? l.problemsAttempted + ' attempt' + (l.problemsAttempted === 1 ? '' : 's') : '');
       return '<li>' + avatar(l.studentId, l.studentName) +
         '<div><button type="button" class="td-name" data-td-do="profile" data-id="' + esc(l.studentId) + '">' + esc(l.studentName) + '</button>' +
         (l.isStruggling ? ' <span class="td-chip td-chip-stuck">needs a hand</span>' : '') +
@@ -2730,7 +2804,7 @@ window.addEventListener('beforeunload', () => {
   var COLS = [
     { key: 'name', label: 'Student', sort: function (s) { return TM.fullName(s).toLowerCase(); } },
     { key: 'status', label: 'Status', sort: function (s) { return { struggling: 0, active: 1, inactive: 2 }[TM.studentStatus(s)]; } },
-    { key: 'last', label: 'Last active', sort: function (s) { return -(TM.lastActiveAt(s) || 0); } },
+    { key: 'last', label: 'Last worked', sort: function (s) { return -(TM.lastWorkedAt(s) || 0); } },
     { key: 'week', label: 'Last 4 weeks', sort: function (s) { return -TM.weekMinutes(s, 0); } },
     { key: 'skills', label: 'Skills', sort: function (s) { return -((s.skillSummary && s.skillSummary.mastered) || 0); } },
     { key: 'focus', label: 'Needs help with', sort: function (s) { var k = TM.strugglingSkills(s)[0]; return k ? (k.name || k.skillId).toLowerCase() : '~'; } }
@@ -5950,7 +6024,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         student,
                         message: days === null
                             ? `<strong>${escapeHtml(fullName)}</strong> hasn't started yet`
-                            : `<strong>${escapeHtml(fullName)}</strong> hasn't been on in ${days} days`,
+                            : `<strong>${escapeHtml(fullName)}</strong> hasn't worked in ${days} days`,
                         actionLabel: 'Send reminder',
                         actionClass: 'action-remind',
                         actionType: 'remind',

@@ -6,7 +6,7 @@
  * lastLogin-only "last seen" told teachers real students had "Never" logged in.
  */
 const {
-  WEEK_MS, getEffectiveWeeklyMinutes, resolveLastActiveAt, bucketConversations, applyActivity,
+  WEEK_MS, getEffectiveWeeklyMinutes, resolveLastActiveAt, bucketConversations, bucketWorkEvents, applyActivity, workedThisWeek,
 } = require('../../utils/studentActivity');
 
 const NOW = new Date('2026-10-14T12:00:00Z').getTime();
@@ -77,6 +77,43 @@ describe('applyActivity', () => {
   test('a student with no conversations still gets a zeroed block', () => {
     const students = [{ _id: 'z' }];
     applyActivity(students, new Map(), NOW);
-    expect(students[0].activity).toEqual({ lastActiveAt: null, weeklyMinutes: [0, 0, 0, 0], sessionsThisWeek: 0 });
+    expect(students[0].activity).toEqual({ lastActiveAt: null, lastWorkedAt: null, weeklyMinutes: [0, 0, 0, 0], workByWeek: [0, 0, 0, 0], sessionsThisWeek: 0 });
+  });
+});
+
+/**
+ * Presence is not work. A conversation's lastActivity and minutes move when
+ * the chat page is open; only a message, a test, an activity check or a
+ * drill is work. Prod 2026-11-17: 42 "active" = 4 who talked to the tutor,
+ * 21 with page minutes and no message, 17 who opened it and left.
+ */
+describe('bucketWorkEvents — the work clock', () => {
+  test('counts work per rolling week and keeps the newest work of any age', () => {
+    const idx = bucketConversations([{ userId: 'a', lastActivity: new Date(NOW - DAY), activeMinutes: 4 }], { now: NOW });
+    bucketWorkEvents(idx, [
+      { userId: 'a', at: new Date(NOW - 2 * DAY) },
+      { userId: 'a', at: new Date(NOW - 3 * DAY) },
+      { userId: 'a', at: new Date(NOW - 10 * DAY) },
+      { userId: 'b', at: new Date(NOW - 90 * DAY) }, // beyond the window: lastWorkedAt only
+    ], { now: NOW });
+    expect(idx.get('a').workByWeek).toEqual([2, 1, 0, 0]);
+    expect(idx.get('a').lastWorkedAt.getTime()).toBe(NOW - 2 * DAY);
+    expect(idx.get('b').workByWeek).toEqual([0, 0, 0, 0]);
+    expect(idx.get('b').lastWorkedAt.getTime()).toBe(NOW - 90 * DAY);
+  });
+  test('page minutes without a work event leave the work clock empty', () => {
+    const idx = bucketConversations([{ userId: 'a', lastActivity: new Date(NOW - DAY), activeMinutes: 4 }], { now: NOW });
+    bucketWorkEvents(idx, [], { now: NOW });
+    const students = [{ _id: 'a' }];
+    applyActivity(students, idx, NOW);
+    expect(students[0].activity.weeklyMinutes).toEqual([4, 0, 0, 0]);
+    expect(students[0].activity.workByWeek).toEqual([0, 0, 0, 0]);
+    expect(students[0].activity.lastWorkedAt).toBeNull();
+    expect(workedThisWeek(students[0])).toBe(false);
+  });
+  test('workedThisWeek is the server-side "active"', () => {
+    expect(workedThisWeek({ activity: { workByWeek: [1, 0, 0, 0] } })).toBe(true);
+    expect(workedThisWeek({ activity: { workByWeek: [0, 3, 0, 0] } })).toBe(false);
+    expect(workedThisWeek({ lastLogin: new Date() })).toBe(false);
   });
 });
