@@ -1,7 +1,7 @@
 /**
  * Mathmatix Arcade — the one front door to every game (/arcade, public/arcade.html).
  *
- * The catalogue the page renders: the four whole-class game types (one card each, in the order
+ * The catalogue the page renders: the five whole-class game types (one card each, in the order
  * a teacher meets them), the solo-practice hubs (a card per course, from solo.HUBS — never a
  * second list of courses), and the public practice tests. Everything a card says comes from here,
  * so the Arcade, the host's setup page and the lobby can't describe different games.
@@ -44,6 +44,14 @@ const GAMES = [
     how: 'Three right in a row opens the vault: cash, a jackpot, a grab from someone ahead of you, a gadget that fogs every other screen… or a decoy. A wrong answer trips the alarm and locks your screen, so guessing doesn\'t pay.',
     icon: 'vault',
     players: 'Whole class · solo safecrackers',
+  },
+  {
+    id: 'knockout',
+    name: 'Knockout Arena',
+    tagline: 'Drive. Grab the right orb. Last car running.',
+    how: 'A number goes up and every student drives a rocket car for an orb whose fact makes it. There is always one orb short, so someone is knocked out each round — and answers facts in the pit to drive again. Math Facts only.',
+    icon: 'arena',
+    players: 'Whole class · solo drivers · Math Facts',
   },
 ];
 

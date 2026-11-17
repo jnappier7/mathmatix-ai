@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261111b">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261117">
 </head>
 <body>
 <div class="wrap">
@@ -67,12 +67,13 @@
         <div class="stepbody">
           <div class="modes compact" id="modes" role="group" aria-label="Game"></div>
           <div class="row">
-            <div id="opt-drive"><span class="lbl">Clock</span><div class="seg-ctl" id="o-seconds"></div></div>
+            <div id="opt-drive"><span class="lbl" id="o-seconds-l">Clock</span><div class="seg-ctl" id="o-seconds"></div></div>
             <div id="opt-huddle" hidden style="display:flex;gap:18px;flex-wrap:wrap">
-              <div><span class="lbl">Plays</span><div class="seg-ctl" id="o-plays"></div></div>
-              <div><span class="lbl">Seconds per play</span><div class="seg-ctl" id="o-spp"></div></div>
+              <div id="o-plays-w"><span class="lbl">Plays</span><div class="seg-ctl" id="o-plays"></div></div>
+              <div><span class="lbl" id="o-spp-l">Seconds per play</span><div class="seg-ctl" id="o-spp"></div></div>
             </div>
           </div>
+          <p class="muted" id="mode-note" hidden style="margin:8px 0 0"></p>
         </div>
       </section>
 
@@ -152,6 +153,16 @@
         </div>
       </div>
 
+      <!-- knockout arena: the whole pitch, the pit, the Fact Champion race -->
+      <div id="ko-pane" class="kopane" hidden>
+        <div class="arena"><canvas id="ko-pitch" role="img" aria-label="The arena"></canvas></div>
+        <div class="koside">
+          <div><h3>Still driving</h3><div class="big" id="ko-alive">–</div><div class="muted" id="ko-gate"></div></div>
+          <div><h3>The pit<span id="ko-pit-n"></span></h3><ol id="ko-pit"></ol></div>
+          <div><h3>🏆 Fact Champion race</h3><ol id="ko-champs"></ol></div>
+        </div>
+      </div>
+
       <!-- huddle: the play itself, large -->
       <div id="huddle-pane" class="big" hidden style="display:flex;flex-direction:column;gap:12px">
         <div class="hbar">
@@ -202,8 +213,9 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261111b"></script>
+<script src="/js/live-drill/common.js?v=20261117"></script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/host.js?v=20261111b"></script>
+<script src="/js/live-drill/knockout.js?v=20261117"></script>
+<script src="/js/live-drill/host.js?v=20261117"></script>
 </body>
 </html>

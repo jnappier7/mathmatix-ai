@@ -21,6 +21,7 @@
   let huddleKey = '';
   let fetching = false;
   let account = null; // { name } when a signed-in student is on this page
+  let arena = null; // Knockout Arena: the canvas this student drives on (knockout.js)
 
   const store = {
     get() { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch { return null; } },
@@ -79,6 +80,7 @@
     if (es) es.close(); es = null;
     clearInterval(tick);
     store.clear(); seat = null; st = null; cur = null; huddleKey = '';
+    koReset();
     $('gone-msg').textContent = msg;
     show('gone');
   }
@@ -108,6 +110,8 @@
     es = new EventSource(`${API}/${encodeURIComponent(seat.code)}/stream?t=${encodeURIComponent(seat.token)}`);
     es.addEventListener('state', (ev) => { try { apply(JSON.parse(ev.data)); } catch { /* malformed */ } });
     es.addEventListener('kicked', () => gone('Your teacher removed you from this game.'));
+    // Knockout Arena: where every other car is, ~3× a second, outside the state stream
+    es.addEventListener('cars', (ev) => { if (arena) { try { arena.cars(JSON.parse(ev.data)); } catch { /* malformed */ } } });
     es.onerror = async () => {
       try { apply(await api(`/${encodeURIComponent(seat.code)}/state`)); } catch (err) {
         if (err.status === 401) gone('You are no longer in this game. Join again with the code.');
@@ -124,7 +128,7 @@
     if (prev && prev.phase !== 'lobby') watchTouchdowns(prev, next);
     st = next;
     // Back to the lobby — a "Run it back" — so nothing from the last game stays on screen.
-    if (st.phase === 'lobby') { cur = null; huddleKey = ''; heistWait = null; fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip'); }
+    if (st.phase === 'lobby') { cur = null; huddleKey = ''; heistWait = null; fxShown = ''; $('live').classList.remove('fx-smoke', 'fx-flip'); koReset(); }
     if (st.phase === 'lobby') { show('lobby'); renderLobby(); }
     else if (st.phase === 'over') { show('final'); renderFinal(); }
     else { show('live'); renderLive(); }
@@ -139,10 +143,11 @@
     const t = st.me.team;
     const onHill = st.mode === 'hill';
     const onHeist = st.mode === 'heist';
-    $('l-team').className = onHill ? 'teamcard hill' : onHeist ? 'teamcard heist' : `teamcard t${t}`;
-    $('l-teamname').textContent = onHill ? 'King of the Hill' : onHeist ? 'Heist' : `Team ${teamName(t)}`;
+    const onKo = st.mode === 'knockout';
+    $('l-team').className = onHill ? 'teamcard hill' : onHeist ? 'teamcard heist' : onKo ? 'teamcard ko' : `teamcard t${t}`;
+    $('l-teamname').textContent = onHill ? 'King of the Hill' : onHeist ? 'Heist' : onKo ? 'Knockout Arena' : `Team ${teamName(t)}`;
     $('l-name').textContent = st.me.name;
-    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : onHill ? 'every climber for themselves' : onHeist ? 'every safecracker for themselves' : 'Huddle'}`;
+    $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : onHill ? 'every climber for themselves' : onHeist ? 'every safecracker for themselves' : onKo ? 'last car running wins' : 'Huddle'}`;
     const rules = window.LiveDrill.rulesHTML(st);
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
   }
@@ -154,6 +159,10 @@
     $('live').classList.toggle('mode-heist', onHeist);
     $('p-hill').hidden = !onHill;
     $('p-heist').hidden = !onHeist;
+    const onKo = st.mode === 'knockout';
+    $('live').classList.toggle('mode-knockout', onKo);
+    if (!onKo) { $('p-ko').hidden = true; $('p-arena').hidden = true; $('live').classList.remove('driving'); }
+    if (onKo) { renderMyKnockout(); return; }
     if (onHill) { renderMyHill(); return; }
     if (onHeist) { renderMyHeist(); return; }
     st.teams.forEach((t, i) => { $('s-n' + i).textContent = t.name; $('s-p' + i).textContent = t.pts; });
@@ -199,6 +208,63 @@
     $('p-hill').innerHTML = `<div class="climb">${scene}
       <div class="hnums"><span class="v">${Math.round(h.h)}</span><span class="k">of ${h.summit}</span></div>
       <div class="boulder"><span class="k">${h.king && h.king.me ? 'Shield' : 'Boulder'}</span><span class="dots">${dots}</span></div></div>${status}`;
+  }
+
+  // ---- knockout arena: drive for an orb; in the pit, answer your way back ----
+  let koHtml = '';
+  function koReset() {
+    if (arena) arena.stop();
+    arena = null; koHtml = '';
+    $('p-arena').hidden = true; $('p-ko').hidden = true;
+    $('live').classList.remove('driving', 'mode-knockout');
+  }
+
+  /** The strip above the play: who is left, and — in the pit — how close the way back is. */
+  function renderMyKnockout() {
+    const k = st.knockout;
+    if (!k) return;
+    $('p-team').className = 'pill ko';
+    $('p-team').textContent = k.in ? `${k.alive} left` : k.ready ? 'Back next round' : 'In the pit';
+    $('p-me').textContent = `${st.me.name}${k.in ? (k.held ? ` · holding ${k.held}` : ' · grab an orb') : ` · ${k.benchPts} pit ${k.benchPts === 1 ? 'point' : 'points'}`}`;
+    let html = '';
+    if (!k.in) {
+      const dots = Array.from({ length: k.need }, (_, i) => `<span class="${i < k.row ? 'on' : ''}"></span>`).join('');
+      const top = k.champ && k.champ.top;
+      const champ = top ? (top.me ? '🏆 You lead the Fact Champion race.' : `🏆 ${esc(top.name)} leads the Fact Champion race with ${top.pts}.`) : '';
+      const pts = `<div><span class="k">Pit points</span><span class="v">${k.benchPts}</span></div>`;
+      if (k.ready) html = `<div class="pitline ok">You earned your way back. You drive next round — keep answering for pit points.</div>`;
+      else if (k.gateOpen) html = `<div class="pit"><div><span class="k">In a row</span><span class="dots">${dots}</span></div><div><span class="k">Or right in all</span><span class="v">${Math.min(k.since, k.needTotal)}/${k.needTotal}</span></div>${pts}</div><div class="pitline"><b>${k.need} right in a row</b>, or <b>${k.needTotal} right in all</b>, puts you back in the arena. ${champ}</div>`;
+      else html = `<div class="pit">${pts}</div><div class="pitline">The gate is closed — no more comebacks. Every right answer still scores for <b>Fact Champion</b>, fast ones double. ${champ}</div>`;
+    }
+    $('p-ko').hidden = !html;
+    if (html !== koHtml) { koHtml = html; $('p-ko').innerHTML = html; }
+  }
+
+  /** Knockout Arena, live: the arena while this student is in it, the ordinary play screen in the pit. */
+  function knockoutLive() {
+    const k = st.knockout;
+    if (!k) return;
+    const code = encodeURIComponent(seat.code);
+    $('live').classList.toggle('driving', k.in);
+    $('p-arena').hidden = !k.in;
+    if (!arena && window.LiveDrillKnockout) {
+      arena = window.LiveDrillKnockout.mount($('p-pitch'), {
+        me: st.me.id,
+        serverNow,
+        grab: (body) => api(`/${code}/grab`, { method: 'POST', body: JSON.stringify(body) }),
+        // fire and forget: a lost position report costs nothing, and must never queue behind a retry
+        pos: (x, y) => { fetch(`${API}/${code}/pos`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Live-Drill-Token': seat.token }, body: JSON.stringify({ x, y }), credentials: 'omit', cache: 'no-store' }).catch(() => {}); },
+        onGone: () => gone('You are no longer in this game.'),
+      });
+    }
+    if (arena) arena.update(st);
+    if (k.in) {
+      // out of the pit: whatever play was on screen is gone
+      if (cur || pad) { cur = null; closePad(); $('p-card').innerHTML = ''; $('p-choices').innerHTML = ''; $('fb').className = 'fb'; $('fb').innerHTML = ''; }
+      return;
+    }
+    // (a ready student keeps answering: the points still count, and the next round pulls them out)
+    if (!cur && !fetching) nextDrivePlay();
   }
 
   // ---- heist: cash, the alarm, the safes, the gadgets ----
@@ -365,6 +431,14 @@
     heistTick();
     const c = $('s-clock');
     let left = null;
+    if (st.mode === 'knockout' && st.phase === 'live') {
+      // the clock is the gate: after it closes there are no comebacks, and no clock — it ends at one car
+      const gl = ((st.knockout || {}).gateAt || 0) - serverNow();
+      $('s-ck').textContent = gl > 0 ? 'Gate closes' : 'Sudden death';
+      c.textContent = gl > 0 ? mmss(gl) : '—';
+      c.classList.toggle('low', gl > 0 && gl <= 15000);
+      return;
+    }
     if (st.mode !== 'huddle' && st.phase === 'live') { $('s-ck').textContent = 'Clock'; left = st.endsAt - serverNow(); }
     else if (st.mode === 'huddle' && st.round) {
       $('s-ck').textContent = st.round.closed ? `Play ${st.round.n}/${st.totalPlays}` : `Play ${st.round.n}`;
@@ -377,6 +451,7 @@
 
   function renderLive() {
     renderScore();
+    if (st.mode === 'knockout') { knockoutLive(); return; }
     if (st.mode !== 'huddle') { if (!cur && !fetching) nextDrivePlay(); return; }
     renderHuddle();
   }
@@ -408,6 +483,7 @@
     pad = { onSubmit, value: '', locked: false, minus: !!allowMinus };
     $('p-choices').hidden = true; $('p-choices').innerHTML = '';
     $('p-pad').hidden = false;
+    $('p-pad').classList.remove('locked'); // a fresh pad: the last answer's lock must not dim these keys
     $('live').classList.add('typing');
     $('keys-hint') && ($('keys-hint').textContent = 'Type with the keys or the pad. Enter sends.');
     const key = (k, label) => `<button type="button" data-key="${k}" aria-label="${label || k}">${k}</button>`;
@@ -489,6 +565,23 @@
           $('fb').className = 'fb bad';
           $('fb').innerHTML = `<span class="bigtxt">🚨 Alarm · ${MINUS}${money(-hz.step)}</span><span class="why">You ${typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`}. ${r.tell}</span>`;
           setTimeout(() => showAlarm(hz.lockUntil), 1600); // read the tell first, then the lock
+        }
+        return;
+      }
+      if (r.knockout) {
+        // the pit: every right answer is a step back to the arena and a point in the Fact Champion race
+        const b = r.knockout;
+        if (r.ok) {
+          const way = b.ready ? 'You drive next round!' : b.gateOpen ? `${b.row} in a row · ${Math.min(b.since, b.needTotal)}/${b.needTotal} in all` : 'Fact Champion race';
+          $('fb').className = `fb good${b.ready ? ' crack' : ''}`;
+          $('fb').innerHTML = `<span class="bigtxt">${b.fluent ? '⚡ Fluent' : 'Right'} · +${b.pts} pit ${b.pts === 1 ? 'point' : 'points'}</span><span class="why">${(r.ms / 1000).toFixed(1)} s · ${way}</span>`;
+          setTimeout(() => { cur = null; nextDrivePlay(); }, b.ready ? 900 : typed ? 380 : 650);
+        } else {
+          const picked = typed ? `typed ${esc(showNum(r.picked))}` : `picked ${(cur.play.choices.find((c) => c.k === k) || {}).html || ''}`;
+          $('fb').className = 'fb bad';
+          $('fb').innerHTML = `<span class="bigtxt">Miss · the streak starts over</span><span class="why">You ${picked}. ${r.tell}${b.gateOpen ? ` Your ${Math.min(b.since, b.needTotal)}/${b.needTotal} right in all still counts.` : ''}</span><button class="next" id="nx">Next play</button>`;
+          $('nx').focus();
+          $('nx').onclick = () => { cur = null; nextDrivePlay(); };
         }
         return;
       }
@@ -610,8 +703,19 @@
       h.textContent = hz.rank === 1 ? '🏆 Top of the heist' : `#${hz.rank} of ${hz.of}`;
       $('f-place').textContent = hz.rank === 1 ? `You walked out with ${money(hz.cash)}.` : `You walked out with ${money(hz.cash)}${hz.leader ? ` · 🏆 ${hz.leader.name} took ${money(hz.leader.cash)}` : ''}.`;
     }
-    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : onHeist && st.heist ? money(st.heist.cash) : me.yards;
-    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : onHeist ? 'Your cash' : 'Your yards';
+    const onKo = st.mode === 'knockout';
+    $('final').classList.toggle('mode-knockout', onKo);
+    if (onKo && st.knockout) {
+      const k = st.knockout;
+      const top = k.champ && k.champ.top;
+      $('f-place').hidden = false;
+      $('f-mid').textContent = `#${k.place}`;
+      h.className = k.place === 1 ? 'king' : '';
+      h.textContent = k.place === 1 ? '🏁 Last car running' : `#${k.place} of ${k.of}`;
+      $('f-place').textContent = [k.winner && !k.winner.me ? `${k.winner.name} won the arena.` : '', top ? (top.me ? `🏆 You are the Fact Champion with ${top.pts} pit points.` : `🏆 Fact Champion: ${top.name}, ${top.pts} pit points.`) : ''].filter(Boolean).join(' ');
+    }
+    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : onHeist && st.heist ? money(st.heist.cash) : onKo && st.knockout ? st.knockout.grabbed : me.yards;
+    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : onHeist ? 'Your cash' : onKo ? 'Orbs grabbed' : 'Your yards';
     $('f-comp').textContent = `${me.comp}/${me.att}`;
     $('f-pct').textContent = me.att ? Math.round((100 * me.comp) / me.att) + '%' : '–';
     $('f-best').textContent = me.best;
