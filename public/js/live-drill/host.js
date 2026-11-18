@@ -192,8 +192,19 @@
     const games = S.games && S.games.length ? S.games : Object.entries(MODE_LABEL).map(([id, name]) => ({ id, name, tagline: '' }));
     $('modes').innerHTML = games.map((g) => `<button type="button" class="mode" id="m-${esc(g.id)}" data-id="${esc(g.id)}" aria-pressed="${g.id === S.mode}"><b>${esc(g.name)}</b>${g.tagline ? `<span>${esc(g.tagline)}</span>` : ''}</button>`).join('');
     $('modes').querySelectorAll('.mode').forEach((b) => { b.onclick = () => { S.mode = b.dataset.id; renderSetup(); }; });
+    // Knockout Arena uses both clocks: the game clock is the gate (how long comebacks stay open),
+    // and "seconds per play" is how long each round lasts.
+    const ko = S.mode === 'knockout';
     $('opt-drive').hidden = S.mode === 'huddle'; // Team Drive, the hill and the heist all run on one clock
-    $('opt-huddle').hidden = S.mode !== 'huddle';
+    $('opt-huddle').hidden = S.mode !== 'huddle' && !ko;
+    $('o-plays-w').hidden = ko;
+    $('o-seconds-l').textContent = ko ? 'Comebacks stay open for' : 'Clock';
+    $('o-spp-l').textContent = ko ? 'Seconds per round' : 'Seconds per play';
+    // …and it builds its orbs from one operation's facts, so it plays the Math Facts bank only.
+    const koOk = !ko || (!!d.focusable && ['all', 'add', 'sub', 'mul', 'div'].includes(S.playbook));
+    $('mode-note').hidden = koOk;
+    if (!koOk) $('mode-note').textContent = 'Knockout Arena plays Math Facts (Mixed, Addition, Subtraction, Multiplication or Division). Pick Math Facts in step 2.';
+    $('open').disabled = !koOk;
     // Each drill brings its own clocks (a fact takes seconds, an algebra play half a minute).
     const st = d.settings || S.settings;
     if (!st.drive.seconds.includes(S.seconds)) S.seconds = st.drive.defaultSeconds;
@@ -208,7 +219,7 @@
     // what the lobby will say, in one line
     const cls = S.classes.find((c) => c.id === S.classId);
     const game = games.find((g) => g.id === S.mode) || { name: MODE_LABEL[S.mode] || S.mode };
-    const when = S.mode === 'huddle' ? `${S.plays} plays · ${S.spp}s each` : mmss(S.seconds * 1000);
+    const when = S.mode === 'huddle' ? `${S.plays} plays · ${S.spp}s each` : ko ? `${S.spp}s rounds · comebacks for ${mmss(S.seconds * 1000)}` : mmss(S.seconds * 1000);
     const what = picked.length ? (book && book.key !== secKey && inSec.length > 1 ? `${secLabel} · ${book.name}` : secLabel) : book && books.length > 1 ? book.name : '';
     $('summary').innerHTML = [cls ? esc(cls.name) : 'Join by code', esc(d.name || d.title || ''), esc(what), esc(game.name), when]
       .filter(Boolean).map((x) => `<span>${x}</span>`).join('<i>·</i>');
@@ -272,6 +283,7 @@
       apply(st);
     } catch (e) { $('setup-err').textContent = e.message; }
     $('open').disabled = false;
+    renderSetup(); // (a mode that can't play this drill keeps the button off)
   };
 
   // ---------------- live connection ----------------
@@ -279,6 +291,8 @@
     if (es) es.close();
     es = new EventSource(`${API}/games/${encodeURIComponent(code)}/stream`);
     es.addEventListener('state', (ev) => { try { apply(JSON.parse(ev.data)); } catch { /* malformed */ } });
+    // Knockout Arena: every car's position, ~3× a second, outside the state stream
+    es.addEventListener('cars', (ev) => { if (pitch) { try { pitch.cars(JSON.parse(ev.data)); } catch { /* malformed */ } } });
     es.onerror = async () => {
       // EventSource retries on its own; just check the game still exists.
       try { apply(await api(`/games/${encodeURIComponent(code)}`)); } catch (e) {
@@ -328,7 +342,9 @@
     return st.mode === 'huddle' && st.round && st.round.closed ? 'reveal' : 'live';
   }
   /** The stands lean in as either ball crosses midfield: 0 at the 50, 1 at the goal line. */
-  const hypeOf = (st) => (st.hill
+  const hypeOf = (st) => (st.knockout
+    ? Math.max(0, 1 - (st.knockout.alive - 1) / 6) // knockout: the room tightens as the last few cars are left
+    : st.hill
     ? Math.max(0, ...st.hill.climbers.map((c) => (c.h - 40) / 60)) // the hill: the crowd leans in near the top
     : st.heist
       ? Math.max(0, 1 - (st.endsAt - serverNow()) / 45000) // the heist: the room tightens over the last 45 s
@@ -354,6 +370,14 @@
       else if (fresh.some((f) => f.type === 'safe' || f.type === 'crack') && t - (cue.safeAt || 0) > 900) { cue.safeAt = t; SND.safe(); }
       if (fresh.some((f) => f.type === 'grab' || f.type === 'switch' || f.type === 'shakedown') && t - (cue.grabAt || 0) > 1200) { cue.grabAt = t; SND.blitz(); }
       if (fresh.some((f) => f.type === 'gadget')) SND.smoke();
+    }
+    if (st.mode === 'knockout' && prev.knockout && st.knockout) {
+      const a = prev.knockout.round; const b = st.knockout.round;
+      // a new number goes up; a round closes and cars go out; someone drives back in
+      if (a && b && b.n > a.n) SND.chime();
+      if (a && b && a.n === b.n && !a.closed && b.closed) { if ((b.out || []).length) SND.rumble(); else SND.cheer(false); }
+      const since = Math.max(0, ...(prev.feed || []).map((f) => f.at));
+      if ((st.feed || []).some((f) => f.at > since && f.type === 'back')) SND.blitz();
     }
     if (st.mode === 'drive') {
       // a blitz landed since the last state — one whoosh, rate-limited (a big class blitzes often)
@@ -407,7 +431,7 @@
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
     $('l-count').textContent = `${st.players.length} player${st.players.length === 1 ? '' : 's'}${st.gameNumber > 1 ? ` · game ${st.gameNumber}` : ''}`;
     $('kick').disabled = st.players.length === 0;
-    const solo = st.mode === 'hill' || st.mode === 'heist';
+    const solo = st.mode === 'hill' || st.mode === 'heist' || st.mode === 'knockout';
     $('rosters').classList.toggle('solo', solo);
     $('rosters').innerHTML = solo ? soloRoster(st) : st.teams.map((t, i) => {
       const ps = st.players.filter((p) => p.team === i);
@@ -434,12 +458,13 @@
   function modeName(st) {
     if (st.mode === 'hill') return `King of the Hill, ${mmss(st.seconds * 1000)}`;
     if (st.mode === 'heist') return `Heist, ${mmss(st.seconds * 1000)}`;
+    if (st.mode === 'knockout') return `Knockout Arena, ${st.secondsPerPlay}s rounds`;
     return st.mode === 'drive' ? `Team Drive, ${mmss(st.seconds * 1000)}` : `Huddle, ${st.totalPlays} plays`;
   }
-  const MODE_LABEL = { drive: 'Team Drive', huddle: 'Huddle', hill: 'King of the Hill', heist: 'Heist' };
+  const MODE_LABEL = { drive: 'Team Drive', huddle: 'Huddle', hill: 'King of the Hill', heist: 'Heist', knockout: 'Knockout Arena' };
   /** The hill and the heist have no teams: one list of players, each still tappable to remove. */
   function soloRoster(st) {
-    return `<div class="roster"><h3>${st.mode === 'heist' ? 'Crew' : 'Climbers'}<span class="muted" style="font-size:1rem">${st.players.length}</span></h3><div class="chips">${
+    return `<div class="roster"><h3>${st.mode === 'heist' ? 'Crew' : st.mode === 'knockout' ? 'Drivers' : 'Climbers'}<span class="muted" style="font-size:1rem">${st.players.length}</span></h3><div class="chips">${
       st.players.map((p) => (openChip === p.id
         ? `<span class="chipmenu${p.away ? ' away' : ''}">${esc(p.name)}<button class="rm" data-act="kick" data-id="${p.id}">Remove</button><button data-act="close">✕</button></span>`
         : `<button class="chip${p.away ? ' away' : ''}" data-act="open" data-id="${p.id}" title="${p.linked ? 'Signed in' : 'Joined with the code'}${p.away ? ' · screen closed' : ''}">${esc(p.name)}${p.linked ? '<span class="acct" aria-label="signed in">✓</span>' : ''}</button>`)).join('')
@@ -461,6 +486,15 @@
   function renderClock() {
     if (!game || game.phase === 'lobby' || game.phase === 'over') return;
     const c = $('s-clock');
+    if (game.mode === 'knockout') {
+      // the clock is the gate; after it there is no clock — the game ends at one car
+      const gl = ((game.knockout || {}).gateAt || 0) - serverNow();
+      $('s-ck').textContent = gl > 0 ? 'Comebacks close in' : 'Sudden death';
+      c.textContent = gl > 0 ? mmss(gl) : '—';
+      c.classList.toggle('low', gl > 0 && gl <= 15000);
+      if (gl > 0) finalFive(`k${game.code}:${game.gameNumber}`, gl);
+      return;
+    }
     if (game.mode !== 'huddle') {
       $('s-ck').textContent = 'Clock';
       const left = game.endsAt - serverNow();
@@ -501,6 +535,15 @@
     $('live-body').classList.toggle('mode-heist', onHeist);
     $('hill-pane').hidden = !onHill;
     $('heist-pane').hidden = !onHeist;
+    const onKo = st.mode === 'knockout';
+    $('live-body').classList.toggle('mode-knockout', onKo);
+    $('ko-pane').hidden = !onKo;
+    if (onKo) {
+      $('live-body').classList.remove('mode-huddle');
+      ['drive-pane', 'huddle-pane', 'h-next', 'h-keys'].forEach((id) => { $(id).hidden = true; });
+      renderKnockout(st);
+      return;
+    }
     if (onHill || onHeist) {
       $('live-body').classList.remove('mode-huddle');
       ['drive-pane', 'huddle-pane', 'h-next', 'h-keys'].forEach((id) => { $(id).hidden = true; });
@@ -955,6 +998,40 @@
     }).join('') || '<span class="muted">Safes, grabs and gadgets show up here.</span>';
   }
 
+  // ---------------- knockout arena ----------------
+  let pitch = null; // the projector's view of the arena (knockout.js, no car of its own)
+  function renderKnockout(st) {
+    const k = st.knockout;
+    if (!k) return;
+    if (!pitch && window.LiveDrillKnockout) pitch = window.LiveDrillKnockout.mount($('ko-pitch'), { serverNow });
+    if (pitch) pitch.update(st);
+    $('ko-alive').textContent = `${k.alive} of ${k.of}`;
+    $('ko-gate').textContent = k.gateOpen ? 'Comebacks are open' : 'The gate is closed — last car wins';
+    $('ko-pit-n').textContent = k.bench.length ? ` ${k.bench.length}` : '';
+    $('ko-pit').innerHTML = k.bench.map((p) => `<li class="${p.ready ? 'ready' : ''}"><span>${esc(p.name)}</span><span class="n">${p.ready ? 'back next round' : k.gateOpen ? `${p.row} in a row · ${p.since} in all` : `${p.pts} pts`}</span></li>`).join('')
+      || '<li><span class="muted">Nobody is out yet.</span></li>';
+    $('ko-champs').innerHTML = k.champs.map((p, i) => `<li><span>${i + 1}. ${esc(p.name)}</span><span class="n">${p.pts}</span></li>`).join('')
+      || '<li><span class="muted">Pit answers score here.</span></li>';
+  }
+
+  /** Knockout Arena's final: the last car, the Fact Champion, and every driver's line. */
+  function renderKnockoutFinal(st, f) {
+    const k = f.knockout;
+    const h = $('f-result');
+    h.className = 'king';
+    h.textContent = k.winner ? `🏁 ${k.winner} ${k.sole ? 'is the last car running' : 'wins the arena'}` : 'Game over';
+    $('f-picks').hidden = true;
+    const award = (label, a, one, many) => (a ? `<div class="win"><span class="k">${label}</span><span class="v">${esc(a.name)}</span><span class="muted">${a.n} ${a.n === 1 ? one : many}</span></div>` : '');
+    const rows = k.standings.map((p) => `<tr><td class="num">${p.place}</td><td>${esc(p.name)}${p.saved ? ' <span class="acct" title="Signed in">✓</span>' : ''}</td><td>${p.alive ? 'Still driving' : `Out in round ${p.outRound}`}</td>`
+      + `<td class="num">${p.grabbed}</td><td class="num">${p.knocked}</td><td class="num">${p.wrong}</td><td class="num">${p.comebacks}</td><td class="num">${p.benchRight}</td><td class="num"><b>${p.benchPts}</b></td></tr>`).join('');
+    $('f-mvps').innerHTML = `<div class="panel kofinal"><div class="winners">`
+      + `<div class="win"><span class="k">Last car running</span><span class="v">${esc(k.winner || '–')}</span><span class="muted">${k.rounds} ${k.rounds === 1 ? 'round' : 'rounds'}</span></div>`
+      + (k.champion ? `<div class="win champ"><span class="k">🏆 Fact Champion</span><span class="v">${esc(k.champion.name)}</span><span class="muted">${k.champion.n} pit points</span></div>` : '')
+      + award('Orb hog', k.awards.hog, 'orb grabbed', 'orbs grabbed') + award('Comeback kid', k.awards.comeback, 'comeback', 'comebacks')
+      + `</div><div class="tablewrap"><table><thead><tr><th class="num">#</th><th>Driver</th><th>Finish</th><th class="num">Orbs</th><th class="num">Knockouts</th><th class="num">Wrong orbs</th><th class="num">Comebacks</th><th class="num">Pit right</th><th class="num">Pit points</th></tr></thead><tbody>${rows}</tbody></table></div>`
+      + '<p class="muted">Knockouts = extra orbs held when a round closed. Pit answers are graded and timed like any Math Facts game — the fact tracker on this page is built from them.</p></div>';
+  }
+
   /** The heist's final: the standings and the awards, in place of the team result. */
   function renderHeistFinal(st, f) {
     const hz = f.heist;
@@ -992,6 +1069,7 @@
     const f = st.final || { mvps: [[], []], film: [], pct: 0, att: 0 };
     $('final').classList.toggle('mode-hill', st.mode === 'hill');
     $('final').classList.toggle('mode-heist', st.mode === 'heist');
+    $('final').classList.toggle('mode-knockout', st.mode === 'knockout');
     $('f-acc').textContent = f.att ? f.pct + '%' : '–';
     const [a, b] = st.teams;
     const win = a.pts !== b.pts ? (a.pts > b.pts ? 0 : 1) : (a.pos !== b.pos ? (a.pos > b.pos ? 0 : 1) : -1);
@@ -1005,6 +1083,7 @@
       + st.teams.map((t, i) => (t.blitzes ? `<span class="t${i}">⚡ ${esc(t.name)}: ${t.blitzes} ${t.blitzes === 1 ? 'blitz' : 'blitzes'}</span>` : '')).join('');
     if (f.hill) renderHillFinal(st, f);
     else if (f.heist) renderHeistFinal(st, f);
+    else if (f.knockout) renderKnockoutFinal(st, f);
     else $('f-mvps').innerHTML = st.teams.map((t, i) => `<div class="panel t${i}"><h3>${esc(t.name)} · top players</h3>${
       f.mvps[i].length ? `<ol>${f.mvps[i].map((p) => `<li>${esc(p.name)} <span>${p.yards} yds · ${p.comp}/${p.att}</span></li>`).join('')}</ol>` : '<p class="muted">No plays run.</p>'
     }</div>`).join('');
@@ -1025,7 +1104,7 @@
     const el = $('f-players');
     if (!el) return;
     // King of the Hill and the Heist already list everyone in their standings.
-    if (st.mode === 'hill' || st.mode === 'heist' || !players.length) { el.hidden = true; el.innerHTML = ''; return; }
+    if (st.mode === 'hill' || st.mode === 'heist' || st.mode === 'knockout' || !players.length) { el.hidden = true; el.innerHTML = ''; return; }
     el.hidden = false;
     lastScores = { code: st.code, game: st.gameNumber, players, teams: st.teams };
     const unit = st.mode === 'drive' ? 'yds' : 'pts';
@@ -1149,8 +1228,8 @@
       if (!drills.some((d) => d.id === S.drill && !d.unavailable)) S.drill = (drills.find((d) => !d.unavailable) || drills[0]).id;
       // Opened from the Arcade (/live-drill?mode=heist): start on that game.
       const wantMode = new URLSearchParams(location.search).get('mode');
-      if (['drive', 'huddle', 'hill', 'heist'].includes(wantMode)) S.mode = wantMode;
-      if (!['drive', 'huddle', 'hill', 'heist'].includes(S.mode)) S.mode = 'drive';
+      if (Object.keys(MODE_LABEL).includes(wantMode)) S.mode = wantMode;
+      if (!Object.keys(MODE_LABEL).includes(S.mode)) S.mode = 'drive';
       renderSetup();
       wireSearch();
       show('setup');

@@ -196,6 +196,7 @@
     const typed = r.typed ? ` <b>Type</b> each answer — fluent is right in ${s(r.fluentSec)} or less.` : '';
     if (r.hill) return hillRulesHTML(st, r, typed);
     if (r.heist) return heistRulesHTML(st, r, typed);
+    if (r.knockout) return knockoutRulesHTML(st, r);
     const change = r.canChange ? ` Changed your mind? ${r.typed ? 'Type it again' : 'Tap another choice'} before the reveal — your <b>last</b> answer counts, timed from when you sent it.` : '';
     const p6 = r.pickSix;
     return `<h3>How scoring works</h3><p class="lead">${lead}${typed}${change}</p><div class="rgrid">`
@@ -206,6 +207,20 @@
       + (r.blitz ? `<div class="rule"><span class="rk">⚡ Blitz</span><span class="rv"><b>${r.blitz.every} in a row</b> blitzes the other team: their ball goes back <b class="b">${r.blitz.yards}</b> yards' worth (scaled for team size like every push). Nobody picks a target — it's the team you're playing.</span></div>` : '')
       + (p6 ? `<div class="rule"><span class="rk">Pick six</span><span class="rv">Teams of ${p6.minTeam} or more: <b>everyone</b> on the team right on the same play is a pick six — <b class="g">+${p6.points}</b> points, and the other team's ball goes back to the ${p6.resetPos}. One miss, no pick. Make sure your whole team has it.</span></div>` : '')
       + `<div class="rule"><span class="rk">Winner</span><span class="rv">Most points. Tied? Farther downfield.</span></div>`
+      + '</div>';
+  }
+
+  /** Knockout Arena's rules — the same server numbers (games.rulesFor → knockout.rules). */
+  function knockoutRulesHTML(st, r) {
+    const k = r.knockout;
+    return `<h3>How Knockout Arena works</h3><p class="lead">Every car for itself. A number goes up; drive into an orb whose fact <b>makes that number</b>. Last car running wins.</p><div class="rgrid">`
+      + `<div class="rule"><span class="rk">One orb short</span><span class="rv">Every round has <b>one fewer</b> right orb than cars, and <b>${k.roundSec} s</b> on the clock. End a round holding none and you are <b class="b">out</b>.</span></div>`
+      + `<div class="rule"><span class="rk">One spare</span><span class="rv">You can hold <b>${k.maxHold}</b> right orbs. The spare leaves another car without one — but carrying an orb slows you down.</span></div>`
+      + `<div class="rule"><span class="rk">Wrong orb</span><span class="rv">You slow down for <b>${k.slowSec} s</b> and <b class="b">drop every orb</b> you hold. Read it before you hit it.</span></div>`
+      + `<div class="rule"><span class="rk">The pit</span><span class="rv">Out is not over: type facts in the pit. <b class="g">${k.comeback} right in a row</b>, or <b class="g">${k.comebackTotal} right in all</b>, and you drive again next round.</span></div>`
+      + `<div class="rule"><span class="rk">🏆 Fact Champion</span><span class="rv">Every right answer in the pit scores: <b class="g">+${k.benchPoints[0]}</b> in ${k.fluentSec} s or less, <b class="g">+${k.benchPoints[1]}</b> after. Most pit points is the Fact Champion — a second winner.</span></div>`
+      + `<div class="rule"><span class="rk">The gate</span><span class="rv">Comebacks stop after <b>${mmss(k.gateSec * 1000)}</b>. Then it is sudden death to one car.</span></div>`
+      + `<div class="rule"><span class="rk">Driving</span><span class="rv">Arrow keys drive and space boosts. On a touch screen, drag to drive and tap with a second finger to boost.</span></div>`
       + '</div>';
   }
 

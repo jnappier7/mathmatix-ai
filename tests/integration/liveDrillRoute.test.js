@@ -221,6 +221,59 @@ describe('live drill over HTTP', () => {
     expect(pv.heist).toMatchObject({ cash: 450, rank: 1, effect: null, gadgets: [] }); // the finder's own screen is clear
   });
 
+  test('knockout arena, end to end: drive to an orb, the server rules it, the pit answers its way back', async () => {
+    const K = require('../../utils/liveDrill/knockout');
+    // Math Facts only: any other drill is refused before a lobby opens
+    expect((await req.post('/api/live-drill/host/games').send({ drill: 'geometry', playbook: 'all', mode: 'knockout' })).status).toBe(400);
+    const g = await host({ drill: 'facts', playbook: 'mul', mode: 'knockout', seconds: 120, secondsPerPlay: 10 });
+    expect(g.rules.knockout).toMatchObject({ comeback: 3, comebackTotal: 6, roundSec: 10, gateSec: 120 });
+    const [a, b, c] = [await join(g.code, 'Ana'), await join(g.code, 'Ben'), await join(g.code, 'Cy')];
+    const tok = (p) => ({ 'X-Live-Drill-Token': p.token });
+    await req.post(`/api/live-drill/host/games/${g.code}/start`);
+    const game = G.getGame(g.code);
+    // what a phone is sent: the chips, their paths — and nothing about which are right
+    const st = (await req.get(`/api/live-drill/play/${g.code}/state`).set(tok(a))).body;
+    expect(st.knockout).toMatchObject({ in: true, alive: 3, of: 3, gateOpen: true });
+    expect(st.knockout.round.chips.filter((x) => x.ok !== undefined)).toHaveLength(0);
+    expect(st.knockout.spawn).toMatchObject({ round: 1 });
+    // a position report is a 204 and lands on the server; a bad token is a 401
+    expect((await req.post(`/api/live-drill/play/${g.code}/pos`).set(tok(a)).send({ x: 50, y: 60 })).status).toBe(204);
+    expect(game.players.get(a.playerId).ko).toMatchObject({ x: 50, y: 60 });
+    expect((await req.post(`/api/live-drill/play/${g.code}/pos`).send({ x: 1, y: 1 })).status).toBe(401);
+    // drive two cars onto the two right orbs (the device reports where it is; the server checks it)
+    const grab = async (p) => {
+      const r = game.ko.round;
+      const chip = r.chips.find((x) => x.ok && !x.by);
+      const at = K.chipAt(chip, r.world, Date.now());
+      Object.assign(game.players.get(p.playerId).ko, { x: at.x, y: at.y, posAt: Date.now() });
+      return req.post(`/api/live-drill/play/${g.code}/grab`).set(tok(p)).send({ round: r.n, chip: chip.id, x: at.x, y: at.y });
+    };
+    expect((await grab(a)).body).toMatchObject({ ok: true, held: 1 });
+    expect((await grab(b)).body).toMatchObject({ ok: true, held: 1 });
+    // the round closed on the last right orb: Cy is out, and now every screen is told what the orbs were
+    const after = (await req.get(`/api/live-drill/play/${g.code}/state`).set(tok(c))).body;
+    expect(after.knockout).toMatchObject({ in: false, alive: 2 });
+    expect(after.knockout.round).toMatchObject({ closed: true, out: ['Cy'] });
+    expect(after.knockout.round.chips.every((x) => typeof x.ok === 'boolean')).toBe(true);
+    // a car in the arena is not dealt a play; the pit is, and its answers are graded Math Facts answers
+    expect((await req.get(`/api/live-drill/play/${g.code}/play`).set(tok(a))).status).toBe(409);
+    for (let i = 0; i < 3; i++) {
+      const cur = (await req.get(`/api/live-drill/play/${g.code}/play`).set(tok(c))).body;
+      expect(cur.play.input).toBe('number');
+      const r = await req.post(`/api/live-drill/play/${g.code}/answer`).set(tok(c)).send({ n: cur.n, k: G.playAt(game, cur.n).answer });
+      expect(r.body).toMatchObject({ ok: true, knockout: { row: i + 1, ready: i === 2 } });
+      expect(r.body.knockout.pts).toBeGreaterThan(0);
+    }
+    const hv = (await req.get(`/api/live-drill/host/games/${g.code}`)).body;
+    expect(hv.knockout.bench).toEqual([expect.objectContaining({ name: 'Cy', ready: true })]);
+    expect(hv.knockout.champs[0]).toMatchObject({ name: 'Cy' });
+    // the teacher ends it: the final names the winner, the Fact Champion and every driver
+    const fin = (await req.post(`/api/live-drill/host/games/${g.code}/end`)).body;
+    expect(fin.final.knockout.champion).toMatchObject({ name: 'Cy' });
+    expect(fin.final.knockout.standings.map((p) => p.name).slice(-1)).toEqual(['Cy']);
+    expect(fin.final.facts.students.some((x) => x.name === 'Cy')).toBe(true);
+  });
+
   test('a grab is the opener\'s own pick — offered only the classmates above, and the server refuses a name below', async () => {
     const g = await host({ drill: 'geometry', playbook: 'all', mode: 'heist', seconds: 120 });
     const amy = await join(g.code, 'Amy'); const ben = await join(g.code, 'Ben'); const cal = await join(g.code, 'Cal');
@@ -316,7 +369,7 @@ describe('live drill over HTTP', () => {
   test('the Arcade catalogue is public, and /me tells the page whether a teacher is looking', async () => {
     const cat = await req.get('/api/live-drill/solo/arcade');
     expect(cat.status).toBe(200);
-    expect(cat.body.games.map((g) => g.id)).toEqual(['drive', 'huddle', 'hill', 'heist']);
+    expect(cat.body.games.map((g) => g.id)).toEqual(['drive', 'huddle', 'hill', 'heist', 'knockout']);
     expect(cat.body.hubs.length).toBeGreaterThan(0);
     expect(cat.body.tests.map((t) => t.id)).toEqual(['act', 'sat', 'preact']);
     const guest = await req.get('/api/live-drill/solo/me');

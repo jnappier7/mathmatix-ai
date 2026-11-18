@@ -11,7 +11,7 @@
     return r.json();
   }
 
-  // ---- the card art: four little inline scenes, one per game, in the drill's own palette ----
+  // ---- the card art: little inline scenes, one per game, in the drill's own palette ----
   const ART = {
     field: `<svg viewBox="0 0 200 110" aria-hidden="true"><rect width="200" height="110" rx="8" fill="#2d6a3e"/>
       ${[20, 40, 60, 80, 100, 120, 140, 160, 180].map((x) => `<line x1="${x}" y1="10" x2="${x}" y2="100" stroke="#eef3ec" stroke-opacity=".55" stroke-width="${x === 100 ? 2 : 1}"/>`).join('')}
@@ -33,6 +33,13 @@
       <circle cx="100" cy="55" r="5" fill="#ffb547"/><rect x="128" y="48" width="8" height="14" rx="2" fill="#8d93ad"/>
       <text x="160" y="40" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="900" font-size="20" fill="#ffb547">$</text>
       <text x="22" y="86" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="900" font-size="20" fill="#3ccf7e">$</text><text x="28" y="30" font-size="16">🚨</text></svg>`,
+    arena: `<svg viewBox="0 0 200 110" aria-hidden="true"><rect width="200" height="110" rx="8" fill="#0a0f2a"/>
+      <rect x="8" y="8" width="184" height="94" rx="16" fill="#141c44" stroke="#35e0ff" stroke-width="2.5"/>
+      <line x1="100" y1="8" x2="100" y2="102" stroke="#35e0ff" stroke-opacity=".4" stroke-width="1.5"/><circle cx="100" cy="55" r="17" fill="none" stroke="#35e0ff" stroke-opacity=".4" stroke-width="1.5"/>
+      ${[[58, 30, '7×8'], [146, 34, '6×9'], [128, 80, '8×7']].map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="13" fill="#f4f8ff" stroke="#35e0ff" stroke-width="2"/><text x="${x}" y="${y + 3.5}" text-anchor="middle" font-family="Atkinson Hyperlegible, sans-serif" font-weight="700" font-size="9" fill="#05070f">${t}</text>`).join('')}
+      <g transform="translate(64 74) rotate(-24)"><polygon points="-12,-4 -30,0 -12,4" fill="#ffd35a"/><rect x="-13" y="-7" width="27" height="14" rx="5" fill="#ff9a1f"/><rect x="-3" y="-5" width="10" height="10" rx="3" fill="#05070f" opacity=".75"/></g>
+      <g transform="translate(160 66) rotate(200)"><rect x="-13" y="-7" width="27" height="14" rx="5" fill="#4aa8ff"/><rect x="-3" y="-5" width="10" height="10" rx="3" fill="#05070f" opacity=".75"/></g>
+      <rect x="78" y="12" width="44" height="16" rx="4" fill="#080c20" stroke="#35e0ff" stroke-width="1.5"/><text x="100" y="24" text-anchor="middle" font-family="Big Shoulders Display, Impact, sans-serif" font-weight="800" font-size="11" fill="#eef6ff">MAKE 56</text></svg>`,
   };
 
   let me = { signedIn: false, teacher: false, saves: false };
@@ -72,7 +79,7 @@
     try {
       const r = await getJSON('/api/live-drill/mine');
       if (!r.student || !r.games || !r.games.length) return;
-      const what = { drive: 'Team Drive', huddle: 'Huddle', hill: 'King of the Hill', heist: 'Heist' };
+      const what = { drive: 'Team Drive', huddle: 'Huddle', hill: 'King of the Hill', heist: 'Heist', knockout: 'Knockout Arena' };
       $('live-now').hidden = false;
       $('live-now').innerHTML = `<span class="eyebrow">Live now</span>` + r.games.map((g) => `<div class="lrow"><span><b>${esc(g.className || 'Your class')}</b> · ${esc(what[g.mode] || g.mode)}${g.hostName ? ` · ${esc(g.hostName)}` : ''}</span><a class="go sm" href="/play?code=${encodeURIComponent(g.code)}">Join</a></div>`).join('');
     } catch { /* not signed in, or no games */ }
