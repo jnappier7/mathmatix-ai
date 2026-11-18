@@ -251,8 +251,9 @@
     return `<h3>How the hill works</h3><p class="lead"><b>${mmss(st.seconds * 1000)}</b> on one clock — every climber for themselves.${typed}</p><div class="rgrid">`
       + `<div class="rule"><span class="rk">Right answer</span><span class="rv">Climb <b class="g">+${fast.gain}</b> in ${s(fast.within)} · <b class="g">+${mid.gain}</b> in ${s(mid.within)} · <b class="g">+${slow.gain}</b> after</span></div>`
       + `<div class="rule"><span class="rk">Wrong answer</span><span class="rv">Slip <b class="b">−${r.sack}</b></span></div>`
-      + `<div class="rule"><span class="rk">Boulder</span><span class="rv"><b>${h.boulderEvery} in a row</b> rolls a boulder onto the climber <b>just above you</b>: <b class="b">−${h.knockMin}</b> to <b class="b">−${h.knockMax}</b> — the higher they are, the farther they fall. Knocked down? You're steady for ${s(h.steadySec)}.</span></div>`
-      + `<div class="rule"><span class="rk">The king</span><span class="rv">Highest climber wears the crown, and it's heavy: the king climbs at ${h.kingStepPct}% speed. ${h.shieldEvery} in a row raises a 🛡 shield that stops one boulder.</span></div>`
+      + `<div class="rule"><span class="rk">Boulder</span><span class="rv"><b>${h.boulderEvery} in a row</b> earns a boulder — <b>you pick who takes it</b> from the climbers <b>above you</b>, within ${h.reach} of you: <b class="b">−${h.knockMin}</b> to <b class="b">−${h.knockMax}</b>, the higher they are, the farther they fall. Or keep climbing. Knocked down? You're steady for ${s(h.steadySec)} — nobody can hit you again.</span></div>`
+      + `<div class="rule"><span class="rk">Shield</span><span class="rv"><b>${h.shieldEvery} in a row</b> raises a 🛡 shield (anyone) that stops the next boulder.</span></div>`
+      + `<div class="rule"><span class="rk">The king</span><span class="rv">Highest climber wears the crown, and it's heavy: the king climbs at ${h.kingStepPct}% speed.</span></div>`
       + `<div class="rule"><span class="rk">Winner</span><span class="rv">Highest at the buzzer. Summit is ${h.summit}.</span></div>`
       + '</div>';
   }
