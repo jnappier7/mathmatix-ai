@@ -404,7 +404,7 @@ function rulesFor(game) {
     fluentSec: FLUENT_MS / 1000,
     noAnswer: huddle ? sc.noAnswer : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode] || null,
-    hill: game.mode === 'hill' ? hill.rules() : null,
+    hill: game.mode === 'hill' ? hill.rules(scoringFor(game)) : null,
     heist: game.mode === 'heist' ? heist.rules(sc) : null,
     knockout: game.mode === 'knockout' ? knockout.rules(game) : null,
     tdPoints: TD_POINTS,
@@ -639,6 +639,14 @@ function currentPlay(game, player) {
     // a grab or a switch waiting for its target comes before the next play too (a reconnect sees the same choice)
     if (player.pick) return { n: player.n, pick: { kind: player.pick.kind, options: heist.pickOptions(game, player) } };
   }
+  if (game.mode === 'hill' && player.boulder) {
+    // a boulder waiting for its target comes before the next play (a reconnect sees the same choice);
+    // if everyone it was offered has moved out of reach or gone steady, it is dropped
+    player.lastSeen = now();
+    const options = hill.pickOptions(game, player, now());
+    if (options.length) return { n: player.n, pick: { kind: 'boulder', options } };
+    player.boulder = null;
+  }
   const play = playAt(game, player.n);
   if (!player.issuedAt) player.issuedAt = now();
   player.lastSeen = now();
@@ -678,6 +686,7 @@ function answer(game, player, n, k) {
     if (game.mode === 'heist' && heist.locked(player, now())) throw new GameError(409, 'The alarm is still ringing.');
     if (game.mode === 'heist' && player.safe) throw new GameError(409, 'Open your safe first.');
     if (game.mode === 'heist' && player.pick) throw new GameError(409, 'Pick your target first.');
+    if (game.mode === 'hill' && player.boulder && hill.pickOptions(game, player, now()).length) throw new GameError(409, 'Roll your boulder first.');
     if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
     const play = playAt(game, n);
     k = readAnswer(play, k);
@@ -685,7 +694,7 @@ function answer(game, player, n, k) {
     const res = applyAnswer(game, player, play, n, k, ms);
     player.n++; player.issuedAt = null;
     if (game.mode === 'hill') {
-      res.hill = hill.onAnswer(game, player, res, now(), (item) => pushFeed(game, item));
+      res.hill = hill.onAnswer(game, player, res, scoringFor(game), now(), (item) => pushFeed(game, item));
     } else if (game.mode === 'heist') {
       res.heist = heist.onAnswer(game, player, res, scoringFor(game), now(), (item) => pushFeed(game, { ...item, team: player.team }));
     } else {
@@ -736,8 +745,18 @@ function openSafe(game, player, idx) {
   return r;
 }
 
-/** Heist: the classmate a pending grab or switch lands on — only ever someone above the student. */
+/**
+ * Heist: the classmate a pending grab or switch lands on — only ever someone above the student.
+ * Hill: the climber a pending boulder lands on — only ever someone above, within reach, not steady.
+ */
 function pickTarget(game, player, targetId) {
+  if (game.mode === 'hill') {
+    if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
+    player.lastSeen = now();
+    const r = heistCall(() => hill.throwAt(game, player, targetId, scoringFor(game), now(), (item) => pushFeed(game, item)));
+    touch(game);
+    return r;
+  }
   heistOpen(game);
   player.lastSeen = now();
   const r = heistCall(() => heist.pickTarget(game, player, targetId, scoringFor(game), now(), (item) => pushFeed(game, { ...item, team: player.team })));

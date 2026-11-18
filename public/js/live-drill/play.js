@@ -185,12 +185,14 @@
   function renderMyHill() {
     const h = st.hill;
     if (!h) return;
+    // a boulder waiting for its target (a reconnect, or a state update that beat the play fetch)
+    if (st.phase === 'live' && h.pick && heistWait !== 'pick' && !cur) showTargets('boulder', h.pick.options);
     $('p-team').className = 'pill hill';
     $('p-team').textContent = h.king && h.king.me ? '👑 King' : `#${h.rank} of ${h.of}`;
     $('p-me').textContent = `${st.me.name} · streak ${st.me.streak}`;
     const dots = Array.from({ length: 3 }, (_, i) => `<span class="${i < 3 - h.toBoulder ? 'on' : ''}"></span>`).join('');
     const status = h.hit ? `<div class="hit">🪨 ${esc(h.hit.by)} knocked you down!${h.steady ? ' You\'re steady for a moment.' : ''}</div>`
-      : h.king && h.king.me ? `<div class="crownline">👑 You're the king.${h.shield ? ' 🛡 Shield up.' : ` ${h.toBoulder} more in a row for a shield.`}</div>`
+      : h.king && h.king.me ? `<div class="crownline">👑 You're the king.${h.shield ? ' 🛡 Shield up.' : ` ${h.toShield} more in a row for a shield.`}</div>`
       : h.above ? `<div class="above"><b>${esc(h.above.name)}</b> is ${Math.max(1, Math.round(h.above.gap))} above you${h.king && h.king.name !== h.above.name ? ` · 👑 ${esc(h.king.name)}` : ''}</div>`
       : '';
     // the mini hill: a slope 0→100 from the base (y 84) to the snow cap (y 12); me, the climber above, the king
@@ -207,7 +209,7 @@
       <rect x="0" y="88" width="160" height="4" fill="#122c1b"/>${king}${up}${me}</svg>`;
     $('p-hill').innerHTML = `<div class="climb">${scene}
       <div class="hnums"><span class="v">${Math.round(h.h)}</span><span class="k">of ${h.summit}</span></div>
-      <div class="boulder"><span class="k">${h.king && h.king.me ? 'Shield' : 'Boulder'}</span><span class="dots">${dots}</span></div></div>${status}`;
+      <div class="boulder"><span class="k">${h.shield ? '🛡 Boulder' : h.king && h.king.me ? `Shield in ${h.toShield}` : 'Boulder'}</span><span class="dots">${dots}</span></div></div>${status}`;
   }
 
   // ---- knockout arena: drive for an orb; in the pit, answer your way back ----
@@ -318,12 +320,15 @@
     heistWait = 'pick';
     cur = { wait: true };
     closePad();
+    const boulder = kind === 'boulder';
     const head = { grab: ['🕶 Grab — who are you robbing?', 'You take 20% of their cash.'], switch: ['🔁 Switch — whose pile do you want?', 'You trade piles with them.'],
-      shakedown: ['💸 Shakedown — who are you shaking down?', 'They drop 30% of their cash; you pocket a third of it.'] }[kind] || ['Pick a classmate', ''];
-    $('p-card').innerHTML = `<div class="vaultcard"><div class="big">${head[0]}</div><div class="sub">${head[1]} Only classmates ahead of you.</div></div>`;
-    $('p-choices').innerHTML = options.map((t) => `<button class="ch target" data-id="${esc(t.id)}"><span class="lab">${esc(t.name)}</span><span class="cnt">${money(t.cash)}</span></button>`).join('');
+      shakedown: ['💸 Shakedown — who are you shaking down?', 'They drop 30% of their cash; you pocket a third of it.'],
+      boulder: ['🪨 Boulder! Who takes it?', 'The climbers within reach above you.'] }[kind] || ['Pick a classmate', ''];
+    $('p-card').innerHTML = `<div class="vaultcard"><div class="big">${head[0]}</div><div class="sub">${head[1]}${boulder ? '' : ' Only classmates ahead of you.'}</div></div>`;
+    $('p-choices').innerHTML = options.map((t) => `<button class="ch target" data-id="${esc(t.id)}"><span class="lab">${esc(t.name)}${t.king ? ' 👑' : ''}${t.shield ? ' 🛡' : ''}</span><span class="cnt">${boulder ? `${t.h} · +${Math.max(1, Math.round(t.gap))} above` : money(t.cash)}</span></button>`).join('')
+      + (boulder ? '<button class="ch target skip" data-id="none"><span class="lab">Keep climbing</span><span class="cnt">no boulder</span></button>' : '');
     $('fb').className = 'fb';
-    $('fb').innerHTML = '<span class="muted">Tap a name.</span>';
+    $('fb').innerHTML = `<span class="muted">${boulder ? 'Tap a climber — the clock is running.' : 'Tap a name.'}</span>`;
     $('p-choices').querySelectorAll('.target').forEach((b) => { b.onclick = () => pickTarget(b.dataset.id); });
   }
 
@@ -334,14 +339,17 @@
       const r = await api(`/${encodeURIComponent(seat.code)}/target`, { method: 'POST', body: JSON.stringify({ id }) });
       btns.forEach((b) => b.classList.toggle('picked', b.dataset.id === id));
       let call; let why;
-      if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}.`; }
+      if (r.kind === 'boulder' && r.skipped) { call = 'Climb on'; why = 'No boulder this time.'; }
+      else if (r.kind === 'boulder' && r.blocked) { call = `🛡 ${esc(r.name)} blocked it`; why = 'Their shield took the boulder.'; }
+      else if (r.kind === 'boulder') { call = `🪨 ${esc(r.name)} goes down`; why = `−${r.fall} · they're at ${Math.round(r.h)} now.`; }
+      else if (r.kind === 'grab') { call = `🕶 Grab · +${money(r.amount)}`; why = `Taken from ${esc(r.target)}.`; }
       else if (r.kind === 'switch') { call = `🔁 Switch · ${money(r.cash)}`; why = `You traded piles with ${esc(r.target)} (+${money(r.amount)}).`; }
       else if (r.kind === 'shakedown') { call = `💸 Shakedown · +${money(r.amount)}`; why = `${esc(r.target)} dropped ${money(r.lost)}.`; }
       else { call = `+${money(r.amount)}`; why = 'Nobody was ahead of you any more — the safe paid cash instead.'; }
       $('fb').className = 'fb good';
       $('fb').innerHTML = `<span class="bigtxt">${call}</span><span class="why">${why}</span>`;
       heistWait = null;
-      setTimeout(() => { cur = null; nextDrivePlay(); }, 2000);
+      setTimeout(() => { cur = null; nextDrivePlay(); }, r.kind === 'boulder' ? 1100 : 2000);
     } catch (err) {
       if (err.status === 401) return gone('You are no longer in this game.');
       // 400: that classmate is no longer ahead of you — the next fetch brings the fresh list;
@@ -611,8 +619,7 @@
 
   /** What a right answer did on the hill: a plain climb, a boulder, a block, or a shield. */
   function hillCall(h) {
-    if (h.threw && h.threw.blocked) return `🛡 ${esc(h.threw.name)} blocked your boulder`;
-    if (h.threw) return `🪨 Boulder! ${esc(h.threw.name)} goes down`;
+    if (h.pick) return h.shield ? '🛡 Shield up · 🪨 Boulder!' : '🪨 Boulder! Pick your target';
     if (h.shield) return '🛡 Shield up!';
     return 'Climb';
   }
