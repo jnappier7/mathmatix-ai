@@ -215,7 +215,7 @@
     const k = r.knockout;
     return `<h3>How Knockout Arena works</h3><p class="lead">Every car for itself. A number goes up; drive into an orb whose fact <b>makes that number</b>. Last car running wins.</p><div class="rgrid">`
       + `<div class="rule"><span class="rk">One orb short</span><span class="rv">Every round has <b>one fewer</b> right orb than cars, and <b>${k.roundSec} s</b> on the clock. End a round holding none and you are <b class="b">out</b>.</span></div>`
-      + `<div class="rule"><span class="rk">Grab more</span><span class="rv">Hold as many right orbs as you can reach — each extra one leaves another car without.</span></div>`
+      + `<div class="rule"><span class="rk">One spare</span><span class="rv">You can hold <b>${k.maxHold}</b> right orbs. The spare leaves another car without one — but carrying an orb slows you down.</span></div>`
       + `<div class="rule"><span class="rk">Wrong orb</span><span class="rv">You slow down for <b>${k.slowSec} s</b> and <b class="b">drop every orb</b> you hold. Read it before you hit it.</span></div>`
       + `<div class="rule"><span class="rk">The pit</span><span class="rv">Out is not over: type facts in the pit. <b class="g">${k.comeback} right in a row</b>, or <b class="g">${k.comebackTotal} right in all</b>, and you drive again next round.</span></div>`
       + `<div class="rule"><span class="rk">🏆 Fact Champion</span><span class="rv">Every right answer in the pit scores: <b class="g">+${k.benchPoints[0]}</b> in ${k.fluentSec} s or less, <b class="g">+${k.benchPoints[1]}</b> after. Most pit points is the Fact Champion — a second winner.</span></div>`

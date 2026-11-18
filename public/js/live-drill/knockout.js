@@ -60,6 +60,7 @@
     let roundN = 0; let spawnKey = '';
     const pending = new Set(); // chips with a grab in flight
     const stung = new Set(); // wrong orbs this car already hit this round
+    const passed = new Set(); // right orbs it touched with its hands full (cleared if it drops)
     const gone = new Set(); // chips this screen knows are taken before the state says so
     let parts = []; let floats = []; let bubbles = []; let splash = null; let shake = 0; let popT = 9;
     let sentAt = 0; let sentX = 0; let sentY = 0;
@@ -96,7 +97,7 @@
       const m = M(); const r = R();
       if (!m || !r) return;
       if (r.n !== roundN) {
-        roundN = r.n; pending.clear(); stung.clear(); gone.clear(); popT = 0; floats = [];
+        roundN = r.n; pending.clear(); stung.clear(); passed.clear(); gone.clear(); popT = 0; floats = [];
       }
       for (const c of r.chips) if (!c.taken) gone.delete(c.id); // a chip someone dropped is back
       if (!projector) {
@@ -189,13 +190,14 @@
         if (round !== roundN) return;
         if (res.taken) { gone.add(chip.id); return; }
         if (res.again) { stung.add(chip.id); return; }
+        if (res.full) { passed.add(chip.id); floats.push({ x: me.x, y: me.y - 26, text: `Full: ${res.held} is the most you can hold`, color: COL.foam, t: 1.4 }); return; }
         if (res.ok) {
           gone.add(chip.id);
           burst(me.x, me.y, COL.gold, 22, 230);
-          say(res.held === 1 ? 'SAFE!' : res.held === 2 ? 'GREEDY! ×2' : `ORB HOG ×${res.held}`, res.held === 1 ? COL.gold : COL.good);
+          say(res.held === 1 ? 'SAFE!' : 'SPARE ORB!', res.held === 1 ? COL.gold : COL.good);
           buzz(20);
         } else {
-          stung.add(chip.id);
+          stung.add(chip.id); passed.clear();
           burst(me.x, me.y, COL.coral, 16, 200); shake = 11; buzz(70);
           floats.push({ x: me.x, y: me.y - 24, text: `${res.text} = ${res.val}`, color: COL.coral, t: 1.6 });
           if (res.dropped) say(`DROPPED ${res.dropped}!`, COL.coral);
@@ -229,7 +231,7 @@
       if (!swimming() || !r) return;
       me.dartCd = Math.max(0, me.dartCd - dt);
       const i = input();
-      const speed = tune.speed * (slowed() ? 0.5 : 1) * i.k;
+      const speed = tune.speed * (slowed() ? 0.5 : 1) * (m.held ? tune.holdSlow || 1 : 1) * i.k; // carrying an orb is slower
       if (me.dartT > 0) me.dartT -= dt;
       else {
         const d = Math.hypot(i.dx, i.dy);
@@ -247,7 +249,7 @@
       if (!r.closed) {
         const at = now();
         for (const c of r.chips) {
-          if (c.taken || gone.has(c.id) || pending.has(c.id) || stung.has(c.id)) continue;
+          if (c.taken || gone.has(c.id) || pending.has(c.id) || stung.has(c.id) || passed.has(c.id)) continue;
           const p = chipAt(c, r.world, at, tune.margin);
           if (Math.hypot(p.x - me.x, p.y - me.y) <= tune.eatDist) { tryGrab(c, r); break; }
         }
@@ -373,7 +375,8 @@
 
       let tx = W / 2; let ty = H / 2; let ts = Math.min(cw / W, ch / H);
       if (follow) {
-        ts = Math.max(ts, Math.sqrt((cw * ch) / 300000));
+        // A phone shows less of the arena, bigger: an orb's fact has to be readable at arm's length.
+        ts = Math.max(ts, Math.sqrt((cw * ch) / (Math.min(cw, ch) < 520 ? 170000 : 300000)));
         const vw = cw / ts; const vh = ch / ts;
         tx = vw >= W ? W / 2 : clamp(me.x, vw / 2 - 30, W - vw / 2 + 30);
         ty = vh >= H ? H / 2 : clamp(me.y, vh / 2 - 30, H - vh / 2 + 30);
@@ -433,8 +436,9 @@
       const live = st.phase === 'live' && !r.closed;
       if (follow && live) {
         const open = r.chips.filter((c) => !c.taken && !gone.has(c.id));
-        // few chips left: point at every one of them, right and wrong alike
-        if (open.length <= 8) for (const c of open) { const p = chipAt(c, r.world, at, tune.margin); edgeArrow(p.x, p.y, COL.chip); }
+        // point at the nearest orbs that are off the screen, right and wrong alike
+        const far = open.map((c) => { const p = chipAt(c, r.world, at, tune.margin); return { p, d: Math.hypot(p.x - me.x, p.y - me.y) }; }).sort((a, b) => a.d - b.d).slice(0, 8);
+        for (const f of far) edgeArrow(f.p.x, f.p.y, COL.chip);
         if (!m.held && left < 3000) {
           const v = ctx.createRadialGradient(cw / 2, ch / 2, Math.min(cw, ch) * 0.35, cw / 2, ch / 2, Math.max(cw, ch) * 0.75);
           v.addColorStop(0, 'rgba(255,107,94,0)'); v.addColorStop(1, `rgba(255,107,94,${0.28 + (calm() ? 0 : 0.2 * Math.sin(t / 80))})`);
@@ -442,16 +446,25 @@
         }
       }
       const fsTop = projector ? clamp(Math.min(ch * 0.11, cw * 0.1), 40, 130) : clamp(cw * 0.12, 38, 64);
-      const topY = 10 + fsTop * 0.65;
+      const topY = (projector ? 10 : 38) + fsTop * 0.65;
       const k0 = clamp((popT - 0.45) / 0.3, 0, 1); const k = calm() ? 1 : k0 * k0 * (3 - 2 * k0);
       const fsBig = Math.min(fsTop * 1.9, cw * 0.26); const popY = Math.max(topY, ch * 0.24);
       const ph = drawTarget(cw / 2, topY + (popY - topY) * (1 - k), fsTop + (fsBig - fsTop) * (1 - k), r.target);
       // the round's clock: a bar under the number, red for the last three seconds
-      const bw = Math.min(cw - 40, 320); const by = 10 + fsTop * 1.3 + 8;
+      const bw = Math.min(cw - 40, 320); const by = (projector ? 10 : 38) + fsTop * 1.3 + 8;
       if (live) {
         const frac = clamp(left / (r.closesAt - r.openedAt), 0, 1);
         ctx.fillStyle = 'rgba(234,247,244,.18)'; rr(ctx, cw / 2 - bw / 2, by, bw, 6, 3); ctx.fill();
         ctx.fillStyle = left < 3000 ? COL.coral : COL.gold; rr(ctx, cw / 2 - bw / 2, by, Math.max(6, bw * frac), 6, 3); ctx.fill();
+      }
+      // a student's arena can fill the whole phone, so it carries its own scoreboard: who is left, and the gate
+      if (follow) {
+        const gl = (m.gateAt || 0) - at;
+        ctx.font = `700 13px ${TEXT}`; ctx.textBaseline = 'top';
+        const tag = (text, x, align, color) => { const w = ctx.measureText(text).width + 14; const x0 = align === 'left' ? x : x - w; ctx.fillStyle = 'rgba(8,12,32,.82)'; rr(ctx, x0, 8, w, 22, 6); ctx.fill(); ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.fillText(text, x0 + 7, 13); };
+        tag(`${m.alive} left`, 8, 'left', COL.line);
+        tag(gl > 0 ? `Gate ${Math.floor(gl / 60000)}:${String(Math.floor((gl % 60000) / 1000)).padStart(2, '0')}` : 'Sudden death', cw - 8, 'right', gl > 0 && gl > 15000 ? COL.foam : COL.coral);
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       }
       let y = by + 34; void ph;
       if (r.closed) {

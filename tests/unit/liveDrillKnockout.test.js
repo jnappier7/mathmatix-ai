@@ -133,12 +133,26 @@ describe('a round', () => {
     expect(g.feed[0]).toMatchObject({ type: 'out', count: 1 });
   });
 
-  test('grabbing extra chips knocks out extra cars', () => {
+  test('a spare orb knocks out one more car — and one spare is the limit', () => {
     const g = arena(); const [a, b, c, d] = seat(g, 4); G.start(g);
-    claim(g, a, right(g)[0]); claim(g, a, right(g)[0]);
-    expect(claim(g, a, right(g)[0])).toMatchObject({ ok: true, held: 3 });
-    expect([a.ko.in, b.ko.in, c.ko.in, d.ko.in]).toEqual([true, false, false, false]);
-    expect(a.ko.knocked).toBe(2);
+    claim(g, a, right(g)[0]);
+    expect(claim(g, a, right(g)[0])).toMatchObject({ ok: true, held: 2 });
+    // hands full: the third right orb stays on the floor for someone else
+    const third = right(g)[0];
+    expect(claim(g, a, third)).toEqual({ full: true, held: K.TUNE.maxHold });
+    expect(third.by).toBeNull();
+    expect(claim(g, b, third)).toMatchObject({ ok: true, held: 1 }); // the last right orb: the round closes
+    expect([a.ko.in, b.ko.in, c.ko.in, d.ko.in]).toEqual([true, true, false, false]);
+    expect(a.ko.knocked).toBe(1);
+    expect(G.rulesFor(g).knockout.maxHold).toBe(2);
+  });
+
+  test('however fast the hoarders are, at most half the arena goes out in a round', () => {
+    for (const n of [6, 16, 31]) {
+      const g = arena(); const cars = seat(g, n); G.start(g);
+      for (const p of cars) for (let i = 0; i < 5 && right(g).length && !g.ko.round.closed; i++) claim(g, p, right(g)[0]);
+      expect(cars.filter((p) => !p.ko.in).length).toBeLessThanOrEqual(Math.ceil(n / 2));
+    }
   });
 
   test('first claim wins: the second car is told the chip is taken, and holds nothing', () => {
@@ -281,7 +295,7 @@ describe('the end', () => {
     pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); // c ready before the reveal ends
     nextRound(); // round 2: a, b, c
     expect(g.ko.round.cars).toBe(3);
-    claim(g, a, right(g)[0]); claim(g, a, right(g)[0]); // b and c out
+    claim(g, a, right(g)[0]); claim(g, a, right(g)[0]); // a holds both orbs: b and c are out
     expect(g.ko.ending).toBe(true); // nobody ready this time
     nextRound();
     expect(g.phase).toBe('over');

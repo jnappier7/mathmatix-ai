@@ -3,9 +3,9 @@
  *
  * Musical chairs in a neon arena. Every round the server posts a TARGET number and scatters chips,
  * each one a fact ("7×8", "60−4"). There is always ONE FEWER correct chip than cars. A car that
- * ends the round holding no correct chip is OUT. A car may hold as many as it can grab — every
- * extra chip leaves another car without one — but a WRONG chip slows it and spills every chip it
- * holds back onto the floor, so greed has a price and so does guessing.
+ * ends the round holding no correct chip is OUT. A car may hold one spare (`maxHold`) — the spare
+ * leaves another car without one — and carrying slows it; a WRONG chip slows it more and spills
+ * every chip it holds back onto the floor, so greed has a price and so does guessing.
  *
  * Out is not over. A benched student answers plays from the game's own deck (the ordinary
  * own-pace answer path in games.js, so Math Facts answers are tracked and saved like any other
@@ -42,6 +42,11 @@ const TUNE = {
   fluentMs: 3000,
   revealMs: 3000, // chips show what they were before the next round
   slowMs: 2000, // a wrong chip slows the car this long
+  // Hoarding is capped (owner, 2026-11-17: "hoarding is an issue"): one spare orb, so one car can
+  // knock out one other car a round and no more, and a car that is carrying drives slower, so the
+  // spare has to be earned against cars that are still empty-handed.
+  maxHold: 2,
+  holdSlow: 0.8,
   capMs: 150000, // sudden death cannot outlast this after the gate closes
   emptyRounds: 3, // rounds in a row where nobody grabbed anything: the class has walked away
   speed: 130, // a car's cruising speed, world units per second (the client moves it)
@@ -303,6 +308,7 @@ function grab(game, player, body, io) {
   if (chip.by) return { taken: true };
 
   if (chip.ok) {
+    if (m.held.length >= TUNE.maxHold) return { full: true, held: m.held.length }; // hands full: the orb stays on the floor
     chip.by = player.id;
     m.held.push(chip.id);
     m.grabbed++;
@@ -463,7 +469,7 @@ function roundView(game) {
   return v;
 }
 
-const tune = () => ({ speed: TUNE.speed, dartMult: TUNE.dartMult, chipR: TUNE.chipR, eatDist: TUNE.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs });
+const tune = () => ({ maxHold: TUNE.maxHold, holdSlow: TUNE.holdSlow, speed: TUNE.speed, dartMult: TUNE.dartMult, chipR: TUNE.chipR, eatDist: TUNE.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs });
 
 function summary(game, at) {
   const all = seated(game);
@@ -513,7 +519,7 @@ function finalKnockout(game) {
 
 /** The rules as the lobby states them — the same numbers the server plays. */
 function rules(game) {
-  return { comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
+  return { maxHold: TUNE.maxHold, comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
     gateSec: game.seconds, roundSec: game.secondsPerPlay, slowSec: TUNE.slowMs / 1000 };
 }
 

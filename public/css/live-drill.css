@@ -889,3 +889,8 @@ div.alarm>*{position:relative}
 .kofinal th,.kofinal td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--rail)}
 .kofinal th{font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-size:.8rem;color:var(--muted)}
 .kofinal td.num,.kofinal th.num{text-align:right}
+/* On a phone the arena takes the whole screen while the student drives; its scoreboard is drawn on the canvas. */
+@media (max-width:700px){
+  #live.driving .arena{position:fixed;inset:0;height:auto;min-height:0;border:0;border-radius:0;z-index:30}
+  body:has(#live.driving){overflow:hidden}
+}
