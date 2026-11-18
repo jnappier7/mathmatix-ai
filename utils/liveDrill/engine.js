@@ -66,6 +66,13 @@ const DRILLS = {
   hgeo11: { native: require('./review/hgeoCh11'), title: 'Honors Geometry · Chapter 11 Review' },
   // Algebra 2 (no Course Planner site yet): one native course drill, a playbook per unit.
   alg2: { native: require('./review/alg2'), title: 'Algebra 2' },
+  // …and the teacher's own units, built from his unit packets (Units 0–4 so far): a playbook per lesson,
+  // labelled 0.1, 0.2 … so the Section row and "everything through 2.2" work as they do for Algebra 1
+  alg2u0: { native: require('./review/alg2Unit0'), title: 'Algebra 2 · Unit 0 Review' },
+  alg2u1: { native: require('./review/alg2Unit1'), title: 'Algebra 2 · Unit 1 Review' },
+  alg2u2: { native: require('./review/alg2Unit2'), title: 'Algebra 2 · Unit 2 Review' },
+  alg2u3: { native: require('./review/alg2Unit3'), title: 'Algebra 2 · Unit 3 Review' },
+  alg2u4: { native: require('./review/alg2Unit4'), title: 'Algebra 2 · Unit 4 Review' },
   // Fluency games: one reflex, fast, on the Math Facts clocks; server-scored solo runs feed a class leaderboard
   congruence: { native: require('./fluency/congruence'), title: 'Honors Geometry · Triangle Congruence Fluency', scoring: 'facts', graded: true },
 };

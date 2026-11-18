@@ -46,7 +46,6 @@ describe('the index', () => {
 
 describe('what people type', () => {
   test.each([
-    ['completing the square', 'alg1m11/roots'],
     ['box plot', 'alg1m12/box'],
     ['box plots', 'alg1m12/box'],
     ['trapezoid', 'hgeo7/trap'],
@@ -66,16 +65,57 @@ describe('what people type', () => {
   });
 
   test('a section beats its Whole Module on the same words', () => {
-    const r = search('completing the square');
-    expect(r[0].key).toBe('roots');
-    expect(r.find((x) => x.key === 'all').score).toBeLessThan(r[0].score);
+    const r = search('completing the square', { hub: 'algebra' });
+    expect(r[0]).toMatchObject({ drill: 'alg1m11', key: 'roots' });
+    expect(r.find((x) => x.drill === 'alg1m11' && x.key === 'all').score).toBeLessThan(r[0].score);
+  });
+
+  // Two courses teach "completing the square" (Algebra 1 Module 11, Algebra 2 Unit 4). The page
+  // the box is on says which the searcher means; the other course's lesson is right beneath.
+  describe('a topic two courses teach', () => {
+    const two = (q, hub) => search(q, { hub }).slice(0, 2).map((r) => `${r.drill}/${r.key}`);
+    test('your own course page first, the other course next', () => {
+      expect(two('completing the square', 'algebra')).toEqual(['alg1m11/roots', 'alg2u4/l2']);
+      expect(two('completing the square', 'algebra2')).toEqual(['alg2u4/l2', 'alg1m11/roots']);
+      expect(two('completing the square').sort()).toEqual(['alg1m11/roots', 'alg2u4/l2']); // no page (the Arcade): both, best match first
+    });
+    test('only a COMPARABLE match jumps the queue — a weak mention never buries the real lesson', () => {
+      // Algebra 1 only mentions "inverse" (inverse operations); the lessons are Algebra 2 Unit 3
+      const inv = search('inverse', { hub: 'algebra' });
+      expect(inv[0].drill).toBe('alg2u3');
+      expect(inv.some((r) => r.hub === 'algebra')).toBe(true);
+      // Algebra 2 has eleven books that mention equations; Algebra 1's "Solving Equations" must still be on the list
+      const eq = search('equations', { hub: 'algebra2' });
+      expect(eq[0].hub).toBe('algebra2');
+      expect(eq.slice(0, 3).map((r) => `${r.drill}/${r.key}`)).toContain('alg1m2/solve');
+    });
+    test('the preference only re-orders: the same results with or without it, and an unknown page is ignored', () => {
+      const ids = (rs) => rs.map((r) => `${r.drill}/${r.key}`).sort();
+      for (const q of ['completing the square', 'slope', 'systems', 'functions']) expect(ids(search(q, { hub: 'algebra2', limit: 50 }))).toEqual(ids(search(q, { limit: 50 })));
+      expect(search('slope', { hub: 'constructor' })).toEqual(search('slope'));
+      expect(search('slope', { hub: 'nope' })).toEqual(search('slope'));
+    });
+  });
+
+  test('Algebra 2 unit reviews answer to their lessons\' own words', () => {
+    expect(top('average rate of change')).toEqual(['alg2u2/l3']);
+    expect(top('aroc')).toEqual(['alg2u2/l3']);
+    expect(top('composition of functions')).toEqual(['alg2u2/l2']);
+    expect(top('parent functions')).toEqual(['alg2u3/l1']);
+    expect(top('matrix')).toEqual(['alg2u1/l5']);
+    expect(top('3x3')).toEqual(['alg2u1/l3']);
+    expect(top('three variables')).toEqual(['alg2u1/l3']);
+    expect(top('horizontal stretch')).toEqual(['alg2u4/l8']);
+    expect(top('turning point')).toEqual(['alg2u4/l1']);
+    expect(drillsIn('inverse').slice(0, 1)).toEqual(['alg2u3']);
   });
 
   test('student shorthand reaches the lesson through aliases', () => {
     expect(top('SOHCAHTOA', 3)).toContain('hgeo9/trig');
     expect(top('FOIL', 2)).toContain('alg1m10/mult');
     expect(top('times tables')).toEqual(['facts/mul']);
-    expect(top('y=mx+b', 3)).toContain('algebra/m4');
+    expect(search('y=mx+b', { hub: 'algebra' }).slice(0, 3).map((r) => `${r.drill}/${r.key}`)).toContain('algebra/m4');
+    expect(top('y=mx+b', 4)).toContain('algebra/m4'); // (Algebra 2's review of lines is a fair hit too)
     expect(drillsIn('volume')).toContain('hgeo11');
     expect(drillsIn('circles')).toEqual(expect.arrayContaining(['hgeo10', 'hgeo11']));
   });
@@ -85,6 +125,14 @@ describe('what people type', () => {
     expect(search('chapter 9').every((r) => r.drill === 'hgeo9')).toBe(true);
     expect(drillsIn('module 11')[0]).toBe('alg1m11');
     expect(search('module 11').every((r) => r.drill === 'alg1m11')).toBe(true);
+    // the number names the DRILL numbered so — not every drill of a course with that digit in its name
+    // ("module 1" used to answer with all thirteen "Algebra 1 · Module N" drills)
+    expect(drillsIn('module 1')).toEqual(['alg1m1']);
+    expect(drillsIn('unit 2')).toEqual(['alg2u2']);
+    expect(drillsIn('unit 0')).toEqual(['alg2u0']);
+    expect(drillsIn('chapter 1')).toEqual(['hgeo1']);
+    expect(search('unit 3 inverse').every((r) => r.drill === 'alg2u3')).toBe(true);
+    expect(search('unit 3 inverse')[0].key).toMatch(/^l[234]$/);
     expect(drillsIn('mod 4')[0]).toBe('alg1m4');
   });
 

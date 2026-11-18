@@ -3,8 +3,9 @@
  * per unit of the standard Algebra 2 sequence, built to the common core of the course rather than
  * one teacher's packets: quadratics with complex numbers, polynomials, radicals and rational
  * exponents, exponentials and logarithms, rational expressions, function operations, sequences
- * and series. Quick-fire, one move per play, standard scoring. When a teacher's own unit packets
- * arrive, a chapter bank goes beside this one (utils/liveDrill/review/) and onto the algebra2 hub.
+ * and series. Quick-fire, one move per play, standard scoring. A teacher's own units are separate
+ * banks beside this one (alg2Unit0.js … alg2Unit4.js, built from his unit packets) on the same hub —
+ * which is why these playbooks carry no unit numbers: his Unit 1 is Systems of Equations, not this one's.
  *
  * Wrong choices are the classic slips: i² treated as +1, a remainder with the wrong sign, the
  * exponent multiplied instead of added, log(a + b) split, the vertical asymptote at −c, an
@@ -14,13 +15,13 @@ const { M, num, int, pick, sample, frac, makeBank, mc } = require('../prep/kit')
 
 const BOOKS = {
   all: { name: 'Whole Course', ch: 'Alg 2', blurb: 'Every unit, mixed — quadratics and complex numbers through sequences and series.' },
-  quad: { name: 'Quadratics & Complex Numbers', ch: 'Unit 1', blurb: 'Powers of i, complex arithmetic, complex roots, the discriminant, vertex form.' },
-  poly: { name: 'Polynomials', ch: 'Unit 2', blurb: 'Multiply, the Remainder and Factor Theorems, sum and difference of cubes, end behavior, zeros and multiplicity.' },
-  rad: { name: 'Radicals & Rational Exponents', ch: 'Unit 3', blurb: 'nth roots, 8^(2/3), radical ↔ exponent form, simplify, solve a radical equation.' },
-  exp: { name: 'Exponentials & Logarithms', ch: 'Unit 4', blurb: 'Log ↔ exponential form, evaluate, expand and condense, solve with a common base, growth and decay.' },
-  rational: { name: 'Rational Expressions', ch: 'Unit 5', blurb: 'Simplify, add, solve a proportion, asymptotes, excluded values.' },
-  func: { name: 'Functions', ch: 'Unit 6', blurb: 'Evaluate, compose, invert a linear function, read a transformation.' },
-  seq: { name: 'Sequences & Series', ch: 'Unit 7', blurb: 'Arithmetic and geometric nth terms and sums, sigma notation, the infinite geometric sum.' },
+  quad: { name: 'Quadratics & Complex Numbers', ch: 'Alg 2', blurb: 'Powers of i, complex arithmetic, complex roots, the discriminant, vertex form.' },
+  poly: { name: 'Polynomials', ch: 'Alg 2', blurb: 'Multiply, the Remainder and Factor Theorems, sum and difference of cubes, end behavior, zeros and multiplicity.' },
+  rad: { name: 'Radicals & Rational Exponents', ch: 'Alg 2', blurb: 'nth roots, 8^(2/3), radical ↔ exponent form, simplify, solve a radical equation.' },
+  exp: { name: 'Exponentials & Logarithms', ch: 'Alg 2', blurb: 'Log ↔ exponential form, evaluate, expand and condense, solve with a common base, growth and decay.' },
+  rational: { name: 'Rational Expressions', ch: 'Alg 2', blurb: 'Simplify, add, solve a proportion, asymptotes, excluded values.' },
+  func: { name: 'Functions', ch: 'Alg 2', blurb: 'Evaluate, compose, invert a linear function, read a transformation.' },
+  seq: { name: 'Sequences & Series', ch: 'Alg 2', blurb: 'Arithmetic and geometric nth terms and sums, sigma notation, the infinite geometric sum.' },
 };
 
 const sup = (e) => `<sup>${e}</sup>`;

@@ -10,7 +10,8 @@
  *
  * Matching is by word prefix, every query word must hit (AND), and a specific section outranks
  * its "Whole Module" book so "circles" lands on 10.1, not the mixed set. Both pickers — the
- * host's and the solo page's — read the same `GET /api/live-drill/solo/search?q=`.
+ * host's and the solo page's — read the same `GET /api/live-drill/solo/search?q=` and say which
+ * course they are on (`&hub=`), so that course's drills come first.
  */
 const { DRILLS, listPlaybooks, listSections, sectionsOfLabel, resolvePlaybook } = require('./engine');
 const { HUBS } = require('./solo');
@@ -69,12 +70,15 @@ const ALIASES = {
   inverse: ['inverse', 'functions'], composition: ['compose', 'functions'], compose: ['compose', 'functions'],
   series: ['series', 'sequences'], sigma: ['sigma', 'series'], summation: ['sigma', 'series'],
   'nth root': ['roots', 'radicals'], 'cube root': ['roots', 'radicals'],
-  'vertex form': ['vertex', 'quadratics'],
+  'vertex form': ['vertex', 'quadratics'], 'turning point': ['vertex'],
+  matrix: ['matrices'], 'three variables': ['3x3'], '3 variables': ['3x3'],
+  aroc: ['average', 'rate'], maximum: ['extrema'], minimum: ['extrema'], max: ['extrema'], min: ['extrema'],
+  'parent functions': ['parent'], 'even and odd': ['even', 'odd'],
   transversal: ['parallel', 'angle', 'pairs'],
   'alternate interior': ['angle', 'pairs', 'parallel'], 'corresponding angles': ['angle', 'pairs'],
-  transformation: ['transformations', 'translations', 'reflections', 'rotations'],
+  transformation: ['transformations', 'translations', 'reflections', 'rotations', 'shifting', 'reflecting'],
   transformations: ['translations', 'reflections', 'rotations', 'symmetry'],
-  translation: ['translations'], reflection: ['reflections'], rotation: ['rotations'], slide: ['translations'], flip: ['reflections', 'flip'], turn: ['rotations'],
+  translation: ['translations', 'shifting'], reflection: ['reflections', 'reflecting'], rotation: ['rotations'], slide: ['translations'], flip: ['reflections', 'flip'], turn: ['rotations'],
   congruent: ['congruent', 'criteria'], congruence: ['congruent', 'criteria'],
   sss: ['criteria', 'ssa', 'sss'], sas: ['criteria', 'sas'], asa: ['criteria', 'asa'], aas: ['criteria', 'aas'], hl: ['criteria', 'hl'],
   cpctc: ['cpctc', 'proofs'],
@@ -87,7 +91,7 @@ const ALIASES = {
   polygon: ['polygons', 'polygon'], polygons: ['angles', 'areas'],
   quadrilateral: ['quadrilaterals', 'parallelograms', 'trapezoids'], quadrilaterals: ['parallelograms', 'rectangle', 'rhombus', 'trapezoids', 'kites'],
   parallelogram: ['parallelograms'], rhombus: ['rhombus', 'special'], trapezoid: ['trapezoids'], kite: ['kites'],
-  similar: ['similar', 'similarity', 'scale'], similarity: ['similar', 'scale', 'proportionality'], dilation: ['scale', 'similar'],
+  similar: ['similar', 'similarity', 'scale'], similarity: ['similar', 'scale', 'proportionality'], dilation: ['scale', 'similar', 'stretch'],
   'special right': ['special', 'right'], '45': ['special', 'right'], '30': ['special', 'right'],
   'geometric mean': ['geometric', 'means', 'altitude'],
   'law of sines': ['laws', 'sines'], 'law of cosines': ['laws', 'cosines'],
@@ -263,7 +267,12 @@ function expand(q) {
 /** "chapter 9", "module 11", "mod 4", "ch 10", "unit 7": the number names the drill. */
 const DRILL_WORDS = new Set(['chapter', 'ch', 'module', 'mod', 'unit']);
 
+/** The number a drill's title gives it: "Algebra 2 · Unit 3 Review" → "3"; a course drill has none. */
+const unitOf = (title) => (String(title).match(/\b(?:chapter|module|unit)\s+(\d+)\b/i) || [])[1] || null;
+
 const MAX_Q = 80;
+/** A match on the searcher's own course page goes first when it scores at least this share of the best match. */
+const HOME_SHARE = 0.5;
 const LIMIT = 12;
 
 function bestHit(e, tok) {
@@ -277,20 +286,32 @@ function bestHit(e, tok) {
 
 /**
  * @param {string} q  what was typed
- * @param {object} [opts]  { limit }
+ * @param {object} [opts]  { limit, hub } — `hub` is the course page the search was typed on. Two
+ *   courses teach the same topic under the same name ("completing the square" is Algebra 1
+ *   Module 11 AND Algebra 2 Unit 4), and a student on the Algebra 1 page means theirs: a match in
+ *   that course goes first when it is COMPARABLE to the best one found (at least HOME_SHARE of its
+ *   score). A weak mention does not jump the queue — a dozen of them would push the one real
+ *   match, in another course, off the list. With no hub (the Arcade) it is best match first.
  * @returns {Array<{drill,title,hub,hubTitle,game,key,name,ch,blurb,score}>} best first
  */
 function search(q, opts = {}) {
   const limit = Math.max(1, Math.min(50, opts.limit || LIMIT));
+  const home = Object.prototype.hasOwnProperty.call(HUBS, String(opts.hub || '')) ? String(opts.hub) : null;
   const { own, groups } = expand(String(q || '').slice(0, MAX_Q));
   if (!own.length) return [];
   // "chapter 9": the drill whose title carries the 9, and only that drill
   const drillNums = own.filter((w, i) => i > 0 && DRILL_WORDS.has(own[i - 1]) && /^\d+$/.test(w));
+  const numbered = drillNums.length > 0 && index().some((e) => drillNums.includes(unitOf(e.title)));
   // "5.2": only what is, or covers, section 5.2 — never 2.5, and never every "5" and "2"
   const secNums = sectionNums(q);
   const scored = [];
   for (const e of [...multiSection(secNums), ...index()]) {
-    if (drillNums.length && !drillNums.every((n) => hit(e.fields.title, n))) continue;
+    if (drillNums.length) {
+      // "module 1" is the drill NUMBERED 1, not every drill of a course whose name carries a 1
+      // ("Algebra 1 · Module 7"); a drill with no number of its own answers only when none has it
+      const u = unitOf(e.title);
+      if (u ? !drillNums.includes(u) : (numbered || !drillNums.every((n) => hit(e.fields.title, n)))) continue;
+    }
     if (secNums.length && !secNums.some((n) => e.sections.includes(n))) continue;
     if (e.section && !secNums.length) continue; // a topic word lands on the book, not on "Section 12.4" beside it
     let score = 0;
@@ -310,7 +331,9 @@ function search(q, opts = {}) {
     if (e.section) score += e.multi ? 6 : 3; // "5.2" lands on the section itself, its books beneath; "5.1 5.2" on both together
     scored.push({ e, score });
   }
-  scored.sort((a, b) => (b.score - a.score) || (a.e.order - b.e.order));
+  const bar = HOME_SHARE * scored.reduce((m, x) => Math.max(m, x.score), 0);
+  const first = (x) => (home && x.e.hub === home && x.score >= bar ? 0 : 1);
+  scored.sort((a, b) => (first(a) - first(b)) || (b.score - a.score) || (a.e.order - b.e.order));
   return scored.slice(0, limit).map(({ e, score }) => ({
     drill: e.drill, title: e.title, hub: e.hub, hubTitle: e.hubTitle, game: e.game,
     key: e.key, name: e.name, ch: e.ch, blurb: e.blurb, score: Math.round(score * 10) / 10,

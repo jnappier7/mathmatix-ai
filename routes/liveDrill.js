@@ -519,7 +519,8 @@ soloRouter.get('/search', (req, res) => {
   try {
     const q = String(req.query.q || '').slice(0, drillSearch.MAX_Q);
     res.set('Cache-Control', 'public, max-age=300');
-    res.json({ q, results: drillSearch.search(q) });
+    // `hub` (the course page the box is on) only re-orders: that course first, the others beneath
+    res.json({ q, results: drillSearch.search(q, { hub: String(req.query.hub || '').slice(0, 40) }) });
   } catch (err) { send(res, err); }
 });
 
