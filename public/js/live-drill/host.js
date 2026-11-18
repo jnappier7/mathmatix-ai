@@ -618,7 +618,7 @@
   }
 
   // ---------------- the hill ----------------
-  // The scene is one SVG (viewBox 1000×430): sky, haze ridges for depth, the mountain with a snow
+  // The scene is one SVG (viewBox 1000×450, grown upward by fitHill to fit its box): sky, haze ridges for depth, the mountain with a snow
   // cap, a switchback trail, contour lines at 25/50/75, pines and rocks on the lower slope — drawn
   // once — and a dynamic layer on top: climbers as little figures in their own colour with a name
   // badge, the king crowned and glowing, a shield bubble, a boulder that ROLLS from the thrower to
@@ -658,9 +658,10 @@
         <symbol id="pine" overflow="visible"><rect x="-2" y="-4" width="4" height="8" fill="#4a2f1a"/><polygon points="0,-34 -12,-14 12,-14" fill="#1f5a33"/><polygon points="0,-26 -15,-2 15,-2" fill="#17472a"/><polygon points="0,-18 -18,8 18,8" fill="#113a21"/></symbol>
         <symbol id="boulder" overflow="visible"><circle r="11" fill="#8d7f70" stroke="#4e4338" stroke-width="2"/><path d="M-6,-3 L-1,2 L4,-4 M-3,6 L3,5" stroke="#4e4338" stroke-width="1.5" fill="none" stroke-linecap="round"/></symbol>
       </defs>
+      <rect x="0" y="-2000" width="1000" height="2000" fill="#0b1a2e"/>
       <rect width="1000" height="450" fill="url(#sky)"/>
-      <circle cx="150" cy="80" r="46" fill="url(#sun)"/>
-      ${cloud(230, 60, 1, 38)}${cloud(760, 44, 0.8, 52)}${cloud(900, 110, 0.6, 46)}
+      <g id="hill-sky"><circle cx="150" cy="80" r="46" fill="url(#sun)"/>
+      ${cloud(230, 60, 1, 38)}${cloud(760, 44, 0.8, 52)}${cloud(900, 110, 0.6, 46)}</g>
       <polygon class="ridge far" points="0,300 120,190 220,240 330,150 420,200 500,170 600,210 700,140 800,200 900,160 1000,230 1000,430 0,430"/>
       <polygon class="ridge near" points="0,340 90,270 180,300 260,230 350,280 440,250 560,290 650,230 760,280 860,240 1000,300 1000,430 0,430"/>
       <polygon points="20,${BASE_Y} ${500 - PLATEAU - 20},${SUMMIT_Y} ${500 + PLATEAU + 20},${SUMMIT_Y} 980,${BASE_Y}" fill="url(#hillg)" stroke="#2c5f3a" stroke-width="3" stroke-linejoin="round"/>
@@ -690,10 +691,29 @@
       ${labelled ? `<text class="nm" x="16" y="-10">${esc(c.name)}</text>` : ''}`;
   }
 
+  /**
+   * Size the scene to its box. The projector gives the hill whatever height the clock and the
+   * End-game row leave (CSS), which is usually taller than the scene's 1000×450 shape; rather than
+   * letterbox, the viewBox grows UPWARD with sky (the summit, the slope and every climber keep their
+   * coordinates, so the boulders and the sparkle still land), and the sun and clouds ride up into it.
+   */
+  function fitHill() {
+    const svg = $('hill-svg');
+    if (!svg || !svg.dataset.drawn || !svg.clientWidth) return;
+    const extra = Math.max(0, Math.round((1000 * svg.clientHeight) / svg.clientWidth) - 450);
+    if (svg.dataset.extra === String(extra)) return;
+    svg.dataset.extra = String(extra);
+    svg.setAttribute('viewBox', `0 ${-extra} 1000 ${450 + extra}`);
+    const sky = $('hill-sky');
+    if (sky) sky.setAttribute('transform', `translate(0 ${(-extra * 0.7).toFixed(0)})`);
+  }
+  window.addEventListener('resize', fitHill);
+
   function renderHill(st) {
     const H = st.hill;
     const svg = $('hill-svg');
     if (!svg.dataset.drawn) { svg.innerHTML = hillScene(H.summit); svg.dataset.drawn = '1'; }
+    fitHill();
     const layer = $('hill-climbers');
     const keep = new Set();
     const pos = {}; // name → [x, y] for the boulders and the sparkle

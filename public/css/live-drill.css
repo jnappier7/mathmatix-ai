@@ -157,6 +157,20 @@ h1,h2,h3{margin:0;text-wrap:balance}
 .hillpane{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:14px;align-items:start}
 .hillwrap{background:#0b1a2e;border:2px solid var(--rail);border-radius:10px;overflow:hidden}
 .hillwrap svg{display:block;width:100%;height:auto}
+/* On the projector the hill fills the screen (owner, 2026-11-18: "too much extra space" under a scene
+   that stopped at 400px). While the live screen is on the hill, the page widens past the 1280px wrap,
+   the pane takes every pixel the clock and the End-game row leave (flex, no magic numbers), and the SVG
+   is sized by the box — host.js fitHill extends its viewBox with sky above the summit to match the
+   box's shape, so nothing is letterboxed or stretched. Left alone on a short screen: the pane keeps a
+   floor and the page scrolls. */
+.wrap:has(#live:not([hidden]) #live-body.mode-hill){max-width:1760px;min-height:100dvh;box-sizing:border-box;padding-bottom:16px}
+.wrap:has(#live:not([hidden]) #live-body.mode-hill) #live{flex:1 1 auto;display:flex;flex-direction:column;min-height:0}
+.wrap:has(#live:not([hidden]) #live-body.mode-hill) #live-body{flex:1 1 auto;min-height:0}
+#live-body.mode-hill .hillpane{flex:1 1 auto;min-height:360px;align-items:stretch;grid-template-columns:minmax(0,2.2fr) minmax(300px,1fr)}
+#live-body.mode-hill .hillwrap{position:relative;min-height:0}
+#live-body.mode-hill .hillwrap svg{position:absolute;inset:0;width:100%;height:100%}
+#live-body.mode-hill .hillside{min-height:0}
+#live-body.mode-hill .climbers li{font-size:clamp(1rem,1.1vw,1.35rem)}
 /* the scene */
 .ridge.far{fill:#24466a;opacity:.9} .ridge.near{fill:#1a3a55}
 .contour{fill:none;stroke:#fff;stroke-opacity:.14;stroke-width:1.5;stroke-dasharray:6 6}
