@@ -29,12 +29,15 @@ const { dealPlay, publicPlay, RECENT, DRILLS, getDrill, resolvePlaybook } = requ
 const facts = require('./facts');
 const hill = require('./hill');
 const heist = require('./heist');
+const knockout = require('./knockout');
 
-const MODES = ['drive', 'huddle', 'hill', 'heist'];
+const MODES = ['drive', 'huddle', 'hill', 'heist', 'knockout'];
 /** Team Drive and King of the Hill: everyone at their own pace against one clock. */
 const ownPace = (game) => game.mode === 'drive' || game.mode === 'hill' || game.mode === 'heist';
 // Modes with no football: no ball to move, no teams that matter (the hill's climb, the heist's cash).
-const noBall = (game) => game.mode === 'hill' || game.mode === 'heist';
+const noBall = (game) => game.mode === 'hill' || game.mode === 'heist' || game.mode === 'knockout';
+// Knockout Arena runs its own rounds (knockout.js); these are the hands it borrows from the game.
+const knockoutIo = (game) => ({ now, later: (ms, fn) => later(game, ms, fn), feed: (item) => pushFeed(game, item), touch: () => touch(game), end: () => endGame(game) });
 
 const START_POS = 25;
 const TD_POINTS = 7;
@@ -164,11 +167,15 @@ class GameError extends Error {
  */
 function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus }) {
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
-  if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle, hill or heist.');
+  if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle, hill, heist or knockout.');
   const d = getDrill(drill); // throws if the published page can't be read
   // a book of the bank, a numbered section ("5.2" — every book that covers it), or the whole bank
   const pb = resolvePlaybook(drill, playbook);
   const book = pb.key;
+  // Knockout Arena builds its chips from the facts of one operation, so it plays the Math Facts bank only.
+  if (mode === 'knockout' && !(DRILLS[drill].trackFacts && knockout.BOOKS.includes(book))) {
+    throw new GameError(400, 'Knockout Arena plays Math Facts: Mixed, Addition, Subtraction, Multiplication or Division.');
+  }
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
   const fx = DRILLS[drill].focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
   const S = settingsFor(drill);
@@ -218,6 +225,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
   };
   if (mode === 'hill') hill.reset(game);
   if (mode === 'heist') heist.reset(game);
+  if (mode === 'knockout') knockout.reset(game);
   games.set(game.code, game);
   runHooks(changeHooks, game);
   return game;
@@ -301,6 +309,7 @@ function join(game, rawName, { userId } = {}) {
   };
   if (game.mode === 'hill') hill.resetPlayer(player);
   if (game.mode === 'heist') heist.resetPlayer(player);
+  if (game.mode === 'knockout') knockout.resetPlayer(player, game);
   game.players.set(player.id, player);
   game.byToken.set(hash(token), player.id);
   touch(game);
@@ -397,6 +406,7 @@ function rulesFor(game) {
     teamK: TEAM_K[game.mode] || null,
     hill: game.mode === 'hill' ? hill.rules() : null,
     heist: game.mode === 'heist' ? heist.rules(sc) : null,
+    knockout: game.mode === 'knockout' ? knockout.rules(game) : null,
     tdPoints: TD_POINTS,
     startPos: START_POS,
     // Huddle: a student may change their pick until the reveal; the last tap is the one that counts,
@@ -480,6 +490,13 @@ function start(game) {
   if (game.phase !== 'lobby') throw new GameError(409, 'This game has already kicked off.');
   if (!teamSizes(game).some(Boolean)) throw new GameError(409, 'Nobody has joined yet.');
   game.startedAt = now();
+  if (game.mode === 'knockout') {
+    game.phase = 'live';
+    pushFeed(game, { type: 'go' });
+    knockout.start(game, knockoutIo(game)); // opens round 1 (and touches)
+    carTicker(game);
+    return;
+  }
   if (ownPace(game)) {
     game.phase = 'live';
     game.endsAt = game.startedAt + game.seconds * 1000;
@@ -584,6 +601,7 @@ function endGame(game) {
   if (game.phase === 'over') return;
   if (game.mode === 'huddle' && game.phase === 'live') closeRound(game);
   if (game.mode === 'hill' && game.phase === 'live') hill.finish(game, now());
+  if (game.mode === 'knockout') knockout.finish(game);
   game.phase = 'over';
   game.endedAt = now();
   for (const t of game.timers) clearTimeout(t);
@@ -604,7 +622,14 @@ function endGame(game) {
 
 /** Drive: the play this player is on. Its clock starts the first time it is fetched. */
 function currentPlay(game, player) {
-  if (!ownPace(game) || game.phase !== 'live') throw new GameError(409, 'No play is open.');
+  const mn = game.mode === 'knockout';
+  if ((!ownPace(game) && !mn) || game.phase !== 'live') throw new GameError(409, 'No play is open.');
+  if (mn) {
+    // Only the pit answers plays. A student who has earned the way back keeps answering until the
+    // next round pulls them out: those answers still score for Fact Champion.
+    player.lastSeen = now();
+    heistCall(() => knockout.bench(game, player));
+  }
   if (game.mode === 'heist') {
     // The alarm holds the screen: no play is dealt (so none is timed) until it clears. An open crack
     // comes first too — pick a safe, then the next play.
@@ -634,6 +659,20 @@ function readAnswer(play, k) {
 function answer(game, player, n, k) {
   n = Number(n); k = String(k);
   player.lastSeen = now();
+  if (game.mode === 'knockout') {
+    // The bench: the ordinary own-pace answer (graded, timed and fact-tracked like any other game).
+    if (game.phase !== 'live') throw new GameError(409, 'The game is over.');
+    heistCall(() => knockout.bench(game, player));
+    if (n !== player.n || !player.issuedAt) throw new GameError(409, 'That play is already over.');
+    const play = playAt(game, n);
+    k = readAnswer(play, k);
+    const ms = now() - player.issuedAt;
+    const res = applyAnswer(game, player, play, n, k, ms);
+    player.n++; player.issuedAt = null;
+    res.knockout = knockout.onBenchAnswer(game, player, res, ms, now(), (item) => pushFeed(game, item));
+    touch(game);
+    return { ...res, ms, n, answer: play.answer, answerHtml: play.answerHtml, tell: play.tell, revealCard: play.revealCard, picked: k };
+  }
   if (ownPace(game)) {
     if (game.phase !== 'live' || now() > game.endsAt + DRIVE_GRACE_MS) throw new GameError(409, 'The clock has run out.');
     if (game.mode === 'heist' && heist.locked(player, now())) throw new GameError(409, 'The alarm is still ringing.');
@@ -717,6 +756,33 @@ function useGadget(game, player, gadgetId) {
   return r;
 }
 
+/** Knockout Arena: a car claims a chip (the server decides whether it got there first). */
+function grabChip(game, player, body) {
+  if (game.mode !== 'knockout') throw new GameError(409, 'Not that kind of game.');
+  player.lastSeen = now();
+  return heistCall(() => knockout.grab(game, player, body || {}, knockoutIo(game)));
+}
+
+/** Knockout Arena: where this car is. Never a state change — the `cars` ticker carries it to the other screens. */
+function reportPosition(game, player, x, y) {
+  if (game.mode !== 'knockout' || game.phase !== 'live') return;
+  player.lastSeen = now();
+  knockout.position(game, player, x, y, now());
+}
+
+/** Knockout Arena: every car's position to every screen, ~3× a second, outside the state stream. */
+const CAR_MS = 300;
+function carTicker(game) {
+  const t = setInterval(() => {
+    if (game.phase !== 'live') { clearInterval(t); game.timers.delete(t); return; }
+    if (!game.listeners.size) return;
+    const frame = { at: now(), cars: knockout.carFrame(game) };
+    for (const l of game.listeners) safeWrite(l.res, 'cars', frame);
+  }, CAR_MS);
+  if (t.unref) t.unref();
+  game.timers.add(t);
+}
+
 /**
  * Who a Huddle round waits for: the players whose screen is open. A phone that went to sleep or a
  * tab that closed drops its live stream, and a round used to wait out its whole clock for that
@@ -755,6 +821,7 @@ function rematch(game) {
   Object.assign(game, { phase: 'lobby', startedAt: null, endsAt: null, endedAt: null, round: null, feed: [], misses: new Map(), playStats: new Map() });
   if (game.mode === 'hill') hill.reset(game);
   if (game.mode === 'heist') heist.reset(game);
+  if (game.mode === 'knockout') knockout.reset(game);
   game.games = (game.games || 1) + 1;
   touch(game);
 }
@@ -929,6 +996,7 @@ function hostView(game) {
   const v = { ...base(game), players, feed: game.feed.slice(0, 8), round: roundView(game, true) };
   if (game.mode === 'hill') v.hill = hill.hostHill(game, now());
   if (game.mode === 'heist') v.heist = heist.hostHeist(game, now());
+  if (game.mode === 'knockout') v.knockout = knockout.hostKnockout(game, now());
   if (game.phase === 'over') {
     const mvps = [0, 1].map((t) => players.filter((p) => p.team === t && p.att > 0)
       .sort((a, b) => b.yards - a.yards || b.comp - a.comp).slice(0, 3)
@@ -944,6 +1012,7 @@ function hostView(game) {
     if (DRILLS[game.drill] && DRILLS[game.drill].trackFacts) v.final.facts = factsFinal(game, players);
     if (game.mode === 'hill') v.final.hill = hill.finalHill(game);
     if (game.mode === 'heist') v.final.heist = heist.finalHeist(game);
+    if (game.mode === 'knockout') v.final.knockout = knockout.finalKnockout(game);
   }
   return v;
 }
@@ -956,6 +1025,7 @@ function playerView(game, player) {
   };
   if (game.mode === 'hill') v.hill = hill.playerHill(game, player, now());
   if (game.mode === 'heist') v.heist = heist.playerHeist(game, player, now());
+  if (game.mode === 'knockout') v.knockout = knockout.playerKnockout(game, player, now());
   if (game.mode === 'huddle' && game.round) {
     const rv = roundView(game, false);
     const mine = game.round.answers.get(player.id);
@@ -1118,7 +1188,10 @@ function hydrate(snap) {
   for (const p of game.players.values()) p.conns = 0;
   games.set(game.code, game);
   if (game.phase === 'live') {
-    if (ownPace(game)) {
+    if (game.mode === 'knockout') {
+      knockout.rearm(game, knockoutIo(game));
+      carTicker(game);
+    } else if (ownPace(game)) {
       later(game, game.endsAt - now() + DRIVE_GRACE_MS, () => endGame(game));
     } else if (game.round && !game.round.closed) {
       const round = game.round;
@@ -1143,7 +1216,7 @@ function _reset() { for (const g of [...games.values()]) dropGame(g); }
 module.exports = {
   onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, PICK_SIX, BLITZ, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
-  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget,
+  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget, grabChip, reportPosition,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
   onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS,
   _reset, _games: games,

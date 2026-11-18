@@ -8,8 +8,15 @@
 > for Mr. Sierawski, Prof. Davies, Ms. Alex and Mr. Wiggles; on 2026-11-09 Ms.
 > Rashida, Mr. Lee and Dr. G got theirs and Sierawski, Davies, Alex and Wiggles
 > were regenerated with the start/end-frame recipe below (one clip each, in
-> `IDLE_VIDEO_COUNTS`). Still to come: a second idle clip, thinking pose, backdrop and celebration clips for
-> all seven.
+> `IDLE_VIDEO_COUNTS`). **Celebrations (2026-11-12/13):** Ms. Rashida, Mr. Lee,
+> Dr. G, Ms. Alex, Prof. Davies and Mr. Sierawski have both clips; Mr. Wiggles
+> has `smallcele` only, which plays for both moments
+> (`CELEBRATION_CLIPS` in chat-redesign.js and modules/gamification.js — kept
+> in sync by tests/unit/tutorShop.test.js). Sierawski's `levelUp` has the camera
+> rise with him as he stands, so the desk drops below frame — intended. Celebration
+> clips play once, so keep every frame; 16:9 2K exports crop
+> `2160:1440:200:0` → 1152×768. Still to come: a second idle clip, thinking
+> pose and backdrop for all seven; `levelUp` for Mr. Wiggles.
 >
 > **Video prep** (the generator exports 2944×1248 with an audio track): crop
 > 1872×1248 centred on the desk, scale to 1152×768 @24fps, **strip audio

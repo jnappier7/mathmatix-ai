@@ -38,6 +38,14 @@ jest.mock('../../models/conversation', () => ({
 }));
 jest.mock('../../models/enrollmentCode', () => ({ find: jest.fn(), findOne: jest.fn(), findById: jest.fn() }));
 jest.mock('../../models/screenerSession', () => ({ find: jest.fn(), findOne: jest.fn() }));
+// The activity index also reads the other places a student can do work
+// (utils/studentActivity.js); none of it matters here, so each answers empty.
+for (const model of ['actTestSession', 'activityAttempt', 'drillResult']) {
+  jest.mock(`../../models/${model}`, () => ({
+    find: jest.fn().mockReturnValue({ lean: jest.fn().mockResolvedValue([]) }),
+    aggregate: jest.fn().mockResolvedValue([]),
+  }));
+}
 jest.mock('../../models/skill', () => ({ find: jest.fn(), findOne: jest.fn() }));
 jest.mock('../../models/learningCard', () => ({ find: jest.fn(), findOne: jest.fn() }));
 jest.mock('../../utils/skillDisplayNames', () => ({

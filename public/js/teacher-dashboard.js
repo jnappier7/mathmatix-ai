@@ -2368,7 +2368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         student,
                         message: days === null
                             ? `<strong>${escapeHtml(fullName)}</strong> hasn't started yet`
-                            : `<strong>${escapeHtml(fullName)}</strong> hasn't been on in ${days} days`,
+                            : `<strong>${escapeHtml(fullName)}</strong> hasn't worked in ${days} days`,
                         actionLabel: 'Send reminder',
                         actionClass: 'action-remind',
                         actionType: 'remind',

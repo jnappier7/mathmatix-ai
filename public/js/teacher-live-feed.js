@@ -162,8 +162,12 @@ class TeacherLiveFeed {
 
     renderActivityItem(item) {
         const duration = Math.floor(item.duration || 0);
-        const accuracy = item.problemsAttempted > 0
-            ? Math.round((item.problemsCorrect / item.problemsAttempted) * 100)
+        // Accuracy is first-try: each problem once, scored on the first
+        // attempt. problemsAttempted counts retries and skips too, which
+        // made 64% read as 73% across 62 prod sessions (2026-11-17).
+        const ftAttempted = item.firstTryAttempted || 0;
+        const accuracy = ftAttempted > 0
+            ? Math.round(((item.firstTryCorrect || 0) / ftAttempted) * 100)
             : 0;
 
         // Determine alert class
@@ -201,8 +205,9 @@ class TeacherLiveFeed {
 
                 <div class="activity-meta">
                     ${item.currentTopic ? `<span class="meta-badge topic"><i class="fas fa-book"></i> ${item.currentTopic}</span>` : ''}
-                    ${item.problemsAttempted > 0 ? `<span class="meta-badge problems">${item.problemsCorrect}/${item.problemsAttempted} correct</span>` : ''}
-                    ${accuracy > 0 ? `<span class="meta-badge accuracy"><i class="fas fa-check-circle"></i> ${accuracy}%</span>` : ''}
+                    ${ftAttempted > 0 ? `<span class="meta-badge problems" title="Problems right on the first try">${item.firstTryCorrect || 0}/${ftAttempted} first try</span>` : ''}
+                    ${ftAttempted > 0 ? `<span class="meta-badge accuracy" title="First-try accuracy"><i class="fas fa-check-circle"></i> ${accuracy}%</span>` : ''}
+                    ${item.problemsAttempted > ftAttempted ? `<span class="meta-badge" title="Every attempt, retries and skips included">${item.problemsAttempted} attempts</span>` : ''}
                     ${item.isStruggling && item.strugglingWith ? `<span class="meta-badge struggling"><i class="fas fa-exclamation-triangle"></i> ${item.strugglingWith}</span>` : ''}
                     <span class="meta-badge"><i class="fas fa-clock"></i> ${duration} min</span>
                 </div>

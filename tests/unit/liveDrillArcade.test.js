@@ -13,10 +13,11 @@ const G = require('../../utils/liveDrill/games');
 const ROOT = path.join(__dirname, '../..');
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
-test('the four game cards are exactly the modes the game plays, in the order a teacher meets them', () => {
-  expect(arcade.GAMES.map((g) => g.id)).toEqual(['drive', 'huddle', 'hill', 'heist']);
+test('the game cards are exactly the modes the game plays, in the order a teacher meets them', () => {
+  expect(arcade.GAMES.map((g) => g.id)).toEqual(['drive', 'huddle', 'hill', 'heist', 'knockout']);
   for (const g of arcade.GAMES) {
-    expect(() => G.createGame({ hostId: `arc-${g.id}`, drill: 'geometry', playbook: 'all', mode: g.id })).not.toThrow();
+    // (Knockout Arena builds its orbs from one operation's facts, so it plays the Math Facts bank only)
+    expect(() => G.createGame({ hostId: `arc-${g.id}`, drill: g.id === 'knockout' ? 'facts' : 'geometry', playbook: 'all', mode: g.id })).not.toThrow();
     expect(g.name && g.tagline && g.how && g.icon && g.players).toBeTruthy();
   }
   G._reset();

@@ -295,7 +295,9 @@
     }
     var hist = function (arr) { return arr.slice().reverse(); }; // oldest → newest
     el.innerHTML =
-      tile('active', 'Active this week', m.activeThisWeek + '<span class="td-of"> of ' + m.total + '</span>', delta(act), sparkline(hist(m.activeByWeek), { label: 'Students active, last 4 weeks: ' + hist(m.activeByWeek).join(', ') }), 'active') +
+      tile('active', 'Active this week', m.activeThisWeek + '<span class="td-of"> of ' + m.total + '</span>',
+        delta(act) + (m.openedOnly ? '<span class="td-delta td-opened"> · ' + m.openedOnly + ' opened the tutor, no work</span>' : ''),
+        sparkline(hist(m.activeByWeek), { label: 'Students who did work, last 4 weeks: ' + hist(m.activeByWeek).join(', ') }), 'active') +
       tile('minutes', 'Minutes this week', m.minutesByWeek[0].toLocaleString(), delta(mins, 'm'), sparkline(hist(m.minutesByWeek), { label: 'Minutes, last 4 weeks: ' + hist(m.minutesByWeek).join(', ') }), null) +
       tile('help', 'Need help', String(m.needHelp), m.needHelp ? '<span class="td-delta">stuck on a skill, with evidence</span>' : '<span class="td-delta td-up">nobody stuck</span>', '', 'struggling') +
       tile('wins', 'Skills mastered', String(wins.length), '<span class="td-delta">last 30 days</span>', '', null);
@@ -380,7 +382,9 @@
       return;
     }
     el.innerHTML = '<ul class="td-live-list">' + live.map(function (l) {
-      var acc = l.problemsAttempted ? Math.round((l.problemsCorrect / l.problemsAttempted) * 100) + '% on ' + l.problemsAttempted : '';
+      // First-try accuracy (each problem once); the raw attempt count includes retries and skips.
+      var acc = l.firstTryAttempted ? Math.round(((l.firstTryCorrect || 0) / l.firstTryAttempted) * 100) + '% first try on ' + l.firstTryAttempted
+        : (l.problemsAttempted ? l.problemsAttempted + ' attempt' + (l.problemsAttempted === 1 ? '' : 's') : '');
       return '<li>' + avatar(l.studentId, l.studentName) +
         '<div><button type="button" class="td-name" data-td-do="profile" data-id="' + esc(l.studentId) + '">' + esc(l.studentName) + '</button>' +
         (l.isStruggling ? ' <span class="td-chip td-chip-stuck">needs a hand</span>' : '') +
@@ -529,7 +533,7 @@
   var COLS = [
     { key: 'name', label: 'Student', sort: function (s) { return TM.fullName(s).toLowerCase(); } },
     { key: 'status', label: 'Status', sort: function (s) { return { struggling: 0, active: 1, inactive: 2 }[TM.studentStatus(s)]; } },
-    { key: 'last', label: 'Last active', sort: function (s) { return -(TM.lastActiveAt(s) || 0); } },
+    { key: 'last', label: 'Last worked', sort: function (s) { return -(TM.lastWorkedAt(s) || 0); } },
     { key: 'week', label: 'Last 4 weeks', sort: function (s) { return -TM.weekMinutes(s, 0); } },
     { key: 'skills', label: 'Skills', sort: function (s) { return -((s.skillSummary && s.skillSummary.mastered) || 0); } },
     { key: 'focus', label: 'Needs help with', sort: function (s) { var k = TM.strugglingSkills(s)[0]; return k ? (k.name || k.skillId).toLowerCase() : '~'; } }
