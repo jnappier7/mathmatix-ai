@@ -6,7 +6,7 @@ const router = express.Router();
 const User = require('../models/user');
 const Conversation = require('../models/conversation'); // NEW: Import Conversation model
 const { isTeacher, isAuthenticated } = require('../middleware/auth');
-const { generateLiveSummary, detectStruggle, detectTopic, calculateProblemStats } = require('../utils/activitySummarizer');
+const { generateLiveSummary, detectStruggle, detectTopic } = require('../utils/activitySummarizer');
 const { classifySkill } = require('../utils/parentSkillPicture');
 const { cleanupStaleSessions } = require('../services/sessionService');
 const { computeRiskScore, getInterventionTier, generateRecommendation } = require('../utils/interventionAlerts');
@@ -26,8 +26,8 @@ const { checkConsent } = require('../utils/consentManager');
 const { requireActiveConsent } = require('../middleware/consentGate');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
-const { buildActivityIndex, applyActivity, getEffectiveWeeklyMinutes } = require('../utils/studentActivity');
-const { summarizeSkillMastery, struggleReason } = require('../utils/skillSummary');
+const { buildActivityIndex, applyActivity, getEffectiveWeeklyMinutes, workedThisWeek } = require('../utils/studentActivity');
+const { summarizeSkillMastery, struggleReason, isDemonstratedMastery, isPlacedOut } = require('../utils/skillSummary');
 const { mergeSettings, diffSettings, getEffectiveAISettings } = require('../utils/effectiveAISettings');
 const { courseBucket } = require('../utils/courseBuckets');
 const { canonicalSkillId } = require('../utils/skillCanonicalizer');
@@ -36,6 +36,19 @@ const { currentSchoolYear, isValidSchoolYear, classSchoolYear } = require('../ut
 // ?scope=current (default) | archived | all — the year switcher's three views.
 function rosterScope(req) {
   return ['current', 'archived', 'all'].includes(req.query.scope) ? req.query.scope : 'current';
+}
+
+/**
+ * Is this student on the teacher's roster — assigned directly OR through a
+ * class code? The ACCESS check for every per-student route (CLAUDE.md §12:
+ * scope 'all', so an archived student is still the teacher's to act on).
+ * A bare `{ _id, teacherId }` lookup refused every class-code student: on
+ * prod one teacher's whole roster (73 of 73) was "not assigned to you".
+ */
+async function teacherHasStudent(teacherId, studentId) {
+  if (!studentId) return false;
+  const ids = await getStudentIdsForTeacher(teacherId);
+  return ids.map(String).includes(String(studentId));
 }
 
 // Fetches students assigned to the logged-in teacher (via teacherId OR enrollment codes)
@@ -61,11 +74,14 @@ router.get('/students', isTeacher, async (req, res) => {
     // weekly counter is stale for anyone who stopped showing up.
     const now = Date.now();
     applyActivity(students, await buildActivityIndex(students.map(s => s._id), { now }), now);
+    // Canonical ids, so a legacy key and its unified twin are ONE skill in
+    // the counts (utils/masteryGuard decodedMasteryMap) and names resolve.
+    const decoded = new Map(students.map(s => [String(s._id), Object.fromEntries(decodedMasteryMap(s))]));
     const skillNames = await resolveSkillDisplayNames(
-      students.flatMap(s => (s.skillMastery ? Object.keys(s.skillMastery) : []))
+      students.flatMap(s => Object.keys(decoded.get(String(s._id)) || {}))
     );
     for (const s of students) {
-      s.skillSummary = summarizeSkillMastery(s.skillMastery, skillNames, now);
+      s.skillSummary = summarizeSkillMastery(decoded.get(String(s._id)), skillNames, now);
       if (isLightweight) delete s.skillMastery;
     }
     res.json(students);
@@ -355,16 +371,20 @@ router.get('/live-feed', isTeacher, async (req, res) => {
         if (claimed) {
           // We won the race — generate the summary
           liveSummary = await generateLiveSummary(convo, studentName);
+          // The problem counters are the grading pipeline's (persist.js), not
+          // a text re-count: the old `...calculateProblemStats()` spread here
+          // wrote {attempted, correct}, names the schema doesn't have, so
+          // Mongoose dropped it — and had it landed, a heuristic would have
+          // overwritten verified verdicts.
           await Conversation.findByIdAndUpdate(convo._id, {
             liveSummary,
             currentTopic: detectTopic(convo.messages),
-            ...calculateProblemStats(convo.messages)
           });
         }
         // If claimed is null, another request already started the update — skip
       }
 
-      // Detect struggles
+      // Detect struggles: verified wrong answers first, the student's words second.
       const struggleInfo = detectStruggle(convo.messages.slice(-10));
 
       return {
@@ -376,8 +396,13 @@ router.get('/live-feed', isTeacher, async (req, res) => {
         duration: convo.activeMinutes,
         liveSummary: liveSummary || `${studentName} is in an active session`,
         currentTopic: convo.currentTopic,
+        // Every attempt, retries and skips included — the raw count.
         problemsAttempted: convo.problemsAttempted || 0,
         problemsCorrect: convo.problemsCorrect || 0,
+        // Each problem once, scored on the first try — the honest accuracy
+        // (persist.js). This is what the feed shows as a percentage.
+        firstTryAttempted: convo.firstTryAttempted || 0,
+        firstTryCorrect: convo.firstTryCorrect || 0,
         isStruggling: struggleInfo.isStruggling,
         strugglingWith: struggleInfo.strugglingWith,
         severity: struggleInfo.severity,
@@ -477,9 +502,9 @@ router.post('/alerts/:conversationId/:alertIndex/acknowledge', isTeacher, async 
       return res.status(404).json({ message: 'Conversation not found' });
     }
 
-    // Verify teacher has access to this student
-    const student = await User.findOne({ _id: conversation.userId, teacherId });
-    if (!student) {
+    // Verify teacher has access to this student — by roster (direct
+    // assignment OR class code), the same check the feed itself uses.
+    if (!(await teacherHasStudent(teacherId, conversation.userId))) {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
@@ -513,8 +538,12 @@ router.post('/students/:studentId/reset-assessment', isTeacher, async (req, res)
     const teacherId = req.user._id;
     const { reason } = req.body; // Optional reason for audit trail
 
-    // Verify teacher has access to this student
-    const student = await User.findOne({ _id: studentId, teacherId: teacherId });
+    // Verify teacher has access to this student. Roster membership, not
+    // `teacherId` alone: a class-code roster has no teacherId on the student
+    // doc, and one prod teacher's 73 students were ALL unreachable here.
+    const student = (await teacherHasStudent(teacherId, studentId))
+      ? await User.findOne({ _id: studentId, ...anyRole('student') })
+      : null;
     if (!student) {
       return res.status(403).json({ message: 'Not authorized. Student not assigned to you.' });
     }
@@ -582,8 +611,10 @@ router.get('/students/:studentId/skill-report', isTeacher, requireActiveConsent(
     const { studentId } = req.params;
     const teacherId = req.user._id;
 
-    // Verify teacher has access to this student
-    const student = await User.findOne({ _id: studentId, teacherId: teacherId }).lean();
+    // Verify teacher has access to this student (roster: direct OR class code)
+    const student = (await teacherHasStudent(teacherId, studentId))
+      ? await User.findOne({ _id: studentId, ...anyRole('student') }).lean()
+      : null;
     if (!student) {
       return res.status(403).json({ message: 'Not authorized. Student not assigned to you.' });
     }
@@ -697,8 +728,10 @@ router.get('/students/:studentId/growth-history', isTeacher, requireActiveConsen
     const { studentId } = req.params;
     const teacherId = req.user._id;
 
-    // Verify teacher has access to this student
-    const student = await User.findOne({ _id: studentId, teacherId: teacherId }).lean();
+    // Verify teacher has access to this student (roster: direct OR class code)
+    const student = (await teacherHasStudent(teacherId, studentId))
+      ? await User.findOne({ _id: studentId, ...anyRole('student') }).lean()
+      : null;
     if (!student) {
       return res.status(403).json({ message: 'Not authorized. Student not assigned to you.' });
     }
@@ -976,7 +1009,10 @@ router.get('/students/:studentId/learning-curve', isTeacher, requireActiveConsen
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
-    const student = await User.findOne({ _id: studentId, teacherId }).lean();
+    // Roster membership (direct OR class code), not teacherId alone.
+    const student = (await teacherHasStudent(teacherId, studentId))
+      ? await User.findOne({ _id: studentId, ...anyRole('student') }).lean()
+      : null;
     if (!student) return res.status(403).json({ message: 'Not authorized.' });
 
     const skillsOverview = [];
@@ -1037,7 +1073,10 @@ router.get('/students/:studentId/placement-results', isTeacher, requireActiveCon
   try {
     const { studentId } = req.params;
     const teacherId = req.user._id;
-    const student = await User.findOne({ _id: studentId, teacherId }).lean();
+    // Roster membership (direct OR class code), not teacherId alone.
+    const student = (await teacherHasStudent(teacherId, studentId))
+      ? await User.findOne({ _id: studentId, ...anyRole('student') }).lean()
+      : null;
     if (!student) return res.status(403).json({ message: 'Not authorized.' });
 
     // Parse theta from initialPlacement
@@ -1108,21 +1147,22 @@ router.get('/classes', isTeacher, async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    // For each class, compute enrolled count and active student count
-    const studentIds = codes.flatMap(c => c.enrolledStudents.map(e => e.studentId));
+    // For each class, compute enrolled count and active student count.
+    // "Active" is the roster's definition — did WORK this week
+    // (utils/studentActivity.js) — not "logged in", which counted a student
+    // who opened the tutor and left.
+    const studentIds = codes.flatMap(c => c.enrolledStudents.map(e => e.studentId)).filter(Boolean);
     const students = studentIds.length > 0
       ? await User.find({ _id: { $in: studentIds } })
           .select('_id lastLogin')
           .lean()
       : [];
-
-    const loginMap = {};
+    const activityNow = Date.now();
+    applyActivity(students, await buildActivityIndex(students.map(s => s._id), { now: activityNow }), activityNow);
+    const workedMap = {};
     for (const s of students) {
-      loginMap[s._id.toString()] = s.lastLogin;
+      workedMap[s._id.toString()] = workedThisWeek(s);
     }
-
-    const now = new Date();
-    const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
 
     const classes = codes.map(c => ({
       _id: c._id,
@@ -1140,10 +1180,7 @@ router.get('/classes', isTeacher, async (req, res) => {
       createdAt: c.createdAt,
       studentIds: c.enrolledStudents.map(e => e.studentId?.toString()).filter(Boolean),
       studentCount: c.enrolledStudents.length,
-      activeCount: c.enrolledStudents.filter(e => {
-        const ll = loginMap[e.studentId?.toString()];
-        return ll && new Date(ll) > sevenDaysAgo;
-      }).length
+      activeCount: c.enrolledStudents.filter(e => workedMap[e.studentId?.toString()] === true).length
     }));
 
     res.json({ success: true, classes });
@@ -1326,8 +1363,10 @@ router.put('/classes/:codeId/assign-student', isTeacher, async (req, res) => {
       return res.status(404).json({ message: 'Class not found or not owned by you.' });
     }
 
-    // Verify the student belongs to this teacher
-    const student = await User.findOne({ _id: studentId, ...anyRole('student'), teacherId });
+    // Verify the student belongs to this teacher (roster: direct OR class code)
+    const student = (await teacherHasStudent(teacherId, studentId))
+      ? await User.findOne({ _id: studentId, ...anyRole('student') })
+      : null;
     if (!student) {
       return res.status(404).json({ message: 'Student not found or not assigned to you.' });
     }
@@ -1424,8 +1463,9 @@ router.get('/course-progress', isTeacher, async (req, res) => {
 
     // Mastery only counts when it was DEMONSTRATED. Prerequisite inference
     // marks whole grade bands "mastered" for a student who never touched them,
-    // which is how a 10th grader appeared in eight elementary "courses".
-    const NOT_DEMONSTRATED = new Set(['inference', 'legacy']);
+    // which is how a 10th grader appeared in eight elementary "courses" — and
+    // placement did the same thing one rule over (utils/skillSummary.js:
+    // one split, mastered vs placedOut, shared with the roster and the aide).
     students.forEach(student => {
       const mastery = decodedMasteryMap(student);
       const name = `${student.firstName || ''} ${student.lastName || ''}`.trim() || student.username;
@@ -1433,12 +1473,13 @@ router.get('/course-progress', isTeacher, async (req, res) => {
 
       for (const [key, courseData] of Object.entries(courseMap)) {
         let mastered = 0;
+        let placedOut = 0;
         let learning = 0;
         for (const [skillId, skillData] of mastery) {
           if (!skillData || !courseData.skillIdSet.has(skillId)) continue;
           if (skillData.status === 'mastered') {
-            if (skillData.masteryType === 'inferred' || NOT_DEMONSTRATED.has(skillData.provenBy)) continue;
-            mastered++;
+            if (isDemonstratedMastery(skillData)) mastered++;
+            else placedOut++;
           } else if (['learning', 'practicing', 're-fragile', 'needs-review'].includes(skillData.status)) {
             learning++;
           }
@@ -1446,7 +1487,7 @@ router.get('/course-progress', isTeacher, async (req, res) => {
         const isEnrolled = !!ownBucket && ownBucket.key === key;
         if (mastered > 0 || learning > 0 || isEnrolled) {
           const pct = courseData.totalSkills ? Math.round((mastered / courseData.totalSkills) * 100) : 0;
-          courseProgress[key].students.push({ studentId: student._id, name, mastered, learning, progressPct: pct });
+          courseProgress[key].students.push({ studentId: student._id, name, mastered, placedOut, learning, progressPct: pct });
           courseProgress[key].totalMastered += mastered;
           courseProgress[key].totalLearning += learning;
           if (isEnrolled) courseProgress[key].enrolledCount++;
@@ -1517,9 +1558,10 @@ router.get('/class-skill-gaps', isTeacher, async (req, res) => {
       const mastery = decodedMasteryMap(student);
       for (const [skillId, data] of mastery) {
         if (!data) continue;
-        // Inferred mastery is not something the class DID — counting it made
-        // every prerequisite of a placed student a "gap" row of its own.
-        if (data.status === 'mastered' && (data.masteryType === 'inferred' || data.provenBy === 'inference')) continue;
+        // Inferred or placed-out mastery is not something the class DID —
+        // counting it made every prerequisite of a placed student a "gap"
+        // row of its own, and a placed skill read as "mastered, attempted".
+        if (isPlacedOut(data)) continue;
         if (!skillAggregation[skillId]) {
           skillAggregation[skillId] = {
             skillId,
@@ -1669,9 +1711,6 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
 
   if (students.length === 0) return { students: [], roster: [], summary: 'No students enrolled yet.', studentProfiles: '', classHealth: '', needsAttention: [], topPerformers: [], risingStars: [] };
 
-  const now = new Date();
-  const oneWeekAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
-  const twoDaysAgo = new Date(now - 2 * 24 * 60 * 60 * 1000);
 
   // Names come from the Skill catalog by canonical id, resolved once for all
   // students up front (the .map below is synchronous), never from the raw key.
@@ -1704,10 +1743,11 @@ async function buildClassSnapshot(teacherId, { forModel = false } = {}) {
       .map(([k]) => k.replace(/([A-Z])/g, ' $1').toLowerCase().trim());
     const iepGoals = s.iepPlan?.goals?.filter(g => g.status === 'active') || [];
 
-    // Activity
-    const lastActive = s.activity?.lastActiveAt ? new Date(s.activity.lastActiveAt) : null;
-    const isActive = lastActive && lastActive > twoDaysAgo;
-    const isInactive = !lastActive || lastActive < oneWeekAgo;
+    // Activity — the roster's one definition: did WORK in the last 7 days
+    // (utils/studentActivity.js). The aide used to call "active" a 2-day
+    // presence window while its own summary line said "Active this week".
+    const isActive = workedThisWeek(s);
+    const isInactive = !isActive;
     const weeklyMinutes = s.activity?.weeklyMinutes?.[0] ?? getEffectiveWeeklyMinutes(s);
 
     // Growth

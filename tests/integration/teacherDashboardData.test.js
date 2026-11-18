@@ -58,14 +58,16 @@ beforeEach(async () => {
     weeklyActiveTutoringMinutes: 20, lastWeeklyReset: new Date(now - 2 * DAY),
     skillMastery: {
       'two-step-equations': { status: 'learning', masteryScore: 30, strugglingAreas: ['inverse operations'], lastPracticed: new Date(now - DAY) },
-      'one-step-equations': { status: 'mastered', masteryScore: 100, masteredDate: new Date(now - 3 * DAY) },
+      'one-step-equations': { status: 'mastered', masteryScore: 100, masteredDate: new Date(now - 3 * DAY), totalAttempts: 4 },
+      // Placed out by the screener: 'mastered' on paper, never practiced here.
+      'counting': { status: 'mastered', masteryScore: 1, provenBy: 'placement', masteredDate: new Date(now - DAY) },
     },
   });
   // Gone since February, but the stored counter still says 400 min/wk.
   lapsed = await mkUser(['student'], {
     firstName: 'Lapsed', teacherId: teacher._id, lastLogin: new Date(now - 240 * DAY),
     weeklyActiveTutoringMinutes: 400, lastWeeklyReset: new Date(now - 240 * DAY),
-    skillMastery: { 'fractions': { status: 'mastered', masteryScore: 1 } }, // legacy 0-1 seed
+    skillMastery: { 'fractions': { status: 'mastered', masteryScore: 1, pillars: { accuracy: { correct: 4, total: 4 } } } }, // legacy 0-1 seed, practiced
   });
   // Has tutoring history but no lastLogin (older-account shape).
   ghost = await mkUser(['student'], { firstName: 'Ghost', teacherId: teacher._id });
@@ -104,7 +106,8 @@ describe('GET /api/teacher/students', () => {
     const { body } = await supertest(app).get('/api/teacher/students').expect(200);
     const a = byName(body, 'Active').skillSummary;
     expect(a.struggling).toEqual([expect.objectContaining({ skillId: 'two-step-equations', reason: 'tutor-flagged' })]);
-    expect(a.recentlyMastered.map(r => r.skillId)).toEqual(['one-step-equations']);
+    expect(a.recentlyMastered.map(r => r.skillId)).toEqual(['one-step-equations']); // the placed-out skill is not a win
+    expect(a).toMatchObject({ mastered: 1, placedOut: 1 });
     expect(byName(body, 'Lapsed').skillSummary.avgMastery).toBe(100); // 1.0 legacy → 100, not 1 or 10000
   });
 
