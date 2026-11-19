@@ -539,6 +539,7 @@
     const onKo = st.mode === 'knockout';
     $('live-body').classList.toggle('mode-knockout', onKo);
     $('ko-pane').hidden = !onKo;
+    $('ko-wide').hidden = !onKo;
     if (onKo) {
       $('live-body').classList.remove('mode-huddle');
       ['drive-pane', 'huddle-pane', 'h-next', 'h-keys'].forEach((id) => { $(id).hidden = true; });
@@ -1021,10 +1022,30 @@
 
   // ---------------- knockout arena ----------------
   let pitch = null; // the projector's view of the arena (knockout.js, no car of its own)
+  // "Hide scoreboard" (owner, 2026-11-19): the side panel and the score strip go and the arena takes
+  // the screen; the canvas then draws who is left and the gate itself. Remembered on this computer.
+  let koWide = false;
+  try { koWide = localStorage.getItem('mm-ko-wide') === '1'; } catch { /* private window */ }
+  function setKoWide(on) {
+    koWide = !!on;
+    try { localStorage.setItem('mm-ko-wide', koWide ? '1' : '0'); } catch { /* private window */ }
+    applyKoWide();
+  }
+  function applyKoWide() {
+    $('live-body').classList.toggle('ko-wide', koWide);
+    $('ko-wide').textContent = koWide ? 'Show scoreboard' : 'Hide scoreboard';
+    $('ko-wide').setAttribute('aria-pressed', String(koWide));
+    if (pitch) pitch.hud(koWide);
+  }
+  $('ko-wide').onclick = () => setKoWide(!koWide);
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'h' || e.key === 'H') && e.target === document.body && game && game.mode === 'knockout' && !$('live').hidden) setKoWide(!koWide);
+  });
   function renderKnockout(st) {
     const k = st.knockout;
     if (!k) return;
     if (!pitch && window.LiveDrillKnockout) pitch = window.LiveDrillKnockout.mount($('ko-pitch'), { serverNow });
+    applyKoWide();
     if (pitch) pitch.update(st);
     $('ko-alive').textContent = `${k.alive} of ${k.of}`;
     $('ko-gate').textContent = k.gateOpen ? 'Comebacks are open' : 'The gate is closed — last car wins';

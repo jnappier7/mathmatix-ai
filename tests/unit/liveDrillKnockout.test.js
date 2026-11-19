@@ -17,7 +17,13 @@
  *     the Fact Champion — fast ones double;
  *   - the game ends at one car; a game survives a snapshot/hydrate mid-round;
  *   - the SIMULATOR: a class of bots always finishes, and a student who knows the facts outlasts
- *     one who drives into the nearest orb.
+ *     one who drives into the nearest orb;
+ *   - BOOST IS A POWER-UP: canisters dealt clear of cars and orbs, first claim wins, a full tank
+ *     leaves one on the floor, a charge is spent once, and going out loses them;
+ *   - BUMPER CARS (public/js/live-drill/knockout.js, which every device runs): two devices bounce
+ *     their cars apart as mirror images, a bump is always felt, and no bounce is ever faster than
+ *     the server's grab check allows — a car that was just bumped can still grab an orb;
+ *   - THE WHOLE ARENA on every screen: it fits, and a portrait phone turns it to draw it bigger.
  */
 jest.useFakeTimers();
 const G = require('../../utils/liveDrill/games');
@@ -474,5 +480,202 @@ describe('the simulator', () => {
     }
     // the guesser acts nearly twice as often; it should still lose most games
     expect(knower).toBeGreaterThan(guesser * 2);
+  });
+});
+
+describe('boost is a power-up', () => {
+  /** Put `p` on canister `b` (as its device would) and claim it. */
+  function pickUp(g, p, b) {
+    Object.assign(p.ko, { x: b.x, y: b.y, posAt: Date.now() });
+    return G.grabChip(g, p, { round: g.ko.round.n, boost: b.id, x: b.x, y: b.y });
+  }
+
+  test('every round deals one canister per five cars (at least one), clear of every car and every orb', () => {
+    for (const n of [2, 5, 12, 16, 34]) {
+      const g = arena(); seat(g, n); G.start(g);
+      const { boosts, chips, world } = g.ko.round;
+      expect(boosts).toHaveLength(Math.max(1, Math.round(n / K.TUNE.boost.per)));
+      for (const b of boosts) {
+        expect(b.by).toBeNull();
+        expect(b.x).toBeGreaterThanOrEqual(K.TUNE.margin); expect(b.x).toBeLessThanOrEqual(world.w - K.TUNE.margin);
+        // never under a car (a free boost at kickoff) and never on top of an orb
+        for (const p of g.players.values()) expect(Math.hypot(b.x - p.ko.x, b.y - p.ko.y)).toBeGreaterThan(K.TUNE.boost.eat + K.TUNE.bump.r * 2);
+        for (const c of chips) expect(Math.hypot(b.x - c.x, b.y - c.y)).toBeGreaterThan(K.TUNE.chipR + K.TUNE.boost.r);
+      }
+    }
+  });
+
+  test('a canister is a claim like an orb: first claim wins, and it has to be plausible', () => {
+    const g = arena(); const [a, b] = seat(g, 6); G.start(g);
+    const item = g.ko.round.boosts[0];
+    // claims to be on it, having reported the far corner a moment ago
+    Object.assign(a.ko, { x: item.x > 600 ? 20 : 1180, y: item.y > 380 ? 20 : 740, posAt: Date.now() });
+    expect(() => G.grabChip(g, a, { round: g.ko.round.n, boost: item.id, x: item.x, y: item.y })).toThrow(/Too far from that boost/);
+    expect(pickUp(g, a, item)).toEqual({ boost: true, boosts: 1 });
+    expect(pickUp(g, b, item)).toEqual({ taken: true });
+    expect(b.ko.boosts).toBe(0);
+    // what a screen sees: where the canisters are and which are gone
+    expect(G.playerView(g, b).knockout.round.boosts.find((x) => x.id === item.id)).toEqual({ id: item.id, x: item.x, y: item.y, taken: 1 });
+    expect(G.playerView(g, a).knockout.boosts).toBe(1);
+  });
+
+  test('a full tank leaves the canister on the floor for someone else', () => {
+    const g = arena(); const [a, b] = seat(g, 15); G.start(g);
+    const items = g.ko.round.boosts;
+    expect(items.length).toBeGreaterThanOrEqual(3);
+    a.ko.boosts = K.TUNE.boost.max;
+    expect(pickUp(g, a, items[0])).toEqual({ full: true, boosts: K.TUNE.boost.max });
+    expect(items[0].by).toBeNull();
+    expect(pickUp(g, b, items[0])).toMatchObject({ boost: true });
+  });
+
+  test('a safe car may still pick one up — charges carry to the next round', () => {
+    const g = arena(); const [a] = seat(g, 6); G.start(g);
+    claim(g, a, right(g)[0]);
+    expect(pickUp(g, a, g.ko.round.boosts[0])).toMatchObject({ boost: true, boosts: 1 });
+    closeNow(g); nextRound();
+    expect(a.ko.in).toBe(true);
+    expect(a.ko.boosts).toBe(1);
+  });
+
+  test('a charge is spent once: it starts the boost clock, the frame shows it, and an empty tank is refused', () => {
+    const g = arena(); const [a] = seat(g, 6); G.start(g);
+    pickUp(g, a, g.ko.round.boosts[0]);
+    const r = G.fireBoost(g, a, { x: a.ko.x, y: a.ko.y, vx: 90, vy: 0 });
+    expect(r).toEqual({ boosts: 0, boostUntil: Date.now() + K.TUNE.boost.ms });
+    expect(K.carFrame(g, Date.now()).find((f) => f[0] === a.id)).toEqual([a.id, a.ko.x, a.ko.y, 0, 90, 0, 1]);
+    expect(() => G.fireBoost(g, a, {})).toThrow(/No boost left/);
+    jest.advanceTimersByTime(K.TUNE.boost.ms + 10);
+    expect(K.carFrame(g, Date.now()).find((f) => f[0] === a.id)[6]).toBe(0);
+  });
+
+  test('a car that goes out loses its charges, and a car in the pit cannot boost', () => {
+    const g = arena(); const cars = seat(g, 3); G.start(g);
+    const [a, b, c] = cars;
+    c.ko.boosts = 2;
+    claim(g, a, right(g)[0]); claim(g, b, right(g)[0]); // c is left without
+    expect(c.ko.in).toBe(false);
+    expect(c.ko.boosts).toBe(0);
+    expect(() => G.fireBoost(g, c, {})).toThrow(/not in the arena/);
+  });
+
+  test('a report carries the car\'s speed, never above the top speed; the lobby states the boost rules', () => {
+    const g = arena(); const [a] = seat(g, 4); G.start(g);
+    G.reportPosition(g, a, 100, 200, { vx: 3000, vy: 0 });
+    expect(a.ko).toMatchObject({ x: 100, y: 200, vx: K.TUNE.speed * K.TUNE.topMult, vy: 0 });
+    G.reportPosition(g, a, 110, 200, { vx: 'fast' }); // junk speed: the position still lands, the speed stays
+    expect(a.ko).toMatchObject({ x: 110, vx: K.TUNE.speed * K.TUNE.topMult });
+    expect(G.rulesFor(g).knockout).toMatchObject({ boostMax: K.TUNE.boost.max, boostSec: K.TUNE.boost.ms / 1000, ghostSafe: true });
+    expect(G.playerView(g, a).knockout.tune).toMatchObject({ boost: K.TUNE.boost, bump: K.TUNE.bump, topMult: K.TUNE.topMult });
+  });
+
+  test('canisters survive a deploy: the same ones, the same claims', () => {
+    const g = arena(); const [a] = seat(g, 10); G.start(g);
+    pickUp(g, a, g.ko.round.boosts[0]);
+    const snap = JSON.parse(JSON.stringify(G.snapshot(g)));
+    const before = g.ko.round.boosts.map((b) => [b.id, b.x, b.y, b.by]);
+    G._reset();
+    const h = G.hydrate(snap);
+    expect(h.ko.round.boosts.map((b) => [b.id, b.x, b.y, b.by])).toEqual(before);
+    expect(h.players.get(a.id).ko.boosts).toBe(1);
+  });
+});
+
+describe('bumper cars (the bounce every device runs)', () => {
+  const C = require('../../public/js/live-drill/knockout.js');
+  const B = K.TUNE.bump;
+  const TOP = K.TUNE.speed * K.TUNE.topMult * 0.95; // what the page caps a bounce at
+  const car = (x, y, vx = 0, vy = 0) => ({ x, y, vx, vy });
+
+  test('two cars apart do not touch; two that overlap are pushed exactly apart', () => {
+    expect(C.bumpOff(car(0, 0), car(B.r * 2 + 1, 0), B, TOP)).toBeNull();
+    const a = car(0, 0, 100, 0);
+    expect(C.bumpOff(a, car(B.r, 0, -100, 0), B, TOP)).toEqual({ nx: -1, ny: 0 });
+    expect(Math.abs(a.x - B.r)).toBeCloseTo(B.r * 2, 6);
+  });
+
+  test('head on: each device bounces its own car, and the two results are mirror images', () => {
+    // A's device: A at 0 moving right at 120, sees B at 30 moving left at 120
+    const a = car(0, 0, 120, 0); C.bumpOff(a, car(30, 0, -120, 0), B, TOP);
+    // B's device: the same moment, from the other side
+    const b = car(30, 0, -120, 0); C.bumpOff(b, car(0, 0, 120, 0), B, TOP);
+    expect(a.vx).toBeLessThan(0); expect(b.vx).toBeGreaterThan(0);
+    expect(a.vx).toBeCloseTo(-b.vx, 6);
+    expect(a.x - 15).toBeCloseTo(-(b.x - 15), 6);
+    // equal masses: the closing speed comes back (times e), never more
+    expect(Math.abs(a.vx)).toBeCloseTo(Math.max(B.kick, 120 * B.e), 6);
+  });
+
+  test('a car at rest that is hit is always knocked away at least at the kick speed', () => {
+    const still = car(0, 0); C.bumpOff(still, car(-20, 0, 60, 0), B, TOP);
+    expect(still.vx).toBeGreaterThanOrEqual(B.kick - 1e-9);
+    expect(still.vy).toBeCloseTo(0, 9);
+  });
+
+  test('no bounce is ever faster than the grab check allows — so a car that was just bumped can still grab', () => {
+    for (let i = 0; i < 400; i++) {
+      const a = car(0, 0, (Math.random() - 0.5) * 900, (Math.random() - 0.5) * 900);
+      const o = car((Math.random() - 0.5) * B.r * 3.9, (Math.random() - 0.5) * B.r * 3.9, (Math.random() - 0.5) * 900, (Math.random() - 0.5) * 900);
+      if (!C.bumpOff(a, o, B, TOP)) continue;
+      expect(Math.hypot(a.vx, a.vy)).toBeLessThanOrEqual(TOP + 1e-6);
+    }
+    // the server's side: a car reports, is bounced away at the top speed for half a second, then grabs
+    const g = arena(); const [p] = seat(g, 3); G.start(g);
+    const chip = right(g)[0];
+    const t0 = Date.now();
+    jest.advanceTimersByTime(500);
+    const at = K.chipAt(chip, g.ko.round.world, Date.now());
+    const back = (TOP * 0.5) + K.TUNE.eatDist; // where it was half a second before, at full bounce speed
+    Object.assign(p.ko, { x: at.x - back, y: at.y, posAt: t0 });
+    expect(G.grabChip(g, p, { round: g.ko.round.n, chip: chip.id, x: at.x, y: at.y })).toMatchObject({ ok: true });
+  });
+
+  test('a device draws the same orb paths the server checks grabs against', () => {
+    const g = arena(); seat(g, 8); G.start(g);
+    const r = g.ko.round;
+    for (const c of r.chips) {
+      for (const dt of [0, 1700, 9000, 61000]) {
+        expect(C.chipAt(c, r.world, c.t0 + dt, K.TUNE.margin)).toEqual(K.chipAt(c, r.world, c.t0 + dt));
+      }
+    }
+  });
+});
+
+describe('the whole arena, on every screen', () => {
+  const C = require('../../public/js/live-drill/knockout.js');
+  const fits = (v, cw, ch, world) => {
+    const w = (v.rot ? world.h : world.w) * v.s; const h = (v.rot ? world.w : world.h) * v.s;
+    return v.cx - w / 2 >= -1e-6 && v.cx + w / 2 <= cw + 1e-6 && v.cy - h / 2 >= -1e-6 && v.cy + h / 2 <= ch + 1e-6;
+  };
+
+  test('every class size fits on a phone, a Chromebook and a projector — nothing is off the screen', () => {
+    for (const n of [2, 16, 30, 40]) {
+      const world = K.worldFor(n);
+      for (const [cw, ch, turn] of [[390, 750, true], [360, 640, true], [750, 390, true], [1366, 600, true], [1880, 820, false]]) {
+        const v = C.fitView(cw, ch, world, { top: turn ? 110 : 0, bottom: turn ? 70 : 0, canTurn: turn });
+        expect(fits(v, cw, ch - (turn ? 70 : 0), world)).toBe(true);
+      }
+    }
+  });
+
+  test('a portrait phone turns the arena, which draws it half again as big; a landscape screen never turns it', () => {
+    const world = K.worldFor(25);
+    const flat = C.fitView(390, 750, world, { top: 110, bottom: 70 });
+    const turned = C.fitView(390, 750, world, { top: 110, bottom: 70, canTurn: true });
+    expect(turned.rot).toBeCloseTo(Math.PI / 2, 9);
+    expect(turned.s / flat.s).toBeGreaterThan(1.4);
+    expect(C.fitView(1366, 600, world, { top: 110, canTurn: true }).rot).toBe(0);
+    expect(C.fitView(1880, 820, world, { pad: 0 }).rot).toBe(0); // the projector is never offered a turn
+  });
+
+  test('on a turned arena a drag still goes where the finger goes', () => {
+    const rot = Math.PI / 2;
+    // the canvas draws arena (x, y) at screen rotate(rot)(x, y); steering must land the car under the finger
+    const toScreen = ({ dx, dy }) => ({ dx: dx * Math.cos(rot) - dy * Math.sin(rot), dy: dx * Math.sin(rot) + dy * Math.cos(rot) });
+    for (const [dx, dy] of [[1, 0], [0, 1], [-1, 0], [0, -1], [0.6, -0.8]]) {
+      const back = toScreen(C.screenToWorld(dx, dy, rot));
+      expect(back.dx).toBeCloseTo(dx, 9); expect(back.dy).toBeCloseTo(dy, 9);
+    }
+    expect(C.screenToWorld(0.3, -0.7, 0)).toEqual({ dx: 0.3, dy: -0.7 });
   });
 });
