@@ -105,6 +105,25 @@ describe('setup', () => {
     expect(K.worldFor(34).w).toBeGreaterThan(K.worldFor(8).w);
   });
 
+  test('no round opens with an orb on a car: every car has to drive to its orb', () => {
+    for (const n of [2, 8, 16, 26, 34]) {
+      for (const seed of ['a', 'b', 'c']) {
+        const g = arena(); seat(g, n); g.seed = `${seed}${n}`; G.start(g);
+        const { chips, world } = g.ko.round;
+        let nearest = Infinity;
+        for (const p of g.players.values()) {
+          for (const c of chips) nearest = Math.min(nearest, Math.hypot(c.x - p.ko.x, c.y - p.ko.y));
+        }
+        // the clearance holds in every class size we play; never inside an orb's reach plus a car length
+        expect(nearest).toBeGreaterThan(K.TUNE.eatDist + K.TUNE.chipR);
+        if (n <= 26) expect(nearest).toBeGreaterThanOrEqual(K.TUNE.carClear * 0.9);
+        for (const c of chips) {
+          expect(c.x).toBeGreaterThanOrEqual(K.TUNE.margin); expect(c.x).toBeLessThanOrEqual(world.w - K.TUNE.margin);
+        }
+      }
+    }
+  });
+
   test('the lobby states the rules the server plays', () => {
     const g = arena({ seconds: 180, secondsPerPlay: 15 });
     const r = G.rulesFor(g).knockout;

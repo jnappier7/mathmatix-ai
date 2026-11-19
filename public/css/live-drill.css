@@ -909,3 +909,6 @@ div.alarm>*{position:relative}
   body:has(#live.driving){overflow:hidden}
 }
 .koside li.outrow{opacity:.55}
+/* The projector: a live knockout takes the whole screen (the orbs must read from the back of the room) */
+.wrap:has(#live:not([hidden]) #live-body.mode-knockout){max-width:none;min-height:100dvh;box-sizing:border-box;padding:10px 18px 12px;gap:10px}
+@media (min-width:901px){#live-body.mode-knockout .kopane{grid-template-columns:minmax(0,1fr) 280px}#live-body.mode-knockout .kopane .arena{height:calc(100dvh - 285px);min-height:420px}}

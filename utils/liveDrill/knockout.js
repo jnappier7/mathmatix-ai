@@ -60,12 +60,14 @@ const TUNE = {
   emptyRounds: 3, // rounds in a row where nobody grabbed anything: the class has walked away
   speed: 130, // a car's cruising speed, world units per second (the client moves it)
   dartMult: 2.5,
-  chipR: 25,
-  eatDist: 21, // small on purpose: brushing a chip is not eating it
+  chipR: 40, // big enough to read a fact on a phone at arm's length and on a projector across the room
+  eatDist: 32, // inside the orb's edge on purpose: brushing a chip is not eating it
   grabSlack: 70, // latency allowance on a grab's distance to the chip
   moveSlack: 160, // and on how far a car may have moved since its last report
   chipSpeed: [18, 36],
-  margin: 34,
+  margin: 50, // keeps a whole orb inside the wall
+  carClear: 110, // an orb is dealt at least this far from every car (no round opens with a free grab)
+  chipGap: 90, // and this far from every other orb (two radii and a gap: they don't open stacked)
   world: { w: 1200, h: 760, per: 16 }, // the arena for 16 cars; it scales with the class
 };
 
@@ -266,21 +268,30 @@ function openRound(game, io) {
   const nC = Math.max(1, pool.length - 1);
   const nW = Math.max(3, Math.min(12, Math.round(pool.length / 3)));
   const made = makeChips(BOOKS.includes(game.playbook) ? game.playbook : 'all', game.focus, rand, nC, nW);
-  const chips = [];
-  const all = shuffle(rand, [...made.correct.map((c) => ({ ...c, ok: true })), ...made.wrong.map((c) => ({ ...c, ok: false }))]);
-  for (const c of all) {
-    let x = 0; let y = 0;
-    for (let tries = 0; tries < 30; tries++) {
-      x = TUNE.margin + rand() * (world.w - 2 * TUNE.margin);
-      y = TUNE.margin + rand() * (world.h - 2 * TUNE.margin);
-      if (chips.every((o) => Math.hypot(o.x - x, o.y - y) > 70)) break;
-    }
-    chips.push({ id: `c${n}-${chips.length}`, text: c.text, val: c.val, ok: c.ok, x: Math.round(x), y: Math.round(y), ...drift(rand), t0: at, by: null, hits: 0 });
-  }
+  // cars first: they keep their spot from the round before, and the orbs are dealt around them
   for (const p of pool) {
     Object.assign(p.ko, { held: [], ate: [], slowUntil: 0, roundPts: 0 });
     if (p.ko.x == null) spawn(game, p, world, rand, at);
     else { p.ko.x = Math.min(world.w - 14, Math.max(14, p.ko.x)); p.ko.y = Math.min(world.h - 14, Math.max(14, p.ko.y)); p.ko.posAt = at; }
+  }
+  const cars = pool.map((p) => ({ x: p.ko.x, y: p.ko.y }));
+  const chips = [];
+  const all = shuffle(rand, [...made.correct.map((c) => ({ ...c, ok: true })), ...made.wrong.map((c) => ({ ...c, ok: false }))]);
+  for (const c of all) {
+    // No orb opens on (or a nudge from) a car, and orbs don't stack. Best of the tries if the arena is crowded.
+    let best = null; let bestRoom = -Infinity;
+    for (let tries = 0; tries < 40; tries++) {
+      const x = TUNE.margin + rand() * (world.w - 2 * TUNE.margin);
+      const y = TUNE.margin + rand() * (world.h - 2 * TUNE.margin);
+      const room = Math.min(
+        ...cars.map((o) => Math.hypot(o.x - x, o.y - y) / TUNE.carClear),
+        ...chips.map((o) => Math.hypot(o.x - x, o.y - y) / TUNE.chipGap),
+        Infinity,
+      );
+      if (room > bestRoom) { best = { x, y }; bestRoom = room; }
+      if (room >= 1) break;
+    }
+    chips.push({ id: `c${n}-${chips.length}`, text: c.text, val: c.val, ok: c.ok, x: Math.round(best.x), y: Math.round(best.y), ...drift(rand), t0: at, by: null, hits: 0 });
   }
   const round = { n, target: made.target, world, openedAt: at, closesAt: at + game.secondsPerPlay * 1000, closed: false, revealUntil: null, chips, out: [], nobodyOut: false, cars: pool.length };
   mn.round = round;
