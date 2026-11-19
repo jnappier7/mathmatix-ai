@@ -13,7 +13,7 @@
  *   - the scoreboard: a right orb pays more the sooner it is found; a wrong one slows and costs;
  *   - a grab must be plausible: at the chip, and reachable from the car's last report;
  *   - the pit: answers go through the ordinary graded path (so Math Facts are tracked), three in a
- *     row OR six in all buys the way back, the gate closes it, and every right answer scores for
+ *     row OR eight in all buys the way back, the gate closes it, and every right answer scores for
  *     the Fact Champion — fast ones double;
  *   - the game ends at one car; a game survives a snapshot/hydrate mid-round;
  *   - the SIMULATOR: a class of bots always finishes, and a student who knows the facts outlasts
@@ -253,26 +253,27 @@ describe('the pit', () => {
     expect(G.currentPlay(g, c).play.input).toBe('number');
   });
 
-  test('three right in a row buys the way back; a miss resets the streak but not the total', () => {
+  test('four right in a row buys the way back; a miss resets the streak but not the total', () => {
     const { g, c } = benched();
     // (quick answers: the reveal is 3 s, and the way back opens at the NEXT round)
     expect(pit(g, c, true, 100).knockout).toMatchObject({ row: 1, since: 1, ready: false });
     expect(pit(g, c, false, 100).knockout).toMatchObject({ row: 0, since: 1, ready: false });
     pit(g, c, true, 100); pit(g, c, true, 100);
+    expect(pit(g, c, true, 100).knockout).toMatchObject({ row: 3, ready: false });
     const r = pit(g, c, true, 100).knockout;
-    expect(r).toMatchObject({ row: 3, ready: true });
+    expect(r).toMatchObject({ row: 4, ready: true });
     nextRound();
     expect(c.ko.in).toBe(true);
     expect(c.ko.comebacks).toBe(1);
     expect(g.ko.round.n).toBe(2);
   });
 
-  test('six right in all buys it too — a student who keeps missing one fact is never locked out', () => {
+  test('eight right in all buys it too — a student who keeps missing one fact is never locked out', () => {
     const { g, c } = benched();
-    for (let i = 0; i < 2; i++) { pit(g, c); pit(g, c); pit(g, c, false); } // 4 right, never 3 in a row
+    for (let i = 0; i < 3; i++) { pit(g, c); pit(g, c); pit(g, c, false); } // 6 right, never 4 in a row
     expect(c.ko.ready).toBe(false);
     pit(g, c);
-    expect(pit(g, c).knockout).toMatchObject({ since: 6, ready: true });
+    expect(pit(g, c).knockout).toMatchObject({ since: 8, ready: true });
   });
 
   test('pit answers are graded Math Facts answers: tracked per fact, like any other game', () => {
@@ -289,7 +290,7 @@ describe('the pit', () => {
     expect(pit(g, c, true, 1000).knockout).toMatchObject({ pts: K.TUNE.benchPoints[0], fluent: true });
     expect(pit(g, c, true, 5000).knockout).toMatchObject({ pts: K.TUNE.benchPoints[1], fluent: false });
     expect(pit(g, c, false).knockout.pts).toBe(0);
-    pit(g, c); pit(g, c); pit(g, c); // ready
+    pit(g, c); pit(g, c); pit(g, c); pit(g, c); // ready
     const before = c.ko.benchPts;
     expect(pit(g, c).knockout.ready).toBe(true);
     expect(c.ko.benchPts).toBe(before + K.TUNE.benchPoints[0]);
@@ -332,7 +333,7 @@ describe('the end', () => {
   test('one car left but someone has earned the way back: the game goes on', () => {
     const g = arena(); const [a, b, c] = seat(g, 3); G.start(g);
     claim(g, a, right(g)[0]); claim(g, b, right(g)[0]); // round 1: c out
-    pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); // c ready before the reveal ends
+    pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); // c ready before the reveal ends
     nextRound(); // round 2: a, b, c
     expect(g.ko.round.cars).toBe(3);
     claim(g, a, right(g)[0]); claim(g, b, right(g)[0]); // c out again, nobody on the way back

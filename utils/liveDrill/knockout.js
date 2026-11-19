@@ -44,8 +44,8 @@ const crypto = require('crypto');
 const BOOKS = ['all', 'add', 'sub', 'mul', 'div'];
 
 const TUNE = {
-  comeback: 3, // right in a row on the bench to drive again…
-  comebackTotal: 6, // …or this many right since being benched, misses and all (progress that never resets)
+  comeback: 4, // right in a row on the bench to drive again…
+  comebackTotal: 8, // …or this many right since being benched, misses and all (progress that never resets)
   benchPoints: [2, 1], // a bench answer scores for the Fact Champion race: fluent (fast), or just right
   fluentMs: 3000,
   revealMs: 2200, // chips show what they were before the next round (short: a class of 30 sees ~30 of these)
