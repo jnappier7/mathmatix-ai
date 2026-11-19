@@ -44,12 +44,19 @@
  * A car that is SAFE (holding its orb) is a ghost: it neither hits nor is hit. Otherwise a safe
  * car, with nothing left to lose, could spend the rest of the round ramming the cars still hunting.
  *
- * BOOST IS A POWER-UP (owner, same day: "make speed boost a powerup"). It used to be free every
- * 2.5 s. Now each round deals a few ⚡ canisters (`TUNE.boost.per` cars to one), which sit still
- * on the floor. Driving over one is a claim like an orb's (`grab` with `{ boost: id }`, the same
- * plausibility check; first claim wins), worth one charge, up to `boost.max` held — a full tank
- * leaves the canister for someone else. A charge is spent with `fire` and drives at `boost.mult`
- * for `boost.ms`. Charges carry from round to round and are lost when the car goes out.
+ * POWER-UPS (owner, 2026-11-19: "make speed boost a powerup", then "every once in a while a boost
+ * can appear on the board as an orb. 100 pt powerup, 50 point powerup, or speed boost"). Boost
+ * used to be free every 2.5 s. Now every round deals a few POWER-UP ORBS (`dealPowerups`, one per
+ * `power.per` cars, at least one): each POPS IN at its own moment in the round, drifts like a fact
+ * orb, and is gone `power.life` later. A power-up is +100 points, +50 points, or a ⚡ speed charge
+ * (`power.kinds`, weighted). Driving into one is a claim like an orb's (`grab` with
+ * `{ power: id }`, the same plausibility check, first claim wins). Points go straight onto the
+ * scoreboard (so they matter when the clock runs out on several empty-handed cars); a speed
+ * charge goes in the tank, up to `boost.max` held — a full tank leaves it for someone else. A
+ * charge is spent with `fire` and drives at `boost.mult` for `boost.ms`; charges carry from round
+ * to round and are lost when the car goes out. Until a power-up has appeared, no screen is told it
+ * exists (`roundView` hides it; a touch is scheduled for the moment it pops), so nobody can park
+ * where one is about to be.
  *
  * State lives on the game (`game.ko`) and on each player (`p.ko`); both are plain data, so the
  * Mongo shadow (store.js) carries a game across a deploy and `rearm` restarts its clocks.
@@ -80,7 +87,11 @@ const TUNE = {
   topMult: 2.5,
   // ⚡ power-ups: one canister per `per` cars each round (at least one); a charge drives at `mult`
   // for `ms`; at most `max` held. `r` is how big a canister is drawn, `eat` how close is a pickup.
-  boost: { per: 5, max: 2, mult: 2.2, ms: 1200, r: 24, eat: 34 },
+  boost: { max: 2, mult: 2.2, ms: 1200 },
+  // power-up orbs: one per `per` cars a round (at least one), popping in somewhere between `from` and
+  // `to` of the way through the round and gone `life` ms later; `r` how big one is drawn, `eat` how
+  // close is a grab; `kinds` the odds of each; `pts` what the point ones pay
+  power: { per: 6, from: 0.12, to: 0.72, life: 7000, r: 30, eat: 38, drift: [12, 24], kinds: { speed: 50, pts50: 35, pts100: 15 }, pts: { pts50: 50, pts100: 100 } },
   // Bumper cars (the devices do the bouncing; these are the numbers every device uses). `r` is a car's
   // radius for a hit, `kick` the least speed a bump sends a car off at, `e` how much of the closing
   // speed comes back, `stunMs` how long a bounced car coasts before its steering takes over again.
@@ -265,7 +276,7 @@ function resetPlayer(p, game) {
     row: 0, since: 0, ready: false, outAt: 0, outRound: 0, benchPts: 0,
     grabbed: 0, wrong: 0, comebacks: 0, benchRight: 0, pts: 0, roundPts: 0, firsts: 0,
     x: null, y: null, posAt: 0, spawn: 0, vx: 0, vy: 0,
-    boosts: 0, boostUntil: 0, boostsUsed: 0,
+    boosts: 0, boostUntil: 0, boostsUsed: 0, powers: 0, bonus: 0,
   };
 }
 
@@ -319,39 +330,64 @@ function openRound(game, io) {
     }
     chips.push({ id: `c${n}-${chips.length}`, text: c.text, val: c.val, ok: c.ok, x: Math.round(best.x), y: Math.round(best.y), ...drift(rand), t0: at, by: null, hits: 0 });
   }
-  const boosts = dealBoosts(pool.length, world, cars, chips, rand, n);
-  const round = { n, target: made.target, world, openedAt: at, closesAt: at + game.secondsPerPlay * 1000, closed: false, revealUntil: null, chips, boosts, out: [], nobodyOut: false, cars: pool.length };
+  const closesAt = at + game.secondsPerPlay * 1000;
+  const powerups = dealPowerups(pool.length, world, rand, n, at, closesAt, chips);
+  const round = { n, target: made.target, world, openedAt: at, closesAt, closed: false, revealUntil: null, chips, powerups, out: [], nobodyOut: false, cars: pool.length };
   mn.round = round;
   io.later(round.closesAt - at + 200, () => { if (game.ko.round === round && !round.closed) closeRound(game, io); });
+  armPowerups(game, round, io);
   io.touch();
 }
 
+/** Tell every screen the moment each power-up pops in (until then no view mentions it). */
+function armPowerups(game, round, io) {
+  const at = io.now();
+  for (const p of round.powerups || []) if (p.at > at) io.later(p.at - at, () => { if (game.ko.round === round && !round.closed) io.touch(); });
+}
+
+/** A kind of power-up, by the odds in `power.kinds`. */
+function powerKind(rand) {
+  const kinds = Object.entries(TUNE.power.kinds);
+  let r = rand() * kinds.reduce((t, [, w]) => t + w, 0);
+  for (const [k, w] of kinds) { r -= w; if (r < 0) return k; }
+  return kinds[0][0];
+}
+
 /**
- * The round's ⚡ canisters: one per `boost.per` cars, at least one. They sit still (a canister is a
- * prize to drive to, not a second thing to chase), clear of every car and every orb.
+ * The round's power-up orbs: one per `power.per` cars, at least one, each popping in at its own
+ * moment (`at`, between `from` and `to` of the way through the round, spaced apart) and gone at
+ * `until`. It pops in clear of the fact orbs — their paths are a pure function of time, so where
+ * they will be at that moment is known now — and drifts from there like one (`chipAt`, `t0` = the
+ * moment it appears). The cars are wherever they drove by then, so they are not considered.
  */
-function dealBoosts(nCars, world, cars, chips, rand, n) {
-  const count = Math.max(1, Math.round(nCars / TUNE.boost.per));
+function dealPowerups(nCars, world, rand, n, openedAt, closesAt, chips = []) {
+  const P = TUNE.power;
+  const count = Math.max(1, Math.round(nCars / P.per));
+  const span = closesAt - openedAt;
   const out = [];
-  const edge = TUNE.margin + TUNE.boost.r;
   for (let i = 0; i < count; i++) {
-    let best = null; let bestRoom = -Infinity;
-    for (let tries = 0; tries < 40; tries++) {
-      const x = edge + rand() * (world.w - 2 * edge);
-      const y = edge + rand() * (world.h - 2 * edge);
-      const room = Math.min(
-        ...cars.map((o) => Math.hypot(o.x - x, o.y - y) / TUNE.carClear),
-        ...chips.map((o) => Math.hypot(o.x - x, o.y - y) / TUNE.chipGap),
-        ...out.map((o) => Math.hypot(o.x - x, o.y - y) / (TUNE.carClear * 2)),
-        Infinity,
-      );
-      if (room > bestRoom) { best = { x, y }; bestRoom = room; }
-      if (room >= 1) break;
+    // spread over the window: slot i of `count`, a random moment inside its slot
+    const f = P.from + ((i + rand()) / count) * (P.to - P.from);
+    const at = Math.round(openedAt + f * span);
+    const a = rand() * Math.PI * 2; const sp = P.drift[0] + rand() * (P.drift[1] - P.drift[0]);
+    const orbs = chips.map((c) => chipAt(c, world, at));
+    let spot = null; let room = -Infinity;
+    for (let tries = 0; tries < 30; tries++) {
+      const x = TUNE.margin + rand() * (world.w - 2 * TUNE.margin); const y = TUNE.margin + rand() * (world.h - 2 * TUNE.margin);
+      const r = Math.min(...orbs.map((o) => Math.hypot(o.x - x, o.y - y)), Infinity);
+      if (r > room) { spot = { x, y }; room = r; }
+      if (r >= TUNE.chipR + P.r + 30) break;
     }
-    out.push({ id: `b${n}-${i}`, x: Math.round(best.x), y: Math.round(best.y), by: null });
+    out.push({
+      id: `p${n}-${i}`, kind: powerKind(rand),
+      x: Math.round(spot.x), y: Math.round(spot.y),
+      vx: Math.round(Math.cos(a) * sp * 10) / 10, vy: Math.round(Math.sin(a) * sp * 10) / 10,
+      t0: at, at, until: Math.min(at + P.life, closesAt), by: null, byName: null,
+    });
   }
   return out;
 }
+const powerShowing = (p, at) => p.at <= at && at < p.until;
 
 /** Is the car where it says it is, and could it have got there since its last report? Throws if not. */
 function plausible(m, x, y, target, near, at, what = 'chip') {
@@ -363,26 +399,35 @@ function plausible(m, x, y, target, near, at, what = 'chip') {
 }
 
 /**
- * A car drives over a ⚡ canister. First claim wins; a full tank leaves it on the floor. A safe
- * car may pick one up — charges carry to the next round, and it is something to do while it waits.
+ * A car drives into a power-up orb. First claim wins. Points go straight onto the scoreboard; a
+ * speed charge goes in the tank, and a full tank leaves it for someone else. A safe car may take
+ * one too — it is something to race for while it waits, and charges carry to the next round.
  */
-function pickBoost(game, player, body, io) {
+function pickPower(game, player, body, io) {
   const r = game.ko.round;
   const m = player.ko;
   const at = io.now();
-  const item = (r.boosts || []).find((b) => b.id === String(body.boost));
-  if (!item) throw fail(400, 'No such boost.');
+  const id = String(body.power != null ? body.power : body.boost);
+  const item = (r.powerups || []).find((p) => p.id === id);
+  if (!item) throw fail(400, 'No such power-up.');
+  if (!powerShowing(item, at)) throw fail(409, 'That power-up is gone.');
   const x = Number(body.x);
   const y = Number(body.y);
   if (!Number.isFinite(x) || !Number.isFinite(y)) throw fail(400, 'Where are you?');
-  plausible(m, x, y, item, TUNE.boost.eat, at, 'boost');
+  plausible(m, x, y, chipAt(item, r.world, at), TUNE.power.eat, at, 'power-up');
   Object.assign(m, { x, y, posAt: at });
   if (item.by) return { taken: true };
-  if (m.boosts >= TUNE.boost.max) return { full: true, boosts: m.boosts };
-  item.by = player.id;
-  m.boosts++;
+  if (item.kind === 'speed') {
+    if (m.boosts >= TUNE.boost.max) return { full: true, boosts: m.boosts };
+    m.boosts++;
+  } else {
+    const pts = TUNE.power.pts[item.kind] || 0;
+    Object.assign(m, { pts: m.pts + pts, bonus: m.bonus + pts });
+  }
+  Object.assign(item, { by: player.id, byName: player.name });
+  m.powers++;
   io.touch();
-  return { boost: true, boosts: m.boosts };
+  return { power: item.kind, boosts: m.boosts, pts: TUNE.power.pts[item.kind] || 0, total: m.pts };
 }
 
 /** Spend a charge: this car drives at `boost.mult` for `boost.ms`. */
@@ -392,7 +437,7 @@ function fire(game, player, body, io) {
   const at = io.now();
   if (game.phase !== 'live' || !r) throw fail(409, 'The game is not on.');
   if (!m.in) throw fail(409, 'You are not in the arena.');
-  if (m.boosts < 1) throw fail(409, 'No boost left — drive over a ⚡ to get one.');
+  if (m.boosts < 1) throw fail(409, 'No boost left — grab a ⚡ power-up to get one.');
   m.boosts--;
   m.boostsUsed++;
   m.boostUntil = at + TUNE.boost.ms;
@@ -412,7 +457,7 @@ function grab(game, player, body, io) {
   const at = io.now();
   if (game.phase !== 'live' || !r || r.closed || Number(body && body.round) !== r.n) throw fail(409, 'That round is over.');
   if (!m.in) throw fail(409, 'You are not in the arena.');
-  if (body.boost != null) return pickBoost(game, player, body, io);
+  if (body.power != null || body.boost != null) return pickPower(game, player, body, io);
   const chip = r.chips.find((c) => c.id === String(body.chip));
   if (!chip) throw fail(400, 'No such chip.');
   const x = Number(body.x);
@@ -508,7 +553,7 @@ function rearm(game, io) {
   const r = game.ko && game.ko.round;
   if (!r || game.phase !== 'live') return;
   const at = io.now();
-  if (!r.closed) io.later(r.closesAt - at + 200, () => { if (game.ko.round === r && !r.closed) closeRound(game, io); });
+  if (!r.closed) { io.later(r.closesAt - at + 200, () => { if (game.ko.round === r && !r.closed) closeRound(game, io); }); armPowerups(game, r, io); }
   else io.later((r.revealUntil || at) - at, () => { if (game.ko.round === r) next(game, io); });
 }
 
@@ -600,12 +645,14 @@ function chipView(c, closed) {
   return v;
 }
 
-function roundView(game) {
+function roundView(game, at = Date.now()) {
   const r = game.ko.round;
   if (!r) return null;
   const v = { n: r.n, target: r.target, world: r.world, openedAt: r.openedAt, closesAt: r.closesAt, closed: r.closed, revealUntil: r.revealUntil, cars: r.cars,
     chips: r.chips.map((c) => chipView(c, r.closed)),
-    boosts: (r.boosts || []).map((b) => ({ id: b.id, x: b.x, y: b.y, taken: b.by ? 1 : 0 })) };
+    // a power-up is in the view only once it has popped in (and while the round is open)
+    powerups: r.closed ? [] : (r.powerups || []).filter((p) => p.at <= at).map((p) => ({
+      id: p.id, kind: p.kind, x: p.x, y: p.y, vx: p.vx, vy: p.vy, t0: p.t0, until: p.until, taken: p.by ? 1 : 0, by: p.byName || null })) };
   if (r.closed) {
     const worst = r.chips.filter((c) => !c.ok && c.hits).sort((a, b) => b.hits - a.hits)[0];
     Object.assign(v, { out: r.out, spared: r.spared || [], nobodyOut: r.nobodyOut, worst: worst ? { text: worst.text, val: worst.val, hits: worst.hits } : null });
@@ -614,7 +661,7 @@ function roundView(game) {
 }
 
 const tune = () => ({ maxHold: TUNE.maxHold, holdSlow: TUNE.holdSlow, points: TUNE.points, wrongCost: TUNE.wrongCost, speed: TUNE.speed, topMult: TUNE.topMult, chipR: TUNE.chipR, eatDist: TUNE.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs,
-  boost: { ...TUNE.boost }, bump: { ...TUNE.bump } });
+  boost: { ...TUNE.boost }, bump: { ...TUNE.bump }, power: { r: TUNE.power.r, eat: TUNE.power.eat, pts: { ...TUNE.power.pts } } });
 
 function summary(game, at) {
   const all = seated(game);
@@ -628,7 +675,7 @@ function place(game, player) {
 
 function playerKnockout(game, player, at) {
   const m = player.ko;
-  const v = { ...summary(game, at), round: roundView(game),
+  const v = { ...summary(game, at), round: roundView(game, at),
     in: m.in, ...benchView(m), held: m.held.length, mine: m.held.slice(), slowUntil: m.slowUntil, boosts: m.boosts, boostUntil: m.boostUntil,
     grabbed: m.grabbed, comebacks: m.comebacks, wrong: m.wrong,
     pts: m.pts, roundPts: m.roundPts, rank: scoreboard(game).indexOf(player) + 1,
@@ -643,7 +690,7 @@ function playerKnockout(game, player, at) {
 
 function hostKnockout(game, at) {
   const all = seated(game);
-  return { ...summary(game, at), round: roundView(game),
+  return { ...summary(game, at), round: roundView(game, at),
     arena: all.filter((p) => p.ko.in).map((p) => ({ id: p.id, name: p.name, held: p.ko.held.length })),
     bench: all.filter((p) => !p.ko.in).sort((a, b) => b.ko.ready - a.ko.ready || b.ko.benchPts - a.ko.benchPts)
       .map((p) => ({ id: p.id, name: p.name, row: p.ko.row, since: p.ko.since, ready: p.ko.ready, pts: p.ko.benchPts })),
@@ -658,9 +705,10 @@ function finalKnockout(game) {
   return {
     winner: w ? w.name : null, sole: !!game.ko.sole, rounds: game.ko.rounds,
     standings: order.map((p, i) => ({ place: i + 1, name: p.name, alive: p.ko.in, outRound: p.ko.outRound || null,
-      pts: p.ko.pts, grabbed: p.ko.grabbed, firsts: p.ko.firsts, wrong: p.ko.wrong, comebacks: p.ko.comebacks, benchRight: p.ko.benchRight, benchPts: p.ko.benchPts, saved: !!p.userId })),
+      pts: p.ko.pts, grabbed: p.ko.grabbed, firsts: p.ko.firsts, wrong: p.ko.wrong, comebacks: p.ko.comebacks, benchRight: p.ko.benchRight, benchPts: p.ko.benchPts,
+      powers: p.ko.powers || 0, bonus: p.ko.bonus || 0, saved: !!p.userId })),
     champion: best('benchPts'),
-    awards: { scorer: best('pts'), first: best('firsts'), comeback: best('comebacks') },
+    awards: { scorer: best('pts'), first: best('firsts'), comeback: best('comebacks'), powers: best('powers') },
   };
 }
 
@@ -668,11 +716,12 @@ function finalKnockout(game) {
 function rules(game) {
   return { maxHold: TUNE.maxHold, points: { ...TUNE.points }, wrongCost: TUNE.wrongCost, comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
     gateSec: game.seconds, roundSec: game.secondsPerPlay, slowSec: TUNE.slowMs / 1000,
-    boostMax: TUNE.boost.max, boostSec: TUNE.boost.ms / 1000, boostPer: TUNE.boost.per, bumps: true, ghostSafe: TUNE.bump.ghostSafe };
+    boostMax: TUNE.boost.max, boostSec: TUNE.boost.ms / 1000, powerPts: Object.values(TUNE.power.pts).sort((a, b) => b - a), powerSec: TUNE.power.life / 1000,
+    bumps: true, ghostSafe: TUNE.bump.ghostSafe };
 }
 
 module.exports = {
-  BOOKS, TUNE, FORMS, makeChips, valueOf, worldFor, chipAt, bounce, rng,
+  dealPowerups, powerShowing, BOOKS, TUNE, FORMS, makeChips, valueOf, worldFor, chipAt, bounce, rng,
   reset, resetPlayer, start, grab, fire, closeRound, rearm, finish, standings, scoreboard, pointsFor, drivers,
   bench, onBenchAnswer, champions, position, carFrame,
   playerKnockout, hostKnockout, finalKnockout, rules,

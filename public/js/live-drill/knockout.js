@@ -18,8 +18,10 @@
 // the steering takes over. The other car is knocked back on this screen too, until its own report
 // (from its own bounce) arrives. A safe car — holding its orb — is a ghost (`bump.ghostSafe`).
 //
-// BOOST IS A POWER-UP. ⚡ canisters sit on the floor; drive over one to pick up a charge (a claim the
-// server rules, like an orb), and spend it with the BOOST button, space, or a second finger.
+// POWER-UPS. Every so often a gold power-up orb pops in and drifts like a fact orb for a few seconds:
+// +100, +50, or ⚡ (a speed charge). Driving into one is a claim the server rules, like an orb. A
+// charge is spent with the BOOST button, space, or a second finger. Gold, never white: a power-up
+// must never be mistaken for an answer.
 //
 // The look is our own: a night arena, neon lines on a dark floor, rocket cars with a boost flame.
 // It is drawn entirely here (no image files), so a restyle is this file and nothing else.
@@ -42,7 +44,8 @@
   const calm = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const DEFAULT_TUNE = {
     speed: 130, topMult: 2.5, chipR: 40, eatDist: 32, margin: 50, slowMs: 2000, maxHold: 1, holdSlow: 1,
-    boost: { per: 5, max: 2, mult: 2.2, ms: 1200, r: 24, eat: 34 },
+    boost: { max: 2, mult: 2.2, ms: 1200 },
+    power: { r: 30, eat: 38, pts: { pts50: 50, pts100: 100 } },
     bump: { r: 17, kick: 170, e: 0.9, stunMs: 260, ghostSafe: true },
   };
 
@@ -117,11 +120,12 @@
     const others = new Map(); // id → { x, y (drawn) · rx, ry, rvx, rvy, seenAt (reported) · kx, ky, bx, by (a bump seen here) · hitT, ang, swim, held, boostOn }
     let names = new Map();
     let roundN = 0; let spawnKey = '';
-    const pending = new Set(); // chips / canisters with a claim in flight
+    const pending = new Set(); // chips / power-ups with a claim in flight
     const stung = new Set(); // wrong orbs this car already hit this round
     const passed = new Set(); // right orbs it touched with its hands full (cleared if it drops)
-    const gone = new Set(); // chips / canisters this screen knows are taken before the state says so
-    const fullSeen = new Set(); // canisters this car drove over with a full tank (told once)
+    const gone = new Set(); // chips / power-ups this screen knows are taken before the state says so
+    const fullSeen = new Set(); // ⚡ power-ups this car drove into with a full tank (told once)
+    const seenPower = new Map(); // power-up id → taken? (so its pop-in and its taking are each shown once)
     let charges = 0; let firedAt = 0; let hintAt = 0;
     let parts = []; let floats = []; let bubbles = []; let splash = null; let shake = 0; let popT = 9;
     let sentAt = 0; let sentX = 0; let sentY = 0; let sentVx = 0; let sentVy = 0;
@@ -141,7 +145,7 @@
 
     const M = () => (st && st.knockout) || null;
     const R = () => { const m = M(); return m && m.round; };
-    const T = () => { const t = (M() && M().tune) || {}; return { ...DEFAULT_TUNE, ...t, boost: { ...DEFAULT_TUNE.boost, ...(t.boost || {}) }, bump: { ...DEFAULT_TUNE.bump, ...(t.bump || {}) } }; };
+    const T = () => { const t = (M() && M().tune) || {}; return { ...DEFAULT_TUNE, ...t, boost: { ...DEFAULT_TUNE.boost, ...(t.boost || {}) }, bump: { ...DEFAULT_TUNE.bump, ...(t.bump || {}) }, power: { ...DEFAULT_TUNE.power, ...(t.power || {}) } }; };
 
     function burst(x, y, color, n, speed) {
       if (calm()) return;
@@ -152,7 +156,10 @@
     }
     function say(text, color) { splash = { text, color, t: 0 }; }
     function buzz(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch { /* not allowed */ } }
-    function float(text, color, life = 1.4) { floats.push({ x: me.x, y: me.y, rise: 26, text, color, t: life }); }
+    function floatAt(x, y, text, color, life = 1.4) { floats.push({ x, y, rise: 26, text, color, t: life }); }
+    function float(text, color, life = 1.4) { floatAt(me.x, me.y, text, color, life); }
+    /** What a power-up is, in a word: "+100", "+50", "⚡". */
+    const powerLabel = (kind) => (kind === 'speed' ? '⚡' : `+${(T().power.pts || {})[kind] || ''}`);
     function hint(text) { const t = performance.now(); if (t - hintAt < 1200) return; hintAt = t; float(text, COL.foam); }
 
     // ---------------- state in ----------------
@@ -162,9 +169,20 @@
       const m = M(); const r = R();
       if (!m || !r) return;
       if (r.n !== roundN) {
-        roundN = r.n; pending.clear(); stung.clear(); passed.clear(); gone.clear(); fullSeen.clear(); popT = 0; floats = [];
+        roundN = r.n; pending.clear(); stung.clear(); passed.clear(); gone.clear(); fullSeen.clear(); seenPower.clear(); popT = 0; floats = [];
       }
       for (const c of r.chips) if (!c.taken) gone.delete(c.id); // a chip someone dropped is back
+      // a power-up pops in with a ring of sparks; when someone takes it, every screen says who and what
+      const at = now();
+      for (const p of r.powerups || []) {
+        const was = seenPower.get(p.id);
+        if (was === undefined && !p.taken) { const q = chipAt(p, r.world, at, T().margin); burst(q.x, q.y, COL.flame, 18, 200); }
+        if (p.taken && !was && p.by && (projector || p.by !== myName())) {
+          const q = chipAt(p, r.world, at, T().margin);
+          floatAt(q.x, q.y, `${powerLabel(p.kind)} ${p.by}`, COL.flame, 1.8); burst(q.x, q.y, COL.flame, 14, 180);
+        }
+        seenPower.set(p.id, !!p.taken);
+      }
       if (!projector) {
         // The server places a car when it enters the arena (kickoff, a comeback); after that the device owns it.
         const key = m.spawn ? `${m.spawn.round}:${st.gameNumber}` : '';
@@ -287,19 +305,23 @@
       } finally { setTimeout(() => pending.delete(chip.id), 250); }
     }
 
-    async function tryBoost(item, r) {
+    const myName = () => (st && st.me && st.me.name) || '';
+    async function tryPower(item, r) {
       pending.add(item.id);
       const round = r.n;
       try {
-        const res = await opts.grab({ round, boost: item.id, x: Math.round(me.x), y: Math.round(me.y) });
+        const res = await opts.grab({ round, power: item.id, x: Math.round(me.x), y: Math.round(me.y) });
         if (round !== roundN) return;
         if (res.taken) { gone.add(item.id); return; }
         if (res.full) { charges = res.boosts; fullSeen.add(item.id); return; }
-        if (res.boost) {
-          gone.add(item.id); charges = res.boosts;
-          burst(item.x, item.y, COL.flame, 20, 220); float('+⚡ BOOST', COL.flame, 1.3); buzz(15);
+        if (res.power) {
+          gone.add(item.id); seenPower.set(item.id, true); charges = res.boosts;
+          burst(me.x, me.y, COL.flame, 22, 230); buzz(15);
+          if (res.power === 'speed') float('+⚡ BOOST', COL.flame, 1.3);
+          else say(`+${res.pts}!`, COL.flame);
         }
       } catch (err) {
+        if (err && err.status === 409) gone.add(item.id); // it was gone by the time the claim landed
         if (err && err.status === 401 && opts.onGone) opts.onGone();
       } finally { setTimeout(() => pending.delete(item.id), 250); }
     }
@@ -422,12 +444,13 @@
             if (Math.hypot(p.x - me.x, p.y - me.y) <= tune.eatDist) { tryGrab(c, r); break; }
           }
         }
-        // a ⚡ canister: pick it up, unless the tank is full (then it is left for someone else)
-        for (const b of r.boosts || []) {
-          if (b.taken || gone.has(b.id) || pending.has(b.id)) continue;
-          if (Math.hypot(b.x - me.x, b.y - me.y) > tune.boost.eat) { fullSeen.delete(b.id); continue; }
-          if (charges >= tune.boost.max) { if (!fullSeen.has(b.id)) { fullSeen.add(b.id); float('Boost tank full', COL.flame, 1.1); } continue; }
-          tryBoost(b, r); break;
+        // a power-up: take it — unless it is a ⚡ and the tank is full (then it is left for someone else)
+        for (const p of r.powerups || []) {
+          if (p.taken || gone.has(p.id) || pending.has(p.id) || at >= p.until) continue;
+          const q = chipAt(p, r.world, at, tune.margin);
+          if (Math.hypot(q.x - me.x, q.y - me.y) > tune.power.eat) { fullSeen.delete(p.id); continue; }
+          if (p.kind === 'speed' && charges >= tune.boost.max) { if (!fullSeen.has(p.id)) { fullSeen.add(p.id); float('Boost tank full', COL.flame, 1.1); } continue; }
+          tryPower(p, r); break;
         }
       }
       sendPos(bumped);
@@ -514,21 +537,37 @@
       }
     }
 
-    /** A ⚡ canister: a gold hexagon with a lightning bolt, unlike any fact orb. */
-    function drawBoostItem(b, t, tune) {
-      const R0 = tune.boost.r;
-      const pulse = calm() ? 1 : 1 + Math.sin(t / 220 + b.x) * 0.07;
-      upright(b.x, b.y, () => {
+    /**
+     * A power-up orb: dark glass in a gold ring, its prize in gold — "+100", "+50", or a bolt — so it never
+     * reads as a fact. It pulses, and in its last two seconds it blinks: grab it before it goes.
+     */
+    function drawPowerUp(p, r, at, t, tune) {
+      const R0 = tune.power.r;
+      const q = chipAt(p, r.world, at, tune.margin);
+      const left = p.until - at;
+      if (left < 2000 && !calm() && Math.floor(t / 140) % 2) return; // blink out
+      const born = clamp((at - p.t0) / 300, 0, 1); // it pops in: grows from nothing in 0.3 s
+      const pulse = (calm() ? 1 : 1 + Math.sin(t / 200 + p.x) * 0.06) * (calm() ? 1 : 0.4 + 0.6 * born);
+      upright(q.x, q.y, () => {
         ctx.scale(pulse, pulse);
-        ctx.shadowColor = COL.flame; ctx.shadowBlur = 18;
-        ctx.beginPath();
-        for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + (k * Math.PI) / 3; if (k) ctx.lineTo(Math.cos(a) * R0, Math.sin(a) * R0); else ctx.moveTo(Math.cos(a) * R0, Math.sin(a) * R0); }
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(46,28,4,.94)'; ctx.fill(); ctx.shadowBlur = 0;
-        ctx.lineWidth = 3.5; ctx.strokeStyle = COL.flame; ctx.stroke();
-        const k = R0 / 24;
+        ctx.shadowColor = COL.flame; ctx.shadowBlur = 22;
+        const g = ctx.createRadialGradient(0, -R0 * 0.3, R0 * 0.1, 0, 0, R0);
+        g.addColorStop(0, '#5a3a08'); g.addColorStop(1, '#1e1203');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R0, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
+        ctx.lineWidth = 4.5; ctx.strokeStyle = COL.flame; ctx.stroke();
+        // the time it has left, as a ring running down
+        ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,211,90,.55)';
+        ctx.beginPath(); ctx.arc(0, 0, R0 + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * clamp(left / Math.max(1, p.until - p.t0), 0, 1)); ctx.stroke();
         ctx.fillStyle = COL.flame;
-        ctx.beginPath(); ctx.moveTo(4 * k, -16 * k); ctx.lineTo(-9 * k, 3 * k); ctx.lineTo(-1 * k, 3 * k); ctx.lineTo(-4 * k, 16 * k); ctx.lineTo(9 * k, -4 * k); ctx.lineTo(1 * k, -4 * k); ctx.closePath(); ctx.fill();
+        if (p.kind === 'speed') {
+          const k = R0 / 24;
+          ctx.beginPath(); ctx.moveTo(4 * k, -16 * k); ctx.lineTo(-9 * k, 3 * k); ctx.lineTo(-1 * k, 3 * k); ctx.lineTo(-4 * k, 16 * k); ctx.lineTo(9 * k, -4 * k); ctx.lineTo(1 * k, -4 * k); ctx.closePath(); ctx.fill();
+        } else {
+          const label = powerLabel(p.kind);
+          const fs = Math.max(R0 * (label.length > 3 ? 0.62 : 0.72), MIN_FACT_PX / view.s);
+          ctx.font = `900 ${Math.round(fs)}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(label, 0, 2, R0 * 1.8);
+        }
       });
     }
 
@@ -636,8 +675,9 @@
       ctx.restore();
       ctx.shadowColor = COL.line; ctx.shadowBlur = 22; ctx.lineWidth = 6; ctx.strokeStyle = COL.line; rr(ctx, 0, 0, W, H, 60); ctx.stroke(); ctx.shadowBlur = 0;
 
-      if (!r.closed) for (const b of r.boosts || []) if (!b.taken && !gone.has(b.id)) drawBoostItem(b, t, tune);
       for (const c of r.chips) drawChip(c, r, at, tune);
+      // power-ups on top: they are there for a few seconds, and an orb drifting over one must not hide it
+      if (!r.closed) for (const p of r.powerups || []) if (!p.taken && !gone.has(p.id) && at < p.until) drawPowerUp(p, r, at, t, tune);
       ctx.fillStyle = COL.gold;
       for (const b of bubbles) { ctx.globalAlpha = clamp(b.t, 0, 1) * 0.6; ctx.beginPath(); ctx.arc(b.x, b.y, b.r * 0.8, 0, Math.PI * 2); ctx.fill(); }
       ctx.globalAlpha = 1;

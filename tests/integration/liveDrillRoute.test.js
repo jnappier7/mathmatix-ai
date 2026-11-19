@@ -243,13 +243,18 @@ describe('live drill over HTTP', () => {
     // the report carries the car's speed (other screens lead it with that, and bounce off where it really is)
     expect((await req.post(`/api/live-drill/play/${g.code}/pos`).set(tok(a)).send({ x: 52, y: 60, vx: 40, vy: -30 })).status).toBe(204);
     expect(game.players.get(a.playerId).ko).toMatchObject({ x: 52, vx: 40, vy: -30 });
-    // ⚡ boost is a power-up: drive over a canister (a claim through /grab), then spend it through /boost
+    // power-ups: a gold orb pops in mid-round; drive into it (a claim through /grab), and a ⚡ is spent through /boost
     expect((await req.post(`/api/live-drill/play/${g.code}/boost`).set(tok(a)).send({})).status).toBe(409);
-    const can = game.ko.round.boosts[0];
-    Object.assign(game.players.get(a.playerId).ko, { x: can.x, y: can.y, posAt: Date.now() });
-    expect((await req.post(`/api/live-drill/play/${g.code}/grab`).set(tok(a)).send({ round: game.ko.round.n, boost: can.id, x: can.x, y: can.y })).body).toEqual({ boost: true, boosts: 1 });
+    const pw = game.ko.round.powerups[0];
+    expect((await req.get(`/api/live-drill/play/${g.code}/state`).set(tok(a))).body.knockout.round.powerups).toEqual([]); // not yet
+    Object.assign(pw, { kind: 'speed', at: Date.now() - 50, t0: Date.now() - 50 }); // (its moment has come; the unit suite times this)
+    const pAt = K.chipAt(pw, game.ko.round.world, Date.now());
+    Object.assign(game.players.get(a.playerId).ko, { x: pAt.x, y: pAt.y, posAt: Date.now() });
+    expect((await req.post(`/api/live-drill/play/${g.code}/grab`).set(tok(a)).send({ round: game.ko.round.n, power: pw.id, x: pAt.x, y: pAt.y })).body).toMatchObject({ power: 'speed', boosts: 1 });
+    const seen = (await req.get(`/api/live-drill/play/${g.code}/state`).set(tok(b))).body.knockout;
+    expect(seen.round.powerups).toEqual([expect.objectContaining({ id: pw.id, kind: 'speed', taken: 1, by: 'Ana' })]);
     expect((await req.get(`/api/live-drill/play/${g.code}/state`).set(tok(a))).body.knockout).toMatchObject({ boosts: 1 });
-    const fired = await req.post(`/api/live-drill/play/${g.code}/boost`).set(tok(a)).send({ x: can.x, y: can.y });
+    const fired = await req.post(`/api/live-drill/play/${g.code}/boost`).set(tok(a)).send({ x: pAt.x, y: pAt.y });
     expect(fired.status).toBe(200);
     expect(fired.body.boosts).toBe(0);
     expect((await req.post(`/api/live-drill/play/${g.code}/boost`).send({})).status).toBe(401);
@@ -394,6 +399,28 @@ describe('live drill over HTTP', () => {
     const other = await req.get(`/api/live-drill/host/games/${g.code}`).set('X-Test-User', 'teacher-2');
     expect(other.status).toBe(404);
     expect((await req.post(`/api/live-drill/host/games/${g.code}/start`).set('X-Test-User', 'teacher-2')).status).toBe(404);
+  });
+
+  test('a teacher who closed the projector gets back in: their own games are listed, nobody else\'s', async () => {
+    // (owner, 2026-11-19: "I accidentally exited out of the projector screen and there was no obvious way to get back in")
+    expect((await req.get('/api/live-drill/host/games')).body).toEqual({ games: [] });
+    const g = await host({ drill: 'facts', playbook: 'mul', mode: 'knockout' });
+    await join(g.code, 'Ana');
+    await req.post(`/api/live-drill/host/games/${g.code}/start`);
+    const mine = await req.get('/api/live-drill/host/games');
+    expect(mine.status).toBe(200);
+    expect(mine.headers['cache-control']).toBe('no-store');
+    expect(mine.body.games).toEqual([expect.objectContaining({ code: g.code, mode: 'knockout', phase: 'live', players: 1, drillTitle: g.drillTitle })]);
+    expect((await req.get('/api/live-drill/host/games').set('X-Test-User', 'teacher-2')).body.games).toEqual([]);
+    // the list is how the page gets back in: the same state as before, by code
+    expect((await req.get(`/api/live-drill/host/games/${g.code}`)).body).toMatchObject({ code: g.code, phase: 'live' });
+    // a finished game stays on the list (the results are on its final screen) for half an hour, below any live one
+    const g2 = await host({ drill: 'facts', playbook: 'add', mode: 'drive' });
+    await req.post(`/api/live-drill/host/games/${g.code}/end`);
+    const after = (await req.get('/api/live-drill/host/games')).body.games;
+    expect(after.map((x) => [x.code, x.phase])).toEqual([[g2.code, 'lobby'], [g.code, 'over']]);
+    G.getGame(g.code).endedAt = Date.now() - G.RECENT_OVER_MS - 1000;
+    expect((await req.get('/api/live-drill/host/games')).body.games.map((x) => x.code)).toEqual([g2.code]);
   });
 
   test('the teacher can move and remove names in the lobby', async () => {

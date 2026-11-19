@@ -18,8 +18,9 @@
  *   - the game ends at one car; a game survives a snapshot/hydrate mid-round;
  *   - the SIMULATOR: a class of bots always finishes, and a student who knows the facts outlasts
  *     one who drives into the nearest orb;
- *   - BOOST IS A POWER-UP: canisters dealt clear of cars and orbs, first claim wins, a full tank
- *     leaves one on the floor, a charge is spent once, and going out loses them;
+ *   - POWER-UPS: gold orbs (+100, +50, ⚡) pop in mid-round — hidden from every screen until then —
+ *     first claim wins, points land on the scoreboard, a full tank leaves a ⚡ on the floor, a
+ *     charge is spent once, and going out loses them;
  *   - BUMPER CARS (public/js/live-drill/knockout.js, which every device runs): two devices bounce
  *     their cars apart as mirror images, a bump is always felt, and no bounce is ever faster than
  *     the server's grab check allows — a car that was just bumped can still grab an orb;
@@ -483,64 +484,113 @@ describe('the simulator', () => {
   });
 });
 
-describe('boost is a power-up', () => {
-  /** Put `p` on canister `b` (as its device would) and claim it. */
-  function pickUp(g, p, b) {
-    Object.assign(p.ko, { x: b.x, y: b.y, posAt: Date.now() });
-    return G.grabChip(g, p, { round: g.ko.round.n, boost: b.id, x: b.x, y: b.y });
+describe('power-ups', () => {
+  /** Wait until power-up `p` has popped in, put `car` on it (as its device would) and claim it. */
+  function take(g, car, p) {
+    if (Date.now() < p.at) jest.advanceTimersByTime(p.at - Date.now() + 1);
+    const at = K.chipAt(p, g.ko.round.world, Date.now());
+    Object.assign(car.ko, { x: at.x, y: at.y, posAt: Date.now() });
+    return G.grabChip(g, car, { round: g.ko.round.n, power: p.id, x: at.x, y: at.y });
   }
+  const kindOf = (g, kind) => {
+    // find a round with a power-up of this kind (seeds decide), returning [game, power-up, cars]
+    for (let i = 0; i < 60; i++) {
+      const gg = arena({ secondsPerPlay: 20 }); const cars = seat(gg, 6); gg.seed = `pow${kind}${i}`; G.start(gg);
+      const p = gg.ko.round.powerups.find((x) => x.kind === kind);
+      if (p) return [gg, p, cars];
+      G._reset();
+    }
+    throw new Error(`no ${kind} power-up in 60 seeds`);
+  };
 
-  test('every round deals one canister per five cars (at least one), clear of every car and every orb', () => {
-    for (const n of [2, 5, 12, 16, 34]) {
-      const g = arena(); seat(g, n); G.start(g);
-      const { boosts, chips, world } = g.ko.round;
-      expect(boosts).toHaveLength(Math.max(1, Math.round(n / K.TUNE.boost.per)));
-      for (const b of boosts) {
-        expect(b.by).toBeNull();
-        expect(b.x).toBeGreaterThanOrEqual(K.TUNE.margin); expect(b.x).toBeLessThanOrEqual(world.w - K.TUNE.margin);
-        // never under a car (a free boost at kickoff) and never on top of an orb
-        for (const p of g.players.values()) expect(Math.hypot(b.x - p.ko.x, b.y - p.ko.y)).toBeGreaterThan(K.TUNE.boost.eat + K.TUNE.bump.r * 2);
-        for (const c of chips) expect(Math.hypot(b.x - c.x, b.y - c.y)).toBeGreaterThan(K.TUNE.chipR + K.TUNE.boost.r);
+  test('every round deals one per six cars (at least one), each popping in at its own moment inside the round', () => {
+    for (const n of [2, 6, 13, 24, 34]) {
+      const g = arena({ secondsPerPlay: 20 }); seat(g, n); G.start(g);
+      const { powerups, openedAt, closesAt, world } = g.ko.round;
+      expect(powerups).toHaveLength(Math.max(1, Math.round(n / K.TUNE.power.per)));
+      for (const p of powerups) {
+        expect(Object.keys(K.TUNE.power.kinds)).toContain(p.kind);
+        expect(p.at).toBeGreaterThanOrEqual(openedAt + K.TUNE.power.from * (closesAt - openedAt) - 1);
+        expect(p.at).toBeLessThanOrEqual(openedAt + K.TUNE.power.to * (closesAt - openedAt) + 1);
+        expect(p.until).toBeLessThanOrEqual(closesAt);
+        expect(p.until - p.at).toBeLessThanOrEqual(K.TUNE.power.life);
+        for (const dt of [0, 3000, 7000]) {
+          const q = K.chipAt(p, world, p.at + dt);
+          expect(q.x).toBeGreaterThanOrEqual(K.TUNE.margin); expect(q.x).toBeLessThanOrEqual(world.w - K.TUNE.margin);
+        }
       }
     }
   });
 
-  test('a canister is a claim like an orb: first claim wins, and it has to be plausible', () => {
-    const g = arena(); const [a, b] = seat(g, 6); G.start(g);
-    const item = g.ko.round.boosts[0];
-    // claims to be on it, having reported the far corner a moment ago
-    Object.assign(a.ko, { x: item.x > 600 ? 20 : 1180, y: item.y > 380 ? 20 : 740, posAt: Date.now() });
-    expect(() => G.grabChip(g, a, { round: g.ko.round.n, boost: item.id, x: item.x, y: item.y })).toThrow(/Too far from that boost/);
-    expect(pickUp(g, a, item)).toEqual({ boost: true, boosts: 1 });
-    expect(pickUp(g, b, item)).toEqual({ taken: true });
-    expect(b.ko.boosts).toBe(0);
-    // what a screen sees: where the canisters are and which are gone
-    expect(G.playerView(g, b).knockout.round.boosts.find((x) => x.id === item.id)).toEqual({ id: item.id, x: item.x, y: item.y, taken: 1 });
-    expect(G.playerView(g, a).knockout.boosts).toBe(1);
+  test('a power-up pops in clear of where every fact orb is at that moment', () => {
+    for (const n of [6, 16, 30]) {
+      for (const seed of ['a', 'b', 'c', 'd']) {
+        const g = arena({ secondsPerPlay: 20 }); seat(g, n); g.seed = `clear${seed}${n}`; G.start(g);
+        const { powerups, chips, world } = g.ko.round;
+        for (const p of powerups) {
+          const nearest = Math.min(...chips.map((c) => { const q = K.chipAt(c, world, p.at); return Math.hypot(q.x - p.x, q.y - p.y); }));
+          expect(nearest).toBeGreaterThan(K.TUNE.chipR); // never inside an orb, even in a crowded arena
+          if (n <= 16) expect(nearest).toBeGreaterThan(K.TUNE.chipR + K.TUNE.power.r); // and clear of it, with room
+        }
+      }
+    }
   });
 
-  test('a full tank leaves the canister on the floor for someone else', () => {
-    const g = arena(); const [a, b] = seat(g, 15); G.start(g);
-    const items = g.ko.round.boosts;
-    expect(items.length).toBeGreaterThanOrEqual(3);
+  test('over many rounds every kind turns up, the point ones less often than speed', () => {
+    const n = { speed: 0, pts50: 0, pts100: 0 };
+    for (let i = 0; i < 400; i++) for (const p of K.dealPowerups(12, K.worldFor(12), K.rng(`odds${i}`, 1), 1, 0, 20000)) n[p.kind]++;
+    expect(n.pts100).toBeGreaterThan(0);
+    expect(n.speed).toBeGreaterThan(n.pts50);
+    expect(n.pts50).toBeGreaterThan(n.pts100);
+  });
+
+  test('no screen is told about a power-up before it pops in — and the moment it does, every screen is', () => {
+    const g = arena({ secondsPerPlay: 20 }); const [a] = seat(g, 6); G.start(g);
+    const p = g.ko.round.powerups[0];
+    const updates = [];
+    G.subscribe(g, { res: { write: (s) => updates.push(s), end() {} }, kind: 'host' });
+    expect(G.playerView(g, a).knockout.round.powerups).toEqual([]);
+    expect(G.hostView(g).knockout.round.powerups).toEqual([]);
+    expect(() => G.grabChip(g, a, { round: g.ko.round.n, power: p.id, x: p.x, y: p.y })).toThrow(/gone/);
+    const before = updates.length;
+    jest.advanceTimersByTime(p.at - Date.now() + 1100); // (state pushes are coalesced: give it a beat)
+    expect(updates.length).toBeGreaterThan(before);
+    expect(G.playerView(g, a).knockout.round.powerups.map((x) => x.id)).toContain(p.id);
+    expect(G.playerView(g, a).knockout.round.powerups.find((x) => x.id === p.id)).toMatchObject({ kind: p.kind, taken: 0, until: p.until });
+  });
+
+  test('a point power-up goes straight onto the scoreboard; first claim wins, and every screen is told who', () => {
+    const [g, p, [a, b]] = kindOf(null, 'pts100');
+    const before = a.ko.pts;
+    expect(take(g, a, p)).toMatchObject({ power: 'pts100', pts: 100, total: before + 100 });
+    expect(take(g, b, p)).toEqual({ taken: true });
+    expect(a.ko).toMatchObject({ pts: before + 100, bonus: 100, powers: 1 });
+    expect(G.hostView(g).knockout.round.powerups.find((x) => x.id === p.id)).toMatchObject({ taken: 1, by: a.name });
+  });
+
+  test('a speed power-up is a charge; a full tank leaves it for someone else', () => {
+    const [g, p, [a, b]] = kindOf(null, 'speed');
     a.ko.boosts = K.TUNE.boost.max;
-    expect(pickUp(g, a, items[0])).toEqual({ full: true, boosts: K.TUNE.boost.max });
-    expect(items[0].by).toBeNull();
-    expect(pickUp(g, b, items[0])).toMatchObject({ boost: true });
+    expect(take(g, a, p)).toEqual({ full: true, boosts: K.TUNE.boost.max });
+    expect(p.by).toBeNull();
+    expect(take(g, b, p)).toMatchObject({ power: 'speed', boosts: 1, pts: 0 });
+    expect(b.ko.boosts).toBe(1);
   });
 
-  test('a safe car may still pick one up — charges carry to the next round', () => {
-    const g = arena(); const [a] = seat(g, 6); G.start(g);
-    claim(g, a, right(g)[0]);
-    expect(pickUp(g, a, g.ko.round.boosts[0])).toMatchObject({ boost: true, boosts: 1 });
-    closeNow(g); nextRound();
-    expect(a.ko.in).toBe(true);
-    expect(a.ko.boosts).toBe(1);
+  test('a power-up has to be grabbed while it is there, and plausibly', () => {
+    const [g, p, [a]] = kindOf(null, 'pts50');
+    jest.advanceTimersByTime(p.at - Date.now() + 1);
+    const at = K.chipAt(p, g.ko.round.world, Date.now());
+    Object.assign(a.ko, { x: at.x > 600 ? 20 : 1180, y: at.y > 380 ? 20 : 740, posAt: Date.now() });
+    expect(() => G.grabChip(g, a, { round: g.ko.round.n, power: p.id, x: at.x, y: at.y })).toThrow(/Too far from that power-up/);
+    jest.advanceTimersByTime(p.until - Date.now() + 1);
+    if (!g.ko.round.closed) expect(() => take(g, a, p)).toThrow(/gone/);
+    expect(p.by).toBeNull();
   });
 
   test('a charge is spent once: it starts the boost clock, the frame shows it, and an empty tank is refused', () => {
     const g = arena(); const [a] = seat(g, 6); G.start(g);
-    pickUp(g, a, g.ko.round.boosts[0]);
+    a.ko.boosts = 1;
     const r = G.fireBoost(g, a, { x: a.ko.x, y: a.ko.y, vx: 90, vy: 0 });
     expect(r).toEqual({ boosts: 0, boostUntil: Date.now() + K.TUNE.boost.ms });
     expect(K.carFrame(g, Date.now()).find((f) => f[0] === a.id)).toEqual([a.id, a.ko.x, a.ko.y, 0, 90, 0, 1]);
@@ -559,25 +609,34 @@ describe('boost is a power-up', () => {
     expect(() => G.fireBoost(g, c, {})).toThrow(/not in the arena/);
   });
 
-  test('a report carries the car\'s speed, never above the top speed; the lobby states the boost rules', () => {
+  test('a report carries the car\'s speed, never above the top speed; the lobby states the power-up rules', () => {
     const g = arena(); const [a] = seat(g, 4); G.start(g);
     G.reportPosition(g, a, 100, 200, { vx: 3000, vy: 0 });
     expect(a.ko).toMatchObject({ x: 100, y: 200, vx: K.TUNE.speed * K.TUNE.topMult, vy: 0 });
     G.reportPosition(g, a, 110, 200, { vx: 'fast' }); // junk speed: the position still lands, the speed stays
     expect(a.ko).toMatchObject({ x: 110, vx: K.TUNE.speed * K.TUNE.topMult });
-    expect(G.rulesFor(g).knockout).toMatchObject({ boostMax: K.TUNE.boost.max, boostSec: K.TUNE.boost.ms / 1000, ghostSafe: true });
-    expect(G.playerView(g, a).knockout.tune).toMatchObject({ boost: K.TUNE.boost, bump: K.TUNE.bump, topMult: K.TUNE.topMult });
+    expect(G.rulesFor(g).knockout).toMatchObject({ boostMax: K.TUNE.boost.max, boostSec: K.TUNE.boost.ms / 1000, powerPts: [100, 50], powerSec: K.TUNE.power.life / 1000, ghostSafe: true });
+    expect(G.playerView(g, a).knockout.tune).toMatchObject({ boost: K.TUNE.boost, bump: K.TUNE.bump, topMult: K.TUNE.topMult, power: { pts: K.TUNE.power.pts } });
   });
 
-  test('canisters survive a deploy: the same ones, the same claims', () => {
-    const g = arena(); const [a] = seat(g, 10); G.start(g);
-    pickUp(g, a, g.ko.round.boosts[0]);
+  test('power-ups survive a deploy: the same ones, the same claims, and the pop-ins re-armed', () => {
+    const [g, p, [a]] = kindOf(null, 'pts50');
+    take(g, a, p);
     const snap = JSON.parse(JSON.stringify(G.snapshot(g)));
-    const before = g.ko.round.boosts.map((b) => [b.id, b.x, b.y, b.by]);
+    const before = g.ko.round.powerups.map((x) => [x.id, x.kind, x.at, x.by]);
     G._reset();
     const h = G.hydrate(snap);
-    expect(h.ko.round.boosts.map((b) => [b.id, b.x, b.y, b.by])).toEqual(before);
-    expect(h.players.get(a.id).ko.boosts).toBe(1);
+    expect(h.ko.round.powerups.map((x) => [x.id, x.kind, x.at, x.by])).toEqual(before);
+    expect(h.players.get(a.id).ko).toMatchObject({ bonus: 50, powers: 1 });
+  });
+
+  test('the final screen counts each driver\'s power-ups and names the top hunter', () => {
+    const [g, p, [a]] = kindOf(null, 'pts100');
+    take(g, a, p);
+    G.endGame(g);
+    const f = G.hostView(g).final.knockout;
+    expect(f.standings.find((x) => x.name === a.name)).toMatchObject({ powers: 1, bonus: 100 });
+    expect(f.awards.powers).toEqual({ name: a.name, n: 1 });
   });
 });
 

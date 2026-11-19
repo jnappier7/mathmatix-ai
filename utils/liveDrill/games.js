@@ -1140,6 +1140,23 @@ function gamesForClasses(classIds) {
 }
 const anyClassGames = () => [...games.values()].some((g) => g.classId && g.phase !== 'over');
 
+/** How long a finished game stays on its host's "Game in progress" list (the final screen has the results and the CSVs). */
+const RECENT_OVER_MS = 30 * 60 * 1000;
+/**
+ * A teacher's own games, to get back to one (owner, 2026-11-19: "I accidentally exited out of the
+ * projector screen and there was no obvious way to get back in"): every lobby or live game they
+ * host, then any that finished in the last half hour, newest first. Never another teacher's.
+ */
+function gamesForHost(hostId, at = now()) {
+  const id = String(hostId);
+  const seatedN = (g) => [...g.players.values()].filter((p) => !p.kicked).length;
+  return [...games.values()]
+    .filter((g) => g.hostId === id && (g.phase !== 'over' || (g.endedAt && at - g.endedAt < RECENT_OVER_MS)))
+    .sort((a, b) => (a.phase === 'over') - (b.phase === 'over') || b.createdAt - a.createdAt)
+    .map((g) => ({ code: g.code, mode: g.mode, phase: g.phase, drillTitle: g.drillTitle, playbookName: g.playbookName, className: g.className,
+      players: seatedN(g), createdAt: g.createdAt, endsAt: g.endsAt || null, endedAt: g.endedAt || null }));
+}
+
 // ---------------------------------------------------------------------------
 // housekeeping
 // ---------------------------------------------------------------------------
@@ -1245,6 +1262,6 @@ module.exports = {
   createGame, getGame, hostGame, playerFor, normalizeCode,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget, grabChip, reportPosition, fireBoost,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
-  onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS,
+  onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS, gamesForHost, RECENT_OVER_MS,
   _reset, _games: games,
 };
