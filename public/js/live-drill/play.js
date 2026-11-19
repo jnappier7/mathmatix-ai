@@ -227,7 +227,7 @@
     if (!k) return;
     $('p-team').className = 'pill ko';
     $('p-team').textContent = k.in ? `${k.alive} left` : k.ready ? 'Back next round' : 'In the pit';
-    $('p-me').textContent = `${st.me.name}${k.in ? (k.held ? ` · holding ${k.held}` : ' · grab an orb') : ` · ${k.benchPts} pit ${k.benchPts === 1 ? 'point' : 'points'}`}`;
+    $('p-me').textContent = `${st.me.name}${k.in ? ` · ${k.pts} pts${k.held ? ' · safe' : ' · grab an orb'}` : ` · ${k.pts} pts · ${k.benchPts} pit`}`;
     let html = '';
     if (!k.in) {
       const dots = Array.from({ length: k.need }, (_, i) => `<span class="${i < k.row ? 'on' : ''}"></span>`).join('');
@@ -721,8 +721,8 @@
       h.textContent = k.place === 1 ? '🏁 Last car running' : `#${k.place} of ${k.of}`;
       $('f-place').textContent = [k.winner && !k.winner.me ? `${k.winner.name} won the arena.` : '', top ? (top.me ? `🏆 You are the Fact Champion with ${top.pts} pit points.` : `🏆 Fact Champion: ${top.name}, ${top.pts} pit points.`) : ''].filter(Boolean).join(' ');
     }
-    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : onHeist && st.heist ? money(st.heist.cash) : onKo && st.knockout ? st.knockout.grabbed : me.yards;
-    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : onHeist ? 'Your cash' : onKo ? 'Orbs grabbed' : 'Your yards';
+    $('f-yds').textContent = onHill && st.hill ? Math.round(st.hill.h) : onHeist && st.heist ? money(st.heist.cash) : onKo && st.knockout ? st.knockout.pts : me.yards;
+    $('f-yds').nextElementSibling.textContent = onHill ? 'Height' : onHeist ? 'Your cash' : onKo ? 'Your points' : 'Your yards';
     $('f-comp').textContent = `${me.comp}/${me.att}`;
     $('f-pct').textContent = me.att ? Math.round((100 * me.comp) / me.att) + '%' : '–';
     $('f-best').textContent = me.best;

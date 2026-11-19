@@ -908,3 +908,4 @@ div.alarm>*{position:relative}
   #live.driving .arena{position:fixed;inset:0;height:auto;min-height:0;border:0;border-radius:0;z-index:30}
   body:has(#live.driving){overflow:hidden}
 }
+.koside li.outrow{opacity:.55}
