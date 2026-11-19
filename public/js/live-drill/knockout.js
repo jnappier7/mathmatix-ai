@@ -111,8 +111,7 @@
         me.x = clamp(me.x, 14, r.world.w - 14); me.y = clamp(me.y, 14, r.world.h - 14);
         // the round just closed: what happened to me
         if (prev && prev.knockout && prev.knockout.round && prev.knockout.round.n === r.n && !prev.knockout.round.closed && r.closed && m.in) {
-          const extra = Math.min(m.held - 1, (r.out || []).length);
-          if (extra > 0) { say(`KNOCKOUT ×${extra}`, COL.good); shake = 6; }
+          if (!m.held && !r.nobodyOut) say('SPARED!', COL.foam); // the clock ran out, and someone with fewer points went instead
         }
       } else {
         names = new Map((m.arena || []).map((f) => [f.id, f.name]));
@@ -190,17 +189,16 @@
         if (round !== roundN) return;
         if (res.taken) { gone.add(chip.id); return; }
         if (res.again) { stung.add(chip.id); return; }
-        if (res.full) { passed.add(chip.id); floats.push({ x: me.x, y: me.y - 26, text: `Full: ${res.held} is the most you can hold`, color: COL.foam, t: 1.4 }); return; }
+        if (res.safe) return;
         if (res.ok) {
           gone.add(chip.id);
           burst(me.x, me.y, COL.gold, 22, 230);
-          say(res.held === 1 ? 'SAFE!' : 'SPARE ORB!', res.held === 1 ? COL.gold : COL.good);
+          say(res.first ? `FIRST! +${res.pts}` : `SAFE! +${res.pts}`, res.first ? COL.good : COL.gold);
           buzz(20);
         } else {
-          stung.add(chip.id); passed.clear();
+          stung.add(chip.id);
           burst(me.x, me.y, COL.coral, 16, 200); shake = 11; buzz(70);
-          floats.push({ x: me.x, y: me.y - 24, text: `${res.text} = ${res.val}`, color: COL.coral, t: 1.6 });
-          if (res.dropped) say(`DROPPED ${res.dropped}!`, COL.coral);
+          floats.push({ x: me.x, y: me.y - 24, text: `${res.text} = ${res.val}${res.cost ? `  −${res.cost}` : ''}`, color: COL.coral, t: 1.6 });
           if (opts.onWrong) opts.onWrong(res);
         }
       } catch (err) {
@@ -245,8 +243,8 @@
       me.swim += dt;
       if (!calm() && (me.dartT > 0 || Math.random() < sp * dt * 0.012)) bubbles.push({ x: me.x - Math.cos(me.ang) * 12, y: me.y - Math.sin(me.ang) * 12, r: rf(1.2, 3.2), t: rf(0.5, 1) });
 
-      // touching a chip is a claim; the server answers it
-      if (!r.closed) {
+      // touching a chip is a claim; the server answers it. A car that has its orb is safe and claims nothing.
+      if (!r.closed && m.held < (tune.maxHold || 1)) {
         const at = now();
         for (const c of r.chips) {
           if (c.taken || gone.has(c.id) || pending.has(c.id) || stung.has(c.id) || passed.has(c.id)) continue;
@@ -462,7 +460,7 @@
         const gl = (m.gateAt || 0) - at;
         ctx.font = `700 13px ${TEXT}`; ctx.textBaseline = 'top';
         const tag = (text, x, align, color) => { const w = ctx.measureText(text).width + 14; const x0 = align === 'left' ? x : x - w; ctx.fillStyle = 'rgba(8,12,32,.82)'; rr(ctx, x0, 8, w, 22, 6); ctx.fill(); ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.fillText(text, x0 + 7, 13); };
-        tag(`${m.alive} left`, 8, 'left', COL.line);
+        tag(`${m.alive} left · ${m.pts} pts (#${m.rank})`, 8, 'left', COL.line);
         tag(gl > 0 ? `Gate ${Math.floor(gl / 60000)}:${String(Math.floor((gl % 60000) / 1000)).padStart(2, '0')}` : 'Sudden death', cw - 8, 'right', gl > 0 && gl > 15000 ? COL.foam : COL.coral);
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       }

@@ -3,9 +3,17 @@
  *
  * Musical chairs in a neon arena. Every round the server posts a TARGET number and scatters chips,
  * each one a fact ("7×8", "60−4"). There is always ONE FEWER correct chip than cars. A car that
- * ends the round holding no correct chip is OUT. A car may hold one spare (`maxHold`) — the spare
- * leaves another car without one — and carrying slows it; a WRONG chip slows it more and spills
- * every chip it holds back onto the floor, so greed has a price and so does guessing.
+ * ends the round holding no correct chip is at risk — and EXACTLY ONE car goes out each round
+ * (owner, 2026-11-18, after the first class games: "everyone gets one answer. 1 player eliminated
+ * each time" — holding two had been ending games in a handful of rounds). A car takes one orb and
+ * is safe; the round closes the moment every orb is taken, and the car left without is out. If the
+ * clock runs out with several cars empty-handed, only ONE of them goes: the one with the fewest
+ * points (then the most wrong orbs this round), and the rest are spared.
+ *
+ * Points are the scoreboard ("more points for finding it sooner"): a right orb pays `points.max`
+ * the instant the round opens, sliding to `points.min` at its close; a wrong orb slows the car and
+ * costs `wrongCost`. The winner is still the last car running — the scoreboard is a second race
+ * (Top scorer), the tie-break when the clock runs out, and what a game ended early is decided by.
  *
  * Out is not over. A benched student answers plays from the game's own deck (the ordinary
  * own-pace answer path in games.js, so Math Facts answers are tracked and saved like any other
@@ -40,14 +48,15 @@ const TUNE = {
   comebackTotal: 6, // …or this many right since being benched, misses and all (progress that never resets)
   benchPoints: [2, 1], // a bench answer scores for the Fact Champion race: fluent (fast), or just right
   fluentMs: 3000,
-  revealMs: 3000, // chips show what they were before the next round
+  revealMs: 2200, // chips show what they were before the next round (short: a class of 30 sees ~30 of these)
   slowMs: 2000, // a wrong chip slows the car this long
-  // Hoarding is capped (owner, 2026-11-17: "hoarding is an issue"): one spare orb, so one car can
-  // knock out one other car a round and no more, and a car that is carrying drives slower, so the
-  // spare has to be earned against cars that are still empty-handed.
-  maxHold: 2,
-  holdSlow: 0.8,
-  capMs: 150000, // sudden death cannot outlast this after the gate closes
+  // One orb each: a car that holds its orb is safe and done for the round. (Two had let a few
+  // fast students knock out half the arena per round; before that, any number.)
+  maxHold: 1,
+  holdSlow: 1,
+  points: { max: 100, min: 40 }, // a right orb: `max` at the round's first instant, `min` at its last
+  wrongCost: 10, // a wrong orb costs this many points (never below 0)
+  spareRounds: 2, // sudden death may run this many rounds past one-per-car before it is called
   emptyRounds: 3, // rounds in a row where nobody grabbed anything: the class has walked away
   speed: 130, // a car's cruising speed, world units per second (the client moves it)
   dartMult: 2.5,
@@ -218,7 +227,7 @@ const gateOpen = (game, at) => !!game.ko.gateAt && at < game.ko.gateAt;
 const fail = (status, message) => Object.assign(new Error(message), { status });
 
 function reset(game) {
-  game.ko = { round: null, rounds: 0, gateAt: null, capAt: null, empty: 0, ending: false, winner: null, order: null };
+  game.ko = { round: null, rounds: 0, gateAt: null, sudden: 0, empty: 0, ending: false, winner: null, order: null };
   for (const p of game.players.values()) resetPlayer(p, game);
 }
 
@@ -227,7 +236,7 @@ function resetPlayer(p, game) {
   p.ko = {
     in: !game || game.phase === 'lobby', held: [], ate: [], slowUntil: 0,
     row: 0, since: 0, ready: false, outAt: 0, outRound: 0, benchPts: 0,
-    grabbed: 0, wrong: 0, comebacks: 0, benchRight: 0, knocked: 0,
+    grabbed: 0, wrong: 0, comebacks: 0, benchRight: 0, pts: 0, roundPts: 0, firsts: 0,
     x: null, y: null, posAt: 0, spawn: 0,
   };
 }
@@ -243,7 +252,6 @@ function spawn(game, p, world, rand, at) {
 function start(game, io) {
   const at = io.now();
   game.ko.gateAt = at + game.seconds * 1000;
-  game.ko.capAt = game.ko.gateAt + TUNE.capMs;
   game.endsAt = game.ko.gateAt; // the clock every screen shows is the gate
   openRound(game, io);
 }
@@ -270,7 +278,7 @@ function openRound(game, io) {
     chips.push({ id: `c${n}-${chips.length}`, text: c.text, val: c.val, ok: c.ok, x: Math.round(x), y: Math.round(y), ...drift(rand), t0: at, by: null, hits: 0 });
   }
   for (const p of pool) {
-    Object.assign(p.ko, { held: [], ate: [], slowUntil: 0 });
+    Object.assign(p.ko, { held: [], ate: [], slowUntil: 0, roundPts: 0 });
     if (p.ko.x == null) spawn(game, p, world, rand, at);
     else { p.ko.x = Math.min(world.w - 14, Math.max(14, p.ko.x)); p.ko.y = Math.min(world.h - 14, Math.max(14, p.ko.y)); p.ko.posAt = at; }
   }
@@ -305,38 +313,42 @@ function grab(game, player, body, io) {
     if (Math.hypot(m.x - x, m.y - y) > reach) throw fail(409, 'Too far from that chip.');
   }
   Object.assign(m, { x, y, posAt: at });
+  // A car that has its orb is safe: nothing it touches for the rest of the round counts, right or wrong.
+  if (m.held.length >= TUNE.maxHold) return { safe: true, held: m.held.length };
   if (chip.by) return { taken: true };
 
   if (chip.ok) {
-    if (m.held.length >= TUNE.maxHold) return { full: true, held: m.held.length }; // hands full: the orb stays on the floor
+    const first = !r.chips.some((c) => c.ok && c.by);
     chip.by = player.id;
     m.held.push(chip.id);
     m.grabbed++;
+    const pts = pointsFor(r, at);
+    Object.assign(m, { pts: m.pts + pts, roundPts: pts, firsts: m.firsts + (first ? 1 : 0) });
     const left = r.chips.some((c) => c.ok && !c.by);
     if (!left) closeRound(game, io); else io.touch();
-    return { ok: true, held: m.held.length, text: chip.text };
+    return { ok: true, held: m.held.length, text: chip.text, pts, total: m.pts, first };
   }
   if (m.ate.includes(chip.id)) return { again: true };
   m.ate.push(chip.id);
   chip.hits++;
   m.wrong++;
   m.slowUntil = at + TUNE.slowMs;
-  // every chip this car holds goes back on the floor, drifting away from it
-  const rand = rng(game.seed, `${r.n}:${player.id}:${m.wrong}`);
-  const dropped = [];
-  for (const id of m.held) {
-    const c = r.chips.find((k) => k.id === id);
-    if (!c) continue;
-    const a = rand() * Math.PI * 2;
-    Object.assign(c, { by: null, t0: at, x: Math.round(bounce(x + Math.cos(a) * 40, TUNE.margin, r.world.w - TUNE.margin)), y: Math.round(bounce(y + Math.sin(a) * 40, TUNE.margin, r.world.h - TUNE.margin)), ...drift(rand) });
-    dropped.push(id);
-  }
-  m.held = [];
+  const cost = Math.min(m.pts, TUNE.wrongCost);
+  m.pts -= cost;
   io.touch();
-  return { ok: false, text: chip.text, val: chip.val, target: r.target, dropped: dropped.length, slowUntil: m.slowUntil };
+  return { ok: false, text: chip.text, val: chip.val, target: r.target, cost, total: m.pts, slowUntil: m.slowUntil };
 }
 
-/** The music stops. A driver with no chip is out — unless nobody has one, and then nobody is. */
+/** What a right orb pays: sooner is more, on a straight line from `max` to `min` across the round. */
+function pointsFor(r, at) {
+  const f = Math.min(1, Math.max(0, (at - r.openedAt) / Math.max(1, r.closesAt - r.openedAt)));
+  return Math.round(TUNE.points.max - (TUNE.points.max - TUNE.points.min) * f);
+}
+
+/**
+ * The music stops. ONE car goes out: the one left without an orb — or, when the clock ran out on
+ * several, the empty-handed car with the fewest points. Nobody has one: nobody is out.
+ */
 function closeRound(game, io) {
   const mn = game.ko;
   const r = mn.round;
@@ -351,17 +363,23 @@ function closeRound(game, io) {
     mn.empty++;
   } else {
     mn.empty = 0;
-    for (const p of pool) if (p.ko.held.length > 1) p.ko.knocked += p.ko.held.length - 1;
-    for (const p of losers) {
-      Object.assign(p.ko, { in: false, row: 0, since: 0, ready: false, outAt: at, outRound: r.n, x: null, y: null });
-      p.issuedAt = null; // the bench deals from where this student's own deck stands
-      r.out.push(p.name);
-    }
-    if (losers.length) io.feed({ type: 'out', names: r.out.slice(0, 6), count: losers.length, round: r.n });
+    // fewest points goes; then whoever hit more wrong orbs this round; then the round's own coin
+    const rand = rng(game.seed, `${r.n}:out`);
+    const coin = new Map(losers.map((p) => [p.id, rand()]));
+    losers.sort((a, b) => a.ko.pts - b.ko.pts || b.ko.ate.length - a.ko.ate.length || coin.get(a.id) - coin.get(b.id));
+    const [p, ...spared] = losers;
+    Object.assign(p.ko, { in: false, row: 0, since: 0, ready: false, outAt: at, outRound: r.n, x: null, y: null });
+    p.issuedAt = null; // the bench deals from where this student's own deck stands
+    r.out.push(p.name);
+    r.spared = spared.map((q) => q.name);
+    io.feed({ type: 'out', names: r.out.slice(), count: 1, round: r.n });
   }
   const left = drivers(game).length;
   const waiting = seated(game).some((p) => !p.ko.in && p.ko.ready);
-  mn.ending = (left <= 1 && !waiting) || at >= mn.capAt || mn.empty >= TUNE.emptyRounds;
+  // Sudden death is one car a round, so it needs about one round per car — and no more than that.
+  if (at >= mn.gateAt) mn.sudden = (mn.sudden || 0) + 1;
+  const capped = (mn.sudden || 0) > seated(game).length + TUNE.spareRounds;
+  mn.ending = (left <= 1 && !waiting) || capped || mn.empty >= TUNE.emptyRounds;
   io.later(TUNE.revealMs, () => { if (game.ko.round === r) next(game, io); });
   io.touch();
 }
@@ -385,11 +403,17 @@ function rearm(game, io) {
   else io.later((r.revealUntil || at) - at, () => { if (game.ko.round === r) next(game, io); });
 }
 
-/** Still driving first (most chips grabbed breaks a tie); then whoever lasted longest. */
+/** Still driving first (points break a tie); then whoever lasted longest (points again). */
 function standings(game) {
   return seated(game).sort((a, b) => (b.ko.in - a.ko.in)
-    || (a.ko.in ? b.ko.grabbed - a.ko.grabbed : b.ko.outRound - a.ko.outRound || b.ko.outAt - a.ko.outAt)
+    || (a.ko.in ? 0 : b.ko.outRound - a.ko.outRound || b.ko.outAt - a.ko.outAt)
+    || b.ko.pts - a.ko.pts
     || a.name.localeCompare(b.name));
+}
+
+/** The scoreboard: points, most first. */
+function scoreboard(game) {
+  return seated(game).sort((a, b) => b.ko.pts - a.ko.pts || b.ko.grabbed - a.ko.grabbed || a.name.localeCompare(b.name));
 }
 
 function finish(game) {
@@ -464,12 +488,12 @@ function roundView(game) {
     chips: r.chips.map((c) => chipView(c, r.closed)) };
   if (r.closed) {
     const worst = r.chips.filter((c) => !c.ok && c.hits).sort((a, b) => b.hits - a.hits)[0];
-    Object.assign(v, { out: r.out, nobodyOut: r.nobodyOut, worst: worst ? { text: worst.text, val: worst.val, hits: worst.hits } : null });
+    Object.assign(v, { out: r.out, spared: r.spared || [], nobodyOut: r.nobodyOut, worst: worst ? { text: worst.text, val: worst.val, hits: worst.hits } : null });
   }
   return v;
 }
 
-const tune = () => ({ maxHold: TUNE.maxHold, holdSlow: TUNE.holdSlow, speed: TUNE.speed, dartMult: TUNE.dartMult, chipR: TUNE.chipR, eatDist: TUNE.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs });
+const tune = () => ({ maxHold: TUNE.maxHold, holdSlow: TUNE.holdSlow, points: TUNE.points, wrongCost: TUNE.wrongCost, speed: TUNE.speed, dartMult: TUNE.dartMult, chipR: TUNE.chipR, eatDist: TUNE.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs });
 
 function summary(game, at) {
   const all = seated(game);
@@ -486,6 +510,7 @@ function playerKnockout(game, player, at) {
   const v = { ...summary(game, at), round: roundView(game),
     in: m.in, ...benchView(m), held: m.held.length, mine: m.held.slice(), slowUntil: m.slowUntil,
     grabbed: m.grabbed, comebacks: m.comebacks, wrong: m.wrong,
+    pts: m.pts, roundPts: m.roundPts, rank: scoreboard(game).indexOf(player) + 1,
     champ: (() => { const c = champions(game); const i = c.indexOf(player); return { rank: i < 0 ? null : i + 1, top: c[0] ? { name: c[0].name, pts: c[0].ko.benchPts, me: c[0] === player } : null }; })(),
     spawn: m.x == null ? null : { x: m.x, y: m.y, round: m.spawn } };
   if (game.phase === 'over') {
@@ -501,6 +526,7 @@ function hostKnockout(game, at) {
     arena: all.filter((p) => p.ko.in).map((p) => ({ id: p.id, name: p.name, held: p.ko.held.length })),
     bench: all.filter((p) => !p.ko.in).sort((a, b) => b.ko.ready - a.ko.ready || b.ko.benchPts - a.ko.benchPts)
       .map((p) => ({ id: p.id, name: p.name, row: p.ko.row, since: p.ko.since, ready: p.ko.ready, pts: p.ko.benchPts })),
+    scores: scoreboard(game).slice(0, 8).map((p) => ({ id: p.id, name: p.name, pts: p.ko.pts, in: p.ko.in })),
     champs: champions(game).slice(0, 5).map((p) => ({ name: p.name, pts: p.ko.benchPts })) };
 }
 
@@ -511,21 +537,21 @@ function finalKnockout(game) {
   return {
     winner: w ? w.name : null, sole: !!game.ko.sole, rounds: game.ko.rounds,
     standings: order.map((p, i) => ({ place: i + 1, name: p.name, alive: p.ko.in, outRound: p.ko.outRound || null,
-      grabbed: p.ko.grabbed, knocked: p.ko.knocked, wrong: p.ko.wrong, comebacks: p.ko.comebacks, benchRight: p.ko.benchRight, benchPts: p.ko.benchPts, saved: !!p.userId })),
+      pts: p.ko.pts, grabbed: p.ko.grabbed, firsts: p.ko.firsts, wrong: p.ko.wrong, comebacks: p.ko.comebacks, benchRight: p.ko.benchRight, benchPts: p.ko.benchPts, saved: !!p.userId })),
     champion: best('benchPts'),
-    awards: { hog: best('grabbed'), comeback: best('comebacks') },
+    awards: { scorer: best('pts'), first: best('firsts'), comeback: best('comebacks') },
   };
 }
 
 /** The rules as the lobby states them — the same numbers the server plays. */
 function rules(game) {
-  return { maxHold: TUNE.maxHold, comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
+  return { maxHold: TUNE.maxHold, points: { ...TUNE.points }, wrongCost: TUNE.wrongCost, comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
     gateSec: game.seconds, roundSec: game.secondsPerPlay, slowSec: TUNE.slowMs / 1000 };
 }
 
 module.exports = {
   BOOKS, TUNE, FORMS, makeChips, valueOf, worldFor, chipAt, bounce, rng,
-  reset, resetPlayer, start, grab, closeRound, rearm, finish, standings, drivers,
+  reset, resetPlayer, start, grab, closeRound, rearm, finish, standings, scoreboard, pointsFor, drivers,
   bench, onBenchAnswer, champions, position, carFrame,
   playerKnockout, hostKnockout, finalKnockout, rules,
 };
