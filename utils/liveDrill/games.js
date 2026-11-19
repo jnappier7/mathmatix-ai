@@ -782,11 +782,18 @@ function grabChip(game, player, body) {
   return heistCall(() => knockout.grab(game, player, body || {}, knockoutIo(game)));
 }
 
-/** Knockout Arena: where this car is. Never a state change — the `cars` ticker carries it to the other screens. */
-function reportPosition(game, player, x, y) {
+/** Knockout Arena: where this car is, and how fast it is going. Never a state change — the `cars` ticker carries it to the other screens. */
+function reportPosition(game, player, x, y, v) {
   if (game.mode !== 'knockout' || game.phase !== 'live') return;
   player.lastSeen = now();
-  knockout.position(game, player, x, y, now());
+  knockout.position(game, player, x, y, now(), v);
+}
+
+/** Knockout Arena: spend a ⚡ charge (picked up off the floor with grabChip `{ boost: id }`). */
+function fireBoost(game, player, body) {
+  if (game.mode !== 'knockout') throw new GameError(409, 'Not that kind of game.');
+  player.lastSeen = now();
+  return heistCall(() => knockout.fire(game, player, body || {}, knockoutIo(game)));
 }
 
 /** Knockout Arena: every car's position to every screen, ~3× a second, outside the state stream. */
@@ -795,7 +802,8 @@ function carTicker(game) {
   const t = setInterval(() => {
     if (game.phase !== 'live') { clearInterval(t); game.timers.delete(t); return; }
     if (!game.listeners.size) return;
-    const frame = { at: now(), cars: knockout.carFrame(game) };
+    const at = now();
+    const frame = { at, cars: knockout.carFrame(game, at) };
     for (const l of game.listeners) safeWrite(l.res, 'cars', frame);
   }, CAR_MS);
   if (t.unref) t.unref();
@@ -1235,7 +1243,7 @@ function _reset() { for (const g of [...games.values()]) dropGame(g); }
 module.exports = {
   onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, PICK_SIX, BLITZ, GameError, rulesFor,
   createGame, getGame, hostGame, playerFor, normalizeCode,
-  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget, grabChip, reportPosition,
+  join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget, grabChip, reportPosition, fireBoost,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
   onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS,
   _reset, _games: games,

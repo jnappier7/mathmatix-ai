@@ -344,11 +344,13 @@ const joinLimiter = rateLimit({
   message: { message: 'Too many join attempts from this network. Wait a few minutes.' },
 });
 
-// Knockout Arena position reports: every car, about twice a second, for the whole game. Sized on its
-// own so it can never eat the budget the answers and grabs run on (a class of 35 behind one school
-// IP would spend the shared ceiling in four minutes), and mounted ABOVE playIpLimiter for that reason.
+// Knockout Arena position reports: every car, about twice a second, for the whole game, plus one at
+// once after each bump (a bounce has to reach the other screens fast). Sized on its own so it can
+// never eat the budget the answers and grabs run on (a class of 35 behind one school IP would spend
+// the shared ceiling in four minutes), and mounted ABOVE playIpLimiter for that reason. 360 a minute
+// is six a second per car: the steady two, and room for a pile-up's bumps (each device spaces them).
 const carLimiter = rateLimit({
-  windowMs: 60 * 1000, max: 240,
+  windowMs: 60 * 1000, max: 360,
   keyGenerator: (req) => { const t = req.get(TOKEN_HEADER); return t && String(t).length >= 24 ? 't:' + tokenKey(t) : 'ip:' + req.ip; },
   standardHeaders: true, legacyHeaders: false,
   message: { message: 'Too many requests. Wait a moment and try again.' },
@@ -358,8 +360,8 @@ playRouter.post('/:code/pos', carLimiter, async (req, res) => {
     const game = await store.load(req.params.code);
     if (!game) return res.status(404).json({ message: 'That game has ended.' });
     const player = G.playerFor(game, req.get(TOKEN_HEADER));
-    const { x, y } = req.body || {};
-    G.reportPosition(game, player, x, y);
+    const { x, y, vx, vy } = req.body || {};
+    G.reportPosition(game, player, x, y, { vx, vy });
     res.status(204).end();
   } catch (err) { send(res, err); }
 });
@@ -431,6 +433,13 @@ playRouter.post('/:code/grab', playLimiter, async (req, res) => {
   try {
     const { game, player } = await withPlayer(req);
     res.json(G.grabChip(game, player, req.body));
+  } catch (err) { send(res, err); }
+});
+// Knockout Arena: spend a ⚡ boost charge (picked up off the floor through /grab with `{ boost: id }`).
+playRouter.post('/:code/boost', playLimiter, async (req, res) => {
+  try {
+    const { game, player } = await withPlayer(req);
+    res.json(G.fireBoost(game, player, req.body));
   } catch (err) { send(res, err); }
 });
 playRouter.post('/:code/gadget', playLimiter, async (req, res) => {

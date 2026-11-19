@@ -221,7 +221,9 @@
       + `<div class="rule"><span class="rk">The pit</span><span class="rv">Out is not over: type facts in the pit. <b class="g">${k.comeback} right in a row</b>, or <b class="g">${k.comebackTotal} right in all</b>, and you drive again next round.</span></div>`
       + `<div class="rule"><span class="rk">🏆 Fact Champion</span><span class="rv">Every right answer in the pit scores: <b class="g">+${k.benchPoints[0]}</b> in ${k.fluentSec} s or less, <b class="g">+${k.benchPoints[1]}</b> after. Most pit points is the Fact Champion — a second winner.</span></div>`
       + `<div class="rule"><span class="rk">The gate</span><span class="rv">Comebacks stop after <b>${mmss(k.gateSec * 1000)}</b>. Then it is sudden death to one car.</span></div>`
-      + `<div class="rule"><span class="rk">Driving</span><span class="rv">Arrow keys drive and space boosts. On a touch screen, drag to drive and tap with a second finger to boost.</span></div>`
+      + `<div class="rule"><span class="rk">⚡ Boost</span><span class="rv">Boost is a power-up now. Drive over a <b>⚡</b> to pick one up (hold up to <b>${k.boostMax}</b>), then press <b>Boost</b> for <b>${k.boostSec} s</b> of speed.</span></div>`
+      + `<div class="rule"><span class="rk">Bumper cars</span><span class="rv">Cars bounce off each other — knock a rival off their orb.${k.ghostSafe ? ' A car that has its orb is safe and drives through everyone.' : ''}</span></div>`
+      + `<div class="rule"><span class="rk">Driving</span><span class="rv">Drag anywhere to drive and tap <b>Boost</b> (or a second finger). On a keyboard: arrow keys drive, space boosts.</span></div>`
       + '</div>';
   }
 

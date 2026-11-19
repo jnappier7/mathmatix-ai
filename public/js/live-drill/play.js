@@ -254,8 +254,11 @@
         me: st.me.id,
         serverNow,
         grab: (body) => api(`/${code}/grab`, { method: 'POST', body: JSON.stringify(body) }),
-        // fire and forget: a lost position report costs nothing, and must never queue behind a retry
-        pos: (x, y) => { fetch(`${API}/${code}/pos`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Live-Drill-Token': seat.token }, body: JSON.stringify({ x, y }), credentials: 'omit', cache: 'no-store' }).catch(() => {}); },
+        // spend a ⚡ charge (the server keeps the count; the arena has already started the boost)
+        boost: (body) => api(`/${code}/boost`, { method: 'POST', body: JSON.stringify(body) }),
+        // fire and forget: a lost position report costs nothing, and must never queue behind a retry.
+        // The velocity lets the other screens lead this car between reports, so a bump lands where it should.
+        pos: (x, y, vx, vy) => { fetch(`${API}/${code}/pos`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Live-Drill-Token': seat.token }, body: JSON.stringify({ x, y, vx, vy }), credentials: 'omit', cache: 'no-store' }).catch(() => {}); },
         onGone: () => gone('You are no longer in this game.'),
       });
     }

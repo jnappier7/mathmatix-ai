@@ -240,6 +240,19 @@ describe('live drill over HTTP', () => {
     expect((await req.post(`/api/live-drill/play/${g.code}/pos`).set(tok(a)).send({ x: 50, y: 60 })).status).toBe(204);
     expect(game.players.get(a.playerId).ko).toMatchObject({ x: 50, y: 60 });
     expect((await req.post(`/api/live-drill/play/${g.code}/pos`).send({ x: 1, y: 1 })).status).toBe(401);
+    // the report carries the car's speed (other screens lead it with that, and bounce off where it really is)
+    expect((await req.post(`/api/live-drill/play/${g.code}/pos`).set(tok(a)).send({ x: 52, y: 60, vx: 40, vy: -30 })).status).toBe(204);
+    expect(game.players.get(a.playerId).ko).toMatchObject({ x: 52, vx: 40, vy: -30 });
+    // ⚡ boost is a power-up: drive over a canister (a claim through /grab), then spend it through /boost
+    expect((await req.post(`/api/live-drill/play/${g.code}/boost`).set(tok(a)).send({})).status).toBe(409);
+    const can = game.ko.round.boosts[0];
+    Object.assign(game.players.get(a.playerId).ko, { x: can.x, y: can.y, posAt: Date.now() });
+    expect((await req.post(`/api/live-drill/play/${g.code}/grab`).set(tok(a)).send({ round: game.ko.round.n, boost: can.id, x: can.x, y: can.y })).body).toEqual({ boost: true, boosts: 1 });
+    expect((await req.get(`/api/live-drill/play/${g.code}/state`).set(tok(a))).body.knockout).toMatchObject({ boosts: 1 });
+    const fired = await req.post(`/api/live-drill/play/${g.code}/boost`).set(tok(a)).send({ x: can.x, y: can.y });
+    expect(fired.status).toBe(200);
+    expect(fired.body.boosts).toBe(0);
+    expect((await req.post(`/api/live-drill/play/${g.code}/boost`).send({})).status).toBe(401);
     // drive two cars onto the two right orbs (the device reports where it is; the server checks it)
     const grab = async (p) => {
       const r = game.ko.round;
