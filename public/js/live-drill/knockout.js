@@ -78,7 +78,7 @@
 
     const M = () => (st && st.knockout) || null;
     const R = () => { const m = M(); return m && m.round; };
-    const T = () => (M() && M().tune) || { speed: 130, dartMult: 2.5, chipR: 25, eatDist: 21, margin: 34, slowMs: 2000 };
+    const T = () => (M() && M().tune) || { speed: 130, dartMult: 2.5, chipR: 40, eatDist: 32, margin: 50, slowMs: 2000 };
 
     function burst(x, y, color, n, speed) {
       if (calm()) return;
@@ -293,7 +293,9 @@
       }
       if (label) {
         ctx.font = `700 ${big ? 13 : 11}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-        ctx.globalAlpha = 0.92; ctx.fillStyle = COL.foam; ctx.fillText(label, 0, 38); ctx.globalAlpha = 1;
+        // a dark outline: with orbs this big a car's name often sits on one, white on white
+        ctx.lineWidth = 3.5; ctx.lineJoin = 'round'; ctx.strokeStyle = COL.ink; ctx.strokeText(label, 0, 38);
+        ctx.globalAlpha = 0.95; ctx.fillStyle = COL.foam; ctx.fillText(label, 0, 38); ctx.globalAlpha = 1;
       }
       ctx.restore();
     }
@@ -309,8 +311,9 @@
       ctx.shadowColor = COL.line; ctx.shadowBlur = taken ? 0 : 14;
       ctx.fillStyle = COL.chip; ctx.beginPath(); ctx.arc(p.x, p.y, R0, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
-      ctx.lineWidth = 3; ctx.strokeStyle = COL.line; ctx.stroke();
-      ctx.fillStyle = COL.ink; ctx.font = `700 ${c.text.length > 4 ? 14 : 16}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.lineWidth = 4; ctx.strokeStyle = COL.line; ctx.stroke();
+      // the fact fills the orb: ~0.6 of its radius per glyph height, a little less for a long one ("144÷12")
+      ctx.fillStyle = COL.ink; ctx.font = `800 ${Math.round(R0 * (c.text.length > 5 ? 0.46 : c.text.length > 4 ? 0.52 : 0.62))}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(c.text, p.x, p.y + 1);
       ctx.globalAlpha = 1;
       if (closed) {
@@ -318,8 +321,8 @@
         ctx.beginPath(); ctx.arc(p.x, p.y, R0 + 4, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
         if (!c.ok) {
           const label = `= ${c.val}${c.hits ? `  · ${c.hits} hit` : ''}`;
-          ctx.font = `700 13px ${TEXT}`; ctx.lineWidth = 4; ctx.strokeStyle = COL.ink; ctx.strokeText(label, p.x, p.y + R0 + 17);
-          ctx.fillStyle = COL.coral; ctx.fillText(label, p.x, p.y + R0 + 17);
+          ctx.font = `700 17px ${TEXT}`; ctx.lineWidth = 4; ctx.strokeStyle = COL.ink; ctx.strokeText(label, p.x, p.y + R0 + 20);
+          ctx.fillStyle = COL.coral; ctx.fillText(label, p.x, p.y + R0 + 20);
         }
       }
     }
@@ -374,7 +377,7 @@
       let tx = W / 2; let ty = H / 2; let ts = Math.min(cw / W, ch / H);
       if (follow) {
         // A phone shows less of the arena, bigger: an orb's fact has to be readable at arm's length.
-        ts = Math.max(ts, Math.sqrt((cw * ch) / (Math.min(cw, ch) < 520 ? 170000 : 300000)));
+        ts = Math.max(ts, Math.sqrt((cw * ch) / (Math.min(cw, ch) < 520 ? 240000 : 380000)));
         const vw = cw / ts; const vh = ch / ts;
         tx = vw >= W ? W / 2 : clamp(me.x, vw / 2 - 30, W - vw / 2 + 30);
         ty = vh >= H ? H / 2 : clamp(me.y, vh / 2 - 30, H - vh / 2 + 30);
