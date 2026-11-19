@@ -917,3 +917,13 @@ div.alarm>*{position:relative}
 #live-body.mode-knockout.ko-wide>.sb,#live-body.mode-knockout.ko-wide .koside{display:none}
 #live-body.mode-knockout.ko-wide .kopane{grid-template-columns:minmax(0,1fr)}
 #live-body.mode-knockout.ko-wide .kopane .arena{height:calc(100dvh - 162px);min-height:320px}
+
+/* The host's "Game in progress": a game the teacher is running (or just finished), one button back in */
+.resume{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.resume-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--board);border:2px solid var(--rail);border-radius:10px;padding:14px 18px}
+.resume-row.on{border-color:var(--led);box-shadow:0 0 0 3px rgba(255,211,90,.12)}
+.resume-row>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.resume-k{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;color:var(--muted)}
+.resume-row.on .resume-k{color:var(--led)}
+.resume-what{font-weight:800;font-size:1.15rem}
+.resume-row .go{width:auto;flex:none}

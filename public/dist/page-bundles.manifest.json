@@ -254,7 +254,7 @@
         ]
       },
       {
-        "href": "/dist/css/teacher-css1.95baede1.css",
+        "href": "/dist/css/teacher-css1.4c8fcac1.css",
         "files": [
           "/css/dashboard-mobile.css",
           "/css/demo-mode.css",
@@ -286,7 +286,7 @@
         ]
       },
       {
-        "src": "/dist/js/teacher-js2.80ed1aa7.js",
+        "src": "/dist/js/teacher-js2.fc98644d.js",
         "files": [
           "/js/idle-dialog.js",
           "/js/auto-logout.js",

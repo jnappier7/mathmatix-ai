@@ -135,6 +135,19 @@ async function loadForClasses(classIds) {
   for (const doc of docs) if (!stale(doc)) G.hydrate(doc.state);
 }
 
+/** Revive this teacher's games that this process doesn't hold (the host's "Game in progress" after a deploy). */
+async function loadForHost(hostId) {
+  if (paused || !connected() || !hostId) return;
+  let docs;
+  try {
+    docs = await LiveDrillGame.find({ hostId: String(hostId) }).lean();
+  } catch (err) {
+    logger.error('live drill host snapshots read failed', { error: err.message });
+    return;
+  }
+  for (const doc of docs) if (!G.getGame(doc.code) && !stale(doc)) G.hydrate(doc.state);
+}
+
 /** Write every scheduled snapshot now and wait for it (shutdown). */
 async function flush() {
   const codes = [...scheduled.keys()];
@@ -167,4 +180,4 @@ G.onDrop(forget);
 
 function _pause(v = true) { paused = v; handingOff = false; misses.clear(); classPeek = { at: 0, any: false }; for (const t of scheduled.values()) clearTimeout(t); scheduled.clear(); }
 
-module.exports = { load, loadForClasses, anyClassGames, flush, handoff, isHandingOff, saveNow, SAVE_DELAY_MS, MISS_TTL_MS, _pause, _write: write };
+module.exports = { load, loadForClasses, loadForHost, anyClassGames, flush, handoff, isHandingOff, saveNow, SAVE_DELAY_MS, MISS_TTL_MS, _pause, _write: write };

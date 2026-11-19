@@ -310,3 +310,11 @@ html.td-v2 footer, html.td-v2 .site-footer, html.td-v2 .dashboard-footer { posit
 .td-classes-empty { margin: 0; }
 .td-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 640px) { .td-class-grid { grid-template-columns: 1fr; } }
+
+/* Game in progress: a Live Drill game the teacher is running (or just finished), one button back to it */
+.td-games { margin-bottom: 16px; border-color: var(--td-brand); }
+.td-games-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.td-game { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.td-game-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.td-game-what { font-weight: 700; }
+.td-game .td-btn, .td-game .td-btn:hover { text-decoration: none; }

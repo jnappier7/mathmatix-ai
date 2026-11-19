@@ -194,6 +194,7 @@
     today.id = 'today-tab';
     today.setAttribute('role', 'tabpanel');
     today.innerHTML =
+      '<section class="td-card td-games" id="td-games" aria-labelledby="td-games-h" aria-live="polite" hidden></section>' +
       '<section class="td-pulse" id="td-pulse" aria-label="Class pulse"></section>' +
       '<section class="td-card td-classes" id="td-classes" aria-labelledby="td-classes-h">' +
         '<header class="td-card-head"><h2 id="td-classes-h"><i class="fas fa-chalkboard" aria-hidden="true"></i> My classes</h2><span class="td-count" id="td-classes-count"></span></header>' +
@@ -515,6 +516,42 @@
       var live = document.createElement('div'); live.id = 'td-copy-live'; live.className = 'td-sr'; live.setAttribute('aria-live', 'polite');
       document.body.appendChild(live);
     }
+  }
+
+  // ------------------------------------------------------------ Game in progress
+  // A Live Drill game this teacher is running (closed the projector by accident?) — or one that just
+  // finished — with one button back to it. /api/live-drill/host/games lists lobby and live games, then
+  // any finished in the last half hour; the host page reopens one from ?code=.
+  var GAME_MODES = { drive: 'Team Drive', huddle: 'Huddle', hill: 'King of the Hill', heist: 'Heist', knockout: 'Knockout Arena' };
+  function renderGames(list) {
+    var el = document.getElementById('td-games');
+    if (!el) return;
+    if (!list || !list.length) { el.hidden = true; el.innerHTML = ''; return; }
+    var live = list.filter(function (g) { return g.phase !== 'over'; }).length;
+    el.hidden = false;
+    el.innerHTML = '<header class="td-card-head"><h2 id="td-games-h">' + (live ? '<span class="td-live-dot" aria-hidden="true"></span>Game in progress' : '<i class="fas fa-flag-checkered" aria-hidden="true"></i> Game just finished') + '</h2></header>' +
+      '<ul class="td-games-list">' + list.map(function (g) {
+        var on = g.phase !== 'over';
+        var what = [GAME_MODES[g.mode] || g.mode, g.drillTitle, g.playbookName].filter(Boolean).map(esc).join(' · ');
+        var state = g.phase === 'lobby' ? 'In the lobby' : g.phase === 'live' ? 'Playing now' : 'Finished';
+        return '<li class="td-game' + (on ? ' on' : '') + '"><div class="td-game-text"><span class="td-game-what">' + what + '</span>' +
+          '<span class="td-muted">' + state + ' · code <b>' + esc(g.code) + '</b> · ' + g.players + (g.players === 1 ? ' player' : ' players') + (g.className ? ' · ' + esc(g.className) : '') + '</span></div>' +
+          '<a class="td-btn ' + (on ? 'td-btn-primary' : 'td-btn-soft') + ' td-btn-sm" href="/live-drill?code=' + encodeURIComponent(g.code) + '" target="_blank" rel="noopener">' +
+            (on ? '<i class="fas fa-tv" aria-hidden="true"></i> Return to game' : 'See the results') + '</a></li>';
+      }).join('') + '</ul>';
+  }
+  var gamesTimer = null;
+  function loadGames() {
+    fetch('/api/live-drill/host/games', { credentials: 'same-origin', cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : { games: [] }; })
+      .then(function (b) { renderGames(b.games || []); })
+      .catch(function () { /* the card just stays away */ });
+  }
+  function wireGames() {
+    loadGames();
+    clearInterval(gamesTimer);
+    gamesTimer = setInterval(function () { if (!document.hidden) loadGames(); }, 30000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) loadGames(); });
   }
 
   function renderToday() {
@@ -851,6 +888,7 @@
     restructureNav();
     wireClasses();
     mountToday();
+    wireGames();
     mountTable();
     document.addEventListener('mm:roster-updated', onRoster);
     document.addEventListener('mm:roster-rendered', onRendered);

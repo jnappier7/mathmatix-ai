@@ -269,6 +269,16 @@ hostRouter.post('/games', async (req, res) => {
   }
 });
 
+// The teacher's own games, to get back to one: lobby and live first, then any finished in the last half
+// hour (the host page's "Game in progress" banner and the dashboard's Today card both read this).
+hostRouter.get('/games', async (req, res) => {
+  try {
+    await store.loadForHost(req.user._id);
+    res.set('Cache-Control', 'no-store');
+    res.json({ games: G.gamesForHost(req.user._id) });
+  } catch (err) { send(res, err); }
+});
+
 hostRouter.get('/games/:code/stream', async (req, res) => {
   try {
     await store.load(req.params.code);

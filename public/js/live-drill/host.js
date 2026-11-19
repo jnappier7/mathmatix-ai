@@ -287,6 +287,41 @@
     renderSetup(); // (a mode that can't play this drill keeps the button off)
   };
 
+  // ---------------- back into a running game ----------------
+  // Closed the projector by accident? Every game this teacher is running (and any that finished in the
+  // last half hour) is listed on the setup screen with one button back in; /live-drill?code=ABC123
+  // (the dashboard's "Game in progress" card) goes straight back.
+  async function rejoin(code) {
+    $('setup-err').textContent = '';
+    try {
+      const st = await api(`/games/${encodeURIComponent(code)}`);
+      seenFeed.clear();
+      connect(st.code);
+      apply(st);
+    } catch (e) { $('setup-err').textContent = /not found/i.test(e.message) ? 'That game has ended.' : e.message; loadMine(); }
+  }
+  async function loadMine() {
+    let list;
+    try { ({ games: list } = await api('/games')); } catch { list = []; }
+    const el = $('resume');
+    if (!list || !list.length) { el.hidden = true; el.innerHTML = ''; return list || []; }
+    el.hidden = false;
+    el.innerHTML = list.map((g) => {
+      const on = g.phase !== 'over';
+      const what = [MODE_LABEL[g.mode] || g.mode, g.drillTitle, g.playbookName].filter(Boolean).map(esc).join(' · ');
+      const state = g.phase === 'lobby' ? 'In the lobby' : g.phase === 'live' ? 'Playing now' : 'Finished';
+      return `<div class="resume-row${on ? ' on' : ''}"><div><span class="resume-k">${on ? '● Game in progress' : 'Just finished'}</span>`
+        + `<span class="resume-what">${what}</span><span class="muted">${state} · code <b>${esc(g.code)}</b> · ${g.players} player${g.players === 1 ? '' : 's'}${g.className ? ` · ${esc(g.className)}` : ''}</span></div>`
+        + `<button class="go" data-rejoin="${esc(g.code)}">${on ? 'Return to game' : 'See the results'}</button></div>`;
+    }).join('');
+    el.querySelectorAll('[data-rejoin]').forEach((b) => { b.onclick = () => rejoin(b.dataset.rejoin); });
+    return list;
+  }
+  // A game that is on asks before the projector is closed (it keeps running either way — this is what brings it back).
+  window.addEventListener('beforeunload', (e) => {
+    if (game && (game.phase === 'live' || game.phase === 'lobby') && game.players && game.players.length) { e.preventDefault(); e.returnValue = ''; }
+  });
+
   // ---------------- live connection ----------------
   function connect(code) {
     if (es) es.close();
@@ -297,7 +332,7 @@
     es.onerror = async () => {
       // EventSource retries on its own; just check the game still exists.
       try { apply(await api(`/games/${encodeURIComponent(code)}`)); } catch (e) {
-        if (/not found/i.test(e.message)) { es.close(); es = null; game = null; show('setup'); $('setup-err').textContent = 'That game has ended.'; }
+        if (/not found/i.test(e.message)) { es.close(); es = null; game = null; show('setup'); $('setup-err').textContent = 'That game has ended.'; loadMine(); }
       }
     };
   }
@@ -313,7 +348,7 @@
   $('h-next').onclick = action('/advance');
   $('l-cancel').onclick = async () => { await action('/end')(); reset(); show('setup'); };
   function reset() { SND.setScene('setup'); if (es) es.close(); es = null; game = null; seenFeed.clear(); $('l-code').textContent = '------'; $('l-qr').hidden = true; }
-  $('f-again').onclick = () => { reset(); show('setup'); renderSetup(); };
+  $('f-again').onclick = () => { reset(); show('setup'); renderSetup(); loadMine(); };
   // Same code, same teams, same phones: everyone lands back in the lobby still seated.
   $('f-rematch').onclick = () => { seenFeed.clear(); $('final-err').textContent = ''; action('/rematch')(); };
 
@@ -1277,6 +1312,10 @@
       renderSetup();
       wireSearch();
       show('setup');
+      // back into a running game: straight in from a link (?code=), else offered at the top of setup
+      const list = await loadMine();
+      const wantCode = (new URLSearchParams(location.search).get('code') || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (wantCode && list.some((g) => g.code === wantCode)) rejoin(wantCode);
     } catch (e) { $('setup-err').textContent = e.message; }
   })();
 })();
