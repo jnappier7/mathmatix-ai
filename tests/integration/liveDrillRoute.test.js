@@ -98,7 +98,7 @@ describe('live drill over HTTP', () => {
   test('the setup lists every drill with its playbooks and its own settings', async () => {
     const r = await req.get('/api/live-drill/host/drills');
     expect(r.status).toBe(200);
-    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m1', 'alg1m2', 'alg1m3', 'alg1m4', 'alg1m5', 'alg1m6', 'alg1m7', 'alg1m8', 'alg1m9', 'alg1m10', 'alg1m11', 'alg1m12', 'alg1m13', 'hgeo1', 'hgeo3', 'hgeo4', 'hgeo5', 'hgeo6', 'hgeo7', 'hgeo8', 'hgeo9', 'hgeo10', 'hgeo11', 'alg2', 'congruence']);
+    expect(r.body.drills.map((d) => d.id)).toEqual(['algebra', 'geometry', 'facts', 'alg1m1', 'alg1m2', 'alg1m3', 'alg1m4', 'alg1m5', 'alg1m6', 'alg1m7', 'alg1m8', 'alg1m9', 'alg1m10', 'alg1m11', 'alg1m12', 'alg1m13', 'hgeo1', 'hgeo3', 'hgeo4', 'hgeo5', 'hgeo6', 'hgeo7', 'hgeo8', 'hgeo9', 'hgeo10', 'hgeo11', 'alg2', 'alg2u0', 'alg2u1', 'alg2u2', 'alg2u3', 'alg2u4', 'congruence']);
     expect(r.body.drills.every((d) => d.playbooks.length > 1 && !d.unavailable && d.settings.huddle.secondsPerPlay.length)).toBe(true);
     // the picker groups by course: every drill names one, Math Facts (on every hub) is "Any class", courses come in hub order
     expect(r.body.courses.map((c) => c.id)).toEqual(['algebra', 'geometry', 'algebra2', 'any']);
@@ -467,15 +467,23 @@ describe('solo practice (/drill/<hub>)', () => {
     expect(r.body.hubs.map((h) => h.id)).toEqual(['algebra', 'geometry', 'algebra2']);
     expect((await req.get('/api/live-drill/solo/hubs')).body.hubs).toHaveLength(3);
     const a2 = await req.get('/api/live-drill/solo/hubs/algebra2');
-    expect(a2.body.games.map((g) => g.drill)).toEqual(['alg2', 'facts']);
+    // the course drill, then the teacher's unit reviews in teaching order, then Math Facts
+    expect(a2.body.games.map((g) => g.drill)).toEqual(['alg2', 'alg2u0', 'alg2u1', 'alg2u2', 'alg2u3', 'alg2u4', 'facts']);
+    expect(a2.body.games[3].sections.map((s) => s.key)).toEqual(['2.1', '2.2', '2.3']);
     expect(a2.body.games[0].playbooks.map((b) => b.key)).toEqual(['all', 'quad', 'poly', 'rad', 'exp', 'rational', 'func', 'seq']);
   });
 
   test('search finds a playbook by topic, publicly, and names the page it lives on', async () => {
-    const r = await req.get('/api/live-drill/solo/search?q=completing%20the%20square');
+    // two courses teach it; the page the box is on (hub=) says whose lesson comes first
+    const r = await req.get('/api/live-drill/solo/search?q=completing%20the%20square&hub=algebra');
     expect(r.status).toBe(200);
     expect(r.body.q).toBe('completing the square');
     expect(r.body.results[0]).toMatchObject({ drill: 'alg1m11', key: 'roots', hub: 'algebra' });
+    expect(r.body.results[1]).toMatchObject({ drill: 'alg2u4', key: 'l2', hub: 'algebra2' });
+    const other = await req.get('/api/live-drill/solo/search?q=completing%20the%20square&hub=algebra2');
+    expect(other.body.results[0]).toMatchObject({ drill: 'alg2u4', key: 'l2', hub: 'algebra2' });
+    const none = await req.get('/api/live-drill/solo/search?q=completing%20the%20square');
+    expect(none.body.results.slice(0, 2).map((x) => x.drill).sort()).toEqual(['alg1m11', 'alg2u4']);
     const hub = await req.get(`/api/live-drill/solo/hubs/${r.body.results[0].hub}`);
     expect(hub.body.games.find((g) => g.drill === 'alg1m11').playbooks.some((b) => b.key === 'roots')).toBe(true);
     expect((await req.get('/api/live-drill/solo/search')).body.results).toEqual([]);

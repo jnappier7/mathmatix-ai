@@ -83,7 +83,8 @@
     if (!words) { res.hidden = true; res.innerHTML = ''; return; }
     let results;
     try {
-      const r = await fetch(`/api/live-drill/solo/search?q=${encodeURIComponent(words)}`, { credentials: 'same-origin' });
+      // the course tab in view comes first (the server ignores a tab that is not a course, e.g. Math Facts)
+      const r = await fetch(`/api/live-drill/solo/search?q=${encodeURIComponent(words)}&hub=${encodeURIComponent(S.course || '')}`, { credentials: 'same-origin' });
       ({ results } = await r.json());
     } catch { return; }
     if (seq !== qSeq) return; // a newer keystroke answered already

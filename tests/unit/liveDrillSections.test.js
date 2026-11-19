@@ -176,6 +176,9 @@ describe('Find a topic', () => {
 
   test('a topic word alone lands on the book, not on a "Section N.M" entry beside it', () => {
     expect(search('box plots').some((x) => /^\d+\.\d+$/.test(x.key))).toBe(false);
-    expect(search('4.4')).toEqual([]); // the course has no 4.4
+    // Algebra 1 has no 4.4 (Module 4 is 4.1, 4.2, 4.3, 4.5): the number answers only where a course has it
+    expect(search('4.4').map((x) => x.drill)).toEqual(['alg2u4', 'alg2u4']);
+    expect(search('4.4', { hub: 'algebra' }).some((x) => x.hub === 'algebra')).toBe(false);
+    expect(search('4.9')).toEqual([]); // no course has a 4.9
   });
 });

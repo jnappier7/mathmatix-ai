@@ -57,6 +57,11 @@ const HUBS = {
     title: 'Algebra 2',
     games: [
       { drill: 'alg2', name: 'Two-Minute Drill', blurb: 'Every unit of the course — quadratics and complex numbers, polynomials, radicals, logs, rational expressions, functions, sequences — one quick move at a time.' },
+      { drill: 'alg2u0', name: 'Unit 0 Review', blurb: 'Basic algebra skills — equations and inequalities, lines and slope, exponents and distributing, functions and function notation, calculator skills.' },
+      { drill: 'alg2u1', name: 'Unit 1 Review', blurb: 'Systems of equations — substitution and elimination, no solution and infinitely many, 3x3 systems, word problems, matrices.' },
+      { drill: 'alg2u2', name: 'Unit 2 Review', blurb: 'Function algebra — evaluating functions, composition of functions, average rate of change.' },
+      { drill: 'alg2u3', name: 'Unit 3 Review', blurb: 'Function graphs — parent functions, even and odd, inverses, domain and range, features of graphs.' },
+      { drill: 'alg2u4', name: 'Unit 4 Review', blurb: 'Transformations of quadratics — vertex form, completing the square, shifts, reflections, stretches and compressions.' },
       { drill: 'facts', name: 'Math Facts', blurb: 'Type the answer. Fluent is right in 3 seconds or less.' },
     ],
   },

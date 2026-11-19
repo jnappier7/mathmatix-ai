@@ -167,7 +167,8 @@
     const words = String(text || '').trim();
     if (!words) { res.hidden = true; res.innerHTML = ''; return; }
     let results;
-    try { ({ results } = await get(`/search?q=${encodeURIComponent(words)}`)); } catch { return; }
+    // this page's course first: two courses teach "completing the square", and the student is in this one
+    try { ({ results } = await get(`/search?q=${encodeURIComponent(words)}${hubId ? `&hub=${encodeURIComponent(hubId)}` : ''}`)); } catch { return; }
     if (seq !== qSeq) return; // a newer keystroke answered already
     res.hidden = false;
     if (!results.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try the module or chapter number, or a word from the lesson.</p>`; return; }
