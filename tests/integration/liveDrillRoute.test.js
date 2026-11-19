@@ -226,7 +226,7 @@ describe('live drill over HTTP', () => {
     // Math Facts only: any other drill is refused before a lobby opens
     expect((await req.post('/api/live-drill/host/games').send({ drill: 'geometry', playbook: 'all', mode: 'knockout' })).status).toBe(400);
     const g = await host({ drill: 'facts', playbook: 'mul', mode: 'knockout', seconds: 120, secondsPerPlay: 10 });
-    expect(g.rules.knockout).toMatchObject({ comeback: 3, comebackTotal: 6, roundSec: 10, gateSec: 120 });
+    expect(g.rules.knockout).toMatchObject({ comeback: 4, comebackTotal: 8, roundSec: 10, gateSec: 120 });
     const [a, b, c] = [await join(g.code, 'Ana'), await join(g.code, 'Ben'), await join(g.code, 'Cy')];
     const tok = (p) => ({ 'X-Live-Drill-Token': p.token });
     await req.post(`/api/live-drill/host/games/${g.code}/start`);
@@ -257,11 +257,11 @@ describe('live drill over HTTP', () => {
     expect(after.knockout.round.chips.every((x) => typeof x.ok === 'boolean')).toBe(true);
     // a car in the arena is not dealt a play; the pit is, and its answers are graded Math Facts answers
     expect((await req.get(`/api/live-drill/play/${g.code}/play`).set(tok(a))).status).toBe(409);
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
       const cur = (await req.get(`/api/live-drill/play/${g.code}/play`).set(tok(c))).body;
       expect(cur.play.input).toBe('number');
       const r = await req.post(`/api/live-drill/play/${g.code}/answer`).set(tok(c)).send({ n: cur.n, k: G.playAt(game, cur.n).answer });
-      expect(r.body).toMatchObject({ ok: true, knockout: { row: i + 1, ready: i === 2 } });
+      expect(r.body).toMatchObject({ ok: true, knockout: { row: i + 1, ready: i === 3 } });
       expect(r.body.knockout.pts).toBeGreaterThan(0);
     }
     const hv = (await req.get(`/api/live-drill/host/games/${g.code}`)).body;

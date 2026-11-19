@@ -7,11 +7,13 @@
  *     and no wrong chip reads the same as a right one;
  *   - the open round NEVER tells a screen which chips are right — the answer goes out only once
  *     the round has closed;
- *   - musical chairs: one fewer right chip than cars; a car with none at the close is out, unless
- *     nobody has one; extra chips knock out extra cars; a wrong chip spills every chip held;
+ *   - musical chairs: one fewer right chip than cars, ONE orb each, and EXACTLY ONE car out a round —
+ *     the one left without, or (clock ran out on several) the empty-handed car with the fewest
+ *     points; nobody has one, nobody is out;
+ *   - the scoreboard: a right orb pays more the sooner it is found; a wrong one slows and costs;
  *   - a grab must be plausible: at the chip, and reachable from the car's last report;
  *   - the pit: answers go through the ordinary graded path (so Math Facts are tracked), three in a
- *     row OR six in all buys the way back, the gate closes it, and every right answer scores for
+ *     row OR eight in all buys the way back, the gate closes it, and every right answer scores for
  *     the Fact Champion — fast ones double;
  *   - the game ends at one car; a game survives a snapshot/hydrate mid-round;
  *   - the SIMULATOR: a class of bots always finishes, and a student who knows the facts outlasts
@@ -103,6 +105,25 @@ describe('setup', () => {
     expect(K.worldFor(34).w).toBeGreaterThan(K.worldFor(8).w);
   });
 
+  test('no round opens with an orb on a car: every car has to drive to its orb', () => {
+    for (const n of [2, 8, 16, 26, 34]) {
+      for (const seed of ['a', 'b', 'c']) {
+        const g = arena(); seat(g, n); g.seed = `${seed}${n}`; G.start(g);
+        const { chips, world } = g.ko.round;
+        let nearest = Infinity;
+        for (const p of g.players.values()) {
+          for (const c of chips) nearest = Math.min(nearest, Math.hypot(c.x - p.ko.x, c.y - p.ko.y));
+        }
+        // the clearance holds in every class size we play; never inside an orb's reach plus a car length
+        expect(nearest).toBeGreaterThan(K.TUNE.eatDist + K.TUNE.chipR);
+        if (n <= 26) expect(nearest).toBeGreaterThanOrEqual(K.TUNE.carClear * 0.9);
+        for (const c of chips) {
+          expect(c.x).toBeGreaterThanOrEqual(K.TUNE.margin); expect(c.x).toBeLessThanOrEqual(world.w - K.TUNE.margin);
+        }
+      }
+    }
+  });
+
   test('the lobby states the rules the server plays', () => {
     const g = arena({ seconds: 180, secondsPerPlay: 15 });
     const r = G.rulesFor(g).knockout;
@@ -133,26 +154,65 @@ describe('a round', () => {
     expect(g.feed[0]).toMatchObject({ type: 'out', count: 1 });
   });
 
-  test('a spare orb knocks out one more car — and one spare is the limit', () => {
+  test('one orb each: a car that has its orb is safe, and nothing else it touches counts', () => {
     const g = arena(); const [a, b, c, d] = seat(g, 4); G.start(g);
-    claim(g, a, right(g)[0]);
-    expect(claim(g, a, right(g)[0])).toMatchObject({ ok: true, held: 2 });
-    // hands full: the third right orb stays on the floor for someone else
-    const third = right(g)[0];
-    expect(claim(g, a, third)).toEqual({ full: true, held: K.TUNE.maxHold });
-    expect(third.by).toBeNull();
-    expect(claim(g, b, third)).toMatchObject({ ok: true, held: 1 }); // the last right orb: the round closes
-    expect([a.ko.in, b.ko.in, c.ko.in, d.ko.in]).toEqual([true, true, false, false]);
-    expect(a.ko.knocked).toBe(1);
-    expect(G.rulesFor(g).knockout.maxHold).toBe(2);
+    expect(claim(g, a, right(g)[0])).toMatchObject({ ok: true, held: 1 });
+    const second = right(g)[0];
+    expect(claim(g, a, second)).toEqual({ safe: true, held: 1 }); // a second right orb stays on the floor
+    expect(second.by).toBeNull();
+    const bad = wrong(g)[0];
+    expect(claim(g, a, bad)).toEqual({ safe: true, held: 1 }); // and a wrong one cannot sting a safe car
+    expect(bad.hits).toBe(0);
+    expect(a.ko.wrong).toBe(0);
+    claim(g, b, right(g)[0]); claim(g, c, right(g)[0]); // the last right orb: the round closes
+    expect([a.ko.in, b.ko.in, c.ko.in, d.ko.in]).toEqual([true, true, true, false]);
+    expect(G.rulesFor(g).knockout.maxHold).toBe(1);
   });
 
-  test('however fast the hoarders are, at most half the arena goes out in a round', () => {
-    for (const n of [6, 16, 31]) {
+  test('exactly one car goes out a round, whatever the class does', () => {
+    for (const n of [3, 8, 16, 31]) {
       const g = arena(); const cars = seat(g, n); G.start(g);
-      for (const p of cars) for (let i = 0; i < 5 && right(g).length && !g.ko.round.closed; i++) claim(g, p, right(g)[0]);
-      expect(cars.filter((p) => !p.ko.in).length).toBeLessThanOrEqual(Math.ceil(n / 2));
+      // only a third of the class finds an orb before the clock runs out
+      for (const p of cars.slice(0, Math.ceil(n / 3))) claim(g, p, right(g)[0]);
+      closeNow(g);
+      expect(cars.filter((p) => !p.ko.in)).toHaveLength(1);
+      expect(g.ko.round.out).toHaveLength(1);
+      expect(g.ko.round.spared).toHaveLength(n - Math.ceil(n / 3) - 1);
     }
+  });
+
+  test('the clock runs out on several empty-handed cars: the one with the fewest points goes', () => {
+    const g = arena(); const [a, b, c, d] = seat(g, 4); G.start(g);
+    Object.assign(b.ko, { pts: 300 }); Object.assign(c.ko, { pts: 120 }); Object.assign(d.ko, { pts: 200 });
+    claim(g, a, right(g)[0]);
+    closeNow(g);
+    expect([a.ko.in, b.ko.in, c.ko.in, d.ko.in]).toEqual([true, true, false, true]);
+    expect(G.hostView(g).knockout.round).toMatchObject({ out: ['P2'], spared: ['P3', 'P1'] }); // spared, fewest points first
+  });
+
+  test('…and on a tie in points, the one who hit more wrong orbs this round', () => {
+    const g = arena(); const [a, b, c] = seat(g, 3); G.start(g);
+    claim(g, c, wrong(g)[0]);
+    claim(g, a, right(g)[0]);
+    closeNow(g);
+    expect([b.ko.in, c.ko.in]).toEqual([true, false]);
+  });
+
+  test('sooner scores more: the same orb pays less the later it is found', () => {
+    const g = arena({ secondsPerPlay: 10 }); const [a, b, c] = seat(g, 4); G.start(g);
+    const first = claim(g, a, right(g)[0]);
+    expect(first).toMatchObject({ pts: K.TUNE.points.max, total: K.TUNE.points.max, first: true });
+    jest.advanceTimersByTime(5000);
+    const mid = claim(g, b, right(g)[0]);
+    expect(mid).toMatchObject({ pts: (K.TUNE.points.max + K.TUNE.points.min) / 2, first: false });
+    jest.advanceTimersByTime(4900);
+    const late = claim(g, c, right(g)[0]);
+    expect(late.pts).toBeGreaterThanOrEqual(K.TUNE.points.min);
+    expect(late.pts).toBeLessThan(mid.pts);
+    // the scoreboard every screen is sent
+    expect(G.hostView(g).knockout.scores.slice(0, 3).map((x) => x.name)).toEqual(['P0', 'P1', 'P2']);
+    expect(G.playerView(g, b).knockout).toMatchObject({ pts: mid.pts, rank: 2 });
+    expect(G.rulesFor(g).knockout.points).toEqual(K.TUNE.points);
   });
 
   test('first claim wins: the second car is told the chip is taken, and holds nothing', () => {
@@ -163,19 +223,18 @@ describe('a round', () => {
     expect(b.ko.held).toHaveLength(0);
   });
 
-  test('a wrong chip slows the car, spills everything it holds, and stings it only once', () => {
+  test('a wrong chip slows the car, costs points (never below zero), and stings it only once', () => {
     const g = arena(); const [a, b] = seat(g, 4); G.start(g);
-    const mine = right(g)[0];
-    claim(g, a, mine);
-    const bad = wrong(g)[0];
+    const [bad, bad2] = wrong(g);
     const r = claim(g, a, bad);
-    expect(r).toMatchObject({ ok: false, text: bad.text, val: bad.val, dropped: 1 });
+    expect(r).toMatchObject({ ok: false, text: bad.text, val: bad.val, cost: 0, total: 0 }); // nothing to lose yet
     expect(r.slowUntil).toBe(Date.now() + K.TUNE.slowMs);
-    expect(a.ko.held).toHaveLength(0);
-    expect(mine.by).toBeNull(); // back on the floor…
-    expect(claim(g, b, mine)).toMatchObject({ ok: true }); // …where someone else can take it
     expect(claim(g, a, bad)).toEqual({ again: true });
     expect(bad.hits).toBe(1);
+    b.ko.pts = 55;
+    expect(claim(g, b, bad2)).toMatchObject({ ok: false, cost: K.TUNE.wrongCost, total: 55 - K.TUNE.wrongCost });
+    // a stung car can still take its orb
+    expect(claim(g, a, right(g)[0])).toMatchObject({ ok: true, held: 1 });
   });
 
   test('nobody grabbed anything: nobody is out', () => {
@@ -213,26 +272,27 @@ describe('the pit', () => {
     expect(G.currentPlay(g, c).play.input).toBe('number');
   });
 
-  test('three right in a row buys the way back; a miss resets the streak but not the total', () => {
+  test('four right in a row buys the way back; a miss resets the streak but not the total', () => {
     const { g, c } = benched();
     // (quick answers: the reveal is 3 s, and the way back opens at the NEXT round)
     expect(pit(g, c, true, 100).knockout).toMatchObject({ row: 1, since: 1, ready: false });
     expect(pit(g, c, false, 100).knockout).toMatchObject({ row: 0, since: 1, ready: false });
     pit(g, c, true, 100); pit(g, c, true, 100);
+    expect(pit(g, c, true, 100).knockout).toMatchObject({ row: 3, ready: false });
     const r = pit(g, c, true, 100).knockout;
-    expect(r).toMatchObject({ row: 3, ready: true });
+    expect(r).toMatchObject({ row: 4, ready: true });
     nextRound();
     expect(c.ko.in).toBe(true);
     expect(c.ko.comebacks).toBe(1);
     expect(g.ko.round.n).toBe(2);
   });
 
-  test('six right in all buys it too — a student who keeps missing one fact is never locked out', () => {
+  test('eight right in all buys it too — a student who keeps missing one fact is never locked out', () => {
     const { g, c } = benched();
-    for (let i = 0; i < 2; i++) { pit(g, c); pit(g, c); pit(g, c, false); } // 4 right, never 3 in a row
+    for (let i = 0; i < 3; i++) { pit(g, c); pit(g, c); pit(g, c, false); } // 6 right, never 4 in a row
     expect(c.ko.ready).toBe(false);
     pit(g, c);
-    expect(pit(g, c).knockout).toMatchObject({ since: 6, ready: true });
+    expect(pit(g, c).knockout).toMatchObject({ since: 8, ready: true });
   });
 
   test('pit answers are graded Math Facts answers: tracked per fact, like any other game', () => {
@@ -249,7 +309,7 @@ describe('the pit', () => {
     expect(pit(g, c, true, 1000).knockout).toMatchObject({ pts: K.TUNE.benchPoints[0], fluent: true });
     expect(pit(g, c, true, 5000).knockout).toMatchObject({ pts: K.TUNE.benchPoints[1], fluent: false });
     expect(pit(g, c, false).knockout.pts).toBe(0);
-    pit(g, c); pit(g, c); pit(g, c); // ready
+    pit(g, c); pit(g, c); pit(g, c); pit(g, c); // ready
     const before = c.ko.benchPts;
     expect(pit(g, c).knockout.ready).toBe(true);
     expect(c.ko.benchPts).toBe(before + K.TUNE.benchPoints[0]);
@@ -292,13 +352,32 @@ describe('the end', () => {
   test('one car left but someone has earned the way back: the game goes on', () => {
     const g = arena(); const [a, b, c] = seat(g, 3); G.start(g);
     claim(g, a, right(g)[0]); claim(g, b, right(g)[0]); // round 1: c out
-    pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); // c ready before the reveal ends
+    pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); pit(g, c, true, 100); // c ready before the reveal ends
     nextRound(); // round 2: a, b, c
     expect(g.ko.round.cars).toBe(3);
-    claim(g, a, right(g)[0]); claim(g, a, right(g)[0]); // a holds both orbs: b and c are out
-    expect(g.ko.ending).toBe(true); // nobody ready this time
+    claim(g, a, right(g)[0]); claim(g, b, right(g)[0]); // c out again, nobody on the way back
+    expect(g.ko.ending).toBe(false); // two cars still running
+    nextRound(); // round 3: a, b
+    claim(g, a, right(g)[0]); // b out: one car left
+    expect(g.ko.ending).toBe(true);
     nextRound();
     expect(g.phase).toBe('over');
+    expect(G.hostView(g).final.knockout).toMatchObject({ winner: 'P0', sole: true, rounds: 3 });
+  });
+
+  test('sudden death takes one car a round, so it is given a round per car — and then it is called', () => {
+    const g = arena({ seconds: 30 }); const cars = seat(g, 5); G.start(g);
+    jest.advanceTimersByTime(31000); // the gate closes
+    // every round from here, only P0 finds an orb: one car out a round until P0 is alone
+    for (let i = 0; i < 12 && g.phase === 'live'; i++) {
+      if (g.ko.round.closed) nextRound();
+      if (g.phase !== 'live') break;
+      if (cars[0].ko.in && !cars[0].ko.held.length) claim(g, cars[0], right(g)[0]);
+      closeNow(g);
+    }
+    nextRound();
+    expect(g.phase).toBe('over');
+    expect(G.hostView(g).final.knockout.winner).toBe('P0');
   });
 
   test('a game the class walks away from ends by itself', () => {
@@ -333,7 +412,9 @@ describe('a deploy mid-game', () => {
     expect(a2.ko.held).toHaveLength(1);
     closeNow(h); // the re-armed clock closes the round
     expect(h.ko.round.closed).toBe(true);
-    expect(c2.ko.in).toBe(false);
+    expect(a2.ko.in).toBe(true);
+    expect([b, c].map((p) => h.players.get(p.id).ko.in).filter((x) => !x)).toHaveLength(1); // one of the two empty-handed cars
+    void c2;
   });
 });
 
@@ -372,12 +453,13 @@ describe('the simulator', () => {
     return { g, bots };
   }
 
-  test('a class of 16 always finishes, with one winner, inside the cap', () => {
+  test('a class of 16 always finishes, with one winner, and takes a round per car to get there', () => {
     for (let i = 0; i < 12; i++) {
       const profiles = Array.from({ length: 16 }, (_, j) => ({ kind: 'knower', acc: 0.6 + (j % 5) * 0.08, pace: 0.5, greed: 1 + (j % 3) }));
       const { g } = play(i, profiles);
       expect(g.phase).toBe('over');
-      expect(g.endedAt - g.startedAt).toBeLessThanOrEqual(120000 + K.TUNE.capMs + 20000);
+      // one car a round: a class of 16 needs at least 15 rounds, and sudden death is capped near one per car
+      expect(g.ko.rounds).toBeGreaterThanOrEqual(15);
       expect(G.hostView(g).final.knockout.winner).toBeTruthy();
     }
   });

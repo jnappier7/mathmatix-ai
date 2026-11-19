@@ -78,7 +78,7 @@
 
     const M = () => (st && st.knockout) || null;
     const R = () => { const m = M(); return m && m.round; };
-    const T = () => (M() && M().tune) || { speed: 130, dartMult: 2.5, chipR: 25, eatDist: 21, margin: 34, slowMs: 2000 };
+    const T = () => (M() && M().tune) || { speed: 130, dartMult: 2.5, chipR: 40, eatDist: 32, margin: 50, slowMs: 2000 };
 
     function burst(x, y, color, n, speed) {
       if (calm()) return;
@@ -111,8 +111,7 @@
         me.x = clamp(me.x, 14, r.world.w - 14); me.y = clamp(me.y, 14, r.world.h - 14);
         // the round just closed: what happened to me
         if (prev && prev.knockout && prev.knockout.round && prev.knockout.round.n === r.n && !prev.knockout.round.closed && r.closed && m.in) {
-          const extra = Math.min(m.held - 1, (r.out || []).length);
-          if (extra > 0) { say(`KNOCKOUT ×${extra}`, COL.good); shake = 6; }
+          if (!m.held && !r.nobodyOut) say('SPARED!', COL.foam); // the clock ran out, and someone with fewer points went instead
         }
       } else {
         names = new Map((m.arena || []).map((f) => [f.id, f.name]));
@@ -190,17 +189,16 @@
         if (round !== roundN) return;
         if (res.taken) { gone.add(chip.id); return; }
         if (res.again) { stung.add(chip.id); return; }
-        if (res.full) { passed.add(chip.id); floats.push({ x: me.x, y: me.y - 26, text: `Full: ${res.held} is the most you can hold`, color: COL.foam, t: 1.4 }); return; }
+        if (res.safe) return;
         if (res.ok) {
           gone.add(chip.id);
           burst(me.x, me.y, COL.gold, 22, 230);
-          say(res.held === 1 ? 'SAFE!' : 'SPARE ORB!', res.held === 1 ? COL.gold : COL.good);
+          say(res.first ? `FIRST! +${res.pts}` : `SAFE! +${res.pts}`, res.first ? COL.good : COL.gold);
           buzz(20);
         } else {
-          stung.add(chip.id); passed.clear();
+          stung.add(chip.id);
           burst(me.x, me.y, COL.coral, 16, 200); shake = 11; buzz(70);
-          floats.push({ x: me.x, y: me.y - 24, text: `${res.text} = ${res.val}`, color: COL.coral, t: 1.6 });
-          if (res.dropped) say(`DROPPED ${res.dropped}!`, COL.coral);
+          floats.push({ x: me.x, y: me.y - 24, text: `${res.text} = ${res.val}${res.cost ? `  −${res.cost}` : ''}`, color: COL.coral, t: 1.6 });
           if (opts.onWrong) opts.onWrong(res);
         }
       } catch (err) {
@@ -245,8 +243,8 @@
       me.swim += dt;
       if (!calm() && (me.dartT > 0 || Math.random() < sp * dt * 0.012)) bubbles.push({ x: me.x - Math.cos(me.ang) * 12, y: me.y - Math.sin(me.ang) * 12, r: rf(1.2, 3.2), t: rf(0.5, 1) });
 
-      // touching a chip is a claim; the server answers it
-      if (!r.closed) {
+      // touching a chip is a claim; the server answers it. A car that has its orb is safe and claims nothing.
+      if (!r.closed && m.held < (tune.maxHold || 1)) {
         const at = now();
         for (const c of r.chips) {
           if (c.taken || gone.has(c.id) || pending.has(c.id) || stung.has(c.id) || passed.has(c.id)) continue;
@@ -295,7 +293,9 @@
       }
       if (label) {
         ctx.font = `700 ${big ? 13 : 11}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-        ctx.globalAlpha = 0.92; ctx.fillStyle = COL.foam; ctx.fillText(label, 0, 38); ctx.globalAlpha = 1;
+        // a dark outline: with orbs this big a car's name often sits on one, white on white
+        ctx.lineWidth = 3.5; ctx.lineJoin = 'round'; ctx.strokeStyle = COL.ink; ctx.strokeText(label, 0, 38);
+        ctx.globalAlpha = 0.95; ctx.fillStyle = COL.foam; ctx.fillText(label, 0, 38); ctx.globalAlpha = 1;
       }
       ctx.restore();
     }
@@ -311,8 +311,9 @@
       ctx.shadowColor = COL.line; ctx.shadowBlur = taken ? 0 : 14;
       ctx.fillStyle = COL.chip; ctx.beginPath(); ctx.arc(p.x, p.y, R0, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
-      ctx.lineWidth = 3; ctx.strokeStyle = COL.line; ctx.stroke();
-      ctx.fillStyle = COL.ink; ctx.font = `700 ${c.text.length > 4 ? 14 : 16}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.lineWidth = 4; ctx.strokeStyle = COL.line; ctx.stroke();
+      // the fact fills the orb: ~0.6 of its radius per glyph height, a little less for a long one ("144÷12")
+      ctx.fillStyle = COL.ink; ctx.font = `800 ${Math.round(R0 * (c.text.length > 5 ? 0.46 : c.text.length > 4 ? 0.52 : 0.62))}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(c.text, p.x, p.y + 1);
       ctx.globalAlpha = 1;
       if (closed) {
@@ -320,8 +321,8 @@
         ctx.beginPath(); ctx.arc(p.x, p.y, R0 + 4, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
         if (!c.ok) {
           const label = `= ${c.val}${c.hits ? `  · ${c.hits} hit` : ''}`;
-          ctx.font = `700 13px ${TEXT}`; ctx.lineWidth = 4; ctx.strokeStyle = COL.ink; ctx.strokeText(label, p.x, p.y + R0 + 17);
-          ctx.fillStyle = COL.coral; ctx.fillText(label, p.x, p.y + R0 + 17);
+          ctx.font = `700 17px ${TEXT}`; ctx.lineWidth = 4; ctx.strokeStyle = COL.ink; ctx.strokeText(label, p.x, p.y + R0 + 20);
+          ctx.fillStyle = COL.coral; ctx.fillText(label, p.x, p.y + R0 + 20);
         }
       }
     }
@@ -376,7 +377,7 @@
       let tx = W / 2; let ty = H / 2; let ts = Math.min(cw / W, ch / H);
       if (follow) {
         // A phone shows less of the arena, bigger: an orb's fact has to be readable at arm's length.
-        ts = Math.max(ts, Math.sqrt((cw * ch) / (Math.min(cw, ch) < 520 ? 170000 : 300000)));
+        ts = Math.max(ts, Math.sqrt((cw * ch) / (Math.min(cw, ch) < 520 ? 240000 : 380000)));
         const vw = cw / ts; const vh = ch / ts;
         tx = vw >= W ? W / 2 : clamp(me.x, vw / 2 - 30, W - vw / 2 + 30);
         ty = vh >= H ? H / 2 : clamp(me.y, vh / 2 - 30, H - vh / 2 + 30);
@@ -462,7 +463,7 @@
         const gl = (m.gateAt || 0) - at;
         ctx.font = `700 13px ${TEXT}`; ctx.textBaseline = 'top';
         const tag = (text, x, align, color) => { const w = ctx.measureText(text).width + 14; const x0 = align === 'left' ? x : x - w; ctx.fillStyle = 'rgba(8,12,32,.82)'; rr(ctx, x0, 8, w, 22, 6); ctx.fill(); ctx.fillStyle = color; ctx.textAlign = 'left'; ctx.fillText(text, x0 + 7, 13); };
-        tag(`${m.alive} left`, 8, 'left', COL.line);
+        tag(`${m.alive} left · ${m.pts} pts (#${m.rank})`, 8, 'left', COL.line);
         tag(gl > 0 ? `Gate ${Math.floor(gl / 60000)}:${String(Math.floor((gl % 60000) / 1000)).padStart(2, '0')}` : 'Sudden death', cw - 8, 'right', gl > 0 && gl > 15000 ? COL.foam : COL.coral);
         ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       }

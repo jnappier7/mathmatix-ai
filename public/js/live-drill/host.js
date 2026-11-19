@@ -1028,6 +1028,8 @@
     if (pitch) pitch.update(st);
     $('ko-alive').textContent = `${k.alive} of ${k.of}`;
     $('ko-gate').textContent = k.gateOpen ? 'Comebacks are open' : 'The gate is closed — last car wins';
+    $('ko-scores').innerHTML = k.scores.map((p, i) => `<li class="${p.in ? '' : 'outrow'}"><span>${i + 1}. ${esc(p.name)}</span><span class="n">${p.pts}</span></li>`).join('')
+      || '<li><span class="muted">Find it sooner, score more.</span></li>';
     $('ko-pit-n').textContent = k.bench.length ? ` ${k.bench.length}` : '';
     $('ko-pit').innerHTML = k.bench.map((p) => `<li class="${p.ready ? 'ready' : ''}"><span>${esc(p.name)}</span><span class="n">${p.ready ? 'back next round' : k.gateOpen ? `${p.row} in a row · ${p.since} in all` : `${p.pts} pts`}</span></li>`).join('')
       || '<li><span class="muted">Nobody is out yet.</span></li>';
@@ -1044,13 +1046,13 @@
     $('f-picks').hidden = true;
     const award = (label, a, one, many) => (a ? `<div class="win"><span class="k">${label}</span><span class="v">${esc(a.name)}</span><span class="muted">${a.n} ${a.n === 1 ? one : many}</span></div>` : '');
     const rows = k.standings.map((p) => `<tr><td class="num">${p.place}</td><td>${esc(p.name)}${p.saved ? ' <span class="acct" title="Signed in">✓</span>' : ''}</td><td>${p.alive ? 'Still driving' : `Out in round ${p.outRound}`}</td>`
-      + `<td class="num">${p.grabbed}</td><td class="num">${p.knocked}</td><td class="num">${p.wrong}</td><td class="num">${p.comebacks}</td><td class="num">${p.benchRight}</td><td class="num"><b>${p.benchPts}</b></td></tr>`).join('');
+      + `<td class="num"><b>${p.pts}</b></td><td class="num">${p.grabbed}</td><td class="num">${p.firsts}</td><td class="num">${p.wrong}</td><td class="num">${p.comebacks}</td><td class="num">${p.benchRight}</td><td class="num"><b>${p.benchPts}</b></td></tr>`).join('');
     $('f-mvps').innerHTML = `<div class="panel kofinal"><div class="winners">`
       + `<div class="win"><span class="k">Last car running</span><span class="v">${esc(k.winner || '–')}</span><span class="muted">${k.rounds} ${k.rounds === 1 ? 'round' : 'rounds'}</span></div>`
       + (k.champion ? `<div class="win champ"><span class="k">🏆 Fact Champion</span><span class="v">${esc(k.champion.name)}</span><span class="muted">${k.champion.n} pit points</span></div>` : '')
-      + award('Orb hog', k.awards.hog, 'orb grabbed', 'orbs grabbed') + award('Comeback kid', k.awards.comeback, 'comeback', 'comebacks')
-      + `</div><div class="tablewrap"><table><thead><tr><th class="num">#</th><th>Driver</th><th>Finish</th><th class="num">Orbs</th><th class="num">Knockouts</th><th class="num">Wrong orbs</th><th class="num">Comebacks</th><th class="num">Pit right</th><th class="num">Pit points</th></tr></thead><tbody>${rows}</tbody></table></div>`
-      + '<p class="muted">Knockouts = extra orbs held when a round closed. Pit answers are graded and timed like any Math Facts game — the fact tracker on this page is built from them.</p></div>';
+      + award('Top scorer', k.awards.scorer, 'point', 'points') + award('Quickest draw', k.awards.first, 'round found first', 'rounds found first') + award('Comeback kid', k.awards.comeback, 'comeback', 'comebacks')
+      + `</div><div class="tablewrap"><table><thead><tr><th class="num">#</th><th>Driver</th><th>Finish</th><th class="num">Points</th><th class="num">Orbs</th><th class="num">Found first</th><th class="num">Wrong orbs</th><th class="num">Comebacks</th><th class="num">Pit right</th><th class="num">Pit points</th></tr></thead><tbody>${rows}</tbody></table></div>`
+      + '<p class="muted">Points: a right orb pays more the sooner it is found. Pit answers are graded and timed like any Math Facts game — the fact tracker on this page is built from them.</p></div>';
   }
 
   /** The heist's final: the standings and the awards, in place of the team result. */
