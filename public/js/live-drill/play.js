@@ -252,6 +252,7 @@
     if (!arena && window.LiveDrillKnockout) {
       arena = window.LiveDrillKnockout.mount($('p-pitch'), {
         me: st.me.id,
+        fig: $('p-fig'), // a label round's question (this student's own figure)
         serverNow,
         grab: (body) => api(`/${code}/grab`, { method: 'POST', body: JSON.stringify(body) }),
         // spend a ⚡ charge (the server keeps the count; the arena has already started the boost)

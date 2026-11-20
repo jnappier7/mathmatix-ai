@@ -201,10 +201,11 @@
     $('o-plays-w').hidden = ko;
     $('o-seconds-l').textContent = ko ? 'Comebacks stay open for' : 'Clock';
     $('o-spp-l').textContent = ko ? 'Seconds per round' : 'Seconds per play';
-    // …and it builds its orbs from one operation's facts, so it plays the Math Facts bank only.
-    const koOk = !ko || (!!d.focusable && ['all', 'add', 'sub', 'mul', 'div'].includes(S.playbook));
+    // …and it builds its orbs from one operation's facts (Math Facts) or from a fluency drill's fixed
+    // answers (`arena: 'labels'` — Triangle Congruence), so those are the drills it plays.
+    const koOk = !ko || d.arena === 'labels' || (!!d.focusable && ['all', 'add', 'sub', 'mul', 'div'].includes(S.playbook));
     $('mode-note').hidden = koOk;
-    if (!koOk) $('mode-note').textContent = 'Knockout Arena plays Math Facts (Mixed, Addition, Subtraction, Multiplication or Division). Pick Math Facts in step 2.';
+    if (!koOk) $('mode-note').textContent = 'Knockout Arena plays Math Facts (Mixed, Addition, Subtraction, Multiplication or Division) or Triangle Congruence Fluency. Pick one of those in step 2.';
     $('open').disabled = !koOk;
     // Each drill brings its own clocks (a fact takes seconds, an algebra play half a minute).
     const st = d.settings || S.settings;
@@ -1076,12 +1077,30 @@
   document.addEventListener('keydown', (e) => {
     if ((e.key === 'h' || e.key === 'H') && e.target === document.body && game && game.mode === 'knockout' && !$('live').hidden) setKoWide(!koWide);
   });
+  // A label game (Triangle Congruence): every phone has its own question, so the projector has none to show
+  // during a round. Between rounds it shows ONE that somebody missed, with its answer — nobody named — through
+  // the reveal and the next round's think time. That is the reteach, a few seconds at a time.
+  let lookKey = ''; let lookTimer = null;
+  function renderKoLook(k) {
+    const el = $('ko-look');
+    const r = k.round;
+    const show = !!(k.look && r && (r.closed || serverNow() < r.goAt));
+    clearTimeout(lookTimer);
+    if (!show) { if (lookKey) { lookKey = ''; el.hidden = true; el.innerHTML = ''; } return; }
+    if (!r.closed) lookTimer = setTimeout(() => { lookKey = ''; el.hidden = true; el.innerHTML = ''; }, Math.max(0, r.goAt - serverNow()));
+    const key = `${game && game.gameNumber}:${k.look.n}`;
+    if (key === lookKey) return;
+    lookKey = key;
+    el.innerHTML = `<span class="ko-look-k">One to look at</span>${k.look.fig}<div class="ko-look-a">${k.look.tell || esc(k.look.answer)}</div>`;
+    el.hidden = false;
+  }
   function renderKnockout(st) {
     const k = st.knockout;
     if (!k) return;
     if (!pitch && window.LiveDrillKnockout) pitch = window.LiveDrillKnockout.mount($('ko-pitch'), { serverNow });
     applyKoWide();
     if (pitch) pitch.update(st);
+    renderKoLook(k);
     $('ko-alive').textContent = `${k.alive} of ${k.of}`;
     $('ko-gate').textContent = k.gateOpen ? 'Comebacks are open' : 'The gate is closed — last car wins';
     $('ko-scores').innerHTML = k.scores.map((p, i) => `<li class="${p.in ? '' : 'outrow'}"><span>${i + 1}. ${esc(p.name)}</span><span class="n">${p.pts}</span></li>`).join('')
@@ -1108,7 +1127,12 @@
       + (k.champion ? `<div class="win champ"><span class="k">🏆 Fact Champion</span><span class="v">${esc(k.champion.name)}</span><span class="muted">${k.champion.n} pit points</span></div>` : '')
       + award('Top scorer', k.awards.scorer, 'point', 'points') + award('Quickest draw', k.awards.first, 'round found first', 'rounds found first') + award('Comeback kid', k.awards.comeback, 'comeback', 'comebacks')
       + `</div><div class="tablewrap"><table><thead><tr><th class="num">#</th><th>Driver</th><th>Finish</th><th class="num">Points</th><th class="num">Orbs</th><th class="num">Found first</th><th class="num">Wrong orbs</th><th class="num">Comebacks</th><th class="num">Pit right</th><th class="num">Pit points</th></tr></thead><tbody>${rows}</tbody></table></div>`
-      + '<p class="muted">Points: a right orb pays more the sooner it is found. Pit answers are graded and timed like any Math Facts game — the fact tracker on this page is built from them.</p></div>';
+      + (k.kind === 'labels'
+        ? (k.labels && k.labels.length ? `<h3 class="kolabels-h">Which answers gave trouble</h3><div class="tablewrap"><table class="kolabels"><thead><tr><th>Answer</th><th class="num">Asked</th><th class="num">Found</th><th class="num">Wrong orb first</th><th class="num">Missed</th></tr></thead><tbody>${
+          k.labels.map((l) => `<tr><td><b>${esc(l.answer)}</b></td><td class="num">${l.asked}</td><td class="num">${l.safe}</td><td class="num">${l.wrong}</td><td class="num">${l.asked ? Math.round((l.wrong / l.asked) * 100) : 0}%</td></tr>`).join('')
+        }</tbody></table></div>` : '')
+          + '<p class="muted">Every car had its own question each round. Asked = cars that needed that answer; wrong orb first = cars that drove into a different answer before (or instead of) the right one. Points: a right orb pays more the sooner it is found.</p></div>'
+        : '<p class="muted">Points: a right orb pays more the sooner it is found. Pit answers are graded and timed like any Math Facts game — the fact tracker on this page is built from them.</p></div>');
   }
 
   /** The heist's final: the standings and the awards, in place of the team result. */

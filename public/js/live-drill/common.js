@@ -213,6 +213,21 @@
   /** Knockout Arena's rules — the same server numbers (games.rulesFor → knockout.rules). */
   function knockoutRulesHTML(st, r) {
     const k = r.knockout;
+    // a label game (Triangle Congruence): a question each, the answers on the orbs
+    if (k.kind === 'labels') {
+      return `<h3>How Knockout Arena works</h3><p class="lead">Every car for itself. <b>You each get your own question.</b> Drive into the orb with <b>your</b> answer. Last car running wins.</p><div class="rgrid">`
+        + `<div class="rule"><span class="rk">Your own question</span><span class="rv">Everyone's is different, so nobody can call out the answer. The orbs say ${(k.orbs || []).map((o) => `<b>${esc(o)}</b>`).join(', ')}.</span></div>`
+        + `<div class="rule"><span class="rk">Think time</span><span class="rv">Each round opens with <b>${k.thinkSec} s</b> to read your question. Your car is held until <b>GO</b>, then you have <b>${k.roundSec} s</b>.</span></div>`
+        + `<div class="rule"><span class="rk">One out a round</span><span class="rv">Take the orb with your answer and you are safe. The round ends when all but one car is safe — the last car is out.</span></div>`
+        + `<div class="rule"><span class="rk">Sooner scores more</span><span class="rv">Your orb pays <b class="g">${k.points.max}</b> points at GO, sliding to <b class="g">${k.points.min}</b> at the end. If the clock runs out, the unsafe car with the fewest points goes.</span></div>`
+        + `<div class="rule"><span class="rk">Wrong orb</span><span class="rv">You slow down for <b>${k.slowSec} s</b> and lose <b class="b">${k.wrongCost}</b> points. Decide before you drive.</span></div>`
+        + `<div class="rule"><span class="rk">The pit</span><span class="rv">Out is not over: answer questions in the pit. <b class="g">${k.comeback} right in a row</b>, or <b class="g">${k.comebackTotal} right in all</b>, and you drive again next round.</span></div>`
+        + `<div class="rule"><span class="rk">🏆 Pit Champion</span><span class="rv">Every right answer in the pit scores: <b class="g">+${k.benchPoints[0]}</b> in ${k.fluentSec} s or less, <b class="g">+${k.benchPoints[1]}</b> after. Most pit points is a second winner.</span></div>`
+        + `<div class="rule"><span class="rk">The gate</span><span class="rv">Comebacks stop after <b>${mmss(k.gateSec * 1000)}</b>. Then it is sudden death to one car.</span></div>`
+        + `<div class="rule"><span class="rk">★ Power-ups</span><span class="rv">Gold orbs pop up for ${k.powerSec} s: ${(k.powerPts || []).map((n) => `<b class="g">+${n}</b> points`).join(', ')}, or a <b>⚡ boost</b> (hold up to ${k.boostMax}; press <b>Boost</b>).</span></div>`
+        + `<div class="rule"><span class="rk">Driving</span><span class="rv">Drag anywhere to drive. Cars bounce off each other${k.ghostSafe ? '; a safe car drives through everyone' : ''}. On a keyboard: arrow keys drive, space boosts.</span></div>`
+        + '</div>';
+    }
     return `<h3>How Knockout Arena works</h3><p class="lead">Every car for itself. A number goes up; drive into an orb whose fact <b>makes that number</b>. Last car running wins.</p><div class="rgrid">`
       + `<div class="rule"><span class="rk">One orb short</span><span class="rv">Every round has <b>one fewer</b> right orb than cars, and <b>${k.roundSec} s</b> on the clock.</span></div>`
       + `<div class="rule"><span class="rk">One out a round</span><span class="rv">Take <b>one</b> right orb and you are safe. The round ends when every right orb is gone, and the car left without is out — one car, every round.</span></div>`

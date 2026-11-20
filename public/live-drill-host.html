@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261119c">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261120a">
 </head>
 <body>
 <div class="wrap">
@@ -157,7 +157,9 @@
 
       <!-- knockout arena: the whole pitch, the pit, the Fact Champion race -->
       <div id="ko-pane" class="kopane" hidden>
-        <div class="arena"><canvas id="ko-pitch" role="img" aria-label="The arena"></canvas></div>
+        <div class="arena"><canvas id="ko-pitch" role="img" aria-label="The arena"></canvas>
+          <!-- a label game: one question somebody missed last round, with its answer — nobody named -->
+          <div class="ko-look" id="ko-look" hidden></div></div>
         <div class="koside">
           <div><h3>Still driving</h3><div class="big" id="ko-alive">–</div><div class="muted" id="ko-gate"></div></div>
           <div><h3>Scoreboard</h3><ol id="ko-scores"></ol></div>
@@ -217,9 +219,9 @@
 </div>
 
 <script src="/js/csrf.js"></script>
-<script src="/js/live-drill/common.js?v=20261119c"></script>
+<script src="/js/live-drill/common.js?v=20261120a"></script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/knockout.js?v=20261119d"></script>
-<script src="/js/live-drill/host.js?v=20261119c"></script>
+<script src="/js/live-drill/knockout.js?v=20261120a"></script>
+<script src="/js/live-drill/host.js?v=20261120a"></script>
 </body>
 </html>

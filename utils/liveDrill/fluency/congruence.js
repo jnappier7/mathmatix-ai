@@ -345,4 +345,6 @@ T.sharedSSA = { book: 'shared', make(rand) {
 T.hlAgain = T.hl;
 
 const bank = makeBank(BOOKS, T);
-module.exports = { ...bank, CHOICES, NONE, ASK, _geom: { scalene, rightTri, ssaPair, sharedFigure, angleAt, dist } };
+// What an answer is called on a Knockout Arena orb, where it has to fit in a small circle.
+const ORB = { [NONE]: 'Not ≅' };
+module.exports = { ...bank, CHOICES, NONE, ASK, ORB, _geom: { scalene, rightTri, ssaPair, sharedFigure, angleAt, dist } };

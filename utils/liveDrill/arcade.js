@@ -49,9 +49,9 @@ const GAMES = [
     id: 'knockout',
     name: 'Knockout Arena',
     tagline: 'Drive. Grab the right orb. Last car running.',
-    how: 'A number goes up and every student drives a rocket car for an orb whose fact makes it. There is always one orb short, so someone is knocked out each round — and answers facts in the pit to drive again. Math Facts only.',
+    how: 'A number goes up and every student drives a rocket car for an orb whose fact makes it. Someone is knocked out each round — and answers in the pit to drive again. Plays Math Facts, or Triangle Congruence, where every car gets its own triangles and the orbs say SSS, SAS, ASA…',
     icon: 'arena',
-    players: 'Whole class · solo drivers · Math Facts',
+    players: 'Whole class · solo drivers · Math Facts or Triangle Congruence',
   },
 ];
 

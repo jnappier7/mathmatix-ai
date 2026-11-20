@@ -58,10 +58,30 @@
  * exists (`roundView` hides it; a touch is scheduled for the moment it pops), so nobody can park
  * where one is about to be.
  *
+ * OTHER CONTENT: LABEL ROUNDS (owner, 2026-11-20: "Can Knockout arena handle other content from my
+ * courses … Little ASA and SSS SAS HL orbs and a space for a diagram", then "maybe a little built
+ * in think time for each new question"). A drill marked `arena: 'labels'` in engine.js DRILLS —
+ * a bank whose every play is a figure and a few short FIXED answers, like Triangle Congruence —
+ * plays the arena differently from Math Facts:
+ *   - EVERY CAR HAS ITS OWN QUESTION (`questionFor`: a play dealt from (seed, player, round)). One
+ *     shared diagram would be one shout — "it's SAS!" — and the round is over for the whole room;
+ *     with a diagram each, every student classifies their own, every round.
+ *   - The orbs carry the ANSWERS ("SSS", "SAS", "Not ≅"). An orb is right for the cars whose own
+ *     question it answers, so nothing about an orb is right or wrong in itself, and a car that
+ *     drives into the wrong label is stung without using the orb up.
+ *   - There is an orb for every car (plus one of each label nobody needs, so a missing label gives
+ *     nothing away) and the round closes when ALL BUT ONE car is safe: the last one is out. Nobody
+ *     is doomed by the deal; it is still one car a round.
+ *   - THINK TIME: a round opens with `label.thinkMs` in which nothing can be grabbed (`goAt`). The
+ *     screens show the question large and hold the cars; the points clock starts at `goAt`.
+ *   - The answer to a car's question is sent to that car only once the round has closed.
+ * The pit needs nothing new: a benched student answers the same bank's plays the ordinary way.
+ *
  * State lives on the game (`game.ko`) and on each player (`p.ko`); both are plain data, so the
  * Mongo shadow (store.js) carries a game across a deploy and `rearm` restarts its clocks.
  */
 const crypto = require('crypto');
+const { DRILLS, dealPlay, getDrill } = require('./engine');
 
 /** The playbooks of the Math Facts bank this game can build chips for. */
 const BOOKS = ['all', 'add', 'sub', 'mul', 'div'];
@@ -77,6 +97,9 @@ const TUNE = {
   // fast students knock out half the arena per round; before that, any number.)
   maxHold: 1,
   holdSlow: 1,
+  // Label rounds (a fixed-answer bank): think time before anything can be grabbed; smaller orbs (a
+  // label is a few letters) in a smaller arena, which leaves the screen room for the diagram.
+  label: { thinkMs: 4000, chipR: 34, eatDist: 28, world: 0.82 },
   points: { max: 100, min: 40 }, // a right orb: `max` at the round's first instant, `min` at its last
   wrongCost: 10, // a wrong orb costs this many points (never below 0)
   spareRounds: 2, // sudden death may run this many rounds past one-per-car before it is called
@@ -228,9 +251,9 @@ function valueOf(text) {
 // the arena
 // ---------------------------------------------------------------------------
 
-/** Room for `n` cars: the 16-car arena scaled by area, so a big class is not a crush. */
-function worldFor(n) {
-  const s = Math.max(0.7, Math.min(2.4, Math.sqrt(Math.max(1, n) / TUNE.world.per)));
+/** Room for `n` cars: the 16-car arena scaled by area, so a big class is not a crush (`k` shrinks it for label rounds). */
+function worldFor(n, k = 1) {
+  const s = k * Math.max(0.7, Math.min(2.4, Math.sqrt(Math.max(1, n) / TUNE.world.per)));
   return { w: Math.round(TUNE.world.w * s), h: Math.round(TUNE.world.h * s) };
 }
 
@@ -244,7 +267,7 @@ function bounce(v, lo, hi) {
 
 /** Where a chip is at time `at`. The page computes the same thing (public/js/live-drill/knockout.js). */
 function chipAt(chip, world, at) {
-  const t = (at - chip.t0) / 1000;
+  const t = Math.max(0, at - chip.t0) / 1000; // an orb holds still until its own start (label rounds: through think time)
   return {
     x: bounce(chip.x + chip.vx * t, TUNE.margin, world.w - TUNE.margin),
     y: bounce(chip.y + chip.vy * t, TUNE.margin, world.h - TUNE.margin),
@@ -266,8 +289,59 @@ const drivers = (game) => seated(game).filter((p) => p.ko && p.ko.in);
 const gateOpen = (game, at) => !!game.ko.gateAt && at < game.ko.gateAt;
 const fail = (status, message) => Object.assign(new Error(message), { status });
 
+// ---------------------------------------------------------------------------
+// label rounds: a question per car, answers on the orbs
+// ---------------------------------------------------------------------------
+
+/** 'labels' for a fixed-answer bank (DRILLS[*].arena), else 'facts'. */
+const kindOf = (game) => (DRILLS[game.drill] && DRILLS[game.drill].arena === 'labels' ? 'labels' : 'facts');
+/** Can the arena play this drill and playbook? Math Facts (one operation's books), or any label bank. */
+const playable = (drill, book) => !!DRILLS[drill] && (DRILLS[drill].arena === 'labels' || (!!DRILLS[drill].trackFacts && BOOKS.includes(book)));
+
+const strip = (h) => String(h == null ? '' : h).replace(/<[^>]*>/g, '').replace(/&[a-z]+;/g, ' ').replace(/\s+/g, ' ').trim();
+/** What an answer is called on an orb: the bank's own short form ("Not congruent" → "Not ≅"), else the answer. */
+function orbText(game, answer) {
+  const bank = getDrill(game.drill).bank;
+  return (bank.ORB && bank.ORB[answer]) || answer;
+}
+
+const qCache = new WeakMap(); // game → Map("player:round" → question); never in the snapshot — a question is a pure function
+/**
+ * The question car `player` has in round `n`: a play of the game's bank dealt from (seed, player, n).
+ * `label` is the orb that answers it. Never sent while the round is open (see playerKnockout).
+ */
+function questionFor(game, player, n) {
+  let m = qCache.get(game);
+  if (!m) { m = new Map(); qCache.set(game, m); }
+  const key = `${player.id}:${n}`;
+  let q = m.get(key);
+  if (!q) {
+    if (m.size > 600) m.clear();
+    const play = dealPlay(game.drill, game.playbook, `${game.seed}:arena:${player.id}`, n);
+    const right = strip(play.choices.find((c) => c.k === play.answer).html);
+    q = { fig: (play.card.match(/<svg[\s\S]*?<\/svg>/) || [''])[0], ask: play.head, answer: right, label: orbText(game, right), tell: play.tell,
+      labels: play.choices.map((c) => orbText(game, strip(c.html))) };
+    m.set(key, q);
+  }
+  return q;
+}
+
+/** The orbs of a label round: one for every car's own answer, and one of each label nobody needs. */
+function labelChips(game, pool, n, rand) {
+  const need = new Map();
+  let vocab = [];
+  for (const p of pool) {
+    const q = questionFor(game, p, n);
+    vocab = q.labels;
+    need.set(q.label, (need.get(q.label) || 0) + 1);
+  }
+  const out = [];
+  for (const label of vocab) for (let i = 0; i < Math.max(1, need.get(label) || 0); i++) out.push({ text: label, val: null, ok: null });
+  return shuffle(rand, out);
+}
+
 function reset(game) {
-  game.ko = { round: null, rounds: 0, gateAt: null, sudden: 0, empty: 0, ending: false, winner: null, order: null };
+  game.ko = { round: null, rounds: 0, gateAt: null, sudden: 0, empty: 0, ending: false, winner: null, order: null, labels: {}, look: null };
   for (const p of game.players.values()) resetPlayer(p, game);
 }
 
@@ -303,19 +377,28 @@ function openRound(game, io) {
   const n = ++mn.rounds;
   const rand = rng(game.seed, n);
   const pool = drivers(game);
-  const world = worldFor(pool.length);
-  const nC = Math.max(1, pool.length - 1);
-  const nW = Math.max(3, Math.min(12, Math.round(pool.length / 3)));
-  const made = makeChips(BOOKS.includes(game.playbook) ? game.playbook : 'all', game.focus, rand, nC, nW);
+  const kind = kindOf(game);
+  const world = worldFor(pool.length, kind === 'labels' ? TUNE.label.world : 1);
+  let target = null; let all;
+  if (kind === 'labels') all = labelChips(game, pool, n, rand);
+  else {
+    const nC = Math.max(1, pool.length - 1);
+    const nW = Math.max(3, Math.min(12, Math.round(pool.length / 3)));
+    const made = makeChips(BOOKS.includes(game.playbook) ? game.playbook : 'all', game.focus, rand, nC, nW);
+    target = made.target;
+    all = shuffle(rand, [...made.correct.map((c) => ({ ...c, ok: true })), ...made.wrong.map((c) => ({ ...c, ok: false }))]);
+  }
   // cars first: they keep their spot from the round before, and the orbs are dealt around them
   for (const p of pool) {
     Object.assign(p.ko, { held: [], ate: [], slowUntil: 0, roundPts: 0 });
     if (p.ko.x == null) spawn(game, p, world, rand, at);
     else { p.ko.x = Math.min(world.w - 14, Math.max(14, p.ko.x)); p.ko.y = Math.min(world.h - 14, Math.max(14, p.ko.y)); p.ko.posAt = at; }
   }
+  // think time (label rounds): nothing can be grabbed before `goAt`, the round's clock starts there, and the
+  // orbs hold still until then (they are dealt apart; four seconds of drift would stack them before anyone moves)
+  const goAt = at + (kind === 'labels' ? TUNE.label.thinkMs : 0);
   const cars = pool.map((p) => ({ x: p.ko.x, y: p.ko.y }));
   const chips = [];
-  const all = shuffle(rand, [...made.correct.map((c) => ({ ...c, ok: true })), ...made.wrong.map((c) => ({ ...c, ok: false }))]);
   for (const c of all) {
     // No orb opens on (or a nudge from) a car, and orbs don't stack. Best of the tries if the arena is crowded.
     let best = null; let bestRoom = -Infinity;
@@ -330,11 +413,11 @@ function openRound(game, io) {
       if (room > bestRoom) { best = { x, y }; bestRoom = room; }
       if (room >= 1) break;
     }
-    chips.push({ id: `c${n}-${chips.length}`, text: c.text, val: c.val, ok: c.ok, x: Math.round(best.x), y: Math.round(best.y), ...drift(rand), t0: at, by: null, hits: 0 });
+    chips.push({ id: `c${n}-${chips.length}`, text: c.text, val: c.val, ok: c.ok, x: Math.round(best.x), y: Math.round(best.y), ...drift(rand), t0: goAt, by: null, hits: 0 });
   }
-  const closesAt = at + game.secondsPerPlay * 1000;
-  const powerups = dealPowerups(pool.length, world, rand, n, at, closesAt, chips);
-  const round = { n, target: made.target, world, openedAt: at, closesAt, closed: false, revealUntil: null, chips, powerups, out: [], nobodyOut: false, cars: pool.length };
+  const closesAt = goAt + game.secondsPerPlay * 1000;
+  const powerups = dealPowerups(pool.length, world, rand, n, goAt, closesAt, chips);
+  const round = { n, kind, target, world, openedAt: at, goAt, closesAt, closed: false, revealUntil: null, chips, powerups, out: [], nobodyOut: false, cars: pool.length };
   mn.round = round;
   io.later(round.closesAt - at + 200, () => { if (game.ko.round === round && !round.closed) closeRound(game, io); });
   armPowerups(game, round, io);
@@ -459,6 +542,7 @@ function grab(game, player, body, io) {
   const at = io.now();
   if (game.phase !== 'live' || !r || r.closed || Number(body && body.round) !== r.n) throw fail(409, 'That round is over.');
   if (!m.in) throw fail(409, 'You are not in the arena.');
+  if (at < (r.goAt || 0)) throw fail(409, 'Not yet — read your question first.');
   if (body.power != null || body.boost != null) return pickPower(game, player, body, io);
   const chip = r.chips.find((c) => c.id === String(body.chip));
   if (!chip) throw fail(400, 'No such chip.');
@@ -473,14 +557,20 @@ function grab(game, player, body, io) {
   if (m.held.length >= TUNE.maxHold) return { safe: true, held: m.held.length };
   if (chip.by) return { taken: true };
 
-  if (chip.ok) {
-    const first = !r.chips.some((c) => c.ok && c.by);
+  // a label round: the orb is right for THIS car if it is the answer to this car's own question
+  const labels = r.kind === 'labels';
+  const ok = labels ? chip.text === questionFor(game, player, r.n).label : chip.ok;
+  if (ok) {
+    const first = !r.chips.some((c) => c.by);
     chip.by = player.id;
     m.held.push(chip.id);
     m.grabbed++;
     const pts = pointsFor(r, at);
     Object.assign(m, { pts: m.pts + pts, roundPts: pts, firsts: m.firsts + (first ? 1 : 0) });
-    const left = r.chips.some((c) => c.ok && !c.by);
+    // facts: the music stops when the last right orb goes. Labels: when all but one car is safe.
+    const left = labels
+      ? drivers(game).filter((p) => p.ko.held.length).length < Math.max(1, r.cars - 1)
+      : r.chips.some((c) => c.ok && !c.by);
     if (!left) closeRound(game, io); else io.touch();
     return { ok: true, held: m.held.length, text: chip.text, pts, total: m.pts, first };
   }
@@ -492,12 +582,13 @@ function grab(game, player, body, io) {
   const cost = Math.min(m.pts, TUNE.wrongCost);
   m.pts -= cost;
   io.touch();
-  return { ok: false, text: chip.text, val: chip.val, target: r.target, cost, total: m.pts, slowUntil: m.slowUntil };
+  return { ok: false, text: chip.text, val: chip.val, target: r.target, label: labels, cost, total: m.pts, slowUntil: m.slowUntil };
 }
 
 /** What a right orb pays: sooner is more, on a straight line from `max` to `min` across the round. */
 function pointsFor(r, at) {
-  const f = Math.min(1, Math.max(0, (at - r.openedAt) / Math.max(1, r.closesAt - r.openedAt)));
+  const from = r.goAt || r.openedAt; // (think time is not on the clock)
+  const f = Math.min(1, Math.max(0, (at - from) / Math.max(1, r.closesAt - from)));
   return Math.round(TUNE.points.max - (TUNE.points.max - TUNE.points.min) * f);
 }
 
@@ -513,6 +604,7 @@ function closeRound(game, io) {
   r.closed = true;
   r.revealUntil = at + TUNE.revealMs;
   const pool = drivers(game);
+  if (r.kind === 'labels') tallyLabels(game, r, pool);
   const losers = pool.filter((p) => !p.ko.held.length);
   if (losers.length === pool.length) {
     r.nobodyOut = true;
@@ -538,6 +630,25 @@ function closeRound(game, io) {
   mn.ending = (left <= 1 && !waiting) || capped || mn.empty >= TUNE.emptyRounds;
   io.later(TUNE.revealMs, () => { if (game.ko.round === r) next(game, io); });
   io.touch();
+}
+
+/**
+ * A label round has closed: count, per answer, how often it was asked, found, and missed (the
+ * teacher's final table), and pick one missed question for the projector to show — anonymously.
+ */
+function tallyLabels(game, r, pool) {
+  const mn = game.ko;
+  mn.labels = mn.labels || {};
+  const missed = [];
+  for (const p of pool) {
+    const q = questionFor(game, p, r.n);
+    const s = mn.labels[q.answer] || (mn.labels[q.answer] = { asked: 0, safe: 0, wrong: 0 });
+    s.asked++;
+    if (p.ko.held.length) s.safe++;
+    if (p.ko.ate.length) { s.wrong++; missed.push(p); }
+  }
+  const pick = missed.length ? missed[Math.floor(rng(game.seed, `${r.n}:look`)() * missed.length)] : null;
+  mn.look = pick ? { pid: pick.id, n: r.n } : null;
 }
 
 function next(game, io) {
@@ -641,17 +752,22 @@ function carFrame(game, at = Date.now()) {
 // ---------------------------------------------------------------------------
 
 /** A chip as a screen may see it. Whether it is correct is sent only once the round has closed. */
-function chipView(c, closed) {
+function chipView(c, closed, mine) {
   const v = { id: c.id, text: c.text, x: c.x, y: c.y, vx: c.vx, vy: c.vy, t0: c.t0, taken: c.by ? 1 : 0 };
-  if (closed) Object.assign(v, { ok: c.ok, val: c.val, hits: c.hits });
+  // a label orb is right or wrong only for a given car: `mine` is that car's answer (undefined on the projector)
+  if (closed) Object.assign(v, c.ok == null ? { ok: mine == null ? null : c.text === mine, hits: c.hits } : { ok: c.ok, val: c.val, hits: c.hits });
   return v;
 }
 
-function roundView(game, at = Date.now()) {
+/** Was this player a car in the round on the table (still in, or the one it knocked out)? */
+const inRound = (r, m) => m.in || m.outRound === r.n;
+
+function roundView(game, at = Date.now(), viewer = null) {
   const r = game.ko.round;
   if (!r) return null;
-  const v = { n: r.n, target: r.target, world: r.world, openedAt: r.openedAt, closesAt: r.closesAt, closed: r.closed, revealUntil: r.revealUntil, cars: r.cars,
-    chips: r.chips.map((c) => chipView(c, r.closed)),
+  const mine = r.kind === 'labels' && viewer && inRound(r, viewer.ko) ? questionFor(game, viewer, r.n).label : undefined;
+  const v = { n: r.n, kind: r.kind || 'facts', target: r.target, world: r.world, openedAt: r.openedAt, goAt: r.goAt || r.openedAt, closesAt: r.closesAt, closed: r.closed, revealUntil: r.revealUntil, cars: r.cars,
+    chips: r.chips.map((c) => chipView(c, r.closed, mine)),
     // a power-up is in the view only once it has popped in (and while the round is open)
     powerups: r.closed ? [] : (r.powerups || []).filter((p) => p.at <= at).map((p) => ({
       id: p.id, kind: p.kind, x: p.x, y: p.y, vx: p.vx, vy: p.vy, t0: p.t0, until: p.until, taken: p.by ? 1 : 0, by: p.byName || null })) };
@@ -662,12 +778,15 @@ function roundView(game, at = Date.now()) {
   return v;
 }
 
-const tune = () => ({ maxHold: TUNE.maxHold, holdSlow: TUNE.holdSlow, points: TUNE.points, wrongCost: TUNE.wrongCost, speed: TUNE.speed, topMult: TUNE.topMult, chipR: TUNE.chipR, eatDist: TUNE.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs,
-  boost: { ...TUNE.boost }, bump: { ...TUNE.bump }, power: { r: TUNE.power.r, eat: TUNE.power.eat, pts: { ...TUNE.power.pts } } });
+const tune = (game) => {
+  const size = game && kindOf(game) === 'labels' ? TUNE.label : TUNE; // label orbs are smaller
+  return { maxHold: TUNE.maxHold, holdSlow: TUNE.holdSlow, points: TUNE.points, wrongCost: TUNE.wrongCost, speed: TUNE.speed, topMult: TUNE.topMult, chipR: size.chipR, eatDist: size.eatDist, margin: TUNE.margin, slowMs: TUNE.slowMs,
+    boost: { ...TUNE.boost }, bump: { ...TUNE.bump }, power: { r: TUNE.power.r, eat: TUNE.power.eat, pts: { ...TUNE.power.pts } } };
+};
 
 function summary(game, at) {
   const all = seated(game);
-  return { gateAt: game.ko.gateAt, gateOpen: gateOpen(game, at), alive: all.filter((p) => p.ko.in).length, of: all.length, ending: game.ko.ending, tune: tune() };
+  return { gateAt: game.ko.gateAt, gateOpen: gateOpen(game, at), alive: all.filter((p) => p.ko.in).length, of: all.length, ending: game.ko.ending, kind: kindOf(game), tune: tune(game) };
 }
 
 function place(game, player) {
@@ -677,12 +796,19 @@ function place(game, player) {
 
 function playerKnockout(game, player, at) {
   const m = player.ko;
-  const v = { ...summary(game, at), round: roundView(game, at),
+  const r = game.ko.round;
+  const v = { ...summary(game, at), round: roundView(game, at, player),
     in: m.in, ...benchView(m), held: m.held.length, mine: m.held.slice(), slowUntil: m.slowUntil, boosts: m.boosts, boostUntil: m.boostUntil,
     grabbed: m.grabbed, comebacks: m.comebacks, wrong: m.wrong,
     pts: m.pts, roundPts: m.roundPts, rank: scoreboard(game).indexOf(player) + 1,
     champ: (() => { const c = champions(game); const i = c.indexOf(player); return { rank: i < 0 ? null : i + 1, top: c[0] ? { name: c[0].name, pts: c[0].ko.benchPts, me: c[0] === player } : null }; })(),
     spawn: m.x == null ? null : { x: m.x, y: m.y, round: m.spawn } };
+  // a label round: this car's own question — and its answer only once the round has closed
+  if (r && r.kind === 'labels' && inRound(r, m)) {
+    const q = questionFor(game, player, r.n);
+    v.q = { n: r.n, fig: q.fig, ask: q.ask };
+    if (r.closed) Object.assign(v.q, { label: q.label, answer: q.answer, tell: q.tell, got: m.held.length > 0 });
+  }
   if (game.phase === 'over') {
     const w = game.ko.winner && game.players.get(game.ko.winner);
     Object.assign(v, { place: place(game, player), winner: w ? { name: w.name, me: w.id === player.id } : null, sole: !!game.ko.sole });
@@ -690,9 +816,19 @@ function playerKnockout(game, player, at) {
   return v;
 }
 
+/** The projector's "one to look at": a question someone missed last round, with its answer — nobody named. */
+function lookView(game) {
+  const mn = game.ko; const r = mn.round;
+  if (!r || !mn.look || (mn.look.n !== r.n && mn.look.n !== r.n - 1) || (mn.look.n === r.n && !r.closed)) return null;
+  const p = game.players.get(mn.look.pid);
+  if (!p) return null;
+  const q = questionFor(game, p, mn.look.n);
+  return { n: mn.look.n, fig: q.fig, answer: q.answer, tell: q.tell };
+}
+
 function hostKnockout(game, at) {
   const all = seated(game);
-  return { ...summary(game, at), round: roundView(game, at),
+  return { ...summary(game, at), round: roundView(game, at), look: kindOf(game) === 'labels' ? lookView(game) : null,
     arena: all.filter((p) => p.ko.in).map((p) => ({ id: p.id, name: p.name, held: p.ko.held.length })),
     bench: all.filter((p) => !p.ko.in).sort((a, b) => b.ko.ready - a.ko.ready || b.ko.benchPts - a.ko.benchPts)
       .map((p) => ({ id: p.id, name: p.name, row: p.ko.row, since: p.ko.since, ready: p.ko.ready, pts: p.ko.benchPts })),
@@ -705,7 +841,9 @@ function finalKnockout(game) {
   const w = game.ko.winner && game.players.get(game.ko.winner);
   const best = (key) => { const p = [...order].sort((a, b) => b.ko[key] - a.ko[key])[0]; return p && p.ko[key] > 0 ? { name: p.name, n: p.ko[key] } : null; };
   return {
-    winner: w ? w.name : null, sole: !!game.ko.sole, rounds: game.ko.rounds,
+    winner: w ? w.name : null, sole: !!game.ko.sole, rounds: game.ko.rounds, kind: kindOf(game),
+    // label games: which answers gave trouble (asked = cars that had it, wrong = of those, drove into another label first)
+    labels: Object.entries(game.ko.labels || {}).map(([answer, s]) => ({ answer, ...s })).sort((a, b) => b.wrong / Math.max(1, b.asked) - a.wrong / Math.max(1, a.asked) || b.asked - a.asked),
     standings: order.map((p, i) => ({ place: i + 1, name: p.name, alive: p.ko.in, outRound: p.ko.outRound || null,
       pts: p.ko.pts, grabbed: p.ko.grabbed, firsts: p.ko.firsts, wrong: p.ko.wrong, comebacks: p.ko.comebacks, benchRight: p.ko.benchRight, benchPts: p.ko.benchPts,
       powers: p.ko.powers || 0, bonus: p.ko.bonus || 0, saved: !!p.userId })),
@@ -716,14 +854,17 @@ function finalKnockout(game) {
 
 /** The rules as the lobby states them — the same numbers the server plays. */
 function rules(game) {
-  return { maxHold: TUNE.maxHold, points: { ...TUNE.points }, wrongCost: TUNE.wrongCost, comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
+  const kind = kindOf(game);
+  return { kind, thinkSec: kind === 'labels' ? TUNE.label.thinkMs / 1000 : 0,
+    orbs: kind === 'labels' ? dealPlay(game.drill, game.playbook, `${game.seed}:rules`, 1).choices.map((c) => orbText(game, strip(c.html))) : null,
+    maxHold: TUNE.maxHold, points: { ...TUNE.points }, wrongCost: TUNE.wrongCost, comeback: TUNE.comeback, comebackTotal: TUNE.comebackTotal, benchPoints: TUNE.benchPoints.slice(), fluentSec: TUNE.fluentMs / 1000,
     gateSec: game.seconds, roundSec: game.secondsPerPlay, slowSec: TUNE.slowMs / 1000,
     boostMax: TUNE.boost.max, boostSec: TUNE.boost.ms / 1000, powerPts: Object.values(TUNE.power.pts).sort((a, b) => b - a), powerSec: TUNE.power.life / 1000,
     bumps: true, ghostSafe: TUNE.bump.ghostSafe };
 }
 
 module.exports = {
-  dealPowerups, powerShowing, BOOKS, TUNE, FORMS, makeChips, valueOf, worldFor, chipAt, bounce, rng,
+  kindOf, playable, questionFor, dealPowerups, powerShowing, BOOKS, TUNE, FORMS, makeChips, valueOf, worldFor, chipAt, bounce, rng,
   reset, resetPlayer, start, grab, fire, closeRound, rearm, finish, standings, scoreboard, pointsFor, drivers,
   bench, onBenchAnswer, champions, position, carFrame,
   playerKnockout, hostKnockout, finalKnockout, rules,

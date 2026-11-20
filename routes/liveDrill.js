@@ -110,6 +110,8 @@ hostRouter.get('/drills', (req, res) => {
       try {
         const out = { id, title: d.title, ...(named[id] || { name: d.title, blurb: '' }), course: courseOf[id] || { id: 'any', title: 'Any class' }, playbooks: listPlaybooks(id), sections: listSections(id), settings: G.settingsFor(id) };
         if (d.focus) out.focusable = { books: FOCUSABLE, max: FOCUS_MAX }; // Math Facts: pick the numbers
+        // Knockout Arena: 'facts' (Math Facts, one operation's books) or 'labels' (a fixed-answer fluency bank)
+        if (d.arena === 'labels') out.arena = 'labels'; else if (d.trackFacts) out.arena = 'facts';
         return out;
       } catch (e) {
         logger.error('drill bank unreadable', { drill: id, error: e.message });

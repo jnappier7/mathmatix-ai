@@ -23,6 +23,13 @@
 // charge is spent with the BOOST button, space, or a second finger. Gold, never white: a power-up
 // must never be mistaken for an answer.
 //
+// LABEL ROUNDS (a fixed-answer bank such as Triangle Congruence; `round.kind === 'labels'`). Every
+// car has its OWN question (`knockout.q`: a figure and what it asks) and the orbs carry the answers
+// ("SSS", "SAS", "Not ≅"). The figure is a DOM box over the canvas (`opts.fig`): shown LARGE through
+// the round's think time (`round.goAt` — the car is held and nothing can be grabbed until then),
+// then tucked into the corner where "MAKE 48" sits in a Math Facts game. The projector has no
+// question of its own; its slab counts the think time down.
+//
 // The look is our own: a night arena, neon lines on a dark floor, rocket cars with a boost flame.
 // It is drawn entirely here (no image files), so a restyle is this file and nothing else.
 //
@@ -65,7 +72,7 @@
     return lo + (u <= r ? u : 2 * r - u);
   }
   function chipAt(chip, world, at, margin) {
-    const t = (at - chip.t0) / 1000;
+    const t = Math.max(0, at - chip.t0) / 1000;
     return { x: bounce(chip.x + chip.vx * t, margin, world.w - margin), y: bounce(chip.y + chip.vy * t, margin, world.h - margin) };
   }
 
@@ -146,6 +153,10 @@
     const DPR_MAX = Math.min(window.devicePixelRatio || 1, 2);
     let dprCap = DPR_MAX; let slowFor = 0; let frameEma = 16;
     let sized = false; // cleared by the ResizeObserver; the canvas is measured only when it changes
+    // label rounds: the question's figure, a DOM box over the canvas (never drawn per frame)
+    const figEl = opts.fig || null;
+    const fig = { key: '', css: '', cls: '', cap: '', box: null, big: null };
+    let wasThinking = false;
     const keys = {};
     const joy = { on: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 };
 
@@ -256,10 +267,13 @@
     }
     const swimming = () => { const m = M(); return !projector && !!m && m.in && st.phase === 'live'; };
     const slowed = () => { const m = M(); return !!m && m.slowUntil > now(); };
+    /** Think time: the round is on the table but nothing can be grabbed yet (label rounds). */
+    const thinking = () => { const r = R(); return !!r && !r.closed && now() < (r.goAt || 0); };
 
     /** Spend a ⚡ charge. */
     function fireBoost() {
       if (!swimming()) return;
+      if (thinking()) return; // the car is held while the question is read
       if (me.boostT > 0) return; // already boosting: never spend a second charge by accident
       if (slowed()) { hint('Slowed — no boost'); return; }
       if (charges < 1) { hint('Drive over a ⚡ to boost'); return; }
@@ -320,7 +334,7 @@
         } else {
           stung.add(chip.id);
           burst(me.x, me.y, COL.coral, 16, 200); shake = 11; buzz(70);
-          float(`${res.text} = ${res.val}${res.cost ? `  −${res.cost}` : ''}`, COL.coral, 1.6);
+          float(res.label ? `✗ ${res.text}${res.cost ? `  −${res.cost}` : ''}` : `${res.text} = ${res.val}${res.cost ? `  −${res.cost}` : ''}`, COL.coral, 1.6);
           if (opts.onWrong) opts.onWrong(res);
         }
       } catch (err) {
@@ -431,7 +445,8 @@
       }
       if (!swimming() || !r) return;
       me.boostT = Math.max(0, me.boostT - dt); me.stunT = Math.max(0, me.stunT - dt);
-      const i = input();
+      const held = thinking(); // think time: the car is held (it eases to a stop) and claims nothing
+      const i = held ? { dx: 0, dy: 0, k: 1 } : input();
       const d = Math.hypot(i.dx, i.dy);
       if (me.stunT > 0) {
         // a bounced car coasts: the bump carries it before the steering takes over again
@@ -458,7 +473,7 @@
       me.swim += dt;
       if (!calm() && (me.boostT > 0 || Math.random() < sp * dt * 0.012)) bubbles.push({ x: me.x - Math.cos(me.ang) * 14, y: me.y - Math.sin(me.ang) * 14, r: rf(1.2, 3.2), t: rf(0.5, 1) });
 
-      if (!r.closed) {
+      if (!r.closed && !held) {
         const at = now();
         // touching a chip is a claim; the server answers it. A car that has its orb is safe and claims nothing.
         if (m.held < (tune.maxHold || 1)) {
@@ -575,15 +590,15 @@
       if (taken && !closed) return;
       const p = closed ? chipAt(c, r.world, Math.min(at, r.revealUntil ? r.revealUntil - 3000 : at), tune.margin) : chipAt(c, r.world, at, tune.margin);
       const R0 = tune.chipR;
-      ctx.globalAlpha = taken ? 0.45 : 1;
+      ctx.globalAlpha = taken ? 0.45 : at < (r.goAt || 0) ? 0.5 : 1; // dim through think time: look, don't touch
       stamp(orbSprite(c, R0), p.x, p.y, R0 * 1.42);
       ctx.globalAlpha = 1;
-      if (closed) {
+      if (closed && c.ok != null) { // (a label orb has no verdict on the projector: it is right for some cars only)
         ctx.strokeStyle = c.ok ? COL.good : COL.coral;
         ctx.beginPath(); ctx.arc(p.x, p.y, R0 + 4, 0, Math.PI * 2);
         ctx.lineWidth = 11; ctx.globalAlpha = 0.25; ctx.stroke(); ctx.globalAlpha = 1; // the glow: a wide faint stroke
         ctx.lineWidth = 5; ctx.stroke();
-        if (!c.ok) {
+        if (!c.ok && c.val != null) {
           const label = `= ${c.val}${c.hits ? `  · ${c.hits} hit` : ''}`;
           upright(p.x, p.y, () => {
             ctx.font = `700 ${Math.max(17, 13 / view.s)}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -631,11 +646,11 @@
       });
     }
 
-    function drawTarget(cx, cy, fs, target) {
+    function drawTarget(cx, cy, fs, target, word = 'MAKE') {
       const num = String(target);
       ctx.textBaseline = 'middle';
       ctx.font = `800 ${fs}px ${FONT}`; const nw = ctx.measureText(num).width;
-      ctx.font = `600 ${fs * 0.42}px ${FONT}`; const lw = ctx.measureText('MAKE').width;
+      ctx.font = `600 ${fs * 0.42}px ${FONT}`; const lw = ctx.measureText(word).width;
       const gap = fs * 0.22; const pad = fs * 0.4; const w = lw + gap + nw + pad * 2; const h = fs * 1.25;
       // a scoreboard slab: dark glass, neon edge, the number in white
       ctx.fillStyle = 'rgba(8,12,32,.94)'; rr(ctx, cx - w / 2, cy - h / 2, w, h, h * 0.22); ctx.fill();
@@ -643,7 +658,7 @@
       ctx.globalAlpha = 0.22; ctx.lineWidth = Math.max(9, fs * 0.2); ctx.stroke(); ctx.globalAlpha = 1; // the glow: a wide faint stroke
       ctx.lineWidth = Math.max(3, fs * 0.06); ctx.stroke();
       ctx.textAlign = 'left';
-      ctx.fillStyle = COL.gold; ctx.fillText('MAKE', cx - w / 2 + pad, cy + fs * 0.05);
+      ctx.fillStyle = COL.gold; ctx.fillText(word, cx - w / 2 + pad, cy + fs * 0.05);
       ctx.fillStyle = COL.foam; ctx.font = `800 ${fs}px ${FONT}`; ctx.fillText(num, cx - w / 2 + pad + lw + gap, cy + fs * 0.05);
       ctx.textAlign = 'center';
       return h;
@@ -681,25 +696,69 @@
       return lw + fs * 0.22 + nw + fs * 0.8;
     }
 
-    function layout(world, target) {
+    const FIG_RATIO = 0.56; // a question's figure box: height over width (the figure is about 2 : 1, plus its padding)
+    function layout(world, target, labels) {
       const fsTop = fsTopOf();
-      if (projector) { view = fitView(cw, ch, world, { pad: 0 }); btn = null; slot = { x: cw / 2, fs: fsTop, top0: 10, bar: Math.min(cw - 40, 320) }; return; }
-      // A wide screen (a Chromebook): the arena takes the full height, the number goes in the left strip and the
-      // button in the right one. Otherwise the number gets a band on top and the button a band below if it needs one.
+      const barY = (top0, fs) => top0 + fs * 1.3 + 8;
+      if (projector) { view = fitView(cw, ch, world, { pad: 0 }); btn = null; slot = { x: cw / 2, fs: fsTop, top0: 10, bar: Math.min(cw - 40, 320), barY: barY(10, fsTop) }; return; }
+      // A wide screen (a Chromebook): the arena takes the full height, the number (or the question's figure) goes in the
+      // left strip and the button in the right one. Otherwise it gets a band on top, and the button a band below if it needs one.
       const wide = fitView(cw, ch, world, { top: TAGS, canTurn: true });
-      const strip = (cw - (wide.rot ? world.h : world.w) * wide.s) / 2;
+      const spare = cw - (wide.rot ? world.h : world.w) * wide.s;
+      const strip = spare / 2;
       const fsSide = Math.min(fsTop, 54);
-      if (strip >= Math.max(slabW(fsSide, target), BTN.w) + 24) {
+      btn = { x: cw - BTN.w - 12, y: ch - BTN.h - 12, w: BTN.w, h: BTN.h };
+      if (labels && spare - 16 >= 200) {
+        // a question's figure wants ONE wide strip, not two thin ones: the arena sits to the right, the figure
+        // and the button share the left
+        const side = spare - 16;
+        const w = Math.min(side - 20, 360);
+        view = { ...wide, cx: cw - 8 - (cw - spare) / 2 };
+        fig.box = { x: (side - w) / 2, y: TAGS + 8, w };
+        slot = { x: side / 2, fs: fsSide, top0: TAGS + 8, bar: w, barY: TAGS + 8 + w * FIG_RATIO + 12 };
+        btn = { x: (side - BTN.w) / 2, y: ch - BTN.h - 12, w: BTN.w, h: BTN.h };
+      } else if (!labels && strip >= Math.max(slabW(fsSide, target), BTN.w) + 24) {
         view = wide;
-        slot = { x: strip / 2, fs: fsSide, top0: TAGS + 8, bar: Math.min(strip - 24, 320) };
+        slot = { x: strip / 2, fs: fsSide, top0: TAGS + 8, bar: Math.min(strip - 24, 320), barY: barY(TAGS + 8, fsSide) };
       } else {
-        const top = 58 + fsTop * 1.3;
+        // the figure's seat is the question, so it gets more of a phone than the number's slab does
+        const w = clamp(cw * 0.6, 150, 280);
+        const top = labels ? TAGS + w * FIG_RATIO + 24 : 58 + fsTop * 1.3;
         let v = fitView(cw, ch, world, { top, canTurn: true });
         if ((cw - (v.rot ? world.h : world.w) * v.s) / 2 < BTN.w + 20) v = fitView(cw, ch, world, { top, bottom: BTN.h + 16, canTurn: true });
         view = v;
-        slot = { x: cw / 2, fs: fsTop, top0: 38, bar: Math.min(cw - 40, 320) };
+        if (labels) {
+          fig.box = { x: (cw - w) / 2, y: TAGS, w };
+          slot = { x: cw / 2, fs: fsTop, top0: 38, bar: Math.min(cw - 40, 320), barY: TAGS + w * FIG_RATIO + 10 };
+        } else slot = { x: cw / 2, fs: fsTop, top0: 38, bar: Math.min(cw - 40, 320), barY: barY(38, fsTop) };
       }
-      btn = { x: cw - BTN.w - 12, y: ch - BTN.h - 12, w: BTN.w, h: BTN.h };
+      // through think time the figure is LARGE, in the middle of the screen
+      if (labels) { const w = Math.min(cw - 24, 560, ch * 0.9); fig.big = { x: (cw - w) / 2, y: Math.max(TAGS + 6, ch * 0.5 - (w * FIG_RATIO + 40) / 2), w }; }
+    }
+
+    /**
+     * The question's figure (label rounds, a student's own screen): a DOM box over the canvas, written only
+     * when something changes. Large through think time, then in its corner; at the reveal it says the answer.
+     */
+    function syncFig(m, r, at) {
+      if (!figEl) return;
+      const q = m && m.q;
+      const show = !projector && !!q && !!r && r.kind === 'labels' && m.in !== false && st.phase === 'live' && q.n === r.n;
+      if (!show) { if (fig.key !== 'off') { fig.key = 'off'; fig.css = ''; fig.cls = ''; fig.cap = ''; figEl.hidden = true; figEl.innerHTML = ''; } return; }
+      const key = `${st.gameNumber}:${q.n}`;
+      if (fig.key !== key) {
+        fig.key = key; fig.cap = ''; fig.cls = '';
+        figEl.innerHTML = `<div class="ko-fig-ask">${q.ask || ''}</div><div class="ko-fig-svg">${q.fig || ''}</div><div class="ko-fig-cap"></div>`;
+        figEl.hidden = false;
+      }
+      const think = !r.closed && at < r.goAt;
+      const b = think ? fig.big : fig.box;
+      const css = b ? `left:${Math.round(b.x)}px;top:${Math.round(b.y)}px;width:${Math.round(b.w)}px` : '';
+      if (css !== fig.css) { fig.css = css; figEl.style.cssText = css; }
+      const cls = `ko-fig${think ? ' think' : ''}${r.closed && q.label ? (q.got ? ' right' : ' wrong') : ''}`;
+      if (cls !== fig.cls) { fig.cls = cls; figEl.className = cls; }
+      const cap = think ? `Think it through… ${Math.max(1, Math.ceil((r.goAt - at) / 1000))}` : r.closed && q.label ? `${q.got ? '✓' : '✗'} It was ${q.label}` : '';
+      if (cap !== fig.cap) { fig.cap = cap; figEl.lastChild.textContent = cap; }
     }
 
     /** The pitch: dark floor, a faint grid, a halfway line and a centre circle, and a glowing wall — drawn ONCE per layout. */
@@ -743,7 +802,12 @@
       const W = r.world.w; const H = r.world.h;
       const at = now();
       const follow = !projector && m.in;
-      layout(r.world, r.target);
+      const labels = r.kind === 'labels';
+      const think = !r.closed && at < (r.goAt || 0);
+      layout(r.world, r.target, labels);
+      syncFig(m, r, at);
+      if (wasThinking && !think && !r.closed && follow) say('GO!', COL.good);
+      wasThinking = think;
 
       ctx.save();
       const sx = shake > 0.3 ? rf(-1, 1) * shake : 0; const sy = shake > 0.3 ? rf(-1, 1) * shake : 0;
@@ -812,11 +876,15 @@
       // a new number pops big in the middle of the screen, then settles into its place
       const k0 = clamp((popT - 0.45) / 0.3, 0, 1); const k = calm() ? 1 : k0 * k0 * (3 - 2 * k0);
       const fsBig = Math.min(fsTop * 1.9, cw * 0.26); const popY = Math.max(topY, ch * 0.24);
-      drawTarget(slot.x + (cw / 2 - slot.x) * (1 - k), topY + (popY - topY) * (1 - k), fsTop + (fsBig - fsTop) * (1 - k), r.target);
+      if (!labels) drawTarget(slot.x + (cw / 2 - slot.x) * (1 - k), topY + (popY - topY) * (1 - k), fsTop + (fsBig - fsTop) * (1 - k), r.target);
+      // label rounds: every phone has its own question (the figure box), so only the projector has a slab — it counts the think time down
+      else if (projector) { if (think) drawTarget(cw / 2, topY, fsTop, Math.max(1, Math.ceil((r.goAt - at) / 1000)), 'THINK'); else drawTarget(cw / 2, topY, fsTop, 'YOURS', 'FIND'); }
+      // through think time a student's arena is dimmed behind the figure
+      if (labels && think && follow) { ctx.fillStyle = 'rgba(5,7,15,.55)'; ctx.fillRect(0, 0, cw, ch); }
       // the round's clock: a bar under the number, red for the last three seconds
-      const bw = slot.bar; const by = top0 + fsTop * 1.3 + 8;
-      if (live) {
-        const frac = clamp(left / (r.closesAt - r.openedAt), 0, 1);
+      const bw = slot.bar; const by = slot.barY;
+      if (live && !think) {
+        const frac = clamp(left / (r.closesAt - (r.goAt || r.openedAt)), 0, 1);
         ctx.fillStyle = 'rgba(234,247,244,.18)'; rr(ctx, slot.x - bw / 2, by, bw, 6, 3); ctx.fill();
         ctx.fillStyle = left < 3000 ? COL.coral : COL.gold; rr(ctx, slot.x - bw / 2, by, Math.max(6, bw * frac), 6, 3); ctx.fill();
       }
@@ -838,7 +906,7 @@
         const outs = r.out || [];
         const line = r.nobodyOut ? 'Nobody got an orb, so nobody is out' : outs.length ? `Out: ${outs.slice(0, projector ? 8 : 4).join(', ')}${outs.length > (projector ? 8 : 4) ? ` +${outs.length - (projector ? 8 : 4)}` : ''}` : 'Everyone got an orb';
         y += banner(line, y, COL.foam) + 6;
-        if (projector && r.worst) banner(`Most-hit wrong orb: ${r.worst.text} = ${r.worst.val} (${r.worst.hits} ${r.worst.hits === 1 ? 'car' : 'cars'})`, y, COL.coral);
+        if (projector && r.worst) banner(`Most-hit wrong orb: ${r.worst.text}${r.worst.val == null ? '' : ` = ${r.worst.val}`} (${r.worst.hits} ${r.worst.hits === 1 ? 'car' : 'cars'})`, y, COL.coral);
       }
       if (splash && !projector) {
         const p = splash.t; const sc = calm() ? 1 : p < 0.12 ? 0.5 + (p / 0.12) * 0.75 : 1.25 - Math.min(1, (p - 0.12) / 0.15) * 0.25;

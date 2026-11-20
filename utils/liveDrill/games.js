@@ -172,9 +172,10 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
   // a book of the bank, a numbered section ("5.2" — every book that covers it), or the whole bank
   const pb = resolvePlaybook(drill, playbook);
   const book = pb.key;
-  // Knockout Arena builds its chips from the facts of one operation, so it plays the Math Facts bank only.
-  if (mode === 'knockout' && !(DRILLS[drill].trackFacts && knockout.BOOKS.includes(book))) {
-    throw new GameError(400, 'Knockout Arena plays Math Facts: Mixed, Addition, Subtraction, Multiplication or Division.');
+  // Knockout Arena builds its orbs from the facts of one operation (Math Facts), or from the fixed
+  // answers of a fluency bank marked for it (DRILLS[*].arena — Triangle Congruence).
+  if (mode === 'knockout' && !knockout.playable(drill, book)) {
+    throw new GameError(400, 'Knockout Arena plays Math Facts (Mixed, Addition, Subtraction, Multiplication or Division) or a fluency drill such as Triangle Congruence.');
   }
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
   const fx = DRILLS[drill].focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
