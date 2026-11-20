@@ -26,6 +26,14 @@
 // The look is our own: a night arena, neon lines on a dark floor, rocket cars with a boost flame.
 // It is drawn entirely here (no image files), so a restyle is this file and nothing else.
 //
+// IT HAS TO RUN ON A SCHOOL CHROMEBOOK (owner, 2026-11-19: "students had issues with lagging").
+// Measured in a throttled browser with 26 cars, canvas blur (shadowBlur) halved the frame rate —
+// a phone went from 32 to 16 fps. So nothing is blurred per frame: the floor, grid and glowing
+// wall are drawn once into `arenaCache` and copied; each fact orb (with its glow and its fact)
+// and each kind of power-up is drawn once into a small cached picture (`sprite`); glows elsewhere
+// are a second, translucent stroke. And if a device still can't keep up, `governor` lowers the
+// drawing resolution (dpr) a step at a time.
+//
 // Phones are silent in class games (sound.js is the projector's), so feedback here is all visual,
 // plus a short vibration where the browser allows one.
 (function () {
@@ -132,15 +140,31 @@
     let hud = false; // projector: draw who is left and the gate on the canvas (its side panel is hidden)
     const sparked = new Map(); // projector: a pair of cars → when they last threw sparks
     let btn = null; // the BOOST button, in screen pixels
+    let arenaCache = null; // { key, canvas }: the floor, grid, lines and wall, drawn once per layout
+    const sprites = new Map(); // key → canvas: a fact orb or a power-up, drawn once per scale
+    // the frame-rate governor: a device that keeps falling behind draws at a lower resolution
+    const DPR_MAX = Math.min(window.devicePixelRatio || 1, 2);
+    let dprCap = DPR_MAX; let slowFor = 0; let frameEma = 16;
+    let sized = false; // cleared by the ResizeObserver; the canvas is measured only when it changes
     const keys = {};
     const joy = { on: false, id: -1, ox: 0, oy: 0, dx: 0, dy: 0 };
 
     function resize() {
       const r = canvas.getBoundingClientRect();
       if (!r.width || !r.height) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, dprCap);
       cw = r.width; ch = r.height;
       canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr);
+      arenaCache = null; sprites.clear();
+      sized = true;
+    }
+    /** Too slow for a couple of seconds running: draw at a lower resolution (2 → 1.5 → 1). Never back up mid-game. */
+    function governor(dtMs) {
+      frameEma += (Math.min(dtMs, 120) - frameEma) * 0.08;
+      if (frameEma > 30 && dprCap > 1) {
+        slowFor += dtMs;
+        if (slowFor > 2000) { dprCap = Math.max(1, dprCap - 0.5); slowFor = 0; frameEma = 20; resize(); }
+      } else slowFor = 0;
     }
 
     const M = () => (st && st.knockout) || null;
@@ -169,7 +193,7 @@
       const m = M(); const r = R();
       if (!m || !r) return;
       if (r.n !== roundN) {
-        roundN = r.n; pending.clear(); stung.clear(); passed.clear(); gone.clear(); fullSeen.clear(); seenPower.clear(); popT = 0; floats = [];
+        roundN = r.n; pending.clear(); stung.clear(); passed.clear(); gone.clear(); fullSeen.clear(); seenPower.clear(); popT = 0; floats = []; sprites.clear();
       }
       for (const c of r.chips) if (!c.taken) gone.delete(c.id); // a chip someone dropped is back
       // a power-up pops in with a ring of sparks; when someone takes it, every screen says who and what
@@ -326,12 +350,12 @@
       } finally { setTimeout(() => pending.delete(item.id), 250); }
     }
 
-    /** Where this car is, and how fast: twice a second while it moves, at once after a bump, a heartbeat at rest. */
+    /** Where this car is, and how fast: ~3× a second while it moves, at once after a bump or a sharp turn, a heartbeat at rest. */
     function sendPos(force) {
       const t = performance.now();
       const moved = Math.hypot(me.x - sentX, me.y - sentY);
       const turned = Math.hypot(me.vx - sentVx, me.vy - sentVy) > 45; // a stop or a sharp turn: the other screens are leading the car the old way
-      if (((force || turned) && t - sentAt > 200) || (moved > 4 && t - sentAt > 500) || t - sentAt > 2500) {
+      if (((force || turned) && t - sentAt > 200) || (moved > 4 && t - sentAt > 340) || t - sentAt > 2500) {
         sentAt = t; sentX = me.x; sentY = me.y; sentVx = me.vx; sentVy = me.vy;
         opts.pos(Math.round(me.x), Math.round(me.y), Math.round(me.vx), Math.round(me.vy));
       }
@@ -376,7 +400,7 @@
       const tNow = performance.now();
       for (const o of others.values()) {
         // lead the car from its last report by its reported speed (a little way: a stale report must not fly off)
-        const age = Math.min(0.35, (tNow - (o.seenAt || tNow)) / 1000);
+        const age = Math.min(0.5, (tNow - (o.seenAt || tNow)) / 1000);
         let tx = o.rx + (o.rvx || 0) * age; let ty = o.ry + (o.rvy || 0) * age;
         o.bx += o.kx * dt; o.by += o.ky * dt;
         const kd = Math.max(0, 1 - 6 * dt); o.kx *= kd; o.ky *= kd;
@@ -476,17 +500,19 @@
       }
       ctx.fillStyle = '#0b0f1e';
       for (const [wx, wy] of [[-8, -8.5], [7, -8.5], [-8, 5.5], [7, 5.5]]) ctx.fillRect(wx - 3.5, wy, 7, 3);
-      ctx.shadowColor = color; ctx.shadowBlur = 10;
+      // the neon halo is a second, bigger body at low alpha — never a blur (see the note at the top)
+      const a0 = ctx.globalAlpha;
+      ctx.globalAlpha = a0 * 0.28; ctx.fillStyle = color; rr(ctx, -16, -10, 33, 20, 8); ctx.fill();
+      ctx.globalAlpha = a0;
       ctx.fillStyle = color; rr(ctx, -13, -7, 27, 14, 5); ctx.fill();
-      ctx.shadowBlur = 0;
       ctx.fillStyle = 'rgba(5,7,15,.78)'; rr(ctx, -3, -5, 10, 10, 3); ctx.fill(); // cabin glass
       ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillRect(12, -5, 2, 3); ctx.fillRect(12, 2, 2, 3); // headlights
       ctx.fillStyle = 'rgba(5,7,15,.5)'; ctx.fillRect(-14, -6, 2.5, 12); // spoiler
       ctx.restore();
       if (view.rot) ctx.rotate(-view.rot); // everything below reads upright
       if (held) {
-        ctx.strokeStyle = COL.good; ctx.lineWidth = 2.5; ctx.shadowColor = COL.good; ctx.shadowBlur = 8;
-        ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
+        ctx.strokeStyle = COL.good; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke();
         if (held > 1) {
           ctx.fillStyle = COL.good; ctx.beginPath(); ctx.arc(21, -19, 9, 0, Math.PI * 2); ctx.fill();
           ctx.fillStyle = COL.ink; ctx.font = `700 12px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(held, 21, -18.5);
@@ -503,6 +529,46 @@
       ctx.restore();
     }
 
+    /**
+     * A picture drawn once and copied every frame: `paint(g, k)` draws it centred on (0, 0) in arena
+     * units, `half` units each way (k = device pixels per arena unit). Kept per scale: a resize or a
+     * new round starts over.
+     */
+    function sprite(key, half, paint) {
+      const k = view.s * dpr;
+      const full = `${key}|${k.toFixed(3)}`;
+      let cv = sprites.get(full);
+      if (!cv) {
+        if (sprites.size > 400) sprites.clear();
+        const px = Math.max(2, Math.ceil(half * 2 * k));
+        cv = document.createElement('canvas'); cv.width = px; cv.height = px;
+        const g = cv.getContext('2d');
+        g.setTransform(px / (half * 2), 0, 0, px / (half * 2), px / 2, px / 2);
+        paint(g, k);
+        sprites.set(full, cv);
+      }
+      return cv;
+    }
+    /** Copy a sprite centred on an arena point, upright, at `scale` (1 = as drawn). */
+    function stamp(cv, x, y, half, scale = 1) {
+      upright(x, y, () => { const h = half * scale; ctx.drawImage(cv, -h, -h, h * 2, h * 2); });
+    }
+
+    /** A fact orb, drawn once: a bright core you can read a fact on, inside a neon ring, in a soft glow. Right and wrong look the same. */
+    function orbSprite(c, R0) {
+      return sprite(`o:${c.id}`, R0 * 1.42, (g, k) => {
+        g.shadowColor = COL.line; g.shadowBlur = 12 * k; // a blur ONCE, into the cache — never per frame
+        g.fillStyle = COL.chip; g.beginPath(); g.arc(0, 0, R0, 0, Math.PI * 2); g.fill();
+        g.shadowBlur = 0;
+        g.lineWidth = 4; g.strokeStyle = COL.line; g.stroke();
+        // the fact fills the orb: ~0.6 of its radius per glyph height, a little less for a long one ("144÷12"),
+        // and never below MIN_FACT_PX on screen (a long one is squeezed to fit the orb rather than shrunk)
+        const fs = Math.max(R0 * (c.text.length > 5 ? 0.46 : c.text.length > 4 ? 0.52 : 0.62), MIN_FACT_PX / view.s);
+        g.fillStyle = COL.ink; g.font = `800 ${Math.round(fs)}px ${TEXT}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(c.text, 0, 1, R0 * 1.85);
+      });
+    }
+
     function drawChip(c, r, at, tune) {
       const closed = r.closed;
       const taken = c.taken || gone.has(c.id);
@@ -510,22 +576,13 @@
       const p = closed ? chipAt(c, r.world, Math.min(at, r.revealUntil ? r.revealUntil - 3000 : at), tune.margin) : chipAt(c, r.world, at, tune.margin);
       const R0 = tune.chipR;
       ctx.globalAlpha = taken ? 0.45 : 1;
-      // a fact orb: a bright core you can read a fact on, inside a neon ring. Right and wrong look the same.
-      ctx.shadowColor = COL.line; ctx.shadowBlur = taken ? 0 : 14;
-      ctx.fillStyle = COL.chip; ctx.beginPath(); ctx.arc(p.x, p.y, R0, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.lineWidth = 4; ctx.strokeStyle = COL.line; ctx.stroke();
-      // the fact fills the orb: ~0.6 of its radius per glyph height, a little less for a long one ("144÷12"),
-      // and never below MIN_FACT_PX on screen (a long one is squeezed to fit the orb rather than shrunk)
-      const fs = Math.max(R0 * (c.text.length > 5 ? 0.46 : c.text.length > 4 ? 0.52 : 0.62), MIN_FACT_PX / view.s);
-      upright(p.x, p.y, () => {
-        ctx.fillStyle = COL.ink; ctx.font = `800 ${Math.round(fs)}px ${TEXT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(c.text, 0, 1, R0 * 1.85);
-      });
+      stamp(orbSprite(c, R0), p.x, p.y, R0 * 1.42);
       ctx.globalAlpha = 1;
       if (closed) {
-        ctx.lineWidth = 5; ctx.strokeStyle = c.ok ? COL.good : COL.coral; ctx.shadowColor = ctx.strokeStyle; ctx.shadowBlur = 12;
-        ctx.beginPath(); ctx.arc(p.x, p.y, R0 + 4, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0;
+        ctx.strokeStyle = c.ok ? COL.good : COL.coral;
+        ctx.beginPath(); ctx.arc(p.x, p.y, R0 + 4, 0, Math.PI * 2);
+        ctx.lineWidth = 11; ctx.globalAlpha = 0.25; ctx.stroke(); ctx.globalAlpha = 1; // the glow: a wide faint stroke
+        ctx.lineWidth = 5; ctx.stroke();
         if (!c.ok) {
           const label = `= ${c.val}${c.hits ? `  · ${c.hits} hit` : ''}`;
           upright(p.x, p.y, () => {
@@ -548,26 +605,29 @@
       if (left < 2000 && !calm() && Math.floor(t / 140) % 2) return; // blink out
       const born = clamp((at - p.t0) / 300, 0, 1); // it pops in: grows from nothing in 0.3 s
       const pulse = (calm() ? 1 : 1 + Math.sin(t / 200 + p.x) * 0.06) * (calm() ? 1 : 0.4 + 0.6 * born);
-      upright(q.x, q.y, () => {
-        ctx.scale(pulse, pulse);
-        ctx.shadowColor = COL.flame; ctx.shadowBlur = 22;
-        const g = ctx.createRadialGradient(0, -R0 * 0.3, R0 * 0.1, 0, 0, R0);
-        g.addColorStop(0, '#5a3a08'); g.addColorStop(1, '#1e1203');
-        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, R0, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0;
-        ctx.lineWidth = 4.5; ctx.strokeStyle = COL.flame; ctx.stroke();
-        // the time it has left, as a ring running down
-        ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,211,90,.55)';
-        ctx.beginPath(); ctx.arc(0, 0, R0 + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * clamp(left / Math.max(1, p.until - p.t0), 0, 1)); ctx.stroke();
-        ctx.fillStyle = COL.flame;
+      const half = R0 * 1.5;
+      const cv = sprite(`p:${p.kind}`, half, (g, k) => {
+        g.shadowColor = COL.flame; g.shadowBlur = 16 * k; // once, into the cache
+        const gr = g.createRadialGradient(0, -R0 * 0.3, R0 * 0.1, 0, 0, R0);
+        gr.addColorStop(0, '#5a3a08'); gr.addColorStop(1, '#1e1203');
+        g.fillStyle = gr; g.beginPath(); g.arc(0, 0, R0, 0, Math.PI * 2); g.fill(); g.shadowBlur = 0;
+        g.lineWidth = 4.5; g.strokeStyle = COL.flame; g.stroke();
+        g.fillStyle = COL.flame;
         if (p.kind === 'speed') {
-          const k = R0 / 24;
-          ctx.beginPath(); ctx.moveTo(4 * k, -16 * k); ctx.lineTo(-9 * k, 3 * k); ctx.lineTo(-1 * k, 3 * k); ctx.lineTo(-4 * k, 16 * k); ctx.lineTo(9 * k, -4 * k); ctx.lineTo(1 * k, -4 * k); ctx.closePath(); ctx.fill();
+          const u = R0 / 24;
+          g.beginPath(); g.moveTo(4 * u, -16 * u); g.lineTo(-9 * u, 3 * u); g.lineTo(-1 * u, 3 * u); g.lineTo(-4 * u, 16 * u); g.lineTo(9 * u, -4 * u); g.lineTo(1 * u, -4 * u); g.closePath(); g.fill();
         } else {
           const label = powerLabel(p.kind);
           const fs = Math.max(R0 * (label.length > 3 ? 0.62 : 0.72), MIN_FACT_PX / view.s);
-          ctx.font = `900 ${Math.round(fs)}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(label, 0, 2, R0 * 1.8);
+          g.font = `900 ${Math.round(fs)}px ${FONT}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+          g.fillText(label, 0, 2, R0 * 1.8);
         }
+      });
+      stamp(cv, q.x, q.y, half, pulse);
+      // the time it has left, as a ring running down (live: it moves every frame)
+      upright(q.x, q.y, () => {
+        ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,211,90,.55)';
+        ctx.beginPath(); ctx.arc(0, 0, (R0 + 6) * pulse, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * clamp(left / Math.max(1, p.until - p.t0), 0, 1)); ctx.stroke();
       });
     }
 
@@ -578,10 +638,10 @@
       ctx.font = `600 ${fs * 0.42}px ${FONT}`; const lw = ctx.measureText('MAKE').width;
       const gap = fs * 0.22; const pad = fs * 0.4; const w = lw + gap + nw + pad * 2; const h = fs * 1.25;
       // a scoreboard slab: dark glass, neon edge, the number in white
-      ctx.shadowColor = COL.line; ctx.shadowBlur = 18;
       ctx.fillStyle = 'rgba(8,12,32,.94)'; rr(ctx, cx - w / 2, cy - h / 2, w, h, h * 0.22); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.lineWidth = Math.max(3, fs * 0.06); ctx.strokeStyle = COL.line; ctx.stroke();
+      ctx.strokeStyle = COL.line;
+      ctx.globalAlpha = 0.22; ctx.lineWidth = Math.max(9, fs * 0.2); ctx.stroke(); ctx.globalAlpha = 1; // the glow: a wide faint stroke
+      ctx.lineWidth = Math.max(3, fs * 0.06); ctx.stroke();
       ctx.textAlign = 'left';
       ctx.fillStyle = COL.gold; ctx.fillText('MAKE', cx - w / 2 + pad, cy + fs * 0.05);
       ctx.fillStyle = COL.foam; ctx.font = `800 ${fs}px ${FONT}`; ctx.fillText(num, cx - w / 2 + pad + lw + gap, cy + fs * 0.05);
@@ -642,6 +702,38 @@
       btn = { x: cw - BTN.w - 12, y: ch - BTN.h - 12, w: BTN.w, h: BTN.h };
     }
 
+    /** The pitch: dark floor, a faint grid, a halfway line and a centre circle, and a glowing wall — drawn ONCE per layout. */
+    function arenaLayer(W, H) {
+      const key = [canvas.width, canvas.height, dpr, view.s.toFixed(5), view.rot, view.cx, view.cy, W, H].join('|');
+      if (arenaCache && arenaCache.key === key) return arenaCache.canvas;
+      const cv = (arenaCache && arenaCache.canvas) || document.createElement('canvas');
+      cv.width = canvas.width; cv.height = canvas.height;
+      const g = cv.getContext('2d');
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.clearRect(0, 0, cw, ch);
+      g.translate(view.cx, view.cy); g.rotate(view.rot); g.scale(view.s, view.s); g.translate(-W / 2, -H / 2);
+      const fl = g.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, Math.max(W, H) * 0.7);
+      fl.addColorStop(0, COL.floorA); fl.addColorStop(1, COL.floorB);
+      g.fillStyle = fl; rr(g, 0, 0, W, H, 60); g.fill();
+      g.save(); rr(g, 0, 0, W, H, 60); g.clip();
+      g.strokeStyle = 'rgba(53,224,255,.07)'; g.lineWidth = 1;
+      g.beginPath();
+      for (let x = 60; x < W; x += 60) { g.moveTo(x, 0); g.lineTo(x, H); }
+      for (let y = 60; y < H; y += 60) { g.moveTo(0, y); g.lineTo(W, y); }
+      g.stroke();
+      g.strokeStyle = 'rgba(53,224,255,.28)'; g.lineWidth = 3;
+      g.beginPath(); g.moveTo(W / 2, 0); g.lineTo(W / 2, H); g.stroke();
+      g.beginPath(); g.arc(W / 2, H / 2, Math.min(W, H) * 0.17, 0, Math.PI * 2); g.stroke();
+      // the two ends glow in the two colours of the game
+      const endGlow = (x0, x1, col) => { const e = g.createLinearGradient(x0, 0, x1, 0); e.addColorStop(0, col); e.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = e; g.fillRect(Math.min(x0, x1), 0, Math.abs(x1 - x0), H); };
+      endGlow(0, W * 0.16, 'rgba(255,154,31,.16)'); endGlow(W, W * 0.84, 'rgba(74,168,255,.16)');
+      g.restore();
+      g.shadowColor = COL.line; g.shadowBlur = 22; g.lineWidth = 6; g.strokeStyle = COL.line; rr(g, 0, 0, W, H, 60); g.stroke(); g.shadowBlur = 0;
+      arenaCache = { key, canvas: cv };
+      return cv;
+    }
+
+    let vignette = null; // the last-three-seconds red edge: one gradient per screen size, faded with alpha
     function draw(t) {
       const m = M(); const r = R();
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -656,24 +748,8 @@
       ctx.save();
       const sx = shake > 0.3 ? rf(-1, 1) * shake : 0; const sy = shake > 0.3 ? rf(-1, 1) * shake : 0;
       ctx.translate(view.cx + sx, view.cy + sy); ctx.rotate(view.rot); ctx.scale(view.s, view.s); ctx.translate(-W / 2, -H / 2);
-      // the pitch: dark floor, a faint grid, a halfway line and a centre circle, and a glowing wall
-      const g = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, Math.max(W, H) * 0.7);
-      g.addColorStop(0, COL.floorA); g.addColorStop(1, COL.floorB);
-      ctx.fillStyle = g; rr(ctx, 0, 0, W, H, 60); ctx.fill();
-      ctx.save(); rr(ctx, 0, 0, W, H, 60); ctx.clip();
-      ctx.strokeStyle = 'rgba(53,224,255,.07)'; ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let x = 60; x < W; x += 60) { ctx.moveTo(x, 0); ctx.lineTo(x, H); }
-      for (let y = 60; y < H; y += 60) { ctx.moveTo(0, y); ctx.lineTo(W, y); }
-      ctx.stroke();
-      ctx.strokeStyle = 'rgba(53,224,255,.28)'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
-      ctx.beginPath(); ctx.arc(W / 2, H / 2, Math.min(W, H) * 0.17, 0, Math.PI * 2); ctx.stroke();
-      // the two ends glow in the two colours of the game
-      const endGlow = (x0, x1, col) => { const e = ctx.createLinearGradient(x0, 0, x1, 0); e.addColorStop(0, col); e.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = e; ctx.fillRect(Math.min(x0, x1), 0, Math.abs(x1 - x0), H); };
-      endGlow(0, W * 0.16, 'rgba(255,154,31,.16)'); endGlow(W, W * 0.84, 'rgba(74,168,255,.16)');
-      ctx.restore();
-      ctx.shadowColor = COL.line; ctx.shadowBlur = 22; ctx.lineWidth = 6; ctx.strokeStyle = COL.line; rr(ctx, 0, 0, W, H, 60); ctx.stroke(); ctx.shadowBlur = 0;
+      // the pitch (floor, grid, lines, glowing wall) is drawn once per layout and copied every frame
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(arenaLayer(W, H), Math.round(sx * dpr), Math.round(sy * dpr)); ctx.restore();
 
       for (const c of r.chips) drawChip(c, r, at, tune);
       // power-ups on top: they are there for a few seconds, and an orb drifting over one must not hide it
@@ -722,9 +798,13 @@
       const left = r.closesAt - at;
       const live = st.phase === 'live' && !r.closed;
       if (follow && live && !m.held && left < 3000) {
-        const v = ctx.createRadialGradient(cw / 2, ch / 2, Math.min(cw, ch) * 0.35, cw / 2, ch / 2, Math.max(cw, ch) * 0.75);
-        v.addColorStop(0, 'rgba(255,107,94,0)'); v.addColorStop(1, `rgba(255,107,94,${0.28 + (calm() ? 0 : 0.2 * Math.sin(t / 80))})`);
-        ctx.fillStyle = v; ctx.fillRect(0, 0, cw, ch);
+        if (!vignette || vignette.w !== cw || vignette.h !== ch) {
+          const v = ctx.createRadialGradient(cw / 2, ch / 2, Math.min(cw, ch) * 0.35, cw / 2, ch / 2, Math.max(cw, ch) * 0.75);
+          v.addColorStop(0, 'rgba(255,107,94,0)'); v.addColorStop(1, 'rgba(255,107,94,1)');
+          vignette = { w: cw, h: ch, v };
+        }
+        ctx.globalAlpha = 0.28 + (calm() ? 0 : 0.2 * Math.sin(t / 80));
+        ctx.fillStyle = vignette.v; ctx.fillRect(0, 0, cw, ch); ctx.globalAlpha = 1;
       }
       const fsTop = slot.fs;
       const top0 = slot.top0;
@@ -773,8 +853,8 @@
         ctx.globalAlpha = on || me.boostT > 0 ? 1 : 0.55;
         ctx.fillStyle = on ? 'rgba(64,38,4,.95)' : 'rgba(8,12,32,.88)'; rr(ctx, btn.x, btn.y, btn.w, btn.h, 14); ctx.fill();
         ctx.lineWidth = 3; ctx.strokeStyle = on || me.boostT > 0 ? COL.flame : 'rgba(238,246,255,.35)';
-        if (on) { ctx.shadowColor = COL.flame; ctx.shadowBlur = calm() ? 0 : 10 + Math.sin(t / 200) * 6; }
-        ctx.stroke(); ctx.shadowBlur = 0;
+        if (on) { ctx.save(); ctx.globalAlpha = calm() ? 0.3 : 0.2 + Math.sin(t / 200) * 0.12; ctx.lineWidth = 10; ctx.stroke(); ctx.restore(); }
+        ctx.stroke();
         if (me.boostT > 0) { ctx.fillStyle = 'rgba(255,211,90,.35)'; rr(ctx, btn.x + 4, btn.y + btn.h - 10, (btn.w - 8) * (me.boostT / (tune.boost.ms / 1000)), 6, 3); ctx.fill(); }
         ctx.fillStyle = on || me.boostT > 0 ? COL.flame : COL.foam; ctx.font = `800 21px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
         ctx.fillText(`⚡ BOOST ×${charges}`, btn.x + btn.w / 2, btn.y + btn.h / 2 - (me.boostT > 0 ? 3 : 0));
@@ -788,17 +868,28 @@
       }
     }
 
+    let framesSinceMeasure = 0;
     function frame(t) {
       if (!alive) return;
-      const dt = Math.min(0.05, (t - last) / 1000 || 0);
+      const dtMs = last ? t - last : 16;
+      const dt = Math.min(0.05, dtMs / 1000 || 0);
       last = t;
       if (canvas.offsetParent !== null) {
-        if (Math.abs(canvas.getBoundingClientRect().width - cw) > 1 || Math.abs(canvas.getBoundingClientRect().height - ch) > 1) resize();
+        // measuring the canvas forces a layout, so it happens on a resize, not every frame (and once a second, to be safe)
+        if (!sized || ++framesSinceMeasure > 60) {
+          framesSinceMeasure = 0;
+          const b = canvas.getBoundingClientRect();
+          if (!sized || Math.abs(b.width - cw) > 1 || Math.abs(b.height - ch) > 1) resize();
+        }
         step(dt); draw(t);
+        if (!projector) governor(dtMs);
       }
       raf = requestAnimationFrame(frame);
     }
-    window.addEventListener('resize', resize);
+    const onResize = () => { sized = false; };
+    window.addEventListener('resize', onResize);
+    let ro = null;
+    try { ro = new ResizeObserver(onResize); ro.observe(canvas); } catch { /* an old browser: the once-a-second check covers it */ }
     resize();
     raf = requestAnimationFrame(frame);
 
@@ -808,7 +899,8 @@
       hud(on) { hud = !!on; },
       stop() {
         alive = false; cancelAnimationFrame(raf);
-        window.removeEventListener('resize', resize);
+        window.removeEventListener('resize', onResize);
+        if (ro) ro.disconnect();
         if (!projector) {
           canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointermove', onMove);
           canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointercancel', onUp);

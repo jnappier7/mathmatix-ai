@@ -283,11 +283,18 @@ const log = {
 /**
  * Express middleware for HTTP request logging
  */
+// Requests too frequent and too uninteresting to log when they succeed: a Knockout Arena car reports
+// where it is ~3× a second for a whole class game — 75 log lines a second for a class of 25, every one
+// a 204 that says nothing. A failure is still logged.
+const QUIET_PATHS = [/^\/api\/live-drill\/play\/[^/]+\/pos(?:\?|$)/];
+log.isQuietRequest = (url, status) => status < 400 && QUIET_PATHS.some((re) => re.test(url || ''));
+
 log.requestLogger = (req, res, next) => {
   const start = Date.now();
 
   // Log when response finishes (request ID already set by requestId middleware)
   res.on('finish', () => {
+    if (log.isQuietRequest(req.originalUrl || req.url, res.statusCode)) return;
     const duration = Date.now() - start;
     const userId = req.user?.id || req.user?._id;
 

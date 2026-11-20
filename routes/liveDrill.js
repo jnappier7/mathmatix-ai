@@ -354,11 +354,12 @@ const joinLimiter = rateLimit({
   message: { message: 'Too many join attempts from this network. Wait a few minutes.' },
 });
 
-// Knockout Arena position reports: every car, about twice a second, for the whole game, plus one at
-// once after each bump (a bounce has to reach the other screens fast). Sized on its own so it can
-// never eat the budget the answers and grabs run on (a class of 35 behind one school IP would spend
-// the shared ceiling in four minutes), and mounted ABOVE playIpLimiter for that reason. 360 a minute
-// is six a second per car: the steady two, and room for a pile-up's bumps (each device spaces them).
+// Knockout Arena position reports: every car, about three times a second, for the whole game, plus one
+// at once after each bump or sharp turn (a bounce has to reach the other screens fast). Sized on its own
+// so it can never eat the budget the answers and grabs run on (a class of 35 behind one school IP would
+// spend the shared ceiling in four minutes), and mounted ABOVE playIpLimiter for that reason. 360 a
+// minute is six a second per car: the steady three, and room for bumps (a device never sends two within
+// 200 ms, so even constant swerving stays at five). A successful report is not logged (utils/logger.js).
 const carLimiter = rateLimit({
   windowMs: 60 * 1000, max: 360,
   keyGenerator: (req) => { const t = req.get(TOKEN_HEADER); return t && String(t).length >= 24 ? 't:' + tokenKey(t) : 'ip:' + req.ip; },

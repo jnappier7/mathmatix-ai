@@ -47,7 +47,7 @@
  * POWER-UPS (owner, 2026-11-19: "make speed boost a powerup", then "every once in a while a boost
  * can appear on the board as an orb. 100 pt powerup, 50 point powerup, or speed boost"). Boost
  * used to be free every 2.5 s. Now every round deals a few POWER-UP ORBS (`dealPowerups`, one per
- * `power.per` cars, at least one): each POPS IN at its own moment in the round, drifts like a fact
+ * `power.per` cars, at least `power.min`): each POPS IN at its own moment in the round, drifts like a fact
  * orb, and is gone `power.life` later. A power-up is +100 points, +50 points, or a ⚡ speed charge
  * (`power.kinds`, weighted). Driving into one is a claim like an orb's (`grab` with
  * `{ power: id }`, the same plausibility check, first claim wins). Points go straight onto the
@@ -88,10 +88,12 @@ const TUNE = {
   // ⚡ power-ups: one canister per `per` cars each round (at least one); a charge drives at `mult`
   // for `ms`; at most `max` held. `r` is how big a canister is drawn, `eat` how close is a pickup.
   boost: { max: 2, mult: 2.2, ms: 1200 },
-  // power-up orbs: one per `per` cars a round (at least one), popping in somewhere between `from` and
+  // power-up orbs: one per `per` cars a round (at least `min`), popping in somewhere between `from` and
   // `to` of the way through the round and gone `life` ms later; `r` how big one is drawn, `eat` how
-  // close is a grab; `kinds` the odds of each; `pts` what the point ones pay
-  power: { per: 6, from: 0.12, to: 0.72, life: 7000, r: 30, eat: 38, drift: [12, 24], kinds: { speed: 50, pts50: 35, pts100: 15 }, pts: { pts50: 50, pts100: 100 } },
+  // close is a grab; `kinds` the odds of each; `pts` what the point ones pay. Owner, after the first
+  // class games (2026-11-19): "the power-ups need tweaking, more boosts" — one per six cars at 50%
+  // speed was about one boost a round in a class of 25; now one power-up per three cars, mostly boosts.
+  power: { per: 3, min: 2, from: 0.08, to: 0.8, life: 8000, r: 30, eat: 38, drift: [12, 24], kinds: { speed: 65, pts50: 25, pts100: 10 }, pts: { pts50: 50, pts100: 100 } },
   // Bumper cars (the devices do the bouncing; these are the numbers every device uses). `r` is a car's
   // radius for a hit, `kick` the least speed a bump sends a car off at, `e` how much of the closing
   // speed comes back, `stunMs` how long a bounced car coasts before its steering takes over again.
@@ -362,7 +364,7 @@ function powerKind(rand) {
  */
 function dealPowerups(nCars, world, rand, n, openedAt, closesAt, chips = []) {
   const P = TUNE.power;
-  const count = Math.max(1, Math.round(nCars / P.per));
+  const count = Math.max(P.min || 1, Math.round(nCars / P.per));
   const span = closesAt - openedAt;
   const out = [];
   for (let i = 0; i < count; i++) {

@@ -503,11 +503,11 @@ describe('power-ups', () => {
     throw new Error(`no ${kind} power-up in 60 seeds`);
   };
 
-  test('every round deals one per six cars (at least one), each popping in at its own moment inside the round', () => {
+  test('every round deals one per three cars (at least two), each popping in at its own moment inside the round', () => {
     for (const n of [2, 6, 13, 24, 34]) {
       const g = arena({ secondsPerPlay: 20 }); seat(g, n); G.start(g);
       const { powerups, openedAt, closesAt, world } = g.ko.round;
-      expect(powerups).toHaveLength(Math.max(1, Math.round(n / K.TUNE.power.per)));
+      expect(powerups).toHaveLength(Math.max(K.TUNE.power.min, Math.round(n / K.TUNE.power.per)));
       for (const p of powerups) {
         expect(Object.keys(K.TUNE.power.kinds)).toContain(p.kind);
         expect(p.at).toBeGreaterThanOrEqual(openedAt + K.TUNE.power.from * (closesAt - openedAt) - 1);
@@ -534,6 +534,14 @@ describe('power-ups', () => {
         }
       }
     }
+  });
+
+  test('more boosts (owner, after the first class games): a class of 25 sees several power-ups a round, most of them boosts', () => {
+    const n = { speed: 0, all: 0 };
+    for (let i = 0; i < 200; i++) for (const p of K.dealPowerups(25, K.worldFor(25), K.rng(`boosts${i}`, 1), 1, 0, 20000)) { n.all++; if (p.kind === 'speed') n.speed++; }
+    expect(n.all / 200).toBeGreaterThanOrEqual(8); // one per three cars
+    expect(n.speed / n.all).toBeGreaterThan(0.55);
+    expect(n.speed / 200).toBeGreaterThanOrEqual(5); // ~5 boosts a round (was ~1)
   });
 
   test('over many rounds every kind turns up, the point ones less often than speed', () => {
@@ -736,5 +744,32 @@ describe('the whole arena, on every screen', () => {
       expect(back.dx).toBeCloseTo(dx, 9); expect(back.dy).toBeCloseTo(dy, 9);
     }
     expect(C.screenToWorld(0.3, -0.7, 0)).toEqual({ dx: 0.3, dy: -0.7 });
+  });
+});
+
+describe('lag (owner, 2026-11-19: "students had issues with lagging")', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const page = fs.readFileSync(path.join(__dirname, '../../public/js/live-drill/knockout.js'), 'utf8');
+
+  test('nothing is blurred per frame: every shadowBlur draws into a cache, never onto the live canvas', () => {
+    // A throttled phone with 26 cars ran at 16 fps with per-frame canvas blur and 50+ without it.
+    const blurs = page.split('\n').filter((l) => /shadowBlur\s*=\s*[^0]/.test(l));
+    expect(blurs.length).toBeGreaterThan(0);
+    for (const l of blurs) expect(l).toMatch(/\bg\.shadowBlur/); // `g` is a cache canvas (arenaLayer, sprite), `ctx` the live one
+    expect(page).not.toMatch(/\bctx\.shadowBlur\s*=\s*[^0]/);
+  });
+
+  test('the floor is drawn once per layout, the canvas is measured on resize only, and a slow device draws at a lower resolution', () => {
+    expect(page).toMatch(/function arenaLayer\(W, H\)[\s\S]*arenaCache && arenaCache\.key === key\) return/);
+    expect(page).toMatch(/new ResizeObserver/);
+    expect(page).toMatch(/function governor\(dtMs\)[\s\S]*dprCap = Math\.max\(1, dprCap - 0\.5\)/);
+  });
+
+  test('a successful position report is not logged (a class of 25 sends ~75 a second); a failed one is', () => {
+    const log = require('../../utils/logger');
+    expect(log.isQuietRequest('/api/live-drill/play/ABC123/pos', 204)).toBe(true);
+    expect(log.isQuietRequest('/api/live-drill/play/ABC123/pos', 429)).toBe(false);
+    expect(log.isQuietRequest('/api/live-drill/play/ABC123/grab', 200)).toBe(false);
   });
 });

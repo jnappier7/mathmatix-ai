@@ -796,8 +796,11 @@ function fireBoost(game, player, body) {
   return heistCall(() => knockout.fire(game, player, body || {}, knockoutIo(game)));
 }
 
-/** Knockout Arena: every car's position to every screen, ~3× a second, outside the state stream. */
-const CAR_MS = 300;
+/**
+ * Knockout Arena: every car's position to every screen, 5× a second, outside the state stream. (It was
+ * 3×; with phones reporting ~3× a second, the extra hop made other cars move in steps — "lagging".)
+ */
+const CAR_MS = 200;
 function carTicker(game) {
   const t = setInterval(() => {
     if (game.phase !== 'live') { clearInterval(t); game.timers.delete(t); return; }
