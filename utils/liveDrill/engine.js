@@ -74,7 +74,8 @@ const DRILLS = {
   alg2u3: { native: require('./review/alg2Unit3'), title: 'Algebra 2 · Unit 3 Review' },
   alg2u4: { native: require('./review/alg2Unit4'), title: 'Algebra 2 · Unit 4 Review' },
   // Fluency games: one reflex, fast, on the Math Facts clocks; server-scored solo runs feed a class leaderboard
-  congruence: { native: require('./fluency/congruence'), title: 'Honors Geometry · Triangle Congruence Fluency', scoring: 'facts', graded: true },
+  // `arena: 'labels'`: Knockout Arena can play it — every play is a figure and a few short fixed answers (knockout.js)
+  congruence: { native: require('./fluency/congruence'), title: 'Honors Geometry · Triangle Congruence Fluency', scoring: 'facts', graded: true, arena: 'labels' },
 };
 
 const APP_MARKER = '// ===================== app =====================';

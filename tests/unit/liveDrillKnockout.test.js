@@ -97,7 +97,7 @@ describe('the chips', () => {
 });
 
 describe('setup', () => {
-  test('plays Math Facts only, and only the books it can build chips for', () => {
+  test('of Math Facts it plays only the books it can build chips for, and never a course drill (label drills: liveDrillKnockoutLabels.test.js)', () => {
     expect(() => arena({ drill: 'geometry', playbook: 'all' })).toThrow(/Math Facts/);
     expect(() => arena({ playbook: 'sq' })).toThrow(/Math Facts/);
     expect(arena({ playbook: 'all' }).mode).toBe('knockout');

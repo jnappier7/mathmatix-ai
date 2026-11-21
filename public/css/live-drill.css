@@ -927,3 +927,25 @@ div.alarm>*{position:relative}
 .resume-row.on .resume-k{color:var(--led)}
 .resume-what{font-weight:800;font-size:1.15rem}
 .resume-row .go{width:auto;flex:none}
+
+/* Knockout Arena, label rounds (Triangle Congruence): the student's own question, a box over the canvas.
+   Large through think time (.think), then in its corner; at the reveal it says the answer. */
+.ko-fig{position:absolute;z-index:2;box-sizing:border-box;background:#fbfaf3;border:3px solid #35e0ff;border-radius:10px;padding:5px 6px 4px;pointer-events:none;
+  box-shadow:0 6px 22px rgba(0,0,0,.45);transition:left .35s ease,top .35s ease,width .35s ease,border-color .2s}
+.ko-fig svg{display:block;width:100%;height:auto}
+.ko-fig-ask{display:none;font-weight:700;color:#14212a;font-size:.95rem;line-height:1.25;text-align:center;padding:2px 4px 4px}
+.ko-fig-cap{display:none;font-family:var(--display);font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:#14212a;font-size:.95rem;padding:2px 0 1px}
+.ko-fig.think{border-color:var(--led);border-width:4px;padding:10px 12px 8px}
+.ko-fig.think .ko-fig-ask,.ko-fig.think .ko-fig-cap{display:block}
+.ko-fig.think .ko-fig-cap{font-size:1.25rem;color:#8a5a00}
+.ko-fig.right{border-color:#2fbf71}.ko-fig.wrong{border-color:#ff3d6e}
+.ko-fig.right .ko-fig-cap,.ko-fig.wrong .ko-fig-cap{display:block;font-size:.85rem}
+.ko-fig.right .ko-fig-cap{color:#14713f}.ko-fig.wrong .ko-fig-cap{color:#b3123c}
+@media (prefers-reduced-motion:reduce){.ko-fig{transition:none}}
+/* the projector's "one to look at": a missed question and its answer, between rounds */
+.ko-look{position:absolute;left:14px;bottom:14px;z-index:2;width:min(34%,440px);box-sizing:border-box;background:#fbfaf3;border:3px solid var(--led);border-radius:12px;padding:8px 12px 10px;
+  box-shadow:0 8px 28px rgba(0,0,0,.5);color:#14212a}
+.ko-look svg{display:block;width:100%;height:auto}
+.ko-look-k{display:block;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:#8a5a00}
+.ko-look-a{font-size:1.05rem;line-height:1.3;font-weight:600}
+.kolabels-h{margin:14px 0 4px;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-size:1rem;color:var(--muted)}
