@@ -27,6 +27,7 @@
   /** Movement, shown only where it means something: a single round is a starting
    *  point, not a trend, so the server sends delta:null for it and we say so. */
   function deltaHTML(g) {
+    if (g.best === null) return '<span class="muted">vs. the computer</span>';
     if (g.delta === null) return '<span class="muted">first round</span>';
     if (g.delta === 0) return '<span class="dz">no change</span>';
     const up = g.delta > 0;
@@ -34,7 +35,7 @@
   }
 
   const gameChips = (games, names) => games.map((g) => `<span class="gchip"><b>${esc((names && names[g.drill]) || g.drill)}</b>`
-    + `<i>${g.rounds} ${g.rounds === 1 ? 'round' : 'rounds'} · best ${g.best}</i>${deltaHTML(g)}</span>`).join('');
+    + `<i>${g.rounds} ${g.rounds === 1 ? 'round' : 'rounds'}${g.best === null ? '' : ` · best ${g.best}`}${g.versus ? ` · ${g.versus} vs. the computer` : ''}</i>${deltaHTML(g)}</span>`).join('');
 
   function renderClass() {
     const v = $('class-view');
@@ -108,7 +109,7 @@
     const lines = [['Student', 'Rounds', 'Minutes', 'Last played', 'Games'].map(q).join(',')]
       .concat(data.students.map((s) => [
         safe(s.name), s.rounds, s.minutes, s.lastAt ? new Date(s.lastAt).toISOString() : '',
-        s.games.map((g) => `${gameName(g.drill)}: ${g.rounds} ${g.rounds === 1 ? 'round' : 'rounds'}, best ${g.best}${g.delta === null ? '' : `, ${g.delta >= 0 ? '+' : ''}${g.delta}`}`).join('; '),
+        s.games.map((g) => `${gameName(g.drill)}: ${g.rounds} ${g.rounds === 1 ? 'round' : 'rounds'}${g.best === null ? '' : `, best ${g.best}`}${g.delta === null ? '' : `, ${g.delta >= 0 ? '+' : ''}${g.delta}`}${g.versus ? `, ${g.versus} vs. the computer` : ''}`).join('; '),
       ].map(q).join(',')));
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));

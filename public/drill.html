@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261112">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261121">
 </head>
 <body class="solo">
 <div class="pwrap">
@@ -44,8 +44,11 @@
         <div class="nums" id="f-nums" role="group" aria-label="Pick the numbers"></div>
         <p class="muted" id="f-note" style="margin:6px 0 0;font-size:.9rem"></p>
       </div>
-      <div><span class="lbl" id="c-l">Clock</span><div class="seg-ctl" id="clock" role="group" aria-labelledby="c-l"></div></div>
-      <details class="rules compact"><summary>How scoring works</summary><div id="rules"></div></details>
+      <!-- every class game can be played alone, against computer rivals (utils/liveDrill/rivals.js) -->
+      <div><span class="lbl" id="m-l">How to play</span><div class="books modes" id="modes" role="group" aria-labelledby="m-l"></div></div>
+      <div id="lvl-wrap" hidden><span class="lbl" id="l-l">Computer rivals</span><div class="seg-ctl" id="levels" role="group" aria-labelledby="l-l"></div><p class="muted" id="lvl-note" style="margin:6px 0 0;font-size:.9rem"></p></div>
+      <div id="clock-wrap"><span class="lbl" id="c-l">Clock</span><div class="seg-ctl" id="clock" role="group" aria-labelledby="c-l"></div></div>
+      <details class="rules compact" id="rules-box"><summary>How scoring works</summary><div id="rules"></div></details>
       <button class="go" id="start" type="button">Play</button>
       <p class="muted best" id="best" aria-live="polite"></p>
       <div class="lbwrap" id="lb" hidden></div>
@@ -93,6 +96,6 @@
 <script src="/js/live-drill/common.js?v=20261106b"></script>
 <script>window.LiveDrillSoundConfig = { defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false };</script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/solo.js?v=20261112"></script>
+<script src="/js/live-drill/solo.js?v=20261121"></script>
 </body>
 </html>

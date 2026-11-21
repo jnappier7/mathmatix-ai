@@ -39,18 +39,23 @@ function summarizeStudent(rows) {
   }
 
   const games = [...byGame.entries()].map(([drill, rs]) => {
-    const first = rs[0];
-    const last = rs[rs.length - 1];
+    // A game played against the computer (`mode`) counts as practice — rounds, minutes, recency —
+    // but its score is that game's own (cash, height, arena points), so the best and the movement
+    // are read from the classic rounds alone. Mixing them would show a Heist's $1,500 as a "best".
+    const classic = rs.filter((r) => !r.mode);
+    const first = classic[0];
+    const last = classic[classic.length - 1];
     return {
       drill,
       rounds: rs.length,
-      best: Math.max(...rs.map((r) => r.score || 0)),
-      first: first.score || 0,
-      last: last.score || 0,
+      versus: rs.length - classic.length,
+      best: classic.length ? Math.max(...classic.map((r) => r.score || 0)) : null,
+      first: first ? first.score || 0 : null,
+      last: last ? last.score || 0 : null,
       // Movement needs two rounds to mean anything; one round is a starting
       // point, not a trend, and showing "+0" for it would read as "no progress".
-      delta: rs.length > 1 ? (last.score || 0) - (first.score || 0) : null,
-      lastAt: last.playedAt || null,
+      delta: classic.length > 1 ? (last.score || 0) - (first.score || 0) : null,
+      lastAt: rs[rs.length - 1].playedAt || null,
     };
   }).sort((a, b) => b.rounds - a.rounds);
 

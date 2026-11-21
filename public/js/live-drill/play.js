@@ -22,6 +22,12 @@
   let fetching = false;
   let account = null; // { name } when a signed-in student is on this page
   let arena = null; // Knockout Arena: the canvas this student drives on (knockout.js)
+  // A game played ALONE against computer rivals (st.solo; utils/liveDrill/rivals.js): the same game on
+  // the same screen, but the student starts it, deals the next Huddle play, and runs it back.
+  let autoBegin = false; // "Play again": start as soon as the fresh lobby arrives
+  let soloLevel = ''; // the level picked on the final screen for the next game
+  const LEVEL_NAMES = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+  const backUrl = () => `/drill/${encodeURIComponent((st && st.solo && st.solo.hub) || (seat && seat.solo) || '')}`.replace(/\/$/, '');
 
   const store = {
     get() { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch { return null; } },
@@ -77,11 +83,15 @@
   function show(id) { ['join', 'lobby', 'live', 'final', 'gone'].forEach((s) => { $(s).hidden = s !== id; }); }
 
   function gone(msg) {
+    // a game against the computer that has ended (a deploy, a closed tab): back to the practice page
+    const solo = (st && st.solo) || (seat && seat.solo) ? backUrl() : null;
     if (es) es.close(); es = null;
     clearInterval(tick);
     store.clear(); seat = null; st = null; cur = null; huddleKey = '';
     koReset();
-    $('gone-msg').textContent = msg;
+    $('gone-msg').textContent = solo && msg ? `${msg} Start another one.` : msg;
+    $('gone-btn').textContent = solo ? 'Back to practice' : 'Join a game';
+    $('gone-btn').onclick = solo ? () => { location.href = solo; } : () => show('join');
     show('gone');
   }
 
@@ -150,7 +160,42 @@
     $('l-what').textContent = `${st.drillTitle} · ${st.playbookName} · ${st.mode === 'drive' ? 'Team Drive' : onHill ? 'every climber for themselves' : onHeist ? 'every safecracker for themselves' : onKo ? 'last car running wins' : 'Huddle'}`;
     const rules = window.LiveDrill.rulesHTML(st);
     if ($('l-rules').dataset.html !== rules) { $('l-rules').innerHTML = rules; $('l-rules').dataset.html = rules; }
+    // alone: nobody to wait for. Say who the rivals are, and let the student start (the clock starts then).
+    const solo = st.solo;
+    $('l-wait').hidden = !!solo;
+    $('l-solo').hidden = !solo;
+    if (!solo) return;
+    $('l-vs').innerHTML = `You against <b>${solo.rivals === 1 ? 'the computer' : `${solo.rivals} computer rivals`}</b> · ${esc(LEVEL_NAMES[solo.level] || solo.level)}. They play by the same rules you do.`;
+    $('l-back').href = backUrl();
+    $('l-rules-box').open = true;
+    if (autoBegin) begin();
   }
+
+  /** Alone: kick off. */
+  async function begin() {
+    autoBegin = false;
+    $('l-start').disabled = true;
+    try { apply(await api(`/${encodeURIComponent(seat.code)}/begin`, { method: 'POST' })); }
+    catch (err) { if (err.status === 404) gone('That game has ended.'); else if (err.status !== 409) $('l-vs').textContent = err.message; }
+    $('l-start').disabled = false;
+  }
+  $('l-start').onclick = begin;
+
+  /** Alone, Huddle: the student deals the next play. */
+  async function nextHuddle(btn) {
+    btn.disabled = true;
+    try { await api(`/${encodeURIComponent(seat.code)}/next`, { method: 'POST' }); } catch { btn.disabled = false; }
+  }
+
+  /** Alone: run it back, at the level picked on the final screen. */
+  async function playAgain() {
+    $('f-again').disabled = true;
+    autoBegin = true;
+    try { apply(await api(`/${encodeURIComponent(seat.code)}/again`, { method: 'POST', body: JSON.stringify({ level: soloLevel }) })); }
+    catch (err) { autoBegin = false; if (err.status === 404 || err.status === 401) gone('That game has ended.'); }
+    $('f-again').disabled = false;
+  }
+  $('f-again').onclick = playAgain;
 
   function renderScore() {
     const onHill = st.mode === 'hill';
@@ -171,6 +216,7 @@
     $('p-team').className = `pill t${t}`;
     $('p-team').textContent = `Team ${teamName(t)}`;
     const b = st.rules && st.rules.blitz;
+    $('p-quit').hidden = !st.solo; if (st.solo) $('p-quit').href = backUrl();
     const toBlitz = b && st.phase === 'live' ? ` · ${b.every - (st.me.streak % b.every)} to ⚡` : '';
     $('p-me').textContent = `${st.me.name} · ${st.me.yards} yds · streak ${st.me.streak}${toBlitz}`;
   }
@@ -655,6 +701,11 @@
       else if (!mine) { $('fb').className = 'fb'; $('fb').innerHTML = `<span class="bigtxt">No answer</span><span class="why">${theirs}${r.tell}</span>`; }
       else if (mine.ok) { $('fb').className = `fb good${picks[st.me.team] ? ' pick6' : ''}`; $('fb').innerHTML = `<span class="bigtxt">${picks[st.me.team] ? 'Pick six' : 'Right'} · +${mine.gain}</span><span class="why">${ours}${theirs}${r.tell}</span>`; }
       else { $('fb').className = 'fb bad'; $('fb').innerHTML = `<span class="bigtxt">Sacked · ${showNum(mine.gain)}</span><span class="why">${theirs}${r.tell}</span>`; }
+      // alone, nobody is running the pace: the student deals the next play (Enter works too)
+      if (st.solo && st.phase === 'reveal') {
+        $('fb').insertAdjacentHTML('beforeend', `<button class="next" id="nx" type="button">${r.n >= st.totalPlays ? 'See the final' : 'Next play'}</button>`);
+        $('nx').onclick = () => nextHuddle($('nx'));
+      }
       return;
     }
     $('p-card').innerHTML = cardHTML(r.play, null, `Play ${r.n}`);
@@ -698,8 +749,17 @@
     $('f-mid').textContent = win < 0 ? 'Tie' : mineWon ? 'W' : 'L';
     const h = $('f-result');
     h.className = win >= 0 ? `t${win}` : '';
-    h.textContent = win < 0 ? 'Tie game' : `${teamName(win)} wins`;
+    h.textContent = win < 0 ? 'Tie game' : st.solo ? (mineWon ? 'You win' : 'The computer wins') : `${teamName(win)} wins`;
     const me = st.me;
+    // alone: no teacher to run it back. Play again (at any level), or go and pick another game.
+    const solo = st.solo;
+    $('f-stay').hidden = !!solo; $('f-new').hidden = !!solo; $('f-solo').hidden = !solo;
+    if (solo) {
+      if (!LEVEL_NAMES[soloLevel]) soloLevel = solo.level;
+      $('f-levels').innerHTML = Object.keys(LEVEL_NAMES).map((l) => `<button type="button" data-l="${l}" aria-pressed="${l === soloLevel}">${LEVEL_NAMES[l]}</button>`).join('');
+      $('f-levels').querySelectorAll('button').forEach((b) => { b.onclick = () => { soloLevel = b.dataset.l; $('f-levels').querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }; });
+      $('f-back').href = backUrl();
+    }
     const onHill = st.mode === 'hill';
     $('final').classList.toggle('mode-hill', onHill);
     $('f-place').hidden = !onHill;
@@ -744,7 +804,7 @@
           <div class="tellbox">${m.tell}</div></li>`).join('')}</ol>`
       : '<p>Clean game. No film to review.</p>');
     renderMyFacts(st.facts);
-    if (st.facts && account) lifetime();
+    if (st.facts && (account || (st.solo && st.solo.saves))) lifetime();
     // The stream stays open: the teacher may run it back, and this phone goes straight to the lobby.
   }
 
@@ -825,6 +885,9 @@
   }
 
   seat = store.get();
+  // a game against the computer whose seat could not ride in sessionStorage arrives with it in the hash
+  const hseat = (location.hash.match(/^#seat=([A-Za-z0-9_-]{20,})$/) || [])[1];
+  if (hseat && qcode) { seat = { code: qcode, token: hseat, name: 'You', solo: '' }; store.set(seat); history.replaceState(null, '', location.pathname + location.search); }
   if (seat && seat.token && (!qcode || qcode === seat.code)) {
     api(`/${encodeURIComponent(seat.code)}/state`).then((s) => { apply(s); connect(); }).catch(() => { store.clear(); showJoin(); });
   } else {

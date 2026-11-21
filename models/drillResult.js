@@ -46,6 +46,10 @@ const drillResultSchema = new Schema({
   // fluency games). Everything else here is the browser's own word. A class leaderboard reads
   // graded rounds only; a teacher's practice view may show both, labelled.
   graded: { type: Boolean, default: false },
+  // '' = the classic drill (score = its points). Otherwise the game it was played as, alone against
+  // computer rivals ('drive' | 'huddle' | 'hill' | 'heist' | 'knockout'): its score is that game's own
+  // number (yards, height, cash, arena points) and is never compared with a classic score.
+  mode: { type: String, trim: true, maxlength: 12, default: '' },
 
   playedAt: { type: Date, default: Date.now },
 }, { timestamps: true });

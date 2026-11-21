@@ -39,6 +39,25 @@ describe('summarizeStudent', () => {
     expect(s.games[0].rounds).toBe(1);
   });
 
+  it('a game against the computer counts as practice, but its score is never the best or the movement', () => {
+    const s = summarizeStudent([
+      row({ score: 300, playedAt: at('2026-10-20T10:00:00Z') }),
+      row({ score: 1500, mode: 'heist', seconds: 124, playedAt: at('2026-10-21T10:00:00Z') }), // cash, not points
+      row({ score: 420, playedAt: at('2026-10-22T10:00:00Z') }),
+      row({ score: 9000, mode: 'heist', playedAt: at('2026-10-23T10:00:00Z') }),
+    ]);
+    const g = s.games[0];
+    expect(s.rounds).toBe(4);              // all four were work
+    expect(s.minutes).toBe(8);             // 484s
+    expect(g).toMatchObject({ rounds: 4, versus: 2, best: 420, first: 300, last: 420, delta: 120 });
+    expect(new Date(g.lastAt).toISOString()).toBe('2026-10-23T10:00:00.000Z'); // recency is the latest of any kind
+  });
+
+  it('a student who has only played the computer has rounds and no "best"', () => {
+    const s = summarizeStudent([row({ mode: 'hill', score: 88 }), row({ mode: 'knockout', score: 640 })]);
+    expect(s.games[0]).toMatchObject({ rounds: 2, versus: 2, best: null, first: null, last: null, delta: null });
+  });
+
   it('handles a student with nothing', () => {
     const s = summarizeStudent([]);
     expect(s).toMatchObject({ rounds: 0, minutes: 0, lastAt: null, games: [] });

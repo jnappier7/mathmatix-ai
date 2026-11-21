@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261121a">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261121b">
 </head>
 <body>
 <div class="pwrap">
@@ -34,7 +34,13 @@
   <!-- ============ LOBBY ============ -->
   <section id="lobby" hidden>
     <div class="teamcard" id="l-team"><div class="eyebrow">You're on</div><h2 id="l-teamname"></h2><p id="l-name" style="margin:8px 0 0;font-size:1.2rem;font-weight:700"></p></div>
-    <div class="waiting">Waiting for kickoff…</div>
+    <div class="waiting" id="l-wait">Waiting for kickoff…</div>
+    <!-- a game played alone, against computer rivals: the student starts it -->
+    <div class="solo-start" id="l-solo" hidden>
+      <p id="l-vs"></p>
+      <button class="go" id="l-start" type="button">Start</button>
+      <p class="backlink"><a id="l-back" href="/drill">← Pick another game</a></p>
+    </div>
     <p class="muted" style="text-align:center;margin:0" id="l-what"></p>
     <details class="rules panel compact" id="l-rules-box"><summary>How scoring works</summary><div id="l-rules"></div></details>
   </section>
@@ -42,7 +48,7 @@
   <!-- ============ LIVE ============ -->
   <section id="live" hidden>
     <div style="display:flex;flex-direction:column;gap:12px">
-      <div class="pbar"><span class="pill" id="p-team"></span><span class="muted" id="p-me"></span></div>
+      <div class="pbar"><span class="pill" id="p-team"></span><span class="muted" id="p-me"></span><a class="quit-solo" id="p-quit" href="/drill" hidden>Quit</a></div>
       <div class="sb">
         <div class="t0"><span class="k" id="s-n0">Red</span><span class="v" id="s-p0">0</span></div>
         <div class="mid"><span class="k" id="s-ck">Clock</span><span class="v" id="s-clock">–</span></div>
@@ -79,7 +85,12 @@
         <div><span class="v" id="f-pct">0%</span><span class="k">Accuracy</span></div>
         <div><span class="v" id="f-best">0</span><span class="k">Longest streak</span></div>
       </div>
-      <p class="muted" style="margin:0;text-align:center">Stay on this screen — if your teacher runs it back, you'll go straight to the next kickoff.</p>
+      <p class="muted" id="f-stay" style="margin:0;text-align:center">Stay on this screen — if your teacher runs it back, you'll go straight to the next kickoff.</p>
+      <div class="solo-again" id="f-solo" hidden>
+        <div><span class="lbl" id="f-ll">Computer rivals</span><div class="seg-ctl" id="f-levels" role="group" aria-labelledby="f-ll"></div></div>
+        <button class="go" id="f-again" type="button">Play again</button>
+        <a class="ghost" id="f-back" href="/drill">Pick another game</a>
+      </div>
       <div class="facts mine panel" id="f-facts" hidden></div>
       <div class="film" id="f-film"></div>
       <button class="ghost" id="f-new">Join another game</button>
@@ -99,6 +110,6 @@
 <script src="/js/csrf.js"></script>
 <script src="/js/live-drill/common.js?v=20261121a"></script>
 <script src="/js/live-drill/knockout.js?v=20261121a"></script>
-<script src="/js/live-drill/play.js?v=20261121a"></script>
+<script src="/js/live-drill/play.js?v=20261121b"></script>
 </body>
 </html>

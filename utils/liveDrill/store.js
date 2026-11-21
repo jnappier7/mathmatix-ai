@@ -59,6 +59,9 @@ function saveNow(game) {
 
 /** games.onChange: coalesce a burst of changes into one write a second. */
 function schedule(game) {
+  // a game played alone against the computer is never shadowed: bots would write it every second, and a
+  // student whose game a deploy ended simply starts another
+  if (game.solo) return;
   if (paused || !connected() || scheduled.has(game.code)) return;
   const t = setTimeout(() => { scheduled.delete(game.code); saveNow(game); }, SAVE_DELAY_MS);
   if (t.unref) t.unref();
@@ -67,6 +70,7 @@ function schedule(game) {
 
 /** games.onDrop: a game swept from memory (finished an hour ago, or idle) leaves the shadow too. */
 function forget(game) {
+  if (game.solo) return;
   const t = scheduled.get(game.code);
   if (t) { clearTimeout(t); scheduled.delete(game.code); }
   if (paused || !connected()) return;
@@ -170,7 +174,7 @@ async function handoff() {
   if (handingOff) return;
   handingOff = true;
   const games = [...G._games.values()];
-  if (connected()) await Promise.all(games.map((g) => saveNow(g)));
+  if (connected()) await Promise.all(games.filter((g) => !g.solo).map((g) => saveNow(g)));
   G.freezeAll();
   if (games.length) logger.info('live drill games handed off', { games: games.length });
 }

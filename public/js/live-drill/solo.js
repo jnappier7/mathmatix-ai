@@ -24,7 +24,11 @@
   let hub = null; // the hub view from the server
   // `book` is what the server deals from: a playbook key, or one or more numbered sections
   // ("5.1,5.2" — every playbook any of them covers); `secs` is the pick on the Section row.
-  const sel = { gi: 0, book: 'all', secs: [], seconds: 0, focus: [] };
+  // `mode` is how it is played: '' = on your own (this page clocks and scores the round), or one of the
+  // class games — drive, huddle, hill, heist, knockout — against computer rivals at `level` (the server
+  // runs that game exactly as it runs a class game; /play is its screen).
+  const sel = { gi: 0, book: 'all', secs: [], seconds: 0, focus: [], mode: '', level: '' };
+  let catalog = null; // the Arcade's game cards: one source for every game's name and tagline
   /** "5.1 & 5.2", "5.1, 5.2 & 5.4" */
   const listOf = (xs) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} & ${xs[xs.length - 1]}`);
   const sectionsOf = (g) => (g.sections || []).filter((x) => x.books.length);
@@ -116,6 +120,7 @@
     wireSearch();
     if (!hubId) return renderHubList();
     try { hub = await get(`/hubs/${encodeURIComponent(hubId)}`); } catch (err) { $('pick-err').textContent = err.message; return; }
+    get('/arcade').then((c) => { catalog = c; if (hub && !$('setup').hidden) renderModes(game()); }).catch(() => {});
     document.title = `${hub.title} Drills | MATHMATIX AI`;
     $('h-title').innerHTML = `${esc(hub.title)} <span>Drills</span>`;
     $('h-hubs').innerHTML = hub.hubs.filter((h) => h.id !== hub.id)
@@ -123,6 +128,7 @@
     const saved = local.get(`mm-drill-pick:${hub.id}`);
     if (saved && hub.games[saved.gi]) Object.assign(sel, saved);
     if (!Array.isArray(sel.focus)) sel.focus = [];
+    if (typeof sel.mode !== 'string') sel.mode = '';
     // A search result on another course's page lands here with the game and playbook named.
     const jump = new URLSearchParams(location.search);
     const jg = hub.games.findIndex((g) => g.drill === jump.get('game'));
@@ -241,10 +247,66 @@
     $('clock').innerHTML = g.clock.seconds.map((s) => `<button type="button" data-s="${s}" aria-pressed="${s === sel.seconds}">${mmss(s * 1000)}</button>`).join('');
     $('clock').querySelectorAll('button').forEach((b) => { b.onclick = () => { sel.seconds = Number(b.dataset.s); renderSetup(); }; });
     renderFocus(g);
+    renderModes(g);
+    const vs = !!sel.mode;
+    // a game against the computer has its own rules (its lobby states them) and its own score: no
+    // personal best, no class leaderboard — those belong to the classic drill
+    $('clock-wrap').hidden = vs && !['drive', 'hill', 'heist'].includes(sel.mode);
+    $('rules-box').hidden = vs;
+    $('best').hidden = vs;
     $('rules').innerHTML = rulesHTML(g);
-    showBest();
-    renderBoard($('lb'), false);
+    if (vs) { $('lb').hidden = true; bestSeq++; boardSeq++; } else { showBest(); renderBoard($('lb'), false); }
     local.set(`mm-drill-pick:${hub.id}`, sel);
+  }
+
+  /** Can this drill, at this playbook, be played as that game? (Knockout Arena only builds orbs for some.) */
+  const canPlayAs = (g, mode) => mode !== 'knockout' || g.arena === true || (Array.isArray(g.arena) && g.arena.includes(sel.book));
+
+  /** "How to play": on your own, or any of the class games against computer rivals. */
+  function renderModes(g) {
+    const vs = hub.versus || { levels: [], rivals: {} };
+    const cards = (catalog && catalog.games) || [];
+    if (sel.mode && (!cards.some((c) => c.id === sel.mode) || !canPlayAs(g, sel.mode))) sel.mode = '';
+    if (!vs.levels.some((l) => l.id === sel.level)) sel.level = vs.level || (vs.levels[0] || {}).id || '';
+    const tile = (id, name, line, ok, why) => `<button type="button" class="book" data-m="${esc(id)}" aria-pressed="${sel.mode === id}"${ok ? '' : ` disabled title="${esc(why)}"`}><span class="nm">${esc(name)}</span><span class="bl">${esc(ok ? line : why)}</span></button>`;
+    $('modes').innerHTML = tile('', 'On your own', 'Beat the clock. Beat your best.', true)
+      + cards.map((c) => {
+        const n = vs.rivals[c.id] || 1;
+        return tile(c.id, c.name, `${c.tagline} You against ${n === 1 ? 'the computer' : `${n} computer rivals`}.`, canPlayAs(g, c.id), g.arena ? 'Not in this playbook. Pick another one above.' : 'Plays Math Facts and Triangle Congruence.');
+      }).join('');
+    $('modes').querySelectorAll('.book').forEach((b) => { b.onclick = () => { sel.mode = b.dataset.m; renderSetup(); }; });
+    $('lvl-wrap').hidden = !sel.mode;
+    $('levels').innerHTML = vs.levels.map((l) => `<button type="button" data-l="${esc(l.id)}" aria-pressed="${l.id === sel.level}">${esc(l.name)}</button>`).join('');
+    $('levels').querySelectorAll('button').forEach((b) => { b.onclick = () => { sel.level = b.dataset.l; renderSetup(); }; });
+    $('lvl-note').textContent = sel.mode ? `The rivals are the computer, and they play by the same rules you do.${me.saves ? ' Your game is saved to your account.' : ''}` : '';
+    $('start').textContent = sel.mode ? 'Play the computer' : 'Play';
+  }
+
+  /** A device id, so opening a new game against the computer closes this device's last one. */
+  function deviceId() {
+    let id = local.get('mm-solo-device');
+    if (typeof id !== 'string' || !/^[A-Za-z0-9]{8,48}$/.test(id)) { id = newSeed(); local.set('mm-solo-device', id); }
+    return id;
+  }
+
+  /** Open a game against computer rivals and go to its screen (/play — the page every class game uses). */
+  async function startVersus() {
+    const g = game();
+    $('start').disabled = true;
+    $('pick-err').textContent = '';
+    try {
+      const res = await fetch('/api/live-drill/play/solo', {
+        method: 'POST', credentials: 'same-origin', cache: 'no-store', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ drill: g.drill, book: sel.book, mode: sel.mode, level: sel.level, seconds: sel.seconds, focus: focusNow(), hub: hub.id, device: deviceId() }),
+      });
+      const body = await res.json().catch(() => null);
+      if (!res.ok) throw new Error((body && body.message) || `Request failed (${res.status})`);
+      const seat = { code: body.code, token: body.token, name: body.name, solo: hub.id };
+      // the seat rides in sessionStorage (as a class seat does); a browser that refuses it gets the token in the hash
+      let kept = false;
+      try { sessionStorage.setItem('mm-live-drill-seat', JSON.stringify(seat)); kept = (JSON.parse(sessionStorage.getItem('mm-live-drill-seat') || 'null') || {}).token === seat.token; } catch { /* private mode */ }
+      location.href = `/play?code=${encodeURIComponent(body.code)}${kept ? '' : `#seat=${encodeURIComponent(body.token)}`}`;
+    } catch (err) { $('pick-err').textContent = err.message; $('start').disabled = false; }
   }
 
   /**
@@ -310,6 +372,7 @@
   }
 
   async function start() {
+    if (sel.mode) return startVersus();
     const g = game();
     $('start').disabled = true;
     round = { g, book: sel.book, seconds: sel.seconds, focus: focusNow(), seed: newSeed(), plays: [], loading: null,
