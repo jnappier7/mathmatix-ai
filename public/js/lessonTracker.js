@@ -93,6 +93,20 @@ class LessonTracker {
         // the bootcamp jump/continue actions still need the id — without this
         // they silently no-oped.
         if (progressUpdate.sessionId) this._sessionId = progressUpdate.sessionId;
+        // Only the rehydrate endpoint sends the module's skill list; a chat-turn
+        // payload does not. Keep the last list while the module is the same, and
+        // fetch a fresh one when the module changes.
+        const moduleKey = String(progressUpdate.moduleId || '');
+        if (Array.isArray(progressUpdate.skills)) {
+            this._skills = progressUpdate.skills;
+            this._skillsFor = moduleKey;
+        } else if (this._skills && this._skillsFor === moduleKey) {
+            progressUpdate.skills = this._skills;
+        } else if (this._sessionId && this._skillsFetchFor !== moduleKey) {
+            this._skillsFetchFor = moduleKey;
+            this._skills = null;
+            setTimeout(() => this.rehydrate(this._sessionId), 0);
+        }
         this._lastUpdate = progressUpdate;
         this._render(progressUpdate);
     }
@@ -192,6 +206,9 @@ class LessonTracker {
         // Details panel (expandable)
         this._renderDetails(pu);
 
+        // The module's skills, each with an "I think I already know this!" check.
+        this._renderSkills(pu);
+
         // Dev overlay
         this._renderDevOverlay(pu);
 
@@ -199,6 +216,70 @@ class LessonTracker {
         const wrapper = document.getElementById('lesson-tracker-wrapper');
         if (wrapper && wrapper.style.display === 'none') {
             wrapper.style.display = 'block';
+        }
+    }
+
+    // ── Skills in this unit ────────────────────────────────────────────────
+    // Every skill the unit teaches, with a way to skip the ones the student
+    // already has: "I think I already know this!" runs the course's one-skill
+    // check (five problems, no hints). Pass and the tutor skips that skill's
+    // lesson; own every skill in the unit and the unit is marked done.
+    _renderSkills(pu) {
+        const container = document.querySelector('#lesson-tracker-wrapper .lt-container');
+        if (!container) return;
+        let box = document.getElementById('lt-skills');
+        const skills = Array.isArray(pu && pu.skills) ? pu.skills : [];
+        if (!skills.length) { if (box) box.remove(); return; }
+        if (!box) {
+            box = document.createElement('details');
+            box.id = 'lt-skills';
+            box.className = 'lt-skills';
+            // Open where there is room for it; one tap away on a phone.
+            box.open = !(window.matchMedia && window.matchMedia('(max-width: 700px)').matches);
+            container.appendChild(box);
+        }
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const mine = skills.filter((s) => s.owned).length;
+        const key = JSON.stringify(skills.map((s) => [s.skillId, s.owned]));
+        if (box.dataset.key === key) return;            // nothing changed — keep focus and the open state
+        box.dataset.key = key;
+        box.innerHTML = `
+            <summary class="lt-skills-summary">Skills in this unit <span class="lt-skills-count">${mine} of ${skills.length} yours</span></summary>
+            <ul class="lt-skills-list">${skills.map((s) => `
+                <li class="lt-skill${s.owned ? ' is-owned' : ''}">
+                    <span class="lt-skill-name">${s.owned ? '<i class="fas fa-check" aria-hidden="true"></i> ' : ''}${esc(s.label)}</span>
+                    ${s.owned
+                        ? '<span class="lt-skill-yours">Yours</span>'
+                        : `<button type="button" class="lt-skill-know" data-skill-id="${esc(s.skillId)}" aria-label="I think I already know ${esc(s.label)}">I think I already know this!</button>`}
+                </li>`).join('')}
+            </ul>`;
+        box.querySelectorAll('.lt-skill-know').forEach((btn) => {
+            btn.addEventListener('click', () => this._checkSkill(btn.dataset.skillId));
+        });
+    }
+
+    _checkSkill(skillId) {
+        if (!skillId || !this._sessionId) return;
+        if (!window.MMChallengeCard || typeof window.MMChallengeCard.launch !== 'function') return;
+        window.MMChallengeCard.launch(skillId, {
+            base: `/api/course-sessions/${this._sessionId}/skill-check/`,
+            badge: '\u2714 Already know it?'
+        });
+        // The card reports the result; redraw the skills (and the course list,
+        // if a unit just closed) when it does.
+        if (!this._skillProvedBound) {
+            this._skillProvedBound = true;
+            document.addEventListener('mm:skill-proved', (e) => {
+                const result = e && e.detail && e.detail.result;
+                this._skills = null;
+                this._skillsFetchFor = null;
+                if (this._sessionId) this.rehydrate(this._sessionId);
+                const closed = result && Array.isArray(result.closedModules) && result.closedModules.length;
+                const cm = window.courseManager;
+                if (closed && cm && typeof cm.loadMySessions === 'function') {
+                    try { cm.loadMySessions(); } catch (_) { /* cosmetic */ }
+                }
+            });
         }
     }
 

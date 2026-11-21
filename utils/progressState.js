@@ -182,6 +182,8 @@ function buildProgressUpdate({ courseSession, moduleData, conversation, lastSign
   return {
     sessionId:         courseSession._id,
     lessonId:          courseSession.currentLessonId || null,
+    // Which module this is — the tracker keys its per-module skill list on it.
+    moduleId:          courseSession.currentModuleId || null,
 
     // ── Course identity + ACT loop state ──
     // ACT prep is not a gradual-release curriculum: it's a

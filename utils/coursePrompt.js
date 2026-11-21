@@ -193,7 +193,14 @@ function buildCourseSystemPrompt({ userProfile, tutorProfile, courseSession, pat
     const moduleSkillIds = (scaffoldData?.skills || currentModule?.skills || [])
       .map((s) => (typeof s === 'string' ? s : (s && (s.skillId || s.id))))
       .filter(Boolean);
+    // A course the student RESTARTED is taught in full: what they owned before
+    // is exactly what they asked to see again. Only a skill they proved since
+    // (the "I think I already know this!" check) is skipped.
+    const { canonicalSkillId } = require('./skillCanonicalizer');
+    const provenHere = new Set(((courseSession && courseSession.skillsProvenHere) || []).map(canonicalSkillId));
+    const restarted = !!(courseSession && courseSession.fromTheBeginning);
     const proven = moduleSkillIds.filter((sid) => {
+      if (restarted) return provenHere.has(canonicalSkillId(sid));
       const e = getSkillMasteryEntry(userProfile, sid);
       return !!(e && (e.status === 'mastered' || e.rung === 'proved' || e.rung === 'taught'));
     });

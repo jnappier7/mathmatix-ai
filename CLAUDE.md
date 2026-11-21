@@ -479,6 +479,23 @@ npm run seed:all:dry   # preflight + plan, no writes
   module in 4-5 stages) — but `docs/mathmatixdb.problems.json` in this repo is an OLD export
   (12,619 of 21,797 items) and says otherwise; do not size a content gap from it. Pinned by
   `tests/integration/coursePlacementClosesModules.test.js` (real Mongo, CI).
+- **"I think I already know this!" and "Start over" (courses, 2026-11-21).** The lesson tracker
+  lists the current unit's skills (`lesson-progress` → `progressUpdate.skills`, names from
+  `utils/courseSkillLabels.js` — course skills mostly have no Skill document, so the seed files
+  name them) with a button on each one the student does not own
+  (`lessonTracker.js` `_renderSkills`, chat-js3 bundle). It runs the course's ONE-SKILL CHECK,
+  `GET/POST /api/course-sessions/:id/skill-check/:skillId`: five checkable items, no hints, one
+  shot, every item answered and all right; the server grades only the items it served
+  (`session.skillCheckServed`) and clears them, so a submission cannot be replayed. A pass proves
+  the skill (`via: 'challenge'`) and runs `applyPlacement`, so the unit closes when that was its last
+  skill. It reuses `challengeCard.js` (`MMChallengeCard.launch(skillId, { base })`); it is NOT
+  `/api/mastery/challenge`, which needs a Skill doc. **Start over** (`POST /:id/restart`, the
+  catalog card's button; not offered for test prep): every module back to locked, progress and its
+  floor to 0, a NEW conversation, and `fromTheBeginning: true` — while that is set nothing the
+  student already owns closes a module (`placeSession` stands down), the tutor's "ALREADY PROVEN"
+  shortcut reads only `session.skillsProvenHere` (skills re-proved since the restart), and a
+  one-skill check may close only that skill's own unit. Their skill record is never erased.
+  Pinned by the last two blocks of `tests/integration/coursePlacementClosesModules.test.js`.
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.
 - **Math-answer injection gate**: the verified answer is injected into context **only** on an
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.

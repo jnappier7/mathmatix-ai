@@ -111,6 +111,11 @@ function asTyped(item) {
   return { ...item, options: [], correctOption: undefined };
 }
 
+/** The item as the grader should see it, given how the check served it. */
+function forGrading(item) {
+  return servedForm(item) === 'typed' ? asTyped(item) : item;
+}
+
 /** Grade a check submission the way the item was served. */
 function gradeServed(item, submitted) {
   return gradeOne(servedForm(item) === 'typed' ? asTyped(item) : item, submitted);
@@ -250,6 +255,9 @@ function isPlacementCourse(courseId, pathway) {
  */
 function placeSession(session, user, pathway) {
   if (!session || !isPlacementCourse(session.courseId, pathway)) return null;
+  // A course the student restarted is taken from the beginning on purpose:
+  // nothing they already own closes a module behind their back.
+  if (session.fromTheBeginning) return null;
   return applyPlacement(session, pathway, ownedCourseSkills(user, pathway));
 }
 
@@ -290,6 +298,7 @@ module.exports = {
   isCheckable,
   servedForm,
   gradeServed,
+  forGrading,
   testableSkillCount,
   preAssessmentAvailable,
   isPlacementCourse,

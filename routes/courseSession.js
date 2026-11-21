@@ -18,8 +18,8 @@ const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
 const { buildStageBlueprint, scoreBySkill } = require('../utils/coursePreAssessment');
-const { gradeOne } = require('../utils/skillChallenge');
-const { normalizeOptions } = require('../utils/mcOptions');
+const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
+const { normalizeOptions, correctLabelOf } = require('../utils/mcOptions');
 const { resolveGradeNumber, levelToGradeNumber, assessedLevel } = require('../utils/gradeLevel');
 const { advanceRung } = require('../utils/skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
@@ -27,8 +27,10 @@ const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
 const { clientSafeBootcamp } = require('../utils/actReview');
 const { coursePacing } = require('../utils/coursePacing');
-const { bankForCourse, pickItems, placeSession, servedForm, gradeServed } = require('../utils/coursePlacementService');
-const { ownedCourseSkills, applyPlacement, placementMessage } = require('../utils/coursePlacement');
+const { bankForCourse, pickItems, placeSession, servedForm, gradeServed, forGrading } = require('../utils/coursePlacementService');
+const { courseSkillLabel } = require('../utils/courseSkillLabels');
+const { canonicalSkillId } = require('../utils/skillCanonicalizer');
+const { ownedCourseSkills, applyPlacement, placementMessage, isOwnedEntry } = require('../utils/coursePlacement');
 
 // The diagnostic-card definitions and the "is a baseline pending" logic moved to
 // utils/courseDiagnostic.js so the SERVER greeting path can share the exact same
@@ -661,6 +663,28 @@ router.get('/:id/lesson-progress', async (req, res) => {
     progressUpdate.bootcamp = clientSafeBootcamp(session.bootcamp || null);
     progressUpdate.diagnosticPlan = session.diagnosticPlan || null;
 
+    // The skills of the module in front of the student, each with whether they
+    // already own it — what the tracker's "I think I already know this!"
+    // buttons are drawn from. Not for test prep (its loop has no skill list).
+    try {
+      if (!require('../utils/practiceTests').isPrepCourse(session.courseId) && currentPathwayModule) {
+        const me = await User.findById(req.user._id).lean();
+        const ownedNow = session.fromTheBeginning
+          ? new Set(session.skillsProvenHere || [])
+          : ownedCourseSkills(me, pathway);
+        const seenSkill = new Set();
+        progressUpdate.skills = (currentPathwayModule.skills || []).filter(Boolean).map((raw) => {
+          const id = canonicalSkillId(raw);
+          if (seenSkill.has(id)) return null;
+          seenSkill.add(id);
+          return { skillId: raw, label: courseSkillLabel(raw), owned: ownedNow.has(id) };
+        }).filter(Boolean);
+        progressUpdate.fromTheBeginning = !!session.fromTheBeginning;
+      }
+    } catch (skillsErr) {
+      console.error('[CourseSession] lesson-progress skills failed (non-fatal):', skillsErr.message);
+    }
+
     res.json({ success: true, progressUpdate });
   } catch (err) {
     console.error('[CourseSession] Error fetching lesson progress:', err);
@@ -1169,6 +1193,257 @@ router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
   } catch (err) {
     console.error('[CourseSession] pre-assessment POST failed:', err);
     res.status(500).json({ error: 'Failed to score pre-assessment' });
+  }
+});
+
+/* ============================================================
+   "I THINK I ALREADY KNOW THIS!" — prove one skill, skip its lesson.
+   GET/POST /api/course-sessions/:id/skill-check/:skillId
+
+   The course-scoped twin of /api/mastery/challenge: five problems, no hints,
+   one shot. It exists because that route needs a Skill document and course
+   skills mostly have none (the pathway is their catalog) — and because a pass
+   here has a second effect: when it completes the student's ownership of a
+   module, the module is closed (utils/coursePlacement.js).
+   ============================================================ */
+
+/** The session, its pathway, and the course skill a request names — or a reply to send. */
+async function loadSkillCheck(req) {
+  const session = await CourseSession.findOne({ _id: req.params.id, userId: req.user._id });
+  if (!session) return { fail: [404, { error: 'Course session not found' }] };
+  const pathway = loadPathwayByCourseId(session.courseId);
+  if (!pathway) return { fail: [404, { error: 'Course pathway not found' }] };
+  const bank = await bankForCourse(pathway);
+  const wanted = canonicalSkillId(req.params.skillId);
+  const bankSkill = bank.skills.find(b => b.skillId === wanted || b.rawId === req.params.skillId);
+  if (!bankSkill) return { fail: [404, { error: 'That skill is not part of this course' }] };
+  return { session, pathway, bankSkill };
+}
+
+router.get('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
+  try {
+    const ctx = await loadSkillCheck(req);
+    if (ctx.fail) return res.status(ctx.fail[0]).json(ctx.fail[1]);
+    const { session, bankSkill } = ctx;
+
+    const user = await User.findById(req.user._id).lean();
+    if (isOwnedEntry(getSkillMasteryEntry(user, bankSkill.skillId)) && !session.fromTheBeginning) {
+      return res.status(409).json({ error: 'Already proved', reason: 'You already own this one.' });
+    }
+
+    const items = await pickItems(bankSkill, CHALLENGE_SIZE);
+    if (items.length < MIN_ITEMS) {
+      return res.status(409).json({
+        error: 'Not enough problems to check this skill',
+        reason: 'There are not enough questions to check this skill yet — it is learned in the lesson.'
+      });
+    }
+
+    session.skillCheckServed = { skillId: bankSkill.skillId, problemIds: items.map(p => String(p._id)), at: new Date() };
+    session.markModified('skillCheckServed');
+    await session.save();
+
+    res.json({
+      skillId: bankSkill.skillId,
+      label: courseSkillLabel(bankSkill.rawId),
+      instructions: 'Five problems, no hints, one shot. Get them right and this skill is marked as yours — miss, and nothing is lost.',
+      problems: items.map(p => {
+        const options = servedForm(p) === 'typed' ? [] : normalizeOptions(p.options);
+        return {
+          problemId: String(p._id),
+          prompt: p.prompt,
+          answerType: p.answerType,
+          options: options.length ? options : undefined   // never p.answer / p.correctOption
+        };
+      })
+    });
+  } catch (err) {
+    console.error('[CourseSession] skill-check GET failed:', err);
+    res.status(500).json({ error: 'Failed to start the check' });
+  }
+});
+
+router.post('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
+  try {
+    const { submissions } = req.body || {};
+    if (!Array.isArray(submissions) || !submissions.length) {
+      return res.status(400).json({ error: 'Missing submissions' });
+    }
+    const ctx = await loadSkillCheck(req);
+    if (ctx.fail) return res.status(ctx.fail[0]).json(ctx.fail[1]);
+    const { session, pathway, bankSkill } = ctx;
+
+    // Grade exactly the items this check served for this skill — nothing the
+    // client names beyond them, and nothing about correctness from the client.
+    const served = session.skillCheckServed || {};
+    if (served.skillId !== bankSkill.skillId || !Array.isArray(served.problemIds)) {
+      return res.status(409).json({ error: 'This check has expired — start it again.' });
+    }
+    const allowed = new Set(served.problemIds);
+    const mine = submissions.filter(s => s && allowed.has(String(s.problemId)));
+    const problems = await Problem.find({ _id: { $in: served.problemIds } }).lean();
+    const result = gradeChallenge(problems.map(forGrading), mine);
+    // Every served item must be answered: a check passed on the two easy ones is not a check.
+    const complete = result.items.length === served.problemIds.length;
+    const passed = result.passed && complete;
+
+    const byId = new Map(problems.map(p => [String(p._id), p]));
+    const review = result.items.map(item => {
+      const p = byId.get(item.problemId) || {};
+      const typed = servedForm(p) === 'typed';
+      const keyLabel = typed ? null : correctLabelOf(p);
+      const keyOpt = keyLabel ? normalizeOptions(p.options).find(o => o.label === keyLabel) : null;
+      return {
+        problemId: item.problemId,
+        prompt: p.prompt,
+        submitted: item.submitted,
+        correct: item.correct,
+        status: item.correct ? 'correct' : item.ungradable ? 'not-graded' : 'incorrect',
+        expected: item.correct ? undefined
+          : keyOpt ? `${keyOpt.label}. ${keyOpt.text}`
+            : (p.answer && p.answer.value != null ? String(p.answer.value) : undefined)
+      };
+    });
+
+    session.skillCheckServed = null;          // one shot
+
+    if (!passed) {
+      await session.save();
+      return res.json({
+        passed: false,
+        correct: result.correct,
+        total: result.total,
+        items: review,
+        message: !complete
+          ? 'Answer every question to finish the check — try it again.'
+          : `${result.correct} of ${result.total}. Found the gap — this one is worth the lesson. Nothing lost.`
+      });
+    }
+
+    const user = await User.findById(req.user._id);
+    const entry = getSkillMasteryEntry(user, bankSkill.skillId) || {};
+    advanceRung(entry, 'proved', { via: 'challenge', evidence: toRungEvidence(result) });
+    delete entry.__rungResult;
+    entry.status = 'mastered';
+    setSkillMasteryEntry(user, bankSkill.skillId, entry);
+    await user.save();
+
+    // Close the module if that completed it. In a course taken from the
+    // beginning only THIS skill's modules are in play; otherwise everything the
+    // student owns counts, as after any placement.
+    session.skillsProvenHere = Array.from(new Set([...(session.skillsProvenHere || []), bankSkill.skillId]));
+    // …so in a restarted course "owned" means proved since the restart: what
+    // the student knew before is exactly what they asked to be taught again.
+    const owned = session.fromTheBeginning
+      ? new Set(session.skillsProvenHere)
+      : ownedCourseSkills(user, pathway);
+    const itsModules = (pathway.modules || [])
+      .filter(m => (m.skills || []).map(canonicalSkillId).includes(bankSkill.skillId))
+      .map(m => m.moduleId);
+    const placement = applyPlacement(session, pathway, owned,
+      session.fromTheBeginning ? { onlyModules: itsModules } : undefined);
+    await session.save();
+
+    const label = courseSkillLabel(bankSkill.rawId);
+    res.json({
+      passed: true,
+      correct: result.correct,
+      total: result.total,
+      rung: 'proved',
+      items: review,
+      closedModules: placement.closed,
+      modulesLeft: placement.modulesLeft,
+      overallProgress: session.overallProgress,
+      start: placement.start,
+      message: placement.closed.length
+        ? `${label} is yours — and that finishes ${placement.closed.map(m => m.title).join(' and ')}. ${placement.modulesLeft} module${placement.modulesLeft === 1 ? '' : 's'} left.`
+        : `${label} is yours. Your tutor will skip its lesson.`
+    });
+  } catch (err) {
+    console.error('[CourseSession] skill-check POST failed:', err);
+    res.status(500).json({ error: 'Failed to score the check' });
+  }
+});
+
+/* ============================================================
+   POST /api/course-sessions/:id/restart
+   Take the course again from the beginning.
+
+   Progress in THIS course goes back to zero: every module, the checkpoint
+   state, the position. What the student has learned is not erased — their
+   skill record is theirs — but the course stops acting on it: no module is
+   closed for what they already own and the tutor teaches every skill in full
+   (`fromTheBeginning`). A fresh conversation is started so the new run does
+   not read as a continuation of the old one; the old one stays in history.
+   ============================================================ */
+router.post('/:id/restart', isAuthenticated, async (req, res) => {
+  try {
+    const session = await CourseSession.findOne({
+      _id: req.params.id, userId: req.user._id, status: { $in: ['active', 'paused', 'completed'] }
+    });
+    if (!session) return res.status(404).json({ success: false, message: 'Course session not found' });
+    const pathway = loadPathwayByCourseId(session.courseId);
+    if (!pathway) return res.status(404).json({ success: false, message: 'Course pathway not found' });
+    if (require('../utils/practiceTests').isPrepCourse(session.courseId)) {
+      // Test prep is a loop of practice tests, not a sequence to replay.
+      return res.status(400).json({ success: false, message: 'Test prep restarts with a new practice test — take one from the course.' });
+    }
+
+    const previousProgress = session.overallProgress || 0;
+    session.modules = (pathway.modules || []).map((m, i) => ({
+      moduleId: m.moduleId,
+      unit: m.unit,
+      title: m.title,
+      status: i === 0 ? 'available' : 'locked',
+      scaffoldProgress: 0,
+      examWeight: parseExamWeight(m.actPercentage ?? m.examWeight),
+      lessons: (m.lessons || []).map((l, li) => ({
+        lessonId: l.lessonId, title: l.title, order: l.order || li + 1,
+        status: (i === 0 && li === 0) ? 'available' : 'locked'
+      }))
+    }));
+    session.currentModuleId = session.modules[0] ? session.modules[0].moduleId : null;
+    session.currentLessonId = (pathway.modules[0] && pathway.modules[0].lessons && pathway.modules[0].lessons[0])
+      ? pathway.modules[0].lessons[0].lessonId : null;
+    session.currentScaffoldIndex = 0;
+    session.overallProgress = 0;
+    session.progressFloorPct = 0;
+    session.checkpointState = null;
+    session.skillCheckServed = null;
+    session.skillsProvenHere = [];
+    session.status = 'active';
+    session.completedAt = undefined;
+    session.fromTheBeginning = true;
+    session.restartedAt = new Date();
+    session.restartCount = (session.restartCount || 0) + 1;
+    // The entry check has been offered and answered by the act of restarting.
+    if (!session.preAssessmentCompletedAt) session.preAssessmentCompletedAt = new Date();
+
+    const conversation = new Conversation({
+      userId: req.user._id,
+      conversationName: session.courseName,
+      topic: session.courseName,
+      topicEmoji: '📚',
+      conversationType: 'course'
+    });
+    await conversation.save();
+    session.conversationId = conversation._id;
+    session.markModified('modules');
+    await session.save();
+
+    await User.findByIdAndUpdate(req.user._id, { activeCourseSessionId: session._id });
+    console.log(`📚 [CourseSession] ${req.user.firstName} restarted ${session.courseName} (was ${previousProgress}%)`);
+
+    res.json({
+      success: true,
+      message: `${session.courseName} starts over from the beginning.`,
+      session,
+      conversationId: conversation._id,
+      previousProgress
+    });
+  } catch (err) {
+    console.error('[CourseSession] Error restarting:', err);
+    res.status(500).json({ success: false, message: 'Failed to restart the course' });
   }
 });
 

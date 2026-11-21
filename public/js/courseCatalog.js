@@ -859,6 +859,12 @@ class CourseManager {
         return '';
     }
 
+    // Which courses can be taken again from the beginning. Test prep cannot: it
+    // is a loop of practice tests, and "starting over" there is taking a new one.
+    static canRestart(course) {
+        return !!course && !['act-prep', 'sat-prep'].includes(course.courseId) && course.difficulty !== 'Test Prep';
+    }
+
     renderCatalog(catalog, recommended) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
@@ -940,6 +946,11 @@ class CourseManager {
                         background:linear-gradient(135deg, #667eea, #764ba2); color:white;">
                         ${isEnrolled ? '<i class="fas fa-play" style="margin-right:4px; font-size:11px;"></i>Continue' : 'Enroll'}
                     </button>
+                    ${actions.canLeave && CourseManager.canRestart(course) ? `
+                    <button class="catalog-drop-btn catalog-restart-btn" data-course-id="${course.courseId}"
+                        title="Take this course again from the beginning" aria-label="Start ${this.escapeHtml(course.title)} over from the beginning">
+                        <i class="fas fa-rotate-left" style="margin-right:4px; font-size:11px;"></i>Start over
+                    </button>` : ''}
                     ${actions.canLeave ? `
                     <button class="catalog-drop-btn" data-course-id="${course.courseId}"
                         title="Leave this course" aria-label="Leave ${this.escapeHtml(course.title)}">
@@ -978,7 +989,15 @@ class CourseManager {
             // catalog IS the courses surface: the My Courses list (and its
             // drop-X) is display:none below 900px, so without this there is no
             // reachable way off a course at all on a phone.
-            const dropBtn = card.querySelector('.catalog-drop-btn');
+            const restartBtn = card.querySelector('.catalog-restart-btn');
+            if (restartBtn) {
+                restartBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.restartCourse(actions.sessionId);
+                });
+            }
+
+            const dropBtn = card.querySelector('.catalog-drop-btn:not(.catalog-restart-btn)');
             if (dropBtn) {
                 dropBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1423,6 +1442,55 @@ class CourseManager {
      * Repaint the catalog grid from cache if the modal is currently open.
      * Preserves the active search query and difficulty filter.
      */
+    // --------------------------------------------------
+    // Start a course over from the beginning
+    // --------------------------------------------------
+    async restartCourse(sessionId) {
+        if (!sessionId) {
+            await this.loadMySessions();
+            this.refreshCatalogIfOpen();
+            return;
+        }
+        const session = this.courseSessions.find(s => s._id === sessionId);
+        const name = this.formatCourseName(session?.courseName || 'this course');
+        const confirmed = await this.showConfirmation({
+            icon: '\u21BA',
+            title: `Start "${name}" over?`,
+            message: 'Your progress in this course goes back to the beginning and every unit is taught again. What you have learned stays on your record. This cannot be undone.',
+            confirmLabel: 'Start over',
+            confirmClass: 'danger',
+            cancelLabel: 'Keep my progress'
+        });
+        if (!confirmed) return;
+
+        try {
+            const res = await csrfFetch(`/api/course-sessions/${sessionId}/restart`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json();
+            if (!data.success) {
+                this.showToast(data.message || 'Could not start the course over');
+                return;
+            }
+            this.closeCatalog();
+            await this.loadMySessions();
+            this.showToast(`${name} starts over from the beginning.`);
+            // Enter the course's fresh conversation, exactly as "Continue" would.
+            await this.activateCourse(sessionId);
+            // The tracker still holds the old run's skill list ("1 of 5 yours").
+            const tracker = typeof window !== 'undefined' ? window.lessonTracker : null;
+            if (tracker && typeof tracker.rehydrate === 'function') {
+                tracker._skills = null;
+                tracker._skillsFetchFor = null;
+                tracker.rehydrate(sessionId);
+            }
+        } catch (err) {
+            console.error('[CourseManager] Restart error:', err);
+            this.showToast('Something went wrong. Please try again.');
+        }
+    }
+
     refreshCatalogIfOpen() {
         const modal = document.getElementById('course-catalog-modal');
         if (!modal?.classList.contains('is-visible') || !this._catalogCache) return;

@@ -452,3 +452,170 @@ describe('every course opens with a placement it can actually run', () => {
     expect(kinds['algebra-1']).toBe('starting-point');
   });
 });
+
+describe('"I think I already know this!" — the one-skill check', () => {
+  const check = (id, skillId) => get(`/api/course-sessions/${id}/skill-check/${encodeURIComponent(skillId)}`);
+  const submit = (id, skillId, submissions) =>
+    post(`/api/course-sessions/${id}/skill-check/${encodeURIComponent(skillId)}`, { submissions });
+  let extra = [];
+
+  beforeAll(async () => {
+    // The one-skill check asks five; the fixture holds four per skill.
+    for (const raw of G6.modules[0].skills) {
+      const bankId = (bankIdFor(raw) && !G6_RAW.has(bankIdFor(raw))) ? bankIdFor(raw) : raw;
+      for (let n = 4; n < 8; n += 1) {
+        extra.push({
+          problemId: `bank-${bankId}-${n}`, skillId: bankId, prompt: `(${bankId}) ${n} + 1`,
+          answer: { type: 'exact', value: String(n + 1) }, difficulty: 2,
+        });
+      }
+    }
+    extra = await Problem.insertMany(extra);
+  });
+
+  test('the tracker lists the unit\'s skills with whether each is the student\'s', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const res = await get(`/api/course-sessions/${id}/lesson-progress`);
+    const skills = res.body.progressUpdate.skills;
+    expect(skills.map((s) => s.skillId)).toEqual(G6.modules[0].skills);
+    expect(skills.every((s) => s.owned === false && typeof s.label === 'string' && s.label.length > 2)).toBe(true);
+    expect(skills.some((s) => /^g6-/.test(s.label))).toBe(false);       // a name, never a raw id
+    expect(res.body.progressUpdate.moduleId).toBe(G6.modules[0].moduleId);
+  });
+
+  test('five right proves the skill; proving the unit\'s last skill closes the unit', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const skills = G6.modules[0].skills;
+
+    // One skill: proved, tutor skips it, unit still open.
+    const first = await check(id, skills[0]);
+    expect(first.status).toBe(200);
+    expect(first.body.problems).toHaveLength(5);
+    expect(JSON.stringify(first.body)).not.toMatch(/"answer"\s*:|correctOption/);
+    const one = await submit(id, skills[0], await answer(first.body.problems));
+    expect(one.body.passed).toBe(true);
+    expect(one.body.closedModules).toEqual([]);
+    expect(one.body.message).toMatch(/is yours/);
+    const after = (await get(`/api/course-sessions/${id}/lesson-progress`)).body.progressUpdate.skills;
+    expect(after.find((s) => s.skillId === skills[0]).owned).toBe(true);
+
+    // It cannot be taken again for a skill already owned.
+    expect((await check(id, skills[0])).status).toBe(409);
+
+    // The rest of the unit: the last one closes it.
+    let last = null;
+    for (const raw of skills.slice(1)) {
+      const served = await check(id, raw);
+      last = await submit(id, raw, await answer(served.body.problems));
+      expect(last.body.passed).toBe(true);
+    }
+    expect(last.body.closedModules.map((m) => m.moduleId)).toContain(G6.modules[0].moduleId);
+    expect(last.body.overallProgress).toBeGreaterThan(0);
+    const session = await CourseSession.findById(id);
+    expect(session.modules[0].placedOut).toBe(true);
+    expect(session.currentModuleId).not.toBe(G6.modules[0].moduleId);
+  });
+
+  test('a miss costs nothing, and the check is one shot', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const raw = G6.modules[0].skills[1];
+    const served = await check(id, raw);
+    const res = await submit(id, raw, await answer(served.body.problems, { wrong: (p) => p === served.body.problems[0] }));
+    expect(res.body.passed).toBe(false);
+    expect(res.body.message).toMatch(/Nothing lost/);
+    expect((await User.findById(currentUser._id)).skillMastery.size).toBe(0);
+    // The same submission cannot be replayed with the answers now known.
+    expect((await submit(id, raw, await answer(served.body.problems))).status).toBe(409);
+  });
+
+  test('answering only some of the five is not a pass; other items are not graded', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const raw = G6.modules[0].skills[2];
+    const served = await check(id, raw);
+    const four = (await answer(served.body.problems)).slice(0, 4);
+    const stranger = await Problem.findOne({ _id: { $nin: served.body.problems.map((p) => p.problemId) } }).lean();
+    const res = await submit(id, raw, four.concat([{ problemId: String(stranger._id), answer: String(stranger.answer.value) }]));
+    expect(res.body.passed).toBe(false);
+  });
+
+  test('a skill from another course, or someone else\'s session, is refused', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    expect((await check(id, 'cm-banking-basics')).status).toBe(404);
+    const other = await User.create({ username: `o${uniq()}`, email: `o${uniq()}@example.com`, firstName: 'O', lastName: 'O' });
+    const theirs = await CourseSession.create({
+      userId: other._id, courseId: '6th-grade-math', courseName: '6th Grade Math',
+      pathwayId: '6th-grade-math-pathway', modules: [], status: 'active',
+    });
+    expect((await check(theirs._id, G6.modules[0].skills[0])).status).toBe(404);
+  });
+});
+
+describe('starting a course over', () => {
+  const restart = (id) => post(`/api/course-sessions/${id}/restart`);
+
+  test('progress goes back to the beginning, in a fresh conversation, and the record is kept', async () => {
+    // A student who owns the first unit and has worked past it.
+    const user = await User.findById(currentUser._id);
+    for (const raw of G6.modules[0].skills) prove(user, raw);
+    await user.save();
+    currentUser = await User.findById(currentUser._id);
+    const enrolled = await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' });
+    const id = enrolled.body.session._id;
+    expect(enrolled.body.session.overallProgress).toBeGreaterThan(0);
+    const oldConversation = String(enrolled.body.conversationId);
+
+    const res = await restart(id);
+    expect(res.body.success).toBe(true);
+    expect(res.body.previousProgress).toBeGreaterThan(0);
+    const s = await CourseSession.findById(id);
+    expect(s.overallProgress).toBe(0);
+    expect(s.progressFloorPct).toBe(0);
+    expect(s.currentModuleId).toBe(G6.modules[0].moduleId);
+    expect(s.modules.map((m) => m.status)).toEqual(['available', ...G6.modules.slice(1).map(() => 'locked')]);
+    expect(s.modules.some((m) => m.placedOut)).toBe(false);
+    expect(s.fromTheBeginning).toBe(true);
+    expect(String(s.conversationId)).not.toBe(oldConversation);
+    expect(String((await User.findById(currentUser._id)).activeCourseSessionId)).toBe(String(id));
+
+    // What they learned is still theirs…
+    const { ownedCourseSkills } = require('../../utils/coursePlacement');
+    expect(ownedCourseSkills(await User.findById(currentUser._id), G6).size).toBeGreaterThanOrEqual(G6.modules[0].skills.length);
+    // …but the course no longer acts on it: nothing closes behind their back,
+    expect(await service.applyPlacementToActiveCourses(await User.findById(currentUser._id))).toEqual([]);
+    expect((await CourseSession.findById(id)).modules[0].status).toBe('available');
+    // the tracker shows every skill as still to do, and no entry card comes back.
+    const skills = (await get(`/api/course-sessions/${id}/lesson-progress`)).body.progressUpdate.skills;
+    expect(skills.every((x) => x.owned === false)).toBe(true);
+    expect(await buildCourseDiagnostic(await User.findById(currentUser._id), '6th-grade-math')).toBeNull();
+  });
+
+  test('in a restarted course only what is proved AGAIN is skipped', async () => {
+    const user = await User.findById(currentUser._id);
+    for (const raw of G6.modules[0].skills) prove(user, raw);
+    await user.save();
+    currentUser = await User.findById(currentUser._id);
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    await restart(id);
+
+    const raw = G6.modules[0].skills[0];
+    const served = await get(`/api/course-sessions/${id}/skill-check/${raw}`);
+    expect(served.status).toBe(200);                       // offered again, though owned before
+    const res = await post(`/api/course-sessions/${id}/skill-check/${raw}`, { submissions: await answer(served.body.problems) });
+    expect(res.body.passed).toBe(true);
+    // One of five skills re-proved: the unit stays open even though all five were owned before.
+    expect(res.body.closedModules).toEqual([]);
+    const skills = (await get(`/api/course-sessions/${id}/lesson-progress`)).body.progressUpdate.skills;
+    expect(skills.filter((x) => x.owned).map((x) => x.skillId)).toEqual([raw]);
+  });
+
+  test('test prep cannot be restarted this way, and neither can someone else\'s course', async () => {
+    const act = (await post('/api/course-sessions/enroll', { courseId: 'act-prep' })).body.session._id;
+    expect((await restart(act)).status).toBe(400);
+    const other = await User.create({ username: `r${uniq()}`, email: `r${uniq()}@example.com`, firstName: 'R', lastName: 'R' });
+    const theirs = await CourseSession.create({
+      userId: other._id, courseId: '6th-grade-math', courseName: '6th Grade Math',
+      pathwayId: '6th-grade-math-pathway', modules: [], status: 'active',
+    });
+    expect((await restart(theirs._id)).status).toBe(404);
+  });
+});
