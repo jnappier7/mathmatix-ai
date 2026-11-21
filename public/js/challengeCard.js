@@ -85,8 +85,14 @@
     });
   }
 
-  function launch(skillId) {
+  // `opts.base` points the card at another challenge endpoint with the same
+  // contract — the course's own one-skill check
+  // (/api/course-sessions/:id/skill-check/), used by the lesson tracker's
+  // "I think I already know this!" buttons.
+  function launch(skillId, opts) {
     if (!skillId) return;
+    var base = (opts && opts.base) || '/api/mastery/challenge/';
+    var badge = (opts && opts.badge) || '⚡ Challenge';
     var mount = document.getElementById('chat-messages-container') || document.getElementById('chat-messages');
     if (!mount) return;
 
@@ -94,7 +100,7 @@
     card.setAttribute('role', 'group');
     card.setAttribute('aria-label', 'Skill challenge');
     var head = el('div', 'mm-ch-head');
-    head.appendChild(el('span', 'mm-ch-badge', '⚡ Challenge'));
+    head.appendChild(el('span', 'mm-ch-badge', badge));
     var title = el('div', 'mm-ch-title', 'Loading your challenge…');
     head.appendChild(title);
     card.appendChild(head);
@@ -107,7 +113,7 @@
     mount.appendChild(card);
     card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-    api('/api/mastery/challenge/' + encodeURIComponent(skillId)).then(function (data) {
+    api(base + encodeURIComponent(skillId)).then(function (data) {
       title.textContent = 'Prove it: ' + (data.label || 'this skill');
       sub.textContent = data.instructions || 'Five problems, no hints, one shot.';
       var problems = data.problems || [];
@@ -136,7 +142,7 @@
         }
         submit.disabled = true;
         submit.textContent = 'Grading…';
-        api('/api/mastery/challenge/' + encodeURIComponent(skillId), csrf({
+        api(base + encodeURIComponent(skillId), csrf({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ submissions: submissions })
@@ -167,13 +173,15 @@
     var res = el('div', 'mm-ch-result');
     if (result.passed) {
       res.appendChild(el('div', 'mm-ch-result-big', '🎉 Proved it!'));
+      // A course check says what the pass did ("…and that finishes Unit 2"); the
+      // mastery challenge's message is its cascade count. Either reads fine here.
       res.appendChild(el('div', 'mm-ch-result-sub',
         (result.correct != null ? result.correct + ' of ' + result.total + ' — ' : '') +
-        'this skill is yours. Nice.'));
+        (result.closedModules ? (result.message || 'this skill is yours. Nice.') : 'this skill is yours. Nice.')));
       // Nudge the progress surfaces to re-read (the bar just moved to mastered).
       try { if (typeof window.refreshResumeCard === 'function') window.refreshResumeCard(); } catch (_) {}
       try { if (window.MM_XP && typeof window.MM_XP.celebrate === 'function') window.MM_XP.celebrate(); } catch (_) {}
-      document.dispatchEvent(new CustomEvent('mm:skill-proved', { detail: { skillId: skillId } }));
+      document.dispatchEvent(new CustomEvent('mm:skill-proved', { detail: { skillId: skillId, result: result } }));
     } else {
       res.appendChild(el('div', 'mm-ch-result-big', 'Found the gap'));
       // The server's message already carries the score ("3 of 4. Found the

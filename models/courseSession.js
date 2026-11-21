@@ -115,6 +115,12 @@ const courseSessionSchema = new Schema({
   // The bank keys items by its own ids and one bank skill can back two course
   // skills, so the grade has to land on the skill the item was chosen to test.
   preAssessmentServed: { type: Schema.Types.Mixed, default: null },
+  // The one-skill check in flight ("I think I already know this!"):
+  // { skillId, problemIds: [String], at }. Cleared when it is graded.
+  skillCheckServed: { type: Schema.Types.Mixed, default: null },
+  // Course skills proved by a one-skill check in THIS session (canonical ids).
+  // In a restarted course these — and only these — are skipped.
+  skillsProvenHere: { type: [String], default: [] },
   preAssessment: { type: Schema.Types.Mixed, default: null },
 
   // Overall progress
@@ -142,6 +148,14 @@ const courseSessionSchema = new Schema({
     enum: ['self', 'teacher', 'screener', 'system'],
     default: 'self'
   },
+
+  // The student restarted this course to take it from the beginning
+  // (POST /:id/restart). While set, placement does not close modules on what
+  // they already own and the tutor teaches every skill in full — only a skill
+  // they explicitly prove ("I think I already know this!") is skipped.
+  fromTheBeginning: { type: Boolean, default: false },
+  restartedAt: { type: Date },
+  restartCount: { type: Number, default: 0 },
 
   completedAt: { type: Date }
 }, { timestamps: true });

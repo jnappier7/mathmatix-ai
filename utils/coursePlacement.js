@@ -72,7 +72,11 @@ function ownedCourseSkills(user, pathway) {
  * @returns {{ closed: Array<{moduleId:string,title:string}>, start: object|null,
  *             moved: boolean, modulesLeft: number }}
  */
-function applyPlacement(session, pathway, ownedSkillIds) {
+function applyPlacement(session, pathway, ownedSkillIds, options) {
+  // `onlyModules`: close nothing outside these moduleIds (and the checkpoints
+  // that follow them). Used when the student proved ONE skill in a course they
+  // chose to take from the beginning — only that skill's module is in play.
+  const only = options && options.onlyModules ? new Set(options.onlyModules) : null;
   const owned = new Set(Array.from(ownedSkillIds || [], canonicalSkillId));
   const pathwayModules = (pathway && pathway.modules) || [];
   const byId = new Map(pathwayModules.map((m) => [m.moduleId, m]));
@@ -103,7 +107,8 @@ function applyPlacement(session, pathway, ownedSkillIds) {
     const isCheckpoint = !!pm.isCheckpoint || (!skills.length && i > 0);
     const ownsSkills = skills.every((id) => owned.has(id));   // vacuously true with none
     const ownsIt = isCheckpoint ? (allBeforeDone && ownsSkills) : (skills.length > 0 && ownsSkills);
-    if (untouched && ownsIt && i !== last) {
+    const inScope = !only || only.has(mod.moduleId) || (isCheckpoint && closed.length > 0);
+    if (untouched && ownsIt && inScope && i !== last) {
       mod.status = 'completed';
       mod.scaffoldProgress = 100;
       mod.placedOut = true;

@@ -4422,6 +4422,12 @@ class CourseManager {
         return '';
     }
 
+    // Which courses can be taken again from the beginning. Test prep cannot: it
+    // is a loop of practice tests, and "starting over" there is taking a new one.
+    static canRestart(course) {
+        return !!course && !['act-prep', 'sat-prep'].includes(course.courseId) && course.difficulty !== 'Test Prep';
+    }
+
     renderCatalog(catalog, recommended) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
@@ -4503,6 +4509,11 @@ class CourseManager {
                         background:linear-gradient(135deg, #667eea, #764ba2); color:white;">
                         ${isEnrolled ? '<i class="fas fa-play" style="margin-right:4px; font-size:11px;"></i>Continue' : 'Enroll'}
                     </button>
+                    ${actions.canLeave && CourseManager.canRestart(course) ? `
+                    <button class="catalog-drop-btn catalog-restart-btn" data-course-id="${course.courseId}"
+                        title="Take this course again from the beginning" aria-label="Start ${this.escapeHtml(course.title)} over from the beginning">
+                        <i class="fas fa-rotate-left" style="margin-right:4px; font-size:11px;"></i>Start over
+                    </button>` : ''}
                     ${actions.canLeave ? `
                     <button class="catalog-drop-btn" data-course-id="${course.courseId}"
                         title="Leave this course" aria-label="Leave ${this.escapeHtml(course.title)}">
@@ -4541,7 +4552,15 @@ class CourseManager {
             // catalog IS the courses surface: the My Courses list (and its
             // drop-X) is display:none below 900px, so without this there is no
             // reachable way off a course at all on a phone.
-            const dropBtn = card.querySelector('.catalog-drop-btn');
+            const restartBtn = card.querySelector('.catalog-restart-btn');
+            if (restartBtn) {
+                restartBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.restartCourse(actions.sessionId);
+                });
+            }
+
+            const dropBtn = card.querySelector('.catalog-drop-btn:not(.catalog-restart-btn)');
             if (dropBtn) {
                 dropBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -4986,6 +5005,55 @@ class CourseManager {
      * Repaint the catalog grid from cache if the modal is currently open.
      * Preserves the active search query and difficulty filter.
      */
+    // --------------------------------------------------
+    // Start a course over from the beginning
+    // --------------------------------------------------
+    async restartCourse(sessionId) {
+        if (!sessionId) {
+            await this.loadMySessions();
+            this.refreshCatalogIfOpen();
+            return;
+        }
+        const session = this.courseSessions.find(s => s._id === sessionId);
+        const name = this.formatCourseName(session?.courseName || 'this course');
+        const confirmed = await this.showConfirmation({
+            icon: '\u21BA',
+            title: `Start "${name}" over?`,
+            message: 'Your progress in this course goes back to the beginning and every unit is taught again. What you have learned stays on your record. This cannot be undone.',
+            confirmLabel: 'Start over',
+            confirmClass: 'danger',
+            cancelLabel: 'Keep my progress'
+        });
+        if (!confirmed) return;
+
+        try {
+            const res = await csrfFetch(`/api/course-sessions/${sessionId}/restart`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+            const data = await res.json();
+            if (!data.success) {
+                this.showToast(data.message || 'Could not start the course over');
+                return;
+            }
+            this.closeCatalog();
+            await this.loadMySessions();
+            this.showToast(`${name} starts over from the beginning.`);
+            // Enter the course's fresh conversation, exactly as "Continue" would.
+            await this.activateCourse(sessionId);
+            // The tracker still holds the old run's skill list ("1 of 5 yours").
+            const tracker = typeof window !== 'undefined' ? window.lessonTracker : null;
+            if (tracker && typeof tracker.rehydrate === 'function') {
+                tracker._skills = null;
+                tracker._skillsFetchFor = null;
+                tracker.rehydrate(sessionId);
+            }
+        } catch (err) {
+            console.error('[CourseManager] Restart error:', err);
+            this.showToast('Something went wrong. Please try again.');
+        }
+    }
+
     refreshCatalogIfOpen() {
         const modal = document.getElementById('course-catalog-modal');
         if (!modal?.classList.contains('is-visible') || !this._catalogCache) return;
@@ -5440,6 +5508,20 @@ class LessonTracker {
         // the bootcamp jump/continue actions still need the id — without this
         // they silently no-oped.
         if (progressUpdate.sessionId) this._sessionId = progressUpdate.sessionId;
+        // Only the rehydrate endpoint sends the module's skill list; a chat-turn
+        // payload does not. Keep the last list while the module is the same, and
+        // fetch a fresh one when the module changes.
+        const moduleKey = String(progressUpdate.moduleId || '');
+        if (Array.isArray(progressUpdate.skills)) {
+            this._skills = progressUpdate.skills;
+            this._skillsFor = moduleKey;
+        } else if (this._skills && this._skillsFor === moduleKey) {
+            progressUpdate.skills = this._skills;
+        } else if (this._sessionId && this._skillsFetchFor !== moduleKey) {
+            this._skillsFetchFor = moduleKey;
+            this._skills = null;
+            setTimeout(() => this.rehydrate(this._sessionId), 0);
+        }
         this._lastUpdate = progressUpdate;
         this._render(progressUpdate);
     }
@@ -5539,6 +5621,9 @@ class LessonTracker {
         // Details panel (expandable)
         this._renderDetails(pu);
 
+        // The module's skills, each with an "I think I already know this!" check.
+        this._renderSkills(pu);
+
         // Dev overlay
         this._renderDevOverlay(pu);
 
@@ -5546,6 +5631,70 @@ class LessonTracker {
         const wrapper = document.getElementById('lesson-tracker-wrapper');
         if (wrapper && wrapper.style.display === 'none') {
             wrapper.style.display = 'block';
+        }
+    }
+
+    // ── Skills in this unit ────────────────────────────────────────────────
+    // Every skill the unit teaches, with a way to skip the ones the student
+    // already has: "I think I already know this!" runs the course's one-skill
+    // check (five problems, no hints). Pass and the tutor skips that skill's
+    // lesson; own every skill in the unit and the unit is marked done.
+    _renderSkills(pu) {
+        const container = document.querySelector('#lesson-tracker-wrapper .lt-container');
+        if (!container) return;
+        let box = document.getElementById('lt-skills');
+        const skills = Array.isArray(pu && pu.skills) ? pu.skills : [];
+        if (!skills.length) { if (box) box.remove(); return; }
+        if (!box) {
+            box = document.createElement('details');
+            box.id = 'lt-skills';
+            box.className = 'lt-skills';
+            // Open where there is room for it; one tap away on a phone.
+            box.open = !(window.matchMedia && window.matchMedia('(max-width: 700px)').matches);
+            container.appendChild(box);
+        }
+        const esc = (t) => String(t == null ? '' : t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const mine = skills.filter((s) => s.owned).length;
+        const key = JSON.stringify(skills.map((s) => [s.skillId, s.owned]));
+        if (box.dataset.key === key) return;            // nothing changed — keep focus and the open state
+        box.dataset.key = key;
+        box.innerHTML = `
+            <summary class="lt-skills-summary">Skills in this unit <span class="lt-skills-count">${mine} of ${skills.length} yours</span></summary>
+            <ul class="lt-skills-list">${skills.map((s) => `
+                <li class="lt-skill${s.owned ? ' is-owned' : ''}">
+                    <span class="lt-skill-name">${s.owned ? '<i class="fas fa-check" aria-hidden="true"></i> ' : ''}${esc(s.label)}</span>
+                    ${s.owned
+                        ? '<span class="lt-skill-yours">Yours</span>'
+                        : `<button type="button" class="lt-skill-know" data-skill-id="${esc(s.skillId)}" aria-label="I think I already know ${esc(s.label)}">I think I already know this!</button>`}
+                </li>`).join('')}
+            </ul>`;
+        box.querySelectorAll('.lt-skill-know').forEach((btn) => {
+            btn.addEventListener('click', () => this._checkSkill(btn.dataset.skillId));
+        });
+    }
+
+    _checkSkill(skillId) {
+        if (!skillId || !this._sessionId) return;
+        if (!window.MMChallengeCard || typeof window.MMChallengeCard.launch !== 'function') return;
+        window.MMChallengeCard.launch(skillId, {
+            base: `/api/course-sessions/${this._sessionId}/skill-check/`,
+            badge: '\u2714 Already know it?'
+        });
+        // The card reports the result; redraw the skills (and the course list,
+        // if a unit just closed) when it does.
+        if (!this._skillProvedBound) {
+            this._skillProvedBound = true;
+            document.addEventListener('mm:skill-proved', (e) => {
+                const result = e && e.detail && e.detail.result;
+                this._skills = null;
+                this._skillsFetchFor = null;
+                if (this._sessionId) this.rehydrate(this._sessionId);
+                const closed = result && Array.isArray(result.closedModules) && result.closedModules.length;
+                const cm = window.courseManager;
+                if (closed && cm && typeof cm.loadMySessions === 'function') {
+                    try { cm.loadMySessions(); } catch (_) { /* cosmetic */ }
+                }
+            });
         }
     }
 

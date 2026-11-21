@@ -90,6 +90,90 @@ function buildBlueprint(pathway, available, options) {
   };
 }
 
+/**
+ * The NEXT STAGE of a course's quick check: every skill the student does not
+ * yet own in the next open module(s), tested together.
+ *
+ * WHY STAGES. A module closes only when the student owns every skill in it
+ * (utils/coursePlacement.js). The original check sampled ~10 skills spread
+ * across the whole course, so even a perfect run owned one or two skills in
+ * each module and closed none — "0 of 15 modules" after ten right answers. A
+ * stage instead takes whole modules, in course order, from the first one still
+ * open: get it all right and those modules are done, and the student is offered
+ * the next stage. The first miss is where the course starts. Short for a
+ * student who is new to the material, as long as it needs to be for one who is
+ * not — and it never implies more than it tested.
+ *
+ * Skills the student already owns are not asked again (a checkpoint shares its
+ * unit's skills; a review module shares everyone's). A module with a skill the
+ * bank cannot test ends the stage: it cannot be closed by a check, so there is
+ * nothing to gain by testing past it.
+ *
+ * @param {object} pathway
+ * @param {object} state
+ * @param {Iterable<string>} [state.completed]  moduleIds already done in the session
+ * @param {Iterable<string>} [state.owned]      canonical course skill ids the student owns
+ * @param {Object<string,number>} state.available  skillId → usable item count
+ */
+function buildStageBlueprint(pathway, state, options) {
+  const opts = options || {};
+  const perSkill = opts.itemsPerSkill || ITEMS_PER_SKILL;
+  const maxItems = opts.maxItems || MAX_ITEMS;
+  const capacity = Math.max(1, Math.floor(maxItems / perSkill));
+  const st = state || {};
+  const completed = new Set(st.completed || []);
+  const owned = new Set(Array.from(st.owned || [], canonicalSkillId));
+  const available = st.available || {};
+
+  const modules = (pathway && pathway.modules) || [];
+  const chosen = [];
+  const taken = new Set();
+  const covered = [];
+  let blockedBy = null;
+
+  // The last module is never closed by placement, so it is never tested.
+  for (let i = 0; i < modules.length - 1; i += 1) {
+    const m = modules[i];
+    if (completed.has(m.moduleId)) continue;
+    const open = [];
+    (m.skills || []).forEach(function (raw) {
+      if (!raw) return;
+      const id = canonicalSkillId(raw);
+      if (owned.has(id) || taken.has(id) || open.some(function (o) { return o.skillId === id; })) return;
+      open.push({ skillId: id, rawId: raw, moduleId: m.moduleId, moduleTitle: m.title });
+    });
+    if (!open.length) {                      // nothing new to ask: it rides along
+      if ((m.skills || []).length && !m.isCheckpoint) covered.push({ moduleId: m.moduleId, title: m.title });
+      continue;
+    }
+    const untestable = open.filter(function (o) { return (available[o.skillId] || 0) < perSkill; });
+    if (untestable.length) {
+      blockedBy = { moduleId: m.moduleId, title: m.title, skills: untestable.map(function (o) { return o.skillId; }) };
+      break;
+    }
+    const room = capacity - chosen.length;
+    if (chosen.length && open.length > room) break;      // whole modules only, after the first
+    open.slice(0, chosen.length ? room : capacity).forEach(function (o) {
+      taken.add(o.skillId);
+      chosen.push(o);
+    });
+    if (!m.isCheckpoint) covered.push({ moduleId: m.moduleId, title: m.title });
+    if (open.length > capacity) break;                   // a module bigger than one stage: finish it next time
+    if (chosen.length >= capacity) break;
+  }
+
+  const total = courseSkills(pathway).length;
+  return {
+    itemsPerSkill: perSkill,
+    skills: chosen,
+    totalItems: chosen.length * perSkill,
+    modules: chosen.length ? covered : [],
+    blockedBy: chosen.length ? null : blockedBy,
+    coverage: total ? chosen.length / total : 0,
+    totalCourseSkills: total
+  };
+}
+
 /** Evenly sample `n` items across a list, always keeping the first and last. */
 function spread(list, n) {
   if (list.length <= n) return list.slice();
@@ -180,6 +264,7 @@ module.exports = {
   CREDIT_ACCURACY,
   courseSkills,
   buildBlueprint,
+  buildStageBlueprint,
   scoreBySkill,
   creditFromTallies,
   recommendedStart

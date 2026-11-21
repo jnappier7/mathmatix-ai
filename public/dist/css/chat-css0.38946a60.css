@@ -7924,6 +7924,89 @@ html.theme-transitioning *::after {
   }
 }
 
+/* ── Skills in this unit ──────────────────────
+   One row per skill; "I think I already know this!" runs the one-skill check. */
+.lt-skills {
+  margin-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 6px;
+}
+.lt-skills-summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 0.02em;
+  list-style-position: inside;
+  padding: 4px 0;
+}
+.lt-skills-count {
+  font-weight: 500;
+  color: #64748b;
+  margin-left: 6px;
+}
+.lt-skills-list {
+  list-style: none;
+  margin: 4px 0 2px;
+  padding: 0;
+  display: grid;
+  /* Two or three to a row where there is room: five full-width rows pushed the
+     lesson itself off a laptop screen. */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 4px 8px;
+}
+.lt-skill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 3px 4px 3px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.lt-skill-name {
+  font-size: 13px;
+  color: #1e293b;
+  min-width: 0;
+}
+.lt-skill.is-owned .lt-skill-name { color: #166534; }
+.lt-skill-yours {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.lt-skill-know {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4338ca;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 4px 11px;
+  min-height: 28px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.lt-skill-know:hover { background: #e0e7ff; }
+.lt-skill-know:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
+@media (max-width: 700px) {
+  .lt-skill-know { min-height: 40px; }
+}
+[data-theme="dark"] .lt-skills { border-top-color: #334155; }
+[data-theme="dark"] .lt-skills-summary { color: #cbd5e1; }
+[data-theme="dark"] .lt-skills-count { color: #94a3b8; }
+[data-theme="dark"] .lt-skill { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .lt-skill-name { color: #e2e8f0; }
+[data-theme="dark"] .lt-skill.is-owned .lt-skill-name { color: #86efac; }
+[data-theme="dark"] .lt-skill-yours { color: #bbf7d0; background: #14532d; }
+[data-theme="dark"] .lt-skill-know { color: #c7d2fe; background: #312e81; border-color: #4338ca; }
+
 /* --- /css/tour-survey.css --- */
 /* ===================================
    TOUR MODAL STYLES
