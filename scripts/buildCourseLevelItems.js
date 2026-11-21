@@ -38,7 +38,7 @@ const MAX_ATTEMPTS = 60;
 
 // One file per course: scripts/lib/courseLevel<Name>.js exporting
 // { COURSE_ID, GB, TEMPLATES: [{ courseSkill, skillId, tiers: [{ difficulty, gen }] }] }.
-const BANK_NAMES = ['Grade8', 'GeometryA'];   // WIP: Grade6, Grade7, GeometryB, EarlyMath, ConsumerMath to follow
+const BANK_NAMES = ['Grade6', 'Grade7', 'Grade8', 'GeometryA', 'GeometryB', 'EarlyMath', 'ConsumerMath'];
 
 const SEEDS = path.join(__dirname, '..', 'seeds');
 const OUT_ITEMS = path.join(SEEDS, 'course-level-items.generated.json');
