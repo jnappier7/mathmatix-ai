@@ -1128,10 +1128,10 @@
       + award('Top scorer', k.awards.scorer, 'point', 'points') + award('Quickest draw', k.awards.first, 'round found first', 'rounds found first') + award('Comeback kid', k.awards.comeback, 'comeback', 'comebacks')
       + `</div><div class="tablewrap"><table><thead><tr><th class="num">#</th><th>Driver</th><th>Finish</th><th class="num">Points</th><th class="num">Orbs</th><th class="num">Found first</th><th class="num">Wrong orbs</th><th class="num">Comebacks</th><th class="num">Pit right</th><th class="num">Pit points</th></tr></thead><tbody>${rows}</tbody></table></div>`
       + (k.kind === 'labels'
-        ? (k.labels && k.labels.length ? `<h3 class="kolabels-h">Which answers gave trouble</h3><div class="tablewrap"><table class="kolabels"><thead><tr><th>Answer</th><th class="num">Asked</th><th class="num">Found</th><th class="num">Wrong orb first</th><th class="num">Missed</th></tr></thead><tbody>${
-          k.labels.map((l) => `<tr><td><b>${esc(l.answer)}</b></td><td class="num">${l.asked}</td><td class="num">${l.safe}</td><td class="num">${l.wrong}</td><td class="num">${l.asked ? Math.round((l.wrong / l.asked) * 100) : 0}%</td></tr>`).join('')
+        ? (k.labels && k.labels.length ? `<h3 class="kolabels-h">Which answers gave trouble</h3><div class="tablewrap"><table class="kolabels"><thead><tr><th>Answer</th><th class="num">Asked</th><th class="num">Found</th><th class="num">Wrong orb first</th><th class="num">Never found</th><th class="num">Missed</th></tr></thead><tbody>${
+          k.labels.map((l) => `<tr><td><b>${esc(l.answer)}</b></td><td class="num">${l.asked}</td><td class="num">${l.safe}</td><td class="num">${l.wrong}</td><td class="num">${l.none || 0}</td><td class="num">${l.asked ? Math.round((((l.wrong || 0) + (l.none || 0)) / l.asked) * 100) : 0}%</td></tr>`).join('')
         }</tbody></table></div>` : '')
-          + '<p class="muted">Every car had its own question each round. Asked = cars that needed that answer; wrong orb first = cars that drove into a different answer before (or instead of) the right one. Points: a right orb pays more the sooner it is found.</p></div>'
+          + '<p class="muted">Every car had its own question each round. Asked = cars that needed that answer; wrong orb first = cars that drove into a different answer before (or instead of) the right one; never found = cars that touched no orb at all (stuck, or simply the last car when the round closed). Missed = wrong orb first + never found. Points: a right orb pays more the sooner it is found.</p></div>'
         : '<p class="muted">Points: a right orb pays more the sooner it is found. Pit answers are graded and timed like any Math Facts game — the fact tracker on this page is built from them.</p></div>');
   }
 

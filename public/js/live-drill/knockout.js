@@ -234,6 +234,8 @@
         if (prev && prev.knockout && prev.knockout.round && prev.knockout.round.n === r.n && !prev.knockout.round.closed && r.closed && m.in) {
           if (!m.held && !r.nobodyOut) say('SPARED!', COL.foam); // the clock ran out, and someone with fewer points went instead
         }
+        // …or it knocked me out: the phone holds the arena through the reveal (play.js), so say why the car is gone
+        if (prev && prev.knockout && prev.knockout.in && !m.in && r.closed) say('OUT!', COL.coral);
       } else {
         names = new Map((m.arena || []).map((f) => [f.id, f.name]));
         // a car that was knocked out blows where it was last seen
@@ -743,7 +745,9 @@
     function syncFig(m, r, at) {
       if (!figEl) return;
       const q = m && m.q;
-      const show = !projector && !!q && !!r && r.kind === 'labels' && m.in !== false && st.phase === 'live' && q.n === r.n;
+      // no `m.in` here: the car this round knocked out is already out, and it is the one that most needs the
+      // reveal. The server sends `q` only to cars that were in the round on the table.
+      const show = !projector && !!q && !!r && r.kind === 'labels' && st.phase === 'live' && q.n === r.n;
       if (!show) { if (fig.key !== 'off') { fig.key = 'off'; fig.css = ''; fig.cls = ''; fig.cap = ''; figEl.hidden = true; figEl.innerHTML = ''; } return; }
       const key = `${st.gameNumber}:${q.n}`;
       if (fig.key !== key) {
