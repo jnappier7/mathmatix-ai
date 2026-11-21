@@ -17,7 +17,7 @@ const { pathwayAudience, sessionAudience, maxConcurrentFor } = require('../utils
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
-const { courseSkills, buildBlueprint, scoreBySkill, recommendedStart } = require('../utils/coursePreAssessment');
+const { buildBlueprint, scoreBySkill } = require('../utils/coursePreAssessment');
 const { gradeOne } = require('../utils/skillChallenge');
 const { normalizeOptions } = require('../utils/mcOptions');
 const { resolveGradeNumber, levelToGradeNumber, assessedLevel } = require('../utils/gradeLevel');
@@ -27,6 +27,8 @@ const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
 const { clientSafeBootcamp } = require('../utils/actReview');
 const { coursePacing } = require('../utils/coursePacing');
+const { bankForCourse, placeSession } = require('../utils/coursePlacementService');
+const { ownedCourseSkills, applyPlacement, placementMessage } = require('../utils/coursePlacement');
 
 // The diagnostic-card definitions and the "is a baseline pending" logic moved to
 // utils/courseDiagnostic.js so the SERVER greeting path can share the exact same
@@ -377,6 +379,16 @@ router.post('/enroll', async (req, res) => {
         console.error('[CourseSession] test-prep bootcamp seed on enroll failed (non-fatal):', seedErr.message);
       }
     }
+    // A student who already owns part of this course (a Starting Point taken
+    // earlier, work in another course) should not open it at 0%: close those
+    // modules now. Test-prep courses run their own baseline loop and are left
+    // alone. Non-fatal — an unplaced course is the pre-existing behaviour.
+    let enrollPlacement = null;
+    try {
+      enrollPlacement = placeSession(session, req.user, pathway);
+    } catch (placeErr) {
+      console.error('[CourseSession] placement on enroll failed (non-fatal):', placeErr.message);
+    }
     await session.save();
 
     // Set as active course session on user
@@ -395,7 +407,13 @@ router.post('/enroll', async (req, res) => {
       moduleCount: pathwayModules.length,
       units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
       prerequisites: pathway.prerequisites || [],
-      firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
+      firstModuleTitle: (enrollPlacement && enrollPlacement.start && enrollPlacement.start.title)
+        || pathwayModules[0]?.title || 'Getting Started',
+      // What the student already owned on the way in (see placeSession above).
+      placement: enrollPlacement && enrollPlacement.closed.length
+        ? { closed: enrollPlacement.closed.length, modulesLeft: enrollPlacement.modulesLeft,
+            message: placementMessage(enrollPlacement, 0) }
+        : null,
       diagnostic: await buildCourseDiagnostic(req.user, courseId)
     };
 
@@ -936,15 +954,12 @@ router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
     const pathway = loadPathwayByCourseId(session.courseId);
     if (!pathway) return res.status(404).json({ error: 'Course pathway not found' });
 
-    const skills = courseSkills(pathway).map(s => s.skillId);
     // How many usable items exist per skill, so the blueprint only tests what
-    // the bank can actually support.
-    const counts = await Problem.aggregate([
-      { $match: { skillId: { $in: skills }, isActive: { $ne: false } } },
-      { $group: { _id: '$skillId', n: { $sum: 1 } } }
-    ]);
-    const available = {};
-    counts.forEach(c => { available[c._id] = c.n; });
+    // the bank can actually support. Counted under every id the bank might key
+    // the skill by — querying by the course's own ids alone is what produced
+    // "No pre-assessment available" on courses whose content was in the bank.
+    const { skills: bankSkills, available } = await bankForCourse(pathway);
+    const bankIdsOf = new Map(bankSkills.map(b => [b.skillId, b.bankIds]));
 
     const blueprint = buildBlueprint(pathway, available);
     if (!blueprint.skills.length) {
@@ -958,7 +973,7 @@ router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
     const problems = [];
     for (const s of blueprint.skills) {
       const items = await Problem.aggregate([
-        { $match: { skillId: s.skillId, isActive: { $ne: false } } },
+        { $match: { skillId: { $in: bankIdsOf.get(s.skillId) || [s.skillId] }, isActive: { $ne: false } } },
         { $sample: { size: blueprint.itemsPerSkill } }
       ]);
       items.forEach(p => {
@@ -977,6 +992,11 @@ router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
         });
       });
     }
+
+    // Remember what each item was served for; the POST grades against this.
+    session.preAssessmentServed = Object.fromEntries(problems.map(p => [p.problemId, p.skillId]));
+    session.markModified('preAssessmentServed');
+    await session.save();
 
     res.json({
       courseId: session.courseId,
@@ -1018,13 +1038,24 @@ router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
     const problems = await Problem.find({ _id: { $in: ids } }).lean();
     const byId = new Map(problems.map(p => [String(p._id), p]));
 
+    const { bankToCourse } = await bankForCourse(pathway);
+    const served = session.preAssessmentServed && typeof session.preAssessmentServed === 'object'
+      ? session.preAssessmentServed : null;
+
     // Grade each item server-side, then roll up per skill.
     const results = [];
     submissions.forEach(sub => {
       const problem = byId.get(String(sub.problemId));
       if (!problem) return;                       // ignore unknown ids
       const graded = gradeOne(problem, sub.answer);
-      results.push({ skillId: problem.skillId, correct: graded.correct });
+      // The item is keyed by a BANK id; the credit belongs to the COURSE skill
+      // it was served for. Without this the mastery was written under the bank
+      // id and the course never saw it.
+      const skillId = served
+        ? served[String(sub.problemId)]
+        : (bankToCourse.get(problem.skillId) || [problem.skillId])[0];
+      if (!skillId) return;                       // not an item this check served
+      results.push({ skillId, correct: graded.correct });
     });
     const scored = scoreBySkill(results);
 
@@ -1068,15 +1099,20 @@ router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
     }
     await user.save();
 
-    const start = recommendedStart(pathway, scored.credited);
+    // Close what the student owns. Everything they hold counts — what this
+    // check credited, what the cascade cleared beneath it, and anything proved
+    // before today — so the course is shortened by the whole picture, not only
+    // by the ten skills a quick check has room to sample.
+    const placement = applyPlacement(session, pathway, ownedCourseSkills(user, pathway));
+    const start = placement.start;
     session.preAssessmentCompletedAt = new Date();
     session.preAssessment = {
       credited: scored.credited,
       notCredited: scored.notCredited,
       clearedFromAbove: cleared,
-      startModuleId: start ? start.moduleId : null
+      startModuleId: start ? start.moduleId : null,
+      closedModules: placement.closed.map(m => m.moduleId)
     };
-    if (start && start.moduleId) session.currentModuleId = start.moduleId;
     await session.save();
 
     res.json({
@@ -1084,9 +1120,11 @@ router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
       notCredited: scored.notCredited,
       clearedFromAbove: cleared,
       start,
-      message: start
-        ? `You already own ${scored.credited.length} of these. Starting you at ${start.title}.`
-        : 'You cleared everything this check covered — you may not need this course.'
+      closedModules: placement.closed,
+      modulesLeft: placement.modulesLeft,
+      totalModules: session.modules.length,
+      overallProgress: session.overallProgress,
+      message: placementMessage(placement, scored.credited.length)
     });
   } catch (err) {
     console.error('[CourseSession] pre-assessment POST failed:', err);
