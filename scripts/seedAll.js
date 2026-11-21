@@ -157,6 +157,16 @@ const STEPS = [
     ids: jsonIds('bank-topup-items.generated.json', 'problemId'),
   },
   {
+    key: 'course-level-items',
+    label: 'Course check items, written at each course\'s level',
+    script: 'seedCourseLevelItems.js',
+    supportsFresh: true,
+    files: ['course-level-items.generated.json'],
+    model: 'Problem',
+    idField: 'problemId',
+    ids: jsonIds('course-level-items.generated.json', 'problemId'),
+  },
+  {
     key: 'low-volume-expansion',
     label: 'Low-volume expansion (82 skills)',
     script: 'seedLowVolumeExpansion.js',

@@ -29,6 +29,8 @@
     "seed:playground": "node scripts/seedPlaygroundAccounts.js",
     "seed:playground:clear": "node scripts/seedPlaygroundAccounts.js --clear",
     "seed:skills": "node scripts/seed-pattern-skills.js",
+    "seed:course-level": "node scripts/seedCourseLevelItems.js",
+    "build:course-level": "node scripts/buildCourseLevelItems.js",
     "seed:all": "node scripts/seedAll.js",
     "seed:all:fresh": "node scripts/seedAll.js --fresh",
     "seed:all:dry": "node scripts/seedAll.js --dry-run",
