@@ -447,6 +447,24 @@ npm run seed:all:dry   # preflight + plan, no writes
   `tests/unit/outboundPiiScope.test.js` fails the build on a direct `chat.completions.create` anywhere else.
 - **`config/middleware.js` order matters** — Stripe raw-body must precede `express.json`; CSP nonce
   must precede helmet; CSRF after session.
+- **Every student course opens with a placement, and placement CLOSES MODULES.** Which one is
+  `utils/courseDiagnostic.js`: ACT/SAT prep → a full practice test (the only blocking ones);
+  Algebra 1/2, Pre-Calculus, both Calculus → the Starting Point; every other course → its own quick
+  check (`GET/POST /api/course-sessions/:id/preassessment`) — but only where the bank can build one
+  (`coursePlacementService.preAssessmentAvailable`, ≥ 5 testable skills); otherwise the Starting
+  Point, never a dead end. Parent guides are not placed. **The bank is keyed by BANK ids, courses by
+  COURSE ids** — every lookup goes through `skillLookupCandidates` (`bankForCourse`); querying by the
+  course's own ids found nothing and produced "No pre-assessment available" in production while the
+  old route test, which seeded items under course ids, stayed green. What a placement proves is
+  applied by `utils/coursePlacement.js` `applyPlacement` (after the quick check, at enrollment, and
+  after a Starting Point via `applyPlacementToActiveCourses` in `routes/screener.js` `/complete`): a
+  module closes (`placedOut`) when the student owns EVERY skill in it (`skillRung.clearsPrerequisites`
+  — the ladder's one definition of owned), a checkpoint only when everything before it is done, the
+  last module never; it never touches a module in progress and only moves the course forward. A
+  module the student only partly owns stays open and the tutor spot-checks the owned skills
+  (`coursePrompt` "ALREADY PROVEN"). The quick check samples ~10 skills, so on its own it rarely
+  closes a whole module — that takes bank items for every skill in the module, which the bank mostly
+  lacks. Pinned by `tests/integration/coursePlacementClosesModules.test.js` (real Mongo, CI).
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.
 - **Math-answer injection gate**: the verified answer is injected into context **only** on an
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.

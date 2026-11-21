@@ -1864,6 +1864,21 @@ class FloatingScreener {
         this.assessmentExpired = false;
         this.updateSidebarButton();
 
+        // The placement may have just closed modules in a course the student
+        // is taking (utils/coursePlacement.js). Say so, and redraw the course
+        // list and progress bar — both were drawn before the placement.
+        try {
+          const placed = Array.isArray(data.coursePlacements) ? data.coursePlacements : [];
+          const cm = window.courseManager;
+          if (placed.length && cm) {
+            if (typeof cm.loadMySessions === 'function') cm.loadMySessions();
+            const p = placed[0];
+            if (p.closed > 0 && typeof cm.showToast === 'function') {
+              cm.showToast(`${p.courseName}: ${p.closed} module${p.closed === 1 ? '' : 's'} you already own ${p.closed === 1 ? 'is' : 'are'} marked done — ${p.modulesLeft} left.`);
+            }
+          }
+        } catch (placementUiError) { /* cosmetic */ }
+
         return data;
       })().catch((error) => {
         this.completionPromise = null;
@@ -5140,6 +5155,7 @@ class CourseManager {
             </div>
             <div style="padding: 20px; background: white;">
                 ${welcome.overview ? `<p style="font-size: 13px; color: #555; margin: 0 0 16px; line-height: 1.5;">${this.escapeHtml(welcome.overview)}</p>` : ''}
+                ${welcome.placement && welcome.placement.message ? `<p style="font-size: 13px; color: #1f7a54; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 8px 12px; margin: 0 0 16px; line-height: 1.5;"><i class="fas fa-check-circle" style="margin-right: 6px;"></i>${this.escapeHtml(welcome.placement.message)}</p>` : ''}
                 <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #888; letter-spacing: 0.05em; margin-bottom: 8px;">Your Learning Path</div>
                 ${unitListHtml}
                 ${units.length < welcome.moduleCount ? `<div style="font-size: 12px; color: #aaa; padding: 4px 0 0 32px;">+${welcome.moduleCount - units.length} more modules</div>` : ''}

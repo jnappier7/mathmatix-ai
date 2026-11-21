@@ -18,6 +18,7 @@
 
 const CourseSession = require('../models/courseSession');
 const ActTestSession = require('../models/actTestSession');
+const { courseAudience } = require('./courseAudience');
 
 // Which diagnostics may HOLD the tutor, as opposed to merely nudging.
 //
@@ -99,6 +100,10 @@ async function buildCourseDiagnostic(user, courseId) {
   const card = COURSE_DIAGNOSTICS[courseId] || PRE_ASSESSMENT_CARD;
   if (!card || !user) return null;
 
+  // A parent guide teaches the parent how the math is taught; there is nothing
+  // to place. It used to fall through to the quick check like any other course.
+  if (courseAudience(courseId) === 'parent') return null;
+
   if (card.type === 'course-preassessment') {
     try {
       const done = await CourseSession.countDocuments({
@@ -108,6 +113,27 @@ async function buildCourseDiagnostic(user, courseId) {
     } catch (err) {
       console.error('[courseDiagnostic] pre-assessment check failed (non-fatal):', err.message);
       return null;
+    }
+    // The quick check is only offered where the bank can build one. Where it
+    // cannot, the course still opens with a placement — the Starting Point,
+    // whose result closes modules the same way (utils/coursePlacement.js). The
+    // alternative was a card that said "Start here — this sets your baseline",
+    // opened onto "No pre-assessment available for this course yet", and came
+    // back on every visit because nothing could ever complete it.
+    let available = true;
+    try {
+      available = await require('./coursePlacementService').preAssessmentAvailable(courseId);
+    } catch (err) {
+      console.error('[courseDiagnostic] pre-assessment availability check failed (non-fatal):', err.message);
+    }
+    if (!available) {
+      const expired = user.assessmentExpiresAt && new Date(user.assessmentExpiresAt) < new Date();
+      if (user.assessmentCompleted && !expired) return null;
+      return {
+        type: STARTING_POINT_CARD.type, title: STARTING_POINT_CARD.title,
+        body: STARTING_POINT_CARD.body, cta: STARTING_POINT_CARD.cta,
+        required: false, blocking: false,
+      };
     }
     return {
       type: card.type, title: card.title, body: card.body, cta: card.cta, courseId,

@@ -1075,6 +1075,18 @@ router.post('/complete', isAuthenticated, async (req, res) => {
     session.endTime = new Date();
     await session.save();
 
+    // A placement that proves skills also shortens the courses the student is
+    // in: every module whose skills are now all owned is closed and the course
+    // moves to the first one that is not (utils/coursePlacement.js). Until this
+    // ran here, a Starting Point taken from a course's own entry card changed
+    // nothing in that course. Non-fatal, like the cascade above.
+    let coursePlacements = [];
+    try {
+      coursePlacements = await require('../utils/coursePlacementService').applyPlacementToActiveCourses(user);
+    } catch (placementError) {
+      console.error('[Screener] course placement failed (non-fatal):', placementError);
+    }
+
     // ★ THE LADDER ★ Built AFTER the save, from the mastery map the writes and
     // the cascade above just produced — so what the student is shown is the
     // state the system actually holds, not a projection of it. This is what the
@@ -1097,6 +1109,7 @@ router.post('/complete', isAuthenticated, async (req, res) => {
       report,
       sessionType: session.sessionType || 'starting-point',
       ...(ladder ? { ladder } : {}),
+      ...(coursePlacements.length ? { coursePlacements } : {}),
       ...(growthSummary ? { growthSummary } : {}),
       message: isGrowth
         ? 'Growth Check complete! Here’s how you’ve grown.'

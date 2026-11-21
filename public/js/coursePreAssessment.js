@@ -184,11 +184,19 @@
       .then(function (res) { return res.json(); })
       .then(function (body) {
         var cleared = (body.clearedFromAbove || []).length;
-        var credited = (body.credited || []).length;
+        var closed = body.closedModules || [];
+        // The server's message already says what was closed and where the
+        // course starts; list the modules so "marked done" is not a bare count.
         out.innerHTML = '<strong>' + esc(body.message || '') + '</strong>'
+          + (closed.length ? '<ul style="margin:8px 0 0 18px; color:#2e9268; font-size:14px; line-height:1.5;">'
+            + closed.map(function (m) { return '<li>' + esc(m.title || m.moduleId) + '</li>'; }).join('')
+            + '</ul>' : '')
           + (cleared ? '<br><span style="color:#2e9268;">That also cleared ' + cleared
-            + ' earlier skill' + (cleared === 1 ? '' : 's') + ' beneath them.</span>' : '')
-          + (!credited ? '<br><span style="color:#7a889a;">Nothing cleared this time — the course will start from the beginning.</span>' : '');
+            + ' earlier skill' + (cleared === 1 ? '' : 's') + ' beneath them.</span>' : '');
+        // The sidebar and the progress bar were drawn before the check.
+        if (window.courseManager && typeof window.courseManager.loadMySessions === 'function') {
+          try { window.courseManager.loadMySessions(); } catch (e) { /* cosmetic */ }
+        }
         btn.remove();
         var done = document.createElement('button');
         done.textContent = 'Start the course';

@@ -50,6 +50,9 @@ const moduleProgressSchema = new Schema({
   // Completed by passing the unit checkpoint as a test-out, not by working the
   // lesson (utils/courseMoveOn — owner decision 2026-10-18).
   testedOut: { type: Boolean, default: false },
+  // Completed because a placement showed the student already owns every skill
+  // in it — never sat (utils/coursePlacement.js).
+  placedOut: { type: Boolean, default: false },
   scaffoldProgress: { type: Number, default: 0, min: 0, max: 100 },
   // Share of the real exam this module represents (ACT reporting-category
   // percentage). Drives score-weighted progress in test-prep courses; null in
@@ -108,6 +111,10 @@ const courseSessionSchema = new Schema({
   // Shape: { credited: [skillId], notCredited: [skillId], clearedFromAbove: [skillId],
   //          startModuleId, coverage, totalCourseSkills, skippedForNoItems: [skillId] }.
   preAssessmentCompletedAt: { type: Date, default: null },
+  // Which course skill each served item was served FOR ({ problemId: skillId }).
+  // The bank keys items by its own ids and one bank skill can back two course
+  // skills, so the grade has to land on the skill the item was chosen to test.
+  preAssessmentServed: { type: Schema.Types.Mixed, default: null },
   preAssessment: { type: Schema.Types.Mixed, default: null },
 
   // Overall progress

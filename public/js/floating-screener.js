@@ -884,6 +884,21 @@ class FloatingScreener {
         this.assessmentExpired = false;
         this.updateSidebarButton();
 
+        // The placement may have just closed modules in a course the student
+        // is taking (utils/coursePlacement.js). Say so, and redraw the course
+        // list and progress bar — both were drawn before the placement.
+        try {
+          const placed = Array.isArray(data.coursePlacements) ? data.coursePlacements : [];
+          const cm = window.courseManager;
+          if (placed.length && cm) {
+            if (typeof cm.loadMySessions === 'function') cm.loadMySessions();
+            const p = placed[0];
+            if (p.closed > 0 && typeof cm.showToast === 'function') {
+              cm.showToast(`${p.courseName}: ${p.closed} module${p.closed === 1 ? '' : 's'} you already own ${p.closed === 1 ? 'is' : 'are'} marked done — ${p.modulesLeft} left.`);
+            }
+          }
+        } catch (placementUiError) { /* cosmetic */ }
+
         return data;
       })().catch((error) => {
         this.completionPromise = null;

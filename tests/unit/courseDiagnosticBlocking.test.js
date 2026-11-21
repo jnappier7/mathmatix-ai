@@ -18,6 +18,14 @@
 
 jest.mock('../../models/courseSession', () => ({ countDocuments: jest.fn() }));
 jest.mock('../../models/actTestSession', () => ({ countDocuments: jest.fn() }));
+// The quick check is only offered where the bank can build one
+// (utils/coursePlacementService.js). That lookup needs a database; these tests
+// are about which card BLOCKS, so the bank is taken as able to build it. The
+// fallback when it cannot is pinned against a real bank in
+// tests/integration/coursePlacementClosesModules.test.js.
+jest.mock('../../utils/coursePlacementService', () => ({
+  preAssessmentAvailable: jest.fn().mockResolvedValue(true),
+}));
 
 const CourseSession = require('../../models/courseSession');
 const ActTestSession = require('../../models/actTestSession');
