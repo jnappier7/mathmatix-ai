@@ -293,8 +293,13 @@
     const k = st.knockout;
     if (!k) return;
     const code = encodeURIComponent(seat.code);
-    $('live').classList.toggle('driving', k.in);
-    $('p-arena').hidden = !k.in;
+    // A label round's reveal is for the car it knocked out too: that student stays on the arena, with their
+    // figure and "✗ It was ASA", until the next round opens — then the pit. (The server sends `q` only to a car
+    // that was in the round on the table, and its `label` only once that round has closed.)
+    const reveal = !k.in && !!k.q && k.q.label != null && !!k.round && k.round.closed && k.q.n === k.round.n;
+    const driving = k.in || reveal;
+    $('live').classList.toggle('driving', driving);
+    $('p-arena').hidden = !driving;
     if (!arena && window.LiveDrillKnockout) {
       arena = window.LiveDrillKnockout.mount($('p-pitch'), {
         me: st.me.id,
@@ -315,6 +320,7 @@
       if (cur || pad) { cur = null; closePad(); $('p-card').innerHTML = ''; $('p-choices').innerHTML = ''; $('fb').className = 'fb'; $('fb').innerHTML = ''; }
       return;
     }
+    if (reveal) return; // no pit play is dealt (or timed) behind the reveal
     // (a ready student keeps answering: the points still count, and the next round pulls them out)
     if (!cur && !fetching) nextDrivePlay();
   }

@@ -99,7 +99,7 @@ const TUNE = {
   holdSlow: 1,
   // Label rounds (a fixed-answer bank): think time before anything can be grabbed; smaller orbs (a
   // label is a few letters) in a smaller arena, which leaves the screen room for the diagram.
-  label: { thinkMs: 4000, chipR: 34, eatDist: 28, world: 0.82 },
+  label: { thinkMs: 4000, chipR: 34, eatDist: 28, world: 0.82, orbsPer: 1.25 }, // orbsPer: the arena grows once there are more orbs than this per car
   points: { max: 100, min: 40 }, // a right orb: `max` at the round's first instant, `min` at its last
   wrongCost: 10, // a wrong orb costs this many points (never below 0)
   spareRounds: 2, // sudden death may run this many rounds past one-per-car before it is called
@@ -305,7 +305,7 @@ function orbText(game, answer) {
   return (bank.ORB && bank.ORB[answer]) || answer;
 }
 
-const qCache = new WeakMap(); // game → Map("player:round" → question); never in the snapshot — a question is a pure function
+const qCache = new WeakMap(); // game → Map("seed:player:round" → question); never in the snapshot — a question is a pure function
 /**
  * The question car `player` has in round `n`: a play of the game's bank dealt from (seed, player, n).
  * `label` is the orb that answers it. Never sent while the round is open (see playerKnockout).
@@ -313,7 +313,8 @@ const qCache = new WeakMap(); // game → Map("player:round" → question); neve
 function questionFor(game, player, n) {
   let m = qCache.get(game);
   if (!m) { m = new Map(); qCache.set(game, m); }
-  const key = `${player.id}:${n}`;
+  // the seed is in the key: "Run it back" reseeds this same game object and starts again at round 1
+  const key = `${game.seed}:${player.id}:${n}`;
   let q = m.get(key);
   if (!q) {
     if (m.size > 600) m.clear();
@@ -326,7 +327,11 @@ function questionFor(game, player, n) {
   return q;
 }
 
-/** The orbs of a label round: one for every car's own answer, and one of each label nobody needs. */
+/**
+ * The orbs of a label round: the SAME number of every label — as many as the most-needed one needs.
+ * An orb for every car's answer is the floor; the counts must not differ, or the label with the most
+ * orbs is the likeliest answer and a student who cannot read the figure just drives at it.
+ */
 function labelChips(game, pool, n, rand) {
   const need = new Map();
   let vocab = [];
@@ -335,8 +340,9 @@ function labelChips(game, pool, n, rand) {
     vocab = q.labels;
     need.set(q.label, (need.get(q.label) || 0) + 1);
   }
+  const each = Math.max(1, ...need.values());
   const out = [];
-  for (const label of vocab) for (let i = 0; i < Math.max(1, need.get(label) || 0); i++) out.push({ text: label, val: null, ok: null });
+  for (const label of vocab) for (let i = 0; i < each; i++) out.push({ text: label, val: null, ok: null });
   return shuffle(rand, out);
 }
 
@@ -378,10 +384,13 @@ function openRound(game, io) {
   const rand = rng(game.seed, n);
   const pool = drivers(game);
   const kind = kindOf(game);
-  const world = worldFor(pool.length, kind === 'labels' ? TUNE.label.world : 1);
+  let world = worldFor(pool.length, 1);
   let target = null; let all;
-  if (kind === 'labels') all = labelChips(game, pool, n, rand);
-  else {
+  if (kind === 'labels') {
+    all = labelChips(game, pool, n, rand);
+    // every label has as many orbs as the most-needed one, so there can be far more orbs than cars: room for them
+    world = worldFor(Math.max(pool.length, all.length / TUNE.label.orbsPer), TUNE.label.world);
+  } else {
     const nC = Math.max(1, pool.length - 1);
     const nW = Math.max(3, Math.min(12, Math.round(pool.length / 3)));
     const made = makeChips(BOOKS.includes(game.playbook) ? game.playbook : 'all', game.focus, rand, nC, nW);
@@ -635,6 +644,8 @@ function closeRound(game, io) {
 /**
  * A label round has closed: count, per answer, how often it was asked, found, and missed (the
  * teacher's final table), and pick one missed question for the projector to show — anonymously.
+ * Missed is two counts, kept apart: `wrong` (drove into another label) and `none` (never touched an
+ * orb at all — froze, or was simply the last car when the round closed; the two cannot be told apart).
  */
 function tallyLabels(game, r, pool) {
   const mn = game.ko;
@@ -642,10 +653,10 @@ function tallyLabels(game, r, pool) {
   const missed = [];
   for (const p of pool) {
     const q = questionFor(game, p, r.n);
-    const s = mn.labels[q.answer] || (mn.labels[q.answer] = { asked: 0, safe: 0, wrong: 0 });
+    const s = mn.labels[q.answer] || (mn.labels[q.answer] = { asked: 0, safe: 0, wrong: 0, none: 0 });
     s.asked++;
     if (p.ko.held.length) s.safe++;
-    if (p.ko.ate.length) { s.wrong++; missed.push(p); }
+    if (p.ko.ate.length) { s.wrong++; missed.push(p); } else if (!p.ko.held.length) s.none = (s.none || 0) + 1;
   }
   const pick = missed.length ? missed[Math.floor(rng(game.seed, `${r.n}:look`)() * missed.length)] : null;
   mn.look = pick ? { pid: pick.id, n: r.n } : null;
@@ -842,8 +853,10 @@ function finalKnockout(game) {
   const best = (key) => { const p = [...order].sort((a, b) => b.ko[key] - a.ko[key])[0]; return p && p.ko[key] > 0 ? { name: p.name, n: p.ko[key] } : null; };
   return {
     winner: w ? w.name : null, sole: !!game.ko.sole, rounds: game.ko.rounds, kind: kindOf(game),
-    // label games: which answers gave trouble (asked = cars that had it, wrong = of those, drove into another label first)
-    labels: Object.entries(game.ko.labels || {}).map(([answer, s]) => ({ answer, ...s })).sort((a, b) => b.wrong / Math.max(1, b.asked) - a.wrong / Math.max(1, a.asked) || b.asked - a.asked),
+    // label games: which answers gave trouble (asked = cars that had it; of those, wrong = drove into another
+    // label first, none = never touched an orb). Most trouble first: the share that was wrong or never found.
+    labels: Object.entries(game.ko.labels || {}).map(([answer, s]) => ({ answer, ...s, none: s.none || 0 }))
+      .sort((a, b) => (b.wrong + b.none) / Math.max(1, b.asked) - (a.wrong + a.none) / Math.max(1, a.asked) || b.asked - a.asked),
     standings: order.map((p, i) => ({ place: i + 1, name: p.name, alive: p.ko.in, outRound: p.ko.outRound || null,
       pts: p.ko.pts, grabbed: p.ko.grabbed, firsts: p.ko.firsts, wrong: p.ko.wrong, comebacks: p.ko.comebacks, benchRight: p.ko.benchRight, benchPts: p.ko.benchPts,
       powers: p.ko.powers || 0, bonus: p.ko.bonus || 0, saved: !!p.userId })),

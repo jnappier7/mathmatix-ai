@@ -13,8 +13,9 @@
  *   - THE ORBS ARE HONEST: the orb the server accepts for a car is the bank's graded answer to that
  *     car's very play (tests/unit/liveDrillCongruence.test.js re-derives every such answer from the
  *     marks in the picture), in the orb's short form;
- *   - there is an orb for every car's answer, and at least one of every label, so a student has to
- *     tell their label from the others;
+ *   - there is an orb for every car's answer, and THE SAME NUMBER of every label, so a student has to
+ *     tell their label from the others and the orb counts say nothing about which is likeliest;
+ *   - "Run it back" deals new questions (the question cache is keyed by the seed);
  *   - THINK TIME: nothing can be grabbed before `goAt`, the orbs hold still until then, and the
  *     points clock starts there — reading the diagram is never on the clock;
  *   - an open round never tells a screen its answer (not the car's own, not anyone's);
@@ -113,6 +114,26 @@ describe('every car has its own question', () => {
     }
   });
 
+  test('"Run it back" deals new questions: the same car and round, a different game', () => {
+    // QA 2026-11-21: the cache was keyed "player:round" on a game object that rematch() reseeds and reuses,
+    // so game 2 replayed game 1's figures, answers already revealed.
+    const g = arena(); const cars = seat(g, 6); G.start(g);
+    const first = cars.map((p) => [1, 2, 3].map((n) => K.questionFor(g, p, n).fig));
+    const seed = g.seed;
+    G.endGame(g); G.rematch(g);
+    expect(g.seed).not.toBe(seed);
+    G.start(g);
+    expect(g.ko.round.n).toBe(1);
+    const again = cars.map((p) => [1, 2, 3].map((n) => K.questionFor(g, p, n).fig));
+    for (let i = 0; i < cars.length; i++) for (let n = 0; n < 3; n++) expect(again[i][n]).not.toBe(first[i][n]);
+    // and they are the questions a fresh game object with that seed would deal (what a deploy revives)
+    const fresh = { ...g, players: g.players };
+    for (const p of cars) expect(K.questionFor(fresh, p, 1)).toEqual(K.questionFor(g, p, 1));
+    // the orb the server accepts is the new question's
+    go(g);
+    expect(claim(g, cars[0], own(g, cars[0]))).toMatchObject({ ok: true });
+  });
+
   test('"Not congruent" is short on an orb, and it is the only answer that is shortened', () => {
     expect(CONG.ORB[CONG.NONE]).toBe('Not ≅');
     expect(Object.keys(CONG.ORB)).toEqual([CONG.NONE]);
@@ -122,7 +143,7 @@ describe('every car has its own question', () => {
 });
 
 describe('the orbs of a round', () => {
-  test('an orb for every car\'s answer, and at least one of every label', () => {
+  test('an orb for every car\'s answer, and the same number of every label — the counts give nothing away', () => {
     for (const n of [2, 5, 12, 26, 34]) {
       for (const seed of ['a', 'b', 'c', 'd']) {
         const g = arena(); const cars = seat(g, n); g.seed = `${seed}${n}`; G.start(g);
@@ -132,8 +153,25 @@ describe('the orbs of a round', () => {
         const have = {}; for (const c of r.chips) have[c.text] = (have[c.text] || 0) + 1;
         const want = {}; for (const p of cars) want[need(g, p)] = (want[need(g, p)] || 0) + 1;
         const vocab = K.questionFor(g, cars[0], 1).labels;
-        for (const l of vocab) expect(have[l]).toBe(Math.max(1, want[l] || 0));
+        // QA 2026-11-21: 8 SAS orbs beside one of everything else told a student who could not read the
+        // figure to drive at SAS. Every label has as many orbs as the most-needed one.
+        const each = Math.max(...Object.values(want));
+        for (const l of vocab) expect(have[l]).toBe(each);
+        for (const l of vocab) expect(have[l]).toBeGreaterThanOrEqual(want[l] || 0);
         expect(Object.keys(have).sort()).toEqual(vocab.slice().sort());
+        G._reset();
+      }
+    }
+  });
+
+  test('the arena grows with the orbs: equal counts never crowd the floor more than a round did before', () => {
+    // Equal counts can double the orbs (26 cars, 11 needing one label: 66 orbs). Measured 2026-11-21: the
+    // one-orb-per-car rounds peaked at 0.039 of the floor (orbs × r² / area, 10 cars); Math Facts sits at 0.037.
+    for (const n of [2, 6, 14, 26, 34]) {
+      for (const seed of ['a', 'b', 'c', 'd', 'e', 'f']) {
+        const g = arena(); seat(g, n); g.seed = `room${seed}${n}`; G.start(g);
+        const r = g.ko.round;
+        expect((r.chips.length * K.TUNE.label.chipR ** 2) / (r.world.w * r.world.h)).toBeLessThanOrEqual(0.04);
         G._reset();
       }
     }
@@ -246,6 +284,36 @@ describe('what a screen may see', () => {
     }
     // the projector has no car, so its orbs are neither right nor wrong
     expect(G.hostView(g).knockout.round.chips.every((c) => c.ok === null)).toBe(true);
+  });
+});
+
+describe('the car a round knocks out', () => {
+  test('is told its answer at the reveal like every other car in that round, and nothing the round after', () => {
+    const g = arena(); const cars = seat(g, 4); G.start(g); go(g);
+    for (const p of cars.slice(1)) claim(g, p, own(g, p)); // all but one safe: the round closes on cars[0]
+    const out = cars[0];
+    expect(g.ko.round.closed).toBe(true);
+    expect(out.ko.in).toBe(false);
+    const q = K.questionFor(g, out, 1);
+    const v = G.playerView(g, out).knockout;
+    expect(v.in).toBe(false);
+    expect(v.q).toMatchObject({ n: 1, fig: q.fig, label: q.label, answer: q.answer, tell: q.tell, got: false });
+    expect(v.round).toMatchObject({ n: 1, closed: true });
+    nextRound();
+    expect(G.playerView(g, out).knockout.q).toBeUndefined();
+  });
+
+  test('the phone keeps the arena up for that reveal, and the figure box does not hide on `in`', () => {
+    const fs = require('fs'); const path = require('path');
+    const read = (f) => fs.readFileSync(path.join(__dirname, '../../public/js/live-drill', f), 'utf8');
+    // QA 2026-11-21: the client hid the box (and play.js the whole arena) the moment `in` went false,
+    // so the one student who most needed "✗ It was ASA" saw nothing.
+    const show = read('knockout.js').match(/const show = [^\n]*/)[0];
+    expect(show).not.toMatch(/m\.in/);
+    const play = read('play.js');
+    expect(play).toMatch(/const reveal = !k\.in && !!k\.q && k\.q\.label != null/);
+    expect(play).toMatch(/\$\('p-arena'\)\.hidden = !driving/);
+    expect(play).toMatch(/if \(reveal\) return;/);
   });
 });
 
@@ -363,10 +431,10 @@ describe('what the teacher gets', () => {
     expect(G.hostView(g).knockout.look).toBeNull();
   });
 
-  test('the final screen counts, per answer, how often it was asked, found, and missed', () => {
+  test('the final screen counts, per answer, how often it was asked, found, missed, and never found', () => {
     const g = arena(); const cars = seat(g, 6); G.start(g);
     const tally = {};
-    const add = (k, f) => { tally[k] = tally[k] || { asked: 0, safe: 0, wrong: 0 }; tally[k][f]++; };
+    const add = (k, f) => { tally[k] = tally[k] || { asked: 0, safe: 0, wrong: 0, none: 0 }; tally[k][f]++; };
     for (let round = 0; round < 3 && g.phase === 'live'; round++) {
       go(g);
       const live = cars.filter((p) => p.ko.in);
@@ -375,6 +443,8 @@ describe('what the teacher gets', () => {
       jest.advanceTimersByTime(K.TUNE.slowMs);
       claim(g, live[1], own(g, live[1])); add(qs.get(live[1]), 'safe');
       for (const p of live) add(qs.get(p), 'asked');
+      // QA 2026-11-21: a car that touched nothing (froze — often the one knocked out) was counted nowhere
+      for (const p of live.slice(2)) add(qs.get(p), 'none');
       closeNow(g); nextRound();
     }
     G.endGame(g);
@@ -382,7 +452,9 @@ describe('what the teacher gets', () => {
     expect(fin.kind).toBe('labels');
     expect(Object.fromEntries(fin.labels.map(({ answer, ...rest }) => [answer, rest]))).toEqual(tally);
     // the answers that gave the most trouble come first
-    for (let i = 1; i < fin.labels.length; i++) expect(fin.labels[i - 1].wrong).toBeGreaterThanOrEqual(fin.labels[i].wrong);
+    const trouble = (l) => (l.wrong + l.none) / l.asked;
+    for (let i = 1; i < fin.labels.length; i++) expect(trouble(fin.labels[i - 1])).toBeGreaterThanOrEqual(trouble(fin.labels[i]));
+    expect(fin.labels.reduce((n, l) => n + l.none, 0)).toBeGreaterThan(0);
   });
 });
 
