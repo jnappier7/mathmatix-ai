@@ -816,6 +816,49 @@ class CourseManager {
         return { isEnrolled, sessionId, canLeave: isEnrolled && !!sessionId };
     }
 
+    // The order the catalog is shown in. Pure and static, like
+    // resolveCardActions, so it can be tested without a DOM.
+    //
+    //   1. "Your courses"         — what the student is in (their only courses
+    //                               surface on a phone).
+    //   2. "Recommended for you"  — the course for their grade, when they are
+    //                               not already in it. It used to stay in its
+    //                               grade band, so a 9th grader opened the
+    //                               catalog on Elementary with their Algebra 1
+    //                               card several screens down (QA, 2026-11-21).
+    //   3. everything else, in the server's grade-progression order.
+    //
+    // A course appears once: hoisting it removes it from its band.
+    static orderCatalog(catalog, enrolledIds, recommended) {
+        const list = catalog || [];
+        const mine = new Set(enrolledIds || []);
+        const yours = list.filter(c => mine.has(c.courseId)).map(c => ({ ...c, group: 'Your courses' }));
+        const pick = list.filter(c => c.courseId === recommended && !mine.has(c.courseId))
+            .map(c => ({ ...c, group: 'Recommended for you' }));
+        const rest = list.filter(c => !mine.has(c.courseId) && !pick.some(p => p.courseId === c.courseId));
+        return yours.concat(pick, rest);
+    }
+
+    // How long a course is, from the pacing its own modules declare
+    // (utils/coursePacing.js → paceWeeks / estMinutes on each catalog entry).
+    // The old label was moduleCount × 45 minutes: "~16h" for a year of
+    // Algebra 1. A course paced over weeks says so; a short guide (everything
+    // in week 1) gives its authored hours; a course that declares neither —
+    // SAT prep, whose length is the student's own practice tests — says
+    // nothing rather than guess.
+    static timeLabel(course) {
+        const weeks = Number(course && course.paceWeeks) || 0;
+        const minutes = Number(course && course.estMinutes) || 0;
+        if (weeks >= 30) return 'Full-year course \u00B7 self-paced';
+        if (weeks >= 2) return `About ${weeks} weeks at school pace \u00B7 self-paced`;
+        if (weeks === 1 && minutes > 0) {
+            if (minutes < 60) return `About ${Math.round(minutes / 5) * 5} minutes`;
+            const hours = Math.round(minutes / 30) / 2;
+            return `About ${hours} hour${hours === 1 ? '' : 's'}`;
+        }
+        return '';
+    }
+
     renderCatalog(catalog, recommended) {
         const grid = document.getElementById('catalog-grid');
         if (!grid) return;
@@ -841,18 +884,14 @@ class CourseManager {
             'Test Prep': { bg: '#fefce8', text: '#ca8a04' }
         };
 
-        // Estimated time per module (heuristic: ~45 min per module)
-        const EST_MINUTES_PER_MODULE = 45;
-
         // Enrolled courses lead, under their own header. On a phone this modal
         // is the student's only courses surface (see resolveCardActions), and
         // "My Courses" opened it with their own courses buried 14 cards down
         // behind ones they'd never take (site review, 2026-11-03).
-        const enrolled = catalog.filter(c => CourseManager.resolveCardActions(c.courseId, this.courseSessions).isEnrolled);
-        if (enrolled.length) {
-            catalog = enrolled.map(c => ({ ...c, group: 'Your courses' }))
-                .concat(catalog.filter(c => !enrolled.includes(c)));
-        }
+        const enrolledIds = catalog
+            .filter(c => CourseManager.resolveCardActions(c.courseId, this.courseSessions).isEnrolled)
+            .map(c => c.courseId);
+        catalog = CourseManager.orderCatalog(catalog, enrolledIds, recommended);
 
         let lastGroup = '';
         catalog.forEach(course => {
@@ -874,11 +913,7 @@ class CourseManager {
             const isEnrolled = actions.isEnrolled;
             const diff = diffColors[course.difficulty] || { bg: '#f1f5f9', text: '#64748b' };
 
-            // Estimate total time for the course
-            const totalMinutes = course.moduleCount * EST_MINUTES_PER_MODULE;
-            const estTimeLabel = totalMinutes >= 60
-                ? `~${Math.round(totalMinutes / 60)}h`
-                : `~${totalMinutes}m`;
+            const estTimeLabel = CourseManager.timeLabel(course);
 
             card.innerHTML = `
                 ${isRecommended ? '<div style="position:absolute; top:-8px; right:12px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; padding:2px 10px; border-radius:10px; font-size:10px; font-weight:700;">RECOMMENDED</div>' : ''}
@@ -894,8 +929,8 @@ class CourseManager {
                     ${course.tagline ? `<div style="font-size:13px; color:#555; margin-top:4px; line-height:1.4;">${this.escapeHtml(course.tagline)}</div>` : ''}
                     <div style="font-size:11px; color:#aaa; margin-top:4px; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
                         <span>${course.moduleCount} modules</span>
-                        <span style="color:#ddd;">&middot;</span>
-                        <span><i class="fas fa-clock" style="font-size:9px; margin-right:2px;"></i>${estTimeLabel}</span>
+                        ${estTimeLabel ? `<span style="color:#ddd;">&middot;</span>
+                        <span><i class="fas fa-clock" style="font-size:9px; margin-right:2px;"></i>${estTimeLabel}</span>` : ''}
                         ${course.prerequisites.length > 0 ? `<span style="color:#ddd;">&middot;</span><span>Prereq: ${(course.prerequisiteNames || course.prerequisites).join(', ')}</span>` : ''}
                     </div>
                 </div>

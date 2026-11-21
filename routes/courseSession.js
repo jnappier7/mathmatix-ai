@@ -26,6 +26,7 @@ const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = requir
 const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
 const { clientSafeBootcamp } = require('../utils/actReview');
+const { coursePacing } = require('../utils/coursePacing');
 
 // The diagnostic-card definitions and the "is a baseline pending" logic moved to
 // utils/courseDiagnostic.js so the SERVER greeting path can share the exact same
@@ -96,6 +97,9 @@ router.get('/catalog', async (req, res) => {
           sortOrder: meta.sortOrder != null ? meta.sortOrder : 99,
           prerequisites: pathway.prerequisites || [],
           moduleCount: (pathway.modules || []).length,
+          // The course's own pacing (utils/coursePacing.js) — what the card's
+          // time label is built from. Not moduleCount × a guess.
+          ...coursePacing(pathway),
           gradeBand: pathway.gradeBand || '',
           // "AP" only for an AP exam. Any examAlignment used to earn the badge,
           // so the ACT and SAT prep courses were labelled AP (QA handoff §4).
