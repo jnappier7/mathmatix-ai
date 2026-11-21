@@ -90,7 +90,8 @@ function summarizeStudents(users, rounds, fluencyDocs, classesByUser, names = {}
       soloRight: right,
       soloAttempted: attempted,
       soloAccuracy: attempted > 0 ? Math.round((right / attempted) * 100) : null,
-      soloBest: rs.length ? Math.max(...rs.map((r) => r.score || 0)) : null,
+      // the classic drill's score only: a game against the computer keeps its own (cash, height, arena points)
+      soloBest: rs.some((r) => !r.mode) ? Math.max(...rs.filter((r) => !r.mode).map((r) => r.score || 0)) : null,
       soloGames: games.join(', '),
       lastSoloAt: lastSolo,
       liveFactGames: fs ? fs.games : 0,

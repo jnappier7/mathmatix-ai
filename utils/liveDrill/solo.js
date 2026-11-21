@@ -75,6 +75,14 @@ const scoringOf = (drill) => SCORING[(DRILLS[drill] || {}).scoring] || SCORING.s
 
 const hubList = () => Object.entries(HUBS).map(([id, h]) => ({ id, title: h.title, games: h.games.map((g) => g.name) }));
 
+/** The playbooks of a drill Knockout Arena can play: true (all), a list of keys, or false. */
+function arenaBooks(drill) {
+  const knockout = require('./knockout');
+  const keys = listPlaybooks(drill).map((b) => b.key);
+  const ok = keys.filter((k) => knockout.playable(drill, k));
+  return ok.length === keys.length ? ok.length > 0 : ok.length ? ok : false;
+}
+
 /** One hub, as the page renders it: each game with its playbooks, clock choices and scoring. */
 function hubView(hubId) {
   const hub = Object.hasOwn(HUBS, hubId) ? HUBS[hubId] : null;
@@ -83,6 +91,8 @@ function hubView(hubId) {
     id: hubId,
     title: hub.title,
     hubs: hubList(),
+    // every game type can be played alone against computer rivals: the levels, and how many rivals each seats
+    versus: (() => { const rivals = require('./rivals'); return { levels: Object.entries(rivals.LEVELS).map(([id, l]) => ({ id, name: l.name })), level: rivals.DEFAULT_LEVEL, rivals: { ...rivals.RIVALS } }; })(),
     games: hub.games.map((g) => {
       const { drive } = settingsFor(g.drill);
       const s = scoringOf(g.drill);
@@ -93,6 +103,9 @@ function hubView(hubId) {
         clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },
         scoring: { gains: s.gains, withinMs: s.driveMs, miss: s.sack },
         ...(DRILLS[g.drill].focus ? { focusable: { books: FOCUSABLE, max: FOCUS_MAX } } : {}),
+        // played alone against computer rivals (rivals.js): every game type; Knockout Arena only in the
+        // playbooks it can build orbs for (`arenaBooks`, or true for all of them)
+        arena: arenaBooks(g.drill),
       };
     }),
   };

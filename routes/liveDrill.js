@@ -48,10 +48,19 @@ const arcade = require('../utils/liveDrill/arcade');
 const drillSearch = require('../utils/liveDrill/search');
 const practice = require('../utils/liveDrill/practice');
 const soloRun = require('../utils/liveDrill/soloRun');
+const rivals = require('../utils/liveDrill/rivals'); // every game, played alone against computer rivals
 const store = require('../utils/liveDrill/store'); // revives a game this process hasn't seen (after a deploy)
 
 // Every finished Math Facts game folds into its signed-in students' records.
 G.onGameOver((game) => fluency.saveGame(game, FactFluency));
+// A game a signed-in student played alone against the computer is filed like a solo round — server-dealt
+// and server-graded, so `graded: true` — with its `mode`, which keeps its score (yards, height, cash,
+// points) out of the personal bests and class leaderboards the classic drill keeps.
+G.onGameOver(async (game) => {
+  const row = rivals.result(game);
+  if (!row || !row.hub) return;
+  try { await DrillResult.create(row); } catch (err) { logger.error('solo game result failed', { error: err.message }); }
+});
 
 const hostRouter = express.Router();
 const playRouter = express.Router();
@@ -391,6 +400,33 @@ playRouter.post('/join', joinLimiter, async (req, res) => {
   } catch (err) { send(res, err); }
 });
 
+// A game played ALONE, against computer rivals (utils/liveDrill/rivals.js): no host, no code to share.
+// Public like the rest of /play. A signed-in student is seated under their account, so Math Facts
+// answers fold into their fluency record and the game is filed to their drill history; a guest plays
+// the same game and nothing is kept. The seat it returns is an ordinary seat: /play picks it up.
+const soloGameLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000, max: 300, keyGenerator: (req) => req.ip, // a class on one school IP, each starting a few
+  standardHeaders: true, legacyHeaders: false,
+  message: { message: 'Too many new games from this network. Wait a minute and try again.' },
+});
+const DEVICE_RE = /^[A-Za-z0-9_-]{8,48}$/;
+playRouter.post('/solo', soloGameLimiter, notHandingOff, (req, res) => {
+  try {
+    const b = req.body || {};
+    const drill = String(b.drill || '');
+    if (!solo.onAHub(drill)) return res.status(400).json({ message: 'No such game.' });
+    const hub = Object.hasOwn(solo.HUBS, String(b.hub || '')) ? String(b.hub) : Object.keys(solo.HUBS).find((h) => solo.HUBS[h].games.some((g) => g.drill === drill));
+    const user = runUser(req);
+    const { game, token, player } = rivals.open({
+      drill, playbook: String(b.book || b.playbook || 'all').slice(0, 60), mode: String(b.mode || ''), level: String(b.level || ''),
+      seconds: b.seconds, focus: Array.isArray(b.focus) ? b.focus : String(b.focus || '').split(',').filter(Boolean),
+      name: user ? accountName(user) : 'You', userId: user ? user._id : null, hub,
+      owner: DEVICE_RE.test(String(b.device || '')) ? String(b.device) : null,
+    });
+    res.status(201).json({ token, code: game.code, playerId: player.id, name: player.name, team: player.team });
+  } catch (err) { send(res, err); }
+});
+
 async function withPlayer(req) {
   const game = await store.load(req.params.code);
   if (!game) throw new G.GameError(404, 'That game has ended.');
@@ -426,6 +462,18 @@ playRouter.post('/:code/answer', playLimiter, async (req, res) => {
     const { n, k } = req.body || {};
     res.json(G.answer(game, player, n, k));
   } catch (err) { send(res, err); }
+});
+
+// A solo game's own controls — the student is the only one who can start it, deal the next Huddle
+// play, or run it back (rivals.js refuses anyone else, and any game that is not a solo game).
+playRouter.post('/:code/begin', playLimiter, async (req, res) => {
+  try { const { game, player } = await withPlayer(req); rivals.begin(game, player); res.json(G.playerView(game, player)); } catch (err) { send(res, err); }
+});
+playRouter.post('/:code/next', playLimiter, async (req, res) => {
+  try { const { game, player } = await withPlayer(req); rivals.next(game, player); res.json({ ok: true }); } catch (err) { send(res, err); }
+});
+playRouter.post('/:code/again', playLimiter, async (req, res) => {
+  try { const { game, player } = await withPlayer(req); rivals.again(game, player, String((req.body || {}).level || '')); res.json(G.playerView(game, player)); } catch (err) { send(res, err); }
 });
 
 // Heist: open one of the three safes a streak dealt; fire a gadget found in one.
@@ -582,6 +630,9 @@ function selectionOf(src) {
 }
 
 const isStudent = (user) => !!user && userHasRole(user, 'student');
+// A "best" and a leaderboard compare one kind of score: the classic drill's. A game against the
+// computer files its own (`mode`: cash, height, arena points), which must never be ranked beside it.
+const CLASSIC = { mode: { $in: [null, ''] } };
 
 /** Whoever is asking, and — if they are signed in — their best at one selection.
  *  Public on purpose: a guest gets {signedIn:false} rather than a 401, because
@@ -601,7 +652,7 @@ soloRouter.get('/me', async (req, res) => {
     const sel = selectionOf(req.query);
     const best = await DrillResult.findOne({
       userId: req.user._id, drill: sel.drill, playbook: sel.playbook,
-      seconds: sel.seconds, focus: sel.focus,
+      seconds: sel.seconds, focus: sel.focus, ...CLASSIC,
     }).sort({ score: -1 }).lean();
     if (best) {
       out.best = { score: best.score, right: best.right, attempted: best.attempted, playedAt: best.playedAt };
@@ -654,7 +705,7 @@ soloRouter.post('/result', async (req, res) => {
     });
     const best = await DrillResult.findOne({
       userId: req.user._id, drill: sel.drill, playbook: sel.playbook,
-      seconds: sel.seconds, focus: sel.focus,
+      seconds: sel.seconds, focus: sel.focus, ...CLASSIC,
     }).sort({ score: -1 }).lean();
     res.json({
       saved: true,
@@ -700,7 +751,7 @@ runRouter.post('/:id/finish', playLimiter, async (req, res) => {
   try {
     const out = await soloRun.finish(req.params.id, async (row) => {
       await DrillResult.create(row);
-      const best = await DrillResult.findOne({ userId: row.userId, drill: row.drill, playbook: row.playbook, seconds: row.seconds, graded: true })
+      const best = await DrillResult.findOne({ userId: row.userId, drill: row.drill, playbook: row.playbook, seconds: row.seconds, graded: true, ...CLASSIC })
         .sort({ score: -1 }).lean();
       return { best: best ? { score: best.score, right: best.right, attempted: best.attempted, playedAt: best.playedAt } : null };
     });
@@ -721,7 +772,7 @@ runRouter.get('/leaderboard', async (req, res) => {
   try {
     const drill = String(req.query.drill || '');
     if (!solo.onAHub(drill) || !soloRun.isGraded(drill)) return res.json(out);
-    const sel = { drill, playbook: String(req.query.book || req.query.playbook || 'all').slice(0, 60), seconds: Math.max(0, Math.min(3600, parseInt(req.query.seconds, 10) || 0)), graded: true };
+    const sel = { drill, playbook: String(req.query.book || req.query.playbook || 'all').slice(0, 60), seconds: Math.max(0, Math.min(3600, parseInt(req.query.seconds, 10) || 0)), graded: true, ...CLASSIC };
     const uid = req.user._id;
     const classes = await EnrollmentCode.find({ 'enrolledStudents.studentId': uid, isActive: { $ne: false } }, 'className period enrolledStudents.studentId').lean();
     const ids = [...new Set(classes.flatMap((c) => (c.enrolledStudents || []).map((e) => String(e.studentId))))];

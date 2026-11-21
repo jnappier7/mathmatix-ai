@@ -63,6 +63,11 @@ const MAX_GAMES = 500;
 const MAX_GAMES_PER_HOST = 3;
 const DONE_TTL_MS = 60 * 60 * 1000;
 const IDLE_TTL_MS = 2 * 60 * 60 * 1000;
+// A game one student plays alone against computer rivals (utils/liveDrill/rivals.js). Counted and
+// swept on its own, so a busy evening of practice can never keep a teacher from opening a class
+// game, and never shadowed to Mongo (store.js) — a deploy ends it, and the student starts another.
+const MAX_SOLO_GAMES = 400;
+const SOLO_TTL_MS = 10 * 60 * 1000; // a finished one, or a lobby nobody started
 const DRIVE_GRACE_MS = 1500; // an answer in flight when the clock hits 0:00 still counts
 // A team's answers are pooled, then scaled so a team moves like ~K players rather than like the
 // sum of 15: the ball should move on every answer and still need a drive to score. Teams of
@@ -165,7 +170,7 @@ class GameError extends Error {
  * in it sees a "Join" banner on their chat screen (routes/liveDrill.js /mine) and joins with their
  * account name. The code still works for anyone, so a guest device is never locked out.
  */
-function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus }) {
+function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus, solo }) {
   if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
   if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle, hill, heist or knockout.');
   const d = getDrill(drill); // throws if the published page can't be read
@@ -181,12 +186,19 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
   const fx = DRILLS[drill].focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
   const S = settingsFor(drill);
   sweep();
-  if (games.size >= MAX_GAMES) throw new GameError(503, 'Too many live games right now. Try again in a few minutes.');
-  const mine = [...games.values()].filter((g) => g.hostId === String(hostId) && g.phase !== 'over');
-  if (mine.length >= MAX_GAMES_PER_HOST) {
-    // A teacher who closed the tab and hosted again shouldn't be locked out: retire the oldest.
-    mine.sort((a, b) => a.createdAt - b.createdAt);
-    endGame(mine[0]);
+  const all = [...games.values()];
+  if (solo) {
+    // one at a time per device: opening another retires the last (its tab is gone, or it is over)
+    for (const g of all) if (g.solo && g.hostId === String(hostId)) dropGame(g);
+    if (all.filter((g) => g.solo && games.has(g.code)).length >= MAX_SOLO_GAMES) throw new GameError(503, 'Every seat against the computer is taken right now. Play it on your own, or try again in a minute.');
+  } else {
+    if (all.filter((g) => !g.solo).length >= MAX_GAMES) throw new GameError(503, 'Too many live games right now. Try again in a few minutes.');
+    const mine = all.filter((g) => g.hostId === String(hostId) && g.phase !== 'over');
+    if (mine.length >= MAX_GAMES_PER_HOST) {
+      // A teacher who closed the tab and hosted again shouldn't be locked out: retire the oldest.
+      mine.sort((a, b) => a.createdAt - b.createdAt);
+      endGame(mine[0]);
+    }
   }
 
   const pickOr = (v, allowed, dflt) => (allowed.includes(Number(v)) ? Number(v) : dflt);
@@ -202,6 +214,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     playbookName: pb.name + (fx ? ` · ${facts.focusLabel(fx)}` : ''),
     focus: fx,
     mode,
+    solo: solo ? { ...solo } : null, // played alone against computer rivals: { level, hub, humanId }
     seed: crypto.randomBytes(12).toString('hex'),
     createdAt: now(),
     touchedAt: now(),
@@ -882,6 +895,8 @@ function base(game) {
     className: game.className,
     hostName: game.hostName,
     gameNumber: game.games || 1,
+    // played alone: the level of the computer rivals, how many there are, and the practice page to go back to
+    solo: game.solo ? { level: game.solo.level, hub: game.solo.hub || null, rivals: [...game.players.values()].filter((p) => p.bot && !p.kicked).length, saves: !!game.solo.saves } : null,
     teams: teamsView(game),
     rules: rulesFor(game),
     version: game.version,
@@ -1253,7 +1268,7 @@ function hydrate(snap) {
 function sweep() {
   const t = now();
   for (const g of games.values()) {
-    if ((g.phase === 'over' && t - g.endedAt > DONE_TTL_MS) || t - g.touchedAt > IDLE_TTL_MS) dropGame(g);
+    if ((g.phase === 'over' && t - g.endedAt > (g.solo ? SOLO_TTL_MS : DONE_TTL_MS)) || t - g.touchedAt > (g.solo ? SOLO_TTL_MS : IDLE_TTL_MS)) dropGame(g);
   }
 }
 const sweeper = setInterval(sweep, 5 * 60 * 1000);
@@ -1263,7 +1278,7 @@ function _reset() { for (const g of [...games.values()]) dropGame(g); }
 
 module.exports = {
   onGameOver, SETTINGS, FACT_SETTINGS, settingsFor, SCORING, FLUENT_MS, TEAM_K, START_POS, PICK_SIX, BLITZ, GameError, rulesFor,
-  createGame, getGame, hostGame, playerFor, normalizeCode,
+  createGame, getGame, hostGame, playerFor, normalizeCode, later, scoringFor, dropGame, MAX_SOLO_GAMES, SOLO_TTL_MS, MODES,
   join, kick, setTeam, start, advance, endGame, rematch, currentPlay, answer, openSafe, pickTarget, useGadget, grabChip, reportPosition, fireBoost,
   hostView, playerView, subscribe, playAt, gamesForClasses, anyClassGames,
   onChange, onDrop, snapshot, hydrate, freezeAll, IDLE_TTL_MS, DONE_TTL_MS, gamesForHost, RECENT_OVER_MS,

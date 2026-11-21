@@ -59,7 +59,12 @@ function makeApp() {
   const app = express();
   app.use(express.json());
   app.use('/api/live-drill/host', (req, _res, next) => { req.user = { _id: req.get('X-Test-User') || 'teacher-1' }; next(); }, hostRouter);
-  app.use('/api/live-drill/play', playRouter);
+  // public; X-Test-Student signs a student in for the one call that reads an account (a game played alone)
+  app.use('/api/live-drill/play', (req, _res, next) => {
+    const stu = req.get('X-Test-Student');
+    if (stu) { req.user = { _id: stu, roles: ['student'], firstName: 'Marcus', lastName: 'Thompson' }; req.isAuthenticated = () => true; }
+    next();
+  }, playRouter);
   app.use('/api/live-drill/solo', soloRouter); // no user: solo practice is public
   // Server-scored runs: public; X-Test-Student signs a student in (a session cookie in life)
   app.use('/api/live-drill/run', (req, _res, next) => {
@@ -550,6 +555,118 @@ describe('class games, the chat banner and run it back', () => {
     const again = await req.post(`/api/live-drill/host/games/${g.code}/rematch`);
     expect(again.body).toMatchObject({ code: g.code, phase: 'lobby', gameNumber: 2 });
     expect((await req.get(`/api/live-drill/play/${g.code}/state`).set('X-Live-Drill-Token', p.token)).body.phase).toBe('lobby');
+  });
+});
+
+describe('every game, played alone against the computer', () => {
+  const req = supertest(makeApp());
+  const R = require('../../utils/liveDrill/rivals');
+  const DrillResult = require('../../models/drillResult');
+  const tok = (s) => ({ 'X-Live-Drill-Token': s.token });
+  const open = (body, headers = {}) => req.post('/api/live-drill/play/solo').set(headers).send({ drill: 'facts', book: 'mul', mode: 'heist', hub: 'algebra', device: 'device-abcdef12', ...body });
+
+  test('the practice page is told which games a drill can be played as, the levels, and how many rivals each seats', async () => {
+    const hub = (await req.get('/api/live-drill/solo/hubs/algebra')).body;
+    expect(hub.versus).toEqual({ levels: [{ id: 'easy', name: 'Easy' }, { id: 'medium', name: 'Medium' }, { id: 'hard', name: 'Hard' }], level: 'medium', rivals: R.RIVALS });
+    const by = Object.fromEntries(hub.games.map((g) => [g.drill, g.arena]));
+    expect(by.facts).toEqual(['all', 'add', 'sub', 'mul', 'div']); // Knockout Arena builds orbs for these
+    expect(by.algebra).toBe(false);
+    const geo = (await req.get('/api/live-drill/solo/hubs/geometry')).body;
+    expect(geo.games.find((g) => g.drill === 'congruence').arena).toBe(true);
+    // every game on the Arcade's list has a rival count
+    const arcade = (await req.get('/api/live-drill/solo/arcade')).body;
+    for (const g of arcade.games) expect(hub.versus.rivals[g.id]).toBeGreaterThanOrEqual(1);
+  });
+
+  test('a guest opens a game, starts it, and plays it on the ordinary player routes — no teacher, no code to type', async () => {
+    const made = await open({ level: 'easy' });
+    expect(made.status).toBe(201);
+    expect(made.body).toMatchObject({ name: 'You', team: 0 });
+    const code = made.body.code;
+    const lobby = (await req.get(`/api/live-drill/play/${code}/state`).set(tok(made.body))).body;
+    expect(lobby).toMatchObject({ phase: 'lobby', mode: 'heist', solo: { level: 'easy', hub: 'algebra', rivals: R.RIVALS.heist, saves: false } });
+    // no host exists for it: the teacher routes cannot see it, start it or end it
+    expect((await req.get(`/api/live-drill/host/games/${code}`)).status).toBe(404);
+    expect((await req.post(`/api/live-drill/host/games/${code}/start`)).status).toBe(404);
+    expect((await req.get('/api/live-drill/host/games')).body.games || []).toEqual([]);
+    // the student starts it
+    const live = await req.post(`/api/live-drill/play/${code}/begin`).set(tok(made.body));
+    expect(live.status).toBe(200);
+    expect(live.body.phase).toBe('live');
+    expect((await req.post(`/api/live-drill/play/${code}/begin`).set(tok(made.body))).status).toBe(409);
+    const cur = (await req.get(`/api/live-drill/play/${code}/play`).set(tok(made.body))).body;
+    expect(cur.play.answer).toBeUndefined();
+    const game = G.getGame(code);
+    const ans = await req.post(`/api/live-drill/play/${code}/answer`).set(tok(made.body)).send({ n: cur.n, k: G.playAt(game, cur.n).answer });
+    expect(ans.body).toMatchObject({ ok: true });
+    expect((await req.post(`/api/live-drill/play/${code}/next`).set(tok(made.body))).status).toBe(409); // not a Huddle
+    // it cannot be run back mid-game; once over it can, at another level
+    expect((await req.post(`/api/live-drill/play/${code}/again`).set(tok(made.body)).send({})).status).toBe(409);
+    G.endGame(game);
+    const again = await req.post(`/api/live-drill/play/${code}/again`).set(tok(made.body)).send({ level: 'hard' });
+    expect(again.body).toMatchObject({ phase: 'lobby', gameNumber: 2, solo: { level: 'hard' } });
+    G.endGame(game);
+  });
+
+  test('what is refused: a drill that is not on a practice page, an unknown game, an arena that cannot play the drill, a stranger\'s token', async () => {
+    expect((await open({ drill: 'nope' })).status).toBe(400);
+    expect((await open({ mode: 'chess' })).status).toBe(400);
+    expect((await open({ drill: 'algebra', book: 'all', mode: 'knockout' })).status).toBe(400);
+    const made = await open({ mode: 'drive' });
+    expect((await req.post(`/api/live-drill/play/${made.body.code}/begin`)).status).toBe(401);
+    expect((await req.post(`/api/live-drill/play/${made.body.code}/begin`).set({ 'X-Live-Drill-Token': 'x'.repeat(32) })).status).toBe(401);
+  });
+
+  test('a class game cannot be started, advanced or run back from a phone', async () => {
+    const g = (await req.post('/api/live-drill/host/games').send({ drill: 'facts', playbook: 'mul', mode: 'huddle' })).body;
+    const p = (await req.post('/api/live-drill/play/join').send({ code: g.code, name: 'Ana' })).body;
+    for (const path of ['begin', 'next', 'again']) {
+      const r = await req.post(`/api/live-drill/play/${g.code}/${path}`).set(tok(p)).send({});
+      expect(r.status).toBe(403);
+    }
+    expect(G.getGame(g.code).phase).toBe('lobby');
+  });
+
+  test('one game per device: a second one closes the first', async () => {
+    const a = await open({ device: 'same-device-0001' });
+    const b = await open({ device: 'same-device-0001', mode: 'hill' });
+    expect((await req.get(`/api/live-drill/play/${a.body.code}/state`).set(tok(a.body))).status).toBe(404);
+    expect((await req.get(`/api/live-drill/play/${b.body.code}/state`).set(tok(b.body))).status).toBe(200);
+  });
+
+  test('a signed-in student plays under their account name, and the finished game is filed with the game it was played as', async () => {
+    const before = DrillResult._rows.length;
+    const made = await open({ mode: 'hill' }, { 'X-Test-Student': 'stu-marcus' });
+    expect(made.body.name).toBe('Marcus T.');
+    const code = made.body.code;
+    const st = (await req.post(`/api/live-drill/play/${code}/begin`).set(tok(made.body))).body;
+    expect(st.solo.saves).toBe(true);
+    const game = G.getGame(code);
+    for (let i = 0; i < 4; i++) {
+      const cur = (await req.get(`/api/live-drill/play/${code}/play`).set(tok(made.body))).body;
+      await req.post(`/api/live-drill/play/${code}/answer`).set(tok(made.body)).send({ n: cur.n, k: i === 2 ? '0' : G.playAt(game, cur.n).answer });
+    }
+    G.endGame(game);
+    await new Promise((r) => setImmediate(r));
+    const rows = DrillResult._rows.slice(before);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ userId: 'stu-marcus', hub: 'algebra', drill: 'facts', playbook: 'mul', mode: 'hill', graded: true, right: 3, attempted: 4 });
+    // a guest's game files nothing
+    const guest = await open({ mode: 'hill', device: 'guest-device-0002' });
+    await req.post(`/api/live-drill/play/${guest.body.code}/begin`).set(tok(guest.body));
+    const gg = G.getGame(guest.body.code);
+    const cur = (await req.get(`/api/live-drill/play/${guest.body.code}/play`).set(tok(guest.body))).body;
+    await req.post(`/api/live-drill/play/${guest.body.code}/answer`).set(tok(guest.body)).send({ n: cur.n, k: G.playAt(gg, cur.n).answer });
+    G.endGame(gg);
+    await new Promise((r) => setImmediate(r));
+    expect(DrillResult._rows.slice(before)).toHaveLength(1);
+  });
+
+  test('a game against the computer never enters a personal best or a class leaderboard', () => {
+    const src = fs.readFileSync(path.join(__dirname, '../../routes/liveDrill.js'), 'utf8');
+    expect(src).toMatch(/const CLASSIC = \{ mode: \{ \$in: \[null, ''\] \} \};/);
+    // the two bests of the classic drill, the best of a graded run, and the leaderboard's match
+    expect(src.match(/\.\.\.CLASSIC/g)).toHaveLength(4);
   });
 });
 

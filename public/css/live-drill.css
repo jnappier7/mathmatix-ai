@@ -949,3 +949,15 @@ div.alarm>*{position:relative}
 .ko-look-k{display:block;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:#8a5a00}
 .ko-look-a{font-size:1.05rem;line-height:1.3;font-weight:600}
 .kolabels-h{margin:14px 0 4px;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-size:1rem;color:var(--muted)}
+
+/* ---- every game, played alone against computer rivals (rivals.js) ---- */
+.solo .modes{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.solo .modes .book:disabled{opacity:.45;cursor:not-allowed}
+.solo .modes .book .nm{font-size:1.15rem}
+.solo-start{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.solo-start p{margin:0;font-size:1.05rem}
+.solo-start .go{min-width:220px;font-size:1.5rem;padding:16px 28px}
+.solo-again{align-items:flex-end}
+.solo-again a.ghost{text-decoration:none;display:inline-flex;align-items:center}
+.quit-solo{margin-left:auto;color:var(--muted);font-size:.85rem;text-decoration:none;border:1px solid var(--rail);border-radius:5px;padding:3px 10px}
+#live.driving .quit-solo{display:none}

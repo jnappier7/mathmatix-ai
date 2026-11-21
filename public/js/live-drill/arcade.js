@@ -57,7 +57,7 @@
     : '<span class="muted">Your teacher hosts this one — join with the code on the board.</span>'}</div>
         </div>
       </article>`).join('');
-    if (me.teacher) $('g-note').textContent = 'Pick a game to host it. Students join at mathmatix.ai/play with the code on your board, or from their Mathmatix chat screen if you tie the game to a class.';
+    if (me.teacher) $('g-note').textContent = 'Pick a game to host it. Students join at mathmatix.ai/play with the code on your board, or from their Mathmatix chat screen if you tie the game to a class. Out of class, a student can play any of them alone against the computer from a course below.';
   }
 
   function renderHubs(hubs) {
