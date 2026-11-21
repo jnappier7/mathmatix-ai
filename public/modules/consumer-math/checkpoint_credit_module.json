@@ -60,8 +60,8 @@
     },
     {
       "id": "ccr-3",
-      "question": "Marcus owes $5,000 on a credit card with 22.99% APR. He is considering two payoff strategies:\n\n• Strategy A: Pay $100/month → estimated payoff: 167 months (nearly 14 years), total paid: $16,601\n• Strategy B: Pay $250/month → estimated payoff: 25 months (about 2 years), total paid: $6,194\n\n(a) How much total interest does each strategy cost?\n(b) How much interest does Marcus save by choosing Strategy B?\n(c) In your own words, explain why the difference is so dramatic.",
-      "answer": "(a) Strategy A total interest = $16,601 − $5,000 = $11,601. Strategy B total interest = $6,194 − $5,000 = $1,194. (b) Interest saved = $11,601 − $1,194 = $10,407. By paying $150 more per month, Marcus saves $10,407 in interest and pays off the debt 142 months (nearly 12 years) sooner. (c) At $100/month, almost the entire payment goes to interest each month (the first month's interest alone is $95.79 of the $100 payment). The balance barely shrinks, so interest keeps piling up month after month for over a decade. At $250/month, a much larger chunk attacks the principal each month, so the balance drops quickly and generates less interest. This is the minimum payment trap — the credit card company profits enormously from customers who pay only the minimum.",
+      "question": "Marcus owes $5,000 on a credit card with 22.99% APR. He is considering two payoff strategies:\n\n• Strategy A: Pay $100/month → estimated payoff: 167 months (nearly 14 years), total paid: $16,694\n• Strategy B: Pay $250/month → estimated payoff: 26 months (about 2 years), total paid: $6,366\n\n(a) How much total interest does each strategy cost?\n(b) How much interest does Marcus save by choosing Strategy B?\n(c) In your own words, explain why the difference is so dramatic.",
+      "answer": "(a) Strategy A total interest = $16,694 − $5,000 = $11,694. Strategy B total interest = $6,366 − $5,000 = $1,366. (b) Interest saved = $11,694 − $1,366 = $10,328. By paying $150 more per month, Marcus saves $10,328 in interest and pays off the debt 141 months (nearly 12 years) sooner. (c) At $100/month, almost the entire payment goes to interest each month (the first month's interest alone is $95.79 of the $100 payment). The balance barely shrinks, so interest keeps piling up month after month for over a decade. At $250/month, a much larger chunk attacks the principal each month, so the balance drops quickly and generates less interest. This is the minimum payment trap — the credit card company profits enormously from customers who pay only the minimum.",
       "skill": "cm-credit-card-math",
       "difficulty": 5,
       "points": 6
@@ -143,7 +143,7 @@
   "answerKeys": {
     "ccr-1": "$63.30",
     "ccr-2": "Payment: $48.00; Interest: $43.98; Principal: $4.02",
-    "ccr-3": "A interest: $11,601; B interest: $1,194; Savings: $10,407",
+    "ccr-3": "A interest: $11,694; B interest: $1,366; Savings: $10,328",
     "ccr-4": "Total: $20,251.68; Interest: $2,251.68",
     "ccr-5": "Loan A total: $24,271.20; Loan B total: $26,929.44; Loan A saves $2,658.24",
     "ccr-6": "Loan C — total $18,985.92 vs Loan B $23,872.80; Loan C saves $1,886.88",

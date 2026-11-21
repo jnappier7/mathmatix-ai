@@ -81,8 +81,8 @@
   "assessmentProblems": [
     {
       "id": "cbu6-1",
-      "question": "Use a left Riemann sum with n=4 subintervals to approximate \u222b\u2080\u2078 f(x)dx given:\n| x | 0 | 2 | 4 | 6 | 8 |\n|---|---|---|---|---|---|\n| f(x) | 3 | 5 | 4 | 7 | 6 |\nIs this an over- or underestimate if f is increasing?",
-      "answer": "\u0394x = 2. Left sum = \u0394x[f(0)+f(2)+f(4)+f(6)] = 2[3+5+4+7] = 2(19) = 38. If f is increasing, left endpoints are below the curve \u2192 underestimate.",
+      "question": "Use a left Riemann sum with n=4 subintervals to approximate \u222b\u2080\u2078 f(x)dx given:\n| x | 0 | 2 | 4 | 6 | 8 |\n|---|---|---|---|---|---|\n| f(x) | 3 | 4 | 5 | 7 | 9 |\nAssume f is increasing on [0, 8], as the table suggests. Is this an over- or underestimate?",
+      "answer": "\u0394x = 2. Left sum = \u0394x[f(0)+f(2)+f(4)+f(6)] = 2[3+4+5+7] = 2(19) = 38. Since f is increasing, left endpoints are below the curve \u2192 underestimate.",
       "skill": "riemann-sums",
       "difficulty": 3,
       "points": 6
@@ -181,7 +181,7 @@
     }
   ],
   "answerKeys": {
-    "cbu6-1": "38 (underestimate if increasing).",
+    "cbu6-1": "38 (underestimate, since f is increasing).",
     "cbu6-2": "63.",
     "cbu6-3": "2x\u00b7cos(x\u2076).",
     "cbu6-4": "(1/2)sin(x\u00b2)+C.",

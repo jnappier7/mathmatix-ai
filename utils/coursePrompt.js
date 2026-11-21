@@ -1376,7 +1376,7 @@ function formatParentScaffoldStep(step, index, total) {
 /**
  * Parse a pathway's authored exam weight into a number.
  *
- * ACT modules carry strings like "7-10%", "40-43%", "~25%" (a range, because
+ * ACT modules carry strings like "10-12%", "17-20%", "~25%" (a range, because
  * the real exam varies form to form). A range resolves to its midpoint. These
  * were authored from the start and read by nothing until now.
  *
@@ -1416,10 +1416,10 @@ function calculateOverallProgress(modules) {
   //
   // EXCEPTION — exam-weighted courses. A test-prep course is not a curriculum:
   // ACT reporting categories carry wildly different exam weight (Integrating
-  // Essential Skills is 40-43% of the real test, Number & Quantity 7-10%), and
+  // Essential Skills is 20% of the real test, Number & Quantity 10-12%), and
   // the pathway already authors those percentages. Where a session's modules
   // carry examWeight, progress tracks SCORE CONTRIBUTION instead of module
-  // count, so finishing the 40% category moves the bar like it moves the score.
+  // count, so finishing a heavier category moves the bar like it moves the score.
   // Modules with no declared weight (checkpoints, the final practice test) get
   // the mean of the declared ones, so every module still counts for something.
   const declared = modules

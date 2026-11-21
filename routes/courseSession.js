@@ -181,6 +181,43 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * Put a paused or dropped session back in play and build the "welcome back"
+ * payload the client's resume splash expects. The caller points the user at it.
+ */
+async function resumeCourseSession(session, user, courseId) {
+  session.status = 'active';
+  // Recalculate progress from module data in case it was stale
+  session.overallProgress = calculateOverallProgress(session.modules);
+  session.markModified('modules');
+  await session.save();
+
+  const pathwayFile = path.join(__dirname, '../public/resources', `${courseId}-pathway.json`);
+  const pathway = fs.existsSync(pathwayFile)
+    ? JSON.parse(fs.readFileSync(pathwayFile, 'utf8'))
+    : { modules: [], overview: '' };
+  const pathwayModules = pathway.modules || [];
+
+  console.log(`📚 [CourseSession] ${user.firstName} resumed ${session.courseName} (${session.overallProgress}% progress preserved)`);
+
+  return {
+    success: true,
+    message: `Welcome back to ${session.courseName}! Your progress (${session.overallProgress}%) has been restored.`,
+    session,
+    conversationId: session.conversationId,
+    welcomeData: {
+      courseName: session.courseName,
+      overview: pathway.overview || '',
+      moduleCount: pathwayModules.length,
+      units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
+      prerequisites: pathway.prerequisites || [],
+      firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
+      diagnostic: await buildCourseDiagnostic(user, courseId)
+    },
+    resumed: true
+  };
+}
+
 /* ============================================================
    POST /api/course-sessions/enroll
    Enroll in a course (creates a CourseSession)
@@ -207,46 +244,16 @@ router.post('/enroll', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Already enrolled in this course' });
     }
 
-    // Resume a paused (dropped) session — restore progress instead of starting over
+    // Resume a paused session — restore progress instead of starting over.
+    // (A course the student LEFT is `dropped`, not `paused`; that one is
+    // resumed further down, after the concurrent-course cap, because a dropped
+    // course does not hold one of the two seats.)
     if (existing && existing.status === 'paused') {
-      existing.status = 'active';
-      // Recalculate progress from module data in case it was stale
-      existing.overallProgress = calculateOverallProgress(existing.modules);
-      existing.markModified('modules');
-      await existing.save();
-
       await User.findByIdAndUpdate(req.user._id, {
         activeCourseSessionId: existing._id,
         activeConversationId: existing.conversationId
       });
-
-      // Load pathway for welcome data
-      const pathwayFile = path.join(__dirname, '../public/resources', `${courseId}-pathway.json`);
-      const pathway = fs.existsSync(pathwayFile)
-        ? JSON.parse(fs.readFileSync(pathwayFile, 'utf8'))
-        : { modules: [], overview: '' };
-      const pathwayModules = pathway.modules || [];
-
-      const welcomeData = {
-        courseName: existing.courseName,
-        overview: pathway.overview || '',
-        moduleCount: pathwayModules.length,
-        units: pathwayModules.slice(0, 6).map(m => m.title || m.moduleId),
-        prerequisites: pathway.prerequisites || [],
-        firstModuleTitle: pathwayModules[0]?.title || 'Getting Started',
-        diagnostic: await buildCourseDiagnostic(req.user, courseId)
-      };
-
-      console.log(`📚 [CourseSession] ${req.user.firstName} resumed ${existing.courseName} (${existing.overallProgress}% progress preserved)`);
-
-      return res.json({
-        success: true,
-        message: `Welcome back to ${existing.courseName}! Your progress (${existing.overallProgress}%) has been restored.`,
-        session: existing,
-        conversationId: existing.conversationId,
-        welcomeData,
-        resumed: true
-      });
+      return res.json(await resumeCourseSession(existing, req.user, courseId));
     }
 
     // Load the pathway FIRST: the concurrent-course cap is per audience, and the
@@ -290,6 +297,23 @@ router.post('/enroll', async (req, res) => {
       }
     }
 
+    // Re-enrolling in a course the student LEFT picks it up where they stopped.
+    // The leave dialog promises exactly that ("Your progress will be saved and
+    // you can re-enroll later"), but /drop writes `dropped` and the resume above
+    // only ever looked for `paused` — so every re-enrollment silently started a
+    // brand-new session at 0%. The most recent dropped session wins. It comes
+    // AFTER the cap on purpose: a dropped course frees its seat, so coming back
+    // to it has to fit under the cap like any other enrollment.
+    const dropped = await CourseSession.findOne({
+      userId: req.user._id, courseId, status: 'dropped'
+    }).sort({ updatedAt: -1 });
+    if (dropped) {
+      // activeConversationId is deliberately NOT set — see the note on a fresh
+      // enrollment below; course chat reads courseSession.conversationId.
+      await User.findByIdAndUpdate(req.user._id, { activeCourseSessionId: dropped._id });
+      return res.json(await resumeCourseSession(dropped, req.user, courseId));
+    }
+
     const modules = (pathway.modules || []).map((m, i) => ({
       moduleId: m.moduleId,
       unit: m.unit,
@@ -298,7 +322,7 @@ router.post('/enroll', async (req, res) => {
       scaffoldProgress: 0,
       // Exam-weighted courses (ACT: actPercentage per reporting category)
       // measure progress by score contribution rather than module count —
-      // Integrating Essential Skills is 40-43% of the real test. Null for
+      // Integrating Essential Skills is 20% of the real test. Null for
       // ordinary curriculum courses, which stay uniformly weighted.
       examWeight: parseExamWeight(m.actPercentage ?? m.examWeight),
       lessons: (m.lessons || []).map((l, li) => ({
