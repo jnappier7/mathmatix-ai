@@ -39,6 +39,7 @@ const G6 = require('../../public/resources/6th-grade-math-pathway.json');
 const ALG1 = require('../../public/resources/algebra-1-pathway.json');
 
 const G6_RAW = new Set(G6.modules.flatMap((m) => m.skills || []));
+const BANK_KEYED = [];   // course skills whose items live under a different (bank) id
 
 let mem;
 let app;
@@ -73,15 +74,18 @@ beforeAll(async () => {
   mem = await MongoMemoryServer.create();
   await mongoose.connect(mem.getUri());
 
-  // The bank as production holds it: items under BANK ids only. Every
-  // 6th-grade skill that has a mapped bank id gets four items there.
+  // The bank as production holds it once the course bank is seeded: a skill
+  // the old bank already had sits under its BANK id (never the course's), and
+  // the rest sit under the course id the course bank is keyed by.
   const docs = [];
   const seen = new Set();
   for (const m of G6.modules) {
     for (const raw of m.skills || []) {
-      const bankId = bankIdFor(raw);
-      if (!bankId || seen.has(bankId) || G6_RAW.has(bankId)) continue;
+      const mapped = bankIdFor(raw);
+      const bankId = mapped && !G6_RAW.has(mapped) ? mapped : raw;
+      if (seen.has(bankId)) continue;
       seen.add(bankId);
+      if (bankId !== raw) BANK_KEYED.push(raw);
       for (let n = 0; n < 4; n += 1) {
         docs.push({
           problemId: `bank-${bankId}-${n}`, skillId: bankId, prompt: `(${bankId}) ${n} + 1`,
@@ -111,10 +115,11 @@ beforeEach(async () => {
 afterEach(async () => { await CourseSession.deleteMany({}); await User.deleteMany({}); });
 
 describe('the quick check finds the bank', () => {
-  test('the fixture is honest: no item is keyed by a course skill id', async () => {
-    const courseIds = G6.modules.flatMap((m) => m.skills || []);
-    expect(await Problem.countDocuments({ skillId: { $in: courseIds } })).toBe(0);
-    expect(await Problem.countDocuments({})).toBeGreaterThan(20);
+  test('the fixture is honest: bank-keyed skills have nothing under their course id', async () => {
+    expect(BANK_KEYED.length).toBeGreaterThan(10);
+    expect(await Problem.countDocuments({ skillId: { $in: BANK_KEYED } })).toBe(0);
+    // …and the first module leans on them, so the old course-id lookup would have found too little.
+    expect(G6.modules[0].skills.some((raw) => BANK_KEYED.includes(raw))).toBe(true);
   });
 
   test('items held under bank ids are served, labelled with the COURSE skill, answers withheld', async () => {
@@ -242,6 +247,98 @@ describe('placement closes modules and moves the bar', () => {
   });
 });
 
+describe('the check runs in stages, a whole module at a time', () => {
+  const served = async (id) => (await get(`/api/course-sessions/${id}/preassessment`));
+
+  test('stage 1 tests EVERY skill of the first modules, and a clean run closes them', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const first = await served(id);
+    expect(first.status).toBe(200);
+
+    // Whole modules: every skill of each module it names, two items apiece.
+    const tested = new Set(first.body.problems.map((p) => p.skillId));
+    expect(first.body.modules.length).toBeGreaterThanOrEqual(1);
+    for (const m of first.body.modules) {
+      const pm = G6.modules.find((x) => x.moduleId === m.moduleId);
+      for (const raw of pm.skills) expect(tested.has(canonicalSkillId(raw))).toBe(true);
+    }
+    expect(first.body.problems.length).toBe(tested.size * 2);
+    expect(first.body.problems.length).toBeLessThanOrEqual(20);
+
+    const res = await post(`/api/course-sessions/${id}/preassessment`, { submissions: await answer(first.body.problems) });
+    const closed = res.body.closedModules.map((m) => m.moduleId);
+    for (const m of first.body.modules) expect(closed).toContain(m.moduleId);
+    expect(res.body.overallProgress).toBeGreaterThan(0);
+    expect(res.body.canContinue).toBe(true);
+    expect(res.body.start.moduleId).not.toBe(G6.modules[0].moduleId);
+  });
+
+  test('each clean stage hands on to the next; nothing already owned is asked twice', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const asked = new Set();
+    let stages = 0;
+    let last = null;
+    for (; stages < 12; stages += 1) {
+      const stage = await served(id);
+      if (stage.status !== 200) break;
+      for (const p of stage.body.problems) {
+        expect(asked.has(p.skillId) && !stage.body.problems.some((q) => q !== p && q.skillId === p.skillId)).toBe(false);
+      }
+      new Set(stage.body.problems.map((p) => p.skillId)).forEach((sk) => { expect(asked.has(sk)).toBe(false); asked.add(sk); });
+      last = await post(`/api/course-sessions/${id}/preassessment`, { submissions: await answer(stage.body.problems) });
+      if (!last.body.canContinue) { stages += 1; break; }
+    }
+    expect(stages).toBeGreaterThanOrEqual(3);
+    // A student who owns the whole course is left with exactly the final module.
+    const session = await CourseSession.findById(id);
+    expect(session.modules.filter((m) => m.status !== 'completed').map((m) => m.moduleId))
+      .toEqual([G6.modules[G6.modules.length - 1].moduleId]);
+    expect(session.status).toBe('active');
+    // …and the check then says it is finished instead of serving an empty form.
+    expect((await served(id)).status).toBe(409);
+  });
+
+  test('the first miss ends the check: that module stays open and no next stage is offered', async () => {
+    const id = (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+    const first = (await served(id)).body;
+    const missed = first.problems[0].skillId;
+    const res = await post(`/api/course-sessions/${id}/preassessment`,
+      { submissions: await answer(first.problems, { wrong: (p) => p.skillId === missed }) });
+
+    expect(res.body.notCredited).toContain(missed);
+    expect(res.body.canContinue).toBe(false);
+    const missedModule = G6.modules.find((m) => (m.skills || []).map(canonicalSkillId).includes(missed)).moduleId;
+    expect(res.body.closedModules.map((m) => m.moduleId)).not.toContain(missedModule);
+    expect(res.body.start.moduleId).toBe(missedModule);
+  });
+
+  test('a module the bank cannot test ends the check without a loop', async () => {
+    // Retire the items for one skill of the first module: it can no longer be closed by a check.
+    const raw = G6.modules[0].skills[0];
+    const ids = skillLookupCandidates(raw);
+    await Problem.updateMany({ skillId: { $in: ids } }, { $set: { isActive: false } });
+    service._resetCache();
+    try {
+      const user = await User.findById(currentUser._id);
+      expect(await service.preAssessmentAvailable('6th-grade-math')).toBe(false);
+      // The course falls back to the Starting Point rather than offering a check that cannot run…
+      expect((await buildCourseDiagnostic(user, '6th-grade-math')).type).toBe('starting-point');
+
+      // …and a session that asks anyway is told so once, and never sent back.
+      const session = await CourseSession.create({
+        userId: user._id, courseId: '6th-grade-math', courseName: '6th Grade Math',
+        pathwayId: '6th-grade-math-pathway', modules: [], status: 'active',
+      });
+      const res = await served(session._id);
+      expect(res.status).toBe(409);
+      expect((await CourseSession.findById(session._id)).preAssessmentCompletedAt).toBeTruthy();
+    } finally {
+      await Problem.updateMany({ skillId: { $in: ids } }, { $set: { isActive: true } });
+      service._resetCache();
+    }
+  });
+});
+
 describe('a Starting Point reaches the course', () => {
   test('skills proved after enrolling close their modules in the active course', async () => {
     const enrolled = await post('/api/course-sessions/enroll', { courseId: 'algebra-1' });
@@ -323,7 +420,7 @@ describe('every course opens with a placement it can actually run', () => {
 
   test('a course the bank CAN test offers its own quick check', async () => {
     const user = await User.findById(currentUser._id);
-    expect(await service.testableSkillCount('6th-grade-math')).toBeGreaterThanOrEqual(service.MIN_TESTABLE_SKILLS);
+    expect(await service.preAssessmentAvailable('6th-grade-math')).toBe(true);
     expect((await buildCourseDiagnostic(user, '6th-grade-math')).type).toBe('course-preassessment');
   });
 

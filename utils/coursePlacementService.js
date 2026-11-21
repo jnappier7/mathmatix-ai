@@ -21,19 +21,18 @@ const mongoose = require('mongoose');
 const Problem = require('../models/problem');
 const CourseSession = require('../models/courseSession');
 const { skillLookupCandidates } = require('./skillCanonicalizer');
-const { courseSkills, ITEMS_PER_SKILL } = require('./coursePreAssessment');
+const { courseSkills, buildStageBlueprint, ITEMS_PER_SKILL } = require('./coursePreAssessment');
 const { ownedCourseSkills, applyPlacement } = require('./coursePlacement');
 const { pathwayAudience } = require('./courseAudience');
+const { gradeOne } = require('./skillChallenge');
+const { normalizeOptions } = require('./mcOptions');
 
 const RESOURCES_DIR = path.join(__dirname, '../public/resources');
 const SAFE_COURSE_ID = /^[a-z0-9][a-z0-9-]*$/i;
 
-// A check that can test only a handful of skills tells the course little and reads
-// as broken. Below this, the course falls back to the Starting Point instead.
-const MIN_TESTABLE_SKILLS = 5;
-
 const AVAILABILITY_TTL_MS = 10 * 60 * 1000;
 const availabilityCache = new Map();   // courseId → { at, testable }
+const stageCache = new Map();          // courseId → { at, ok }
 
 function loadPathway(courseId) {
   if (typeof courseId !== 'string' || !SAFE_COURSE_ID.test(courseId)) return null;
@@ -44,11 +43,93 @@ function loadPathway(courseId) {
   }
 }
 
+// The practice-test banks (ACT, SAT). Their items are written for a timed
+// exam and are what a practice test's fresh forms are drawn from, so the quick
+// check uses them only for a skill that has nothing else.
+const TEST_BANK_SOURCE = /^(act-|sat-)/;
+
+/**
+ * Can this item be put in front of a student in the quick check?
+ *
+ * The check shows the prompt as plain text and grades through gradeOne, so an
+ * item is only usable when (a) it needs no figure — the live bank has hundreds
+ * that carry an svg or say "the figure shown" — and (b) it grades CLEANLY:
+ * exactly one option is right, or its own answer is accepted. Measured on the
+ * live bank (2026-11-21, 21,797 items) about 30 items fail (b); on a check that
+ * decides how much of a course a student sits, one mis-keyed item is one
+ * module wrongly kept or wrongly closed.
+ */
+function isCheckable(item) {
+  if (!item || !item.prompt) return false;
+  if (item.svg || item.figure) return false;
+  if (/\b(shown|figure|diagram|pictured)\b|\b(graph|table|chart|number line) (above|below)\b/i.test(item.prompt)) return false;
+  try {
+    if (servedForm(item) === 'choice') {
+      return normalizeOptions(item.options).filter((o) => gradeOne(item, o.label).correct).length === 1;
+    }
+    const value = item.answer && item.answer.value;
+    if (value === undefined || value === null || String(value) === '') return false;
+    const typed = asTyped(item);
+    return gradeOne(typed, String(value)).correct && !gradeOne(typed, 'definitely not the answer').correct;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * How the check presents an item: 'choice' (its options) or 'typed' (a box).
+ *
+ * Most of the old bank was written as typed-answer questions and given options
+ * later by a converter, and those options are not distractors — "In 0.908,
+ * which digit is in the tenths place?  14 · 19 · 6 · 9", "Simplify 7:8 —
+ * 8 · 7:8 · 9 · 6". Only one option is even the right KIND of thing, so the
+ * item can be answered without the skill, and a check that closes modules on
+ * two such items per skill would close them for a guesser. An item is from that
+ * population when it has options but no `correctOption`; when its answer is
+ * something a student can type (a number, fraction, ratio or amount), the check
+ * asks for it typed, as it was written. Authored multiple choice, and anything
+ * whose answer is words, stays multiple choice.
+ *
+ * Pure in the item, so the GET that serves and the POST that grades agree.
+ */
+const TYPEABLE = /^(?:[-−+]?\$?\d{1,3}(?:,\d{3})*(?:\.\d+)?%?|[-−+]?\$?\d+(?:\.\d+)?%?|[-−+]?\d+\s?[/:]\s?\d+|[-−+]?\d+ \d+\/\d+)$/;
+
+function servedForm(item) {
+  const options = normalizeOptions(item && item.options);
+  if (!options.length) return 'typed';
+  if (item.correctOption) return 'choice';
+  const value = String((item.answer && item.answer.value) ?? '').trim();
+  if (/^[A-Ha-h]$/.test(value)) return 'choice';                    // the key is a letter
+  // ONE value a student types one way: a number, a fraction or ratio, a mixed
+  // number. Not a list ("3, 21, 26") — spacing and separators would be graded.
+  if (TYPEABLE.test(value)) return 'typed';
+  return 'choice';
+}
+
+/** The item as graded when it was served typed: same key, no options. */
+function asTyped(item) {
+  return { ...item, options: [], correctOption: undefined };
+}
+
+/** Grade a check submission the way the item was served. */
+function gradeServed(item, submitted) {
+  return gradeOne(servedForm(item) === 'typed' ? asTyped(item) : item, submitted);
+}
+
+/** The query half of isCheckable: active, no baked figure. */
+function checkableMatch(ids, { testBanks }) {
+  const match = { skillId: { $in: ids }, isActive: { $ne: false }, svg: { $in: [null, ''] }, figure: null };
+  if (!testBanks) match.source = { $not: TEST_BANK_SOURCE };
+  return match;
+}
+
 /**
  * For each course skill: the bank ids that hold its content and how many
- * usable items they have between them.
+ * usable items they have between them. Tutoring-bank items are counted first;
+ * a skill that has too few of those may also draw on the practice-test banks
+ * (`testBanks: true` on the skill).
  *
- * @returns {{ skills: Array<{skillId,rawId,moduleId,bankIds:string[],count:number}>,
+ * @returns {{ skills: Array<{skillId,rawId,moduleId,bankIds:string[],count:number,testBanks:boolean}>,
  *             available: Object<string,number>, bankToCourse: Map<string,string[]> }}
  */
 async function bankForCourse(pathway) {
@@ -57,22 +138,31 @@ async function bankForCourse(pathway) {
     for (const id of skillLookupCandidates(s.rawId).concat(skillLookupCandidates(s.skillId))) {
       if (!bankIds.includes(id)) bankIds.push(id);
     }
-    return { ...s, bankIds, count: 0 };
+    return { ...s, bankIds, count: 0, testBanks: false };
   });
 
   const allIds = Array.from(new Set(skills.flatMap((s) => s.bankIds)));
   const counts = allIds.length
     ? await Problem.aggregate([
-      { $match: { skillId: { $in: allIds }, isActive: { $ne: false } } },
-      { $group: { _id: '$skillId', n: { $sum: 1 } } },
+      { $match: checkableMatch(allIds, { testBanks: true }) },
+      { $group: {
+        _id: { skill: '$skillId', test: { $regexMatch: { input: { $ifNull: ['$source', ''] }, regex: TEST_BANK_SOURCE.source } } },
+        n: { $sum: 1 },
+      } },
     ])
     : [];
-  const byBankId = new Map(counts.map((c) => [c._id, c.n]));
+  const tutoring = new Map();
+  const testBank = new Map();
+  for (const c of counts) (c._id.test ? testBank : tutoring).set(c._id.skill, c.n);
 
   const available = {};
   const bankToCourse = new Map();
   for (const s of skills) {
-    s.count = s.bankIds.reduce((sum, id) => sum + (byBankId.get(id) || 0), 0);
+    const own = s.bankIds.reduce((sum, id) => sum + (tutoring.get(id) || 0), 0);
+    const exam = s.bankIds.reduce((sum, id) => sum + (testBank.get(id) || 0), 0);
+    // Headroom of 2x: a few sampled items may still fail isCheckable.
+    s.testBanks = own < ITEMS_PER_SKILL * 2;
+    s.count = s.testBanks ? own + exam : own;
     available[s.skillId] = s.count;
     for (const id of s.bankIds) {
       if (!bankToCourse.has(id)) bankToCourse.set(id, []);
@@ -80,6 +170,33 @@ async function bankForCourse(pathway) {
     }
   }
   return { skills, available, bankToCourse };
+}
+
+/**
+ * `count` items for one course skill, chosen at random from what is checkable.
+ * Over-samples and filters in code, because "grades cleanly" cannot be asked of
+ * the database.
+ */
+async function pickItems(bankSkill, count, exclude) {
+  if (!bankSkill || !bankSkill.bankIds || !bankSkill.bankIds.length) return [];
+  const match = checkableMatch(bankSkill.bankIds, { testBanks: !!bankSkill.testBanks });
+  // Two course skills can share a bank skill; one item must not stand for both
+  // (its answer would be filed under only one of them).
+  if (exclude && exclude.length) match._id = { $nin: exclude };
+  const sampled = await Problem.aggregate([
+    { $match: match },
+    { $sample: { size: Math.max(count * 6, 12) } },
+  ]);
+  const out = [];
+  const seen = new Set();
+  for (const item of sampled) {
+    const key = String(item.prompt).toLowerCase().replace(/\s+/g, ' ').trim();
+    if (seen.has(key) || !isCheckable(item)) continue;
+    seen.add(key);
+    out.push(item);
+    if (out.length >= count) break;
+  }
+  return out;
 }
 
 /** How many of a course's skills the bank can test (cached ~10 min). */
@@ -94,9 +211,27 @@ async function testableSkillCount(courseId) {
   return testable;
 }
 
-/** Is the course's own quick check worth offering? */
+/**
+ * Is the course's own quick check worth offering?
+ *
+ * The check runs in stages, a whole module at a time (buildStageBlueprint), so
+ * the question is whether it has a FIRST stage: can the bank test every skill
+ * of the course's first module. Where it cannot — a course whose bank has not
+ * been filled — the course opens with the Starting Point instead. (This used to
+ * be "at least N testable skills anywhere in the course", which offered a check
+ * that then had nothing it could close.)
+ */
 async function preAssessmentAvailable(courseId) {
-  return (await testableSkillCount(courseId)) >= MIN_TESTABLE_SKILLS;
+  const hit = stageCache.get(courseId);
+  if (hit && Date.now() - hit.at < AVAILABILITY_TTL_MS) return hit.ok;
+  const pathway = loadPathway(courseId);
+  let ok = false;
+  if (pathway) {
+    const { available } = await bankForCourse(pathway);
+    ok = buildStageBlueprint(pathway, { available }).skills.length > 0;
+  }
+  stageCache.set(courseId, { at: Date.now(), ok });
+  return ok;
 }
 
 /** Courses that place by a full practice test run their own loop — leave them be. */
@@ -149,13 +284,16 @@ async function applyPlacementToActiveCourses(user) {
 }
 
 module.exports = {
-  MIN_TESTABLE_SKILLS,
   loadPathway,
   bankForCourse,
+  pickItems,
+  isCheckable,
+  servedForm,
+  gradeServed,
   testableSkillCount,
   preAssessmentAvailable,
   isPlacementCourse,
   placeSession,
   applyPlacementToActiveCourses,
-  _resetCache: () => availabilityCache.clear(),
+  _resetCache: () => { availabilityCache.clear(); stageCache.clear(); },
 };

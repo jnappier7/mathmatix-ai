@@ -17,7 +17,7 @@ const { pathwayAudience, sessionAudience, maxConcurrentFor } = require('../utils
 const Problem = require('../models/problem');
 const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
-const { buildBlueprint, scoreBySkill } = require('../utils/coursePreAssessment');
+const { buildStageBlueprint, scoreBySkill } = require('../utils/coursePreAssessment');
 const { gradeOne } = require('../utils/skillChallenge');
 const { normalizeOptions } = require('../utils/mcOptions');
 const { resolveGradeNumber, levelToGradeNumber, assessedLevel } = require('../utils/gradeLevel');
@@ -27,7 +27,7 @@ const { buildGraph, applyProofCascade } = require('../utils/skillClosure');
 const { buildProgressUpdate } = require('../utils/progressState');
 const { clientSafeBootcamp } = require('../utils/actReview');
 const { coursePacing } = require('../utils/coursePacing');
-const { bankForCourse, placeSession } = require('../utils/coursePlacementService');
+const { bankForCourse, pickItems, placeSession, servedForm, gradeServed } = require('../utils/coursePlacementService');
 const { ownedCourseSkills, applyPlacement, placementMessage } = require('../utils/coursePlacement');
 
 // The diagnostic-card definitions and the "is a baseline pending" logic moved to
@@ -959,30 +959,51 @@ router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
     // the skill by — querying by the course's own ids alone is what produced
     // "No pre-assessment available" on courses whose content was in the bank.
     const { skills: bankSkills, available } = await bankForCourse(pathway);
-    const bankIdsOf = new Map(bankSkills.map(b => [b.skillId, b.bankIds]));
+    const bankSkillOf = new Map(bankSkills.map(b => [b.skillId, b]));
 
-    const blueprint = buildBlueprint(pathway, available);
+    // The check runs in STAGES: every skill the student does not yet own in
+    // the next open module(s), together — so a clean run closes those modules
+    // (see buildStageBlueprint). Each GET serves the next stage.
+    const user = await User.findById(req.user._id);
+    const blueprint = buildStageBlueprint(pathway, {
+      completed: (session.modules || []).filter(m => m.status === 'completed').map(m => m.moduleId),
+      owned: ownedCourseSkills(user, pathway),
+      available
+    });
     if (!blueprint.skills.length) {
+      // Nothing this check can serve. Record that, so the "start here" card
+      // that sent the student is not offered again on every visit — the dead
+      // end this route used to be.
+      if (!session.preAssessmentCompletedAt) {
+        session.preAssessmentCompletedAt = new Date();
+        session.preAssessment = { credited: [], notCredited: [], clearedFromAbove: [], unavailable: true };
+        await session.save();
+      }
       // Be explicit rather than serving an empty form.
       return res.status(409).json({
-        error: 'No pre-assessment available for this course yet',
+        error: blueprint.blockedBy
+          ? `That is as far as this check goes — ${blueprint.blockedBy.title} is learned in the course.`
+          : (session.preAssessmentCompletedAt
+            ? 'You have checked everything this course can test. The rest is learned in the course.'
+            : 'No pre-assessment available for this course yet'),
         totalCourseSkills: blueprint.totalCourseSkills
       });
     }
 
     const problems = [];
+    const servedIds = [];
     for (const s of blueprint.skills) {
-      const items = await Problem.aggregate([
-        { $match: { skillId: { $in: bankIdsOf.get(s.skillId) || [s.skillId] }, isActive: { $ne: false } } },
-        { $sample: { size: blueprint.itemsPerSkill } }
-      ]);
+      // Text-only items that grade cleanly, tutoring bank first (pickItems).
+      const items = await pickItems(bankSkillOf.get(s.skillId), blueprint.itemsPerSkill, servedIds);
+      items.forEach(p => servedIds.push(p._id));
       items.forEach(p => {
         // Project to { label, text }. This shares gradeOne with the skill-map
         // challenge, and gradeOne resolves the pick POSITIONALLY — so the labels
         // served have to be positional too or the two ends disagree. It also
         // keeps `isCorrect` out of the payload: the legacy banks carry it on
         // every option, which would ship the answer key to the browser.
-        const options = normalizeOptions(p.options);
+        // Converted-from-typed items are asked typed (servedForm says why).
+        const options = servedForm(p) === 'typed' ? [] : normalizeOptions(p.options);
         problems.push({
           problemId: String(p._id),
           skillId: s.skillId,
@@ -1000,8 +1021,10 @@ router.get('/:id/preassessment', isAuthenticated, async (req, res) => {
 
     res.json({
       courseId: session.courseId,
-      title: pathway.title || session.courseId,
-      instructions: 'Anything you get right here is marked as yours — this course will not teach it again.',
+      title: pathway.track || pathway.courseName || pathway.title || session.courseName || session.courseId,
+      instructions: 'Get every question on a unit right and that unit is marked done — this course will not teach it again. Miss one and that is where your course starts.',
+      // The units this stage tests, by name.
+      modules: blueprint.modules,
       problems,
       // Honest about what this can and cannot tell them.
       coverage: blueprint.coverage,
@@ -1047,7 +1070,7 @@ router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
     submissions.forEach(sub => {
       const problem = byId.get(String(sub.problemId));
       if (!problem) return;                       // ignore unknown ids
-      const graded = gradeOne(problem, sub.answer);
+      const graded = gradeServed(problem, sub.answer);     // as it was served: typed or choice
       // The item is keyed by a BANK id; the credit belongs to the COURSE skill
       // it was served for. Without this the mastery was written under the bank
       // id and the course never saw it.
@@ -1115,11 +1138,28 @@ router.post('/:id/preassessment', isAuthenticated, async (req, res) => {
     };
     await session.save();
 
+    // Offer the next stage only after a clean one — the first miss is where
+    // the course starts — and only when there is a next stage to serve.
+    let canContinue = false;
+    if (scored.credited.length && !scored.notCredited.length && placement.modulesLeft > 1) {
+      try {
+        const { available } = await bankForCourse(pathway);
+        canContinue = buildStageBlueprint(pathway, {
+          completed: session.modules.filter(m => m.status === 'completed').map(m => m.moduleId),
+          owned: ownedCourseSkills(user, pathway),
+          available
+        }).skills.length > 0;
+      } catch (stageErr) {
+        console.error('[CourseSession] next-stage lookup failed (non-fatal):', stageErr.message);
+      }
+    }
+
     res.json({
       credited: scored.credited,
       notCredited: scored.notCredited,
       clearedFromAbove: cleared,
       start,
+      canContinue,
       closedModules: placement.closed,
       modulesLeft: placement.modulesLeft,
       totalModules: session.modules.length,

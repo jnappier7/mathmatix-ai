@@ -6097,6 +6097,16 @@
    "legacyId": "ALG2.DTA.10",
    "unifiedId": "stat-evaluating-reports",
    "course": "catalog-gaps"
+  },
+  {
+   "legacyId": "systems-substitution",
+   "unifiedId": "systems-of-equations-substitution",
+   "course": "grade-8-math"
+  },
+  {
+   "legacyId": "systems-8th",
+   "unifiedId": "systems-of-equations-substitution",
+   "course": "catalog"
   }
  ]
 }

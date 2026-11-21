@@ -130,12 +130,21 @@
     // Coverage is stated, not implied — this check does not see every skill in
     // the course, and claiming otherwise would misreport readiness.
     var coverage = data.skillsAssessed && data.totalCourseSkills
-      ? '<p style="font-size:12px; color:#7a889a; margin-top:14px;">Checks '
+      ? '<p style="font-size:12px; color:#7a889a; margin-top:14px;">This part checks '
         + data.skillsAssessed + ' of ' + data.totalCourseSkills + ' skills in this course.</p>'
+      : '';
+
+    // The check runs a unit or two at a time. Say which, so "that unit is
+    // marked done" in the instructions points at something.
+    var units = (data.modules || []).map(function (m) { return m && m.title; }).filter(Boolean);
+    var covers = units.length
+      ? '<p style="font-size:13.5px; color:#1b2430; background:#eef2ff; border-radius:8px; padding:8px 12px;'
+        + ' margin-bottom:14px;"><strong>This part covers:</strong> ' + units.map(esc).join(' · ') + '</p>'
       : '';
 
     var wrap = shell(data.title ? ('Quick check — ' + data.title) : 'Quick check',
       '<p style="color:#5a6b7d; line-height:1.6; margin-bottom:16px;">' + esc(data.instructions || '') + '</p>'
+      + covers
       + '<ol style="padding-left:20px;">' + items + '</ol>'
       + '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">'
       + '<button id="cpa-submit" style="padding:11px 20px; border:none; border-radius:8px;'
@@ -149,7 +158,7 @@
     var skip = wrap.querySelector('#cpa-skip');
     if (skip) skip.addEventListener('click', closeAndResume);
     wrap.querySelector('#cpa-submit').addEventListener('click', function () {
-      submit(sessionId, wrap);
+      submit(sessionId, wrap, opts);
     });
   }
 
@@ -164,7 +173,7 @@
     return out;
   }
 
-  function submit(sessionId, wrap) {
+  function submit(sessionId, wrap, opts) {
     var submissions = collect(wrap);
     var out = wrap.querySelector('#cpa-result');
     if (!submissions.length) {
@@ -198,6 +207,22 @@
           try { window.courseManager.loadMySessions(); } catch (e) { /* cosmetic */ }
         }
         btn.remove();
+        var skipBtn = wrap.querySelector('#cpa-skip');
+        if (skipBtn) skipBtn.remove();
+        // A clean part earns the next one: the check keeps going, a unit or two
+        // at a time, until the first miss — which is where the course starts.
+        if (body.canContinue) {
+          var more = document.createElement('button');
+          more.id = 'cpa-continue';
+          more.textContent = 'Keep going — check the next unit';
+          more.style.cssText = 'padding:11px 20px; border:none; border-radius:8px; background:#4f46e5;'
+            + 'color:#fff; font-weight:700; cursor:pointer; margin:12px 10px 0 0;';
+          more.addEventListener('click', function () {
+            // Later parts are always optional, whatever the first one was.
+            open(sessionId, Object.assign({}, opts || {}, { required: false }));
+          });
+          out.parentNode.appendChild(more);
+        }
         var done = document.createElement('button');
         done.textContent = 'Start the course';
         done.style.cssText = 'padding:11px 20px; border:none; border-radius:8px; background:#2e9268;'

@@ -451,8 +451,8 @@ npm run seed:all:dry   # preflight + plan, no writes
   `utils/courseDiagnostic.js`: ACT/SAT prep → a full practice test (the only blocking ones);
   Algebra 1/2, Pre-Calculus, both Calculus → the Starting Point; every other course → its own quick
   check (`GET/POST /api/course-sessions/:id/preassessment`) — but only where the bank can build one
-  (`coursePlacementService.preAssessmentAvailable`, ≥ 5 testable skills); otherwise the Starting
-  Point, never a dead end. Parent guides are not placed. **The bank is keyed by BANK ids, courses by
+  (`coursePlacementService.preAssessmentAvailable`: every skill of the course's first module has
+  items); otherwise the Starting Point, never a dead end. Parent guides are not placed. **The bank is keyed by BANK ids, courses by
   COURSE ids** — every lookup goes through `skillLookupCandidates` (`bankForCourse`); querying by the
   course's own ids found nothing and produced "No pre-assessment available" in production while the
   old route test, which seeded items under course ids, stayed green. What a placement proves is
@@ -462,9 +462,23 @@ npm run seed:all:dry   # preflight + plan, no writes
   — the ladder's one definition of owned), a checkpoint only when everything before it is done, the
   last module never; it never touches a module in progress and only moves the course forward. A
   module the student only partly owns stays open and the tutor spot-checks the owned skills
-  (`coursePrompt` "ALREADY PROVEN"). The quick check samples ~10 skills, so on its own it rarely
-  closes a whole module — that takes bank items for every skill in the module, which the bank mostly
-  lacks. Pinned by `tests/integration/coursePlacementClosesModules.test.js` (real Mongo, CI).
+  (`coursePrompt` "ALREADY PROVEN"). **The quick check runs in STAGES**
+  (`coursePreAssessment.buildStageBlueprint`): each GET serves every skill the student does not yet
+  own in the next open module(s), two items a skill, up to ten skills; a clean stage closes those
+  modules and offers the next (`canContinue`), the first miss is where the course starts, and a
+  module with a skill the bank cannot test ends the check. It used to sample ~10 skills across the
+  whole course, so a perfect run owned a skill or two in each module and closed none. Items come
+  from the live bank through `coursePlacementService.pickItems`: text-only (no `svg`/`figure`, no
+  "the figure shown"), graded CLEANLY by the real grader (`isCheckable` — exactly one right option,
+  or its own answer accepted; ~30 of the bank's 21,797 items are not), tutoring bank first and the
+  practice-test banks (`act-*`, `sat-*`) only for a skill with nothing else, and never one item
+  for two skills. An item the old converter gave junk options (options but no `correctOption`,
+  a typeable answer) is asked TYPED, as it was written (`servedForm` / `gradeServed`) — its options
+  let a guesser through. **The live bank covers every skill of the six quick-check courses** (measured
+  2026-11-21 on an export: a student who knows the course is checked out of all but the final
+  module in 4-5 stages) — but `docs/mathmatixdb.problems.json` in this repo is an OLD export
+  (12,619 of 21,797 items) and says otherwise; do not size a content gap from it. Pinned by
+  `tests/integration/coursePlacementClosesModules.test.js` (real Mongo, CI).
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.
 - **Math-answer injection gate**: the verified answer is injected into context **only** on an
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.
