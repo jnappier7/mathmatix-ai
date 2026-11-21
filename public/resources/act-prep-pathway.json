@@ -22,17 +22,17 @@
     "scoringRange": "1-36 (scaled)",
     "reportingCategories": {
       "preparingForHigherMath": {
-        "percentage": "57-60%",
+        "percentage": "80%",
         "subcategories": {
-          "numberAndQuantity": "7-10%",
-          "algebra": "12-15%",
-          "functions": "12-15%",
-          "geometry": "12-15%",
-          "statisticsAndProbability": "8-12%"
+          "numberAndQuantity": "10-12%",
+          "algebra": "17-20%",
+          "functions": "17-20%",
+          "geometry": "17-20%",
+          "statisticsAndProbability": "12-15%"
         }
       },
       "integratingEssentialSkills": {
-        "percentage": "40-43%",
+        "percentage": "20%",
         "description": "Multi-step problems requiring synthesis of skills across domains"
       },
       "modeling": {
@@ -86,10 +86,10 @@
       "moduleId": "number_quantity",
       "unit": 1,
       "title": "Number & Quantity",
-      "preview": "Real/complex numbers, number properties, ratios, matrices, and vectors — 7-10% of the ACT",
+      "preview": "Real/complex numbers, number properties, ratios, matrices, and vectors — 10-12% of the ACT",
       "moduleFile": "/modules/act-prep/number_quantity_module.json",
       "actCategory": "Preparing for Higher Math",
-      "actPercentage": "7-10%",
+      "actPercentage": "10-12%",
       "skills": [
         "act-real-complex-numbers",
         "act-exponents-roots",
@@ -105,10 +105,10 @@
       "moduleId": "algebra",
       "unit": 2,
       "title": "Algebra",
-      "preview": "Expressions, equations, inequalities, and systems — 12-15% of the ACT",
+      "preview": "Expressions, equations, inequalities, and systems — 17-20% of the ACT",
       "moduleFile": "/modules/act-prep/algebra_module.json",
       "actCategory": "Preparing for Higher Math",
-      "actPercentage": "12-15%",
+      "actPercentage": "17-20%",
       "skills": [
         "act-linear-equations",
         "act-systems-of-equations",
@@ -125,10 +125,10 @@
       "moduleId": "functions",
       "unit": 3,
       "title": "Functions",
-      "preview": "Function notation, analysis, transformations, and modeling — 12-15% of the ACT",
+      "preview": "Function notation, analysis, transformations, and modeling — 17-20% of the ACT",
       "moduleFile": "/modules/act-prep/functions_module.json",
       "actCategory": "Preparing for Higher Math",
-      "actPercentage": "12-15%",
+      "actPercentage": "17-20%",
       "skills": [
         "act-function-notation-evaluation",
         "act-linear-functions",
@@ -159,10 +159,10 @@
       "moduleId": "geometry",
       "unit": 4,
       "title": "Geometry",
-      "preview": "Plane geometry, coordinate geometry, congruence, similarity, trig — 12-15% of the ACT",
+      "preview": "Plane geometry, coordinate geometry, congruence, similarity, trig — 17-20% of the ACT",
       "moduleFile": "/modules/act-prep/geometry_module.json",
       "actCategory": "Preparing for Higher Math",
-      "actPercentage": "12-15%",
+      "actPercentage": "17-20%",
       "skills": [
         "act-angles-lines-triangles",
         "act-polygons-circles",
@@ -180,10 +180,10 @@
       "moduleId": "statistics_probability",
       "unit": 5,
       "title": "Statistics & Probability",
-      "preview": "Data analysis, center/spread, probability, counting — 8-12% of the ACT",
+      "preview": "Data analysis, center/spread, probability, counting — 12-15% of the ACT",
       "moduleFile": "/modules/act-prep/statistics_probability_module.json",
       "actCategory": "Preparing for Higher Math",
-      "actPercentage": "8-12%",
+      "actPercentage": "12-15%",
       "skills": [
         "act-center-spread",
         "act-data-representations",
@@ -213,10 +213,10 @@
       "moduleId": "integrating_essential_skills",
       "unit": 6,
       "title": "Integrating Essential Skills",
-      "preview": "Multi-step problems synthesizing arithmetic, algebra, geometry, and data — 40-43% of the ACT",
+      "preview": "Multi-step problems synthesizing arithmetic, algebra, geometry, and data — 20% of the ACT",
       "moduleFile": "/modules/act-prep/integrating_essential_skills_module.json",
       "actCategory": "Integrating Essential Skills",
-      "actPercentage": "40-43%",
+      "actPercentage": "20%",
       "skills": [
         "act-multi-step-rate-proportion",
         "act-area-perimeter-composite",
@@ -268,7 +268,7 @@
       "moduleId": "practice_test_final",
       "unit": 8,
       "title": "Full Practice Test & Final Exam",
-      "preview": "Timed 45-question, 50-minute practice test simulating real ACT conditions, plus final assessment",
+      "preview": "Timed 30-question, 33-minute practice test at the real ACT's pace, plus final assessment",
       "moduleFile": "/modules/act-prep/practice_test_final_module.json",
       "isFinal": true,
       "skills": [

@@ -240,7 +240,7 @@
         "Evaluate: substitute the given value and follow order of operations (GEMS).",
         "An equation has an equal sign. Solve by using inverse operations to isolate the variable.",
         "Two-step equations: Box the variable term [2x] in 2x + 5 = 13. Outside the box: opposites make zero (subtract 5) -> 2x = 8. Inside the box: divide it out (divide by 2) -> x = 4.",
-        "Inequality: same process as equations, but flip the symbol when multiplying or dividing by a negative. Graph on a number line (open circle for < or >, closed for <= or >=)."
+        "Inequality: same process as equations. Graph on a number line (open circle for < or >, closed for <= or >=)."
       ],
       "lessonId": "final_review"
     },
@@ -281,8 +281,8 @@
         },
         {
           "id": "fr-21",
-          "problem": "Solve and graph: 14 - 2x >= 8.",
-          "answer": "14 - 2x >= 8 -> -2x >= -6 -> x <= 3 (flip the symbol because we divided by -2). Graph: closed circle at 3, arrow pointing left."
+          "problem": "Solve and graph: 2x + 8 >= 14.",
+          "answer": "2x + 8 >= 14 -> 2x >= 6 -> x >= 3. Graph: closed circle at 3, arrow pointing right."
         }
       ],
       "lessonId": "final_review"
@@ -461,8 +461,8 @@
         },
         {
           "id": "fr-38",
-          "problem": "A drone starts at (0, 0), flies to (-5, 3), then to (-5, -4), then back to (0, 0). Plot the path. What is the total distance traveled? (Use horizontal/vertical segments and the distance formula if needed.)",
-          "answer": "Leg 1: (0,0) to (-5,3). Distance = sqrt((-5)^2 + 3^2) = sqrt(25+9) = sqrt(34). Leg 2: (-5,3) to (-5,-4). Vertical segment, distance = |3-(-4)| = 7. Leg 3: (-5,-4) to (0,0). Distance = sqrt(5^2 + 4^2) = sqrt(25+16) = sqrt(41). Total = sqrt(34) + 7 + sqrt(41)."
+          "problem": "A drone starts at (0, 3), flies to (-5, 3), then to (-5, -4), then to (0, -4), then back to (0, 3). Plot the path. What is the total distance traveled? (Every leg is a horizontal or vertical segment.)",
+          "answer": "Leg 1: (0,3) to (-5,3). Horizontal segment, distance = |0-(-5)| = 5. Leg 2: (-5,3) to (-5,-4). Vertical segment, distance = |3-(-4)| = 7. Leg 3: (-5,-4) to (0,-4). Horizontal segment, distance = 5. Leg 4: (0,-4) to (0,3). Vertical segment, distance = 7. Total = 5 + 7 + 5 + 7 = 24 units."
         },
         {
           "id": "fr-39",
@@ -494,7 +494,7 @@
     "fr-18": "x = 7. Inequality: x > 12, open circle at 12 with arrow right.",
     "fr-19": "Expression: 25 + 0.10t. t = 120 text messages.",
     "fr-20": "2(9 - 5) + 8 = 8 + 8 = 16.",
-    "fr-21": "x <= 3. Closed circle at 3, arrow left.",
+    "fr-21": "x >= 3. Closed circle at 3, arrow right.",
     "fr-22": "Expression: 3 + 1.50h. h = 5 additional hours. Total: 6 hours.",
     "fr-23": "(36 - 12) / 9 = 24/9 = 8/3.",
     "fr-24": "65 + 15h >= 200. h >= 9 hours.",
@@ -511,7 +511,7 @@
     "fr-35": "Square with side 5. Area = 25 square units.",
     "fr-36": "Modal interval: 7-8 hrs. Estimated mean = 7.35 hrs. Cannot find exact mean from histogram.",
     "fr-37": "Mean = 6.5. Median = 5.5. MAD = 2. The outlier (12) inflates the mean; median is more representative.",
-    "fr-38": "Total distance = sqrt(34) + 7 + sqrt(41).",
+    "fr-38": "Total distance = 5 + 7 + 5 + 7 = 24 units.",
     "fr-39": "IQR = 5. Range = 13. Adding 20-hr student changes range to 18; IQR likely stays the same."
   }
 }

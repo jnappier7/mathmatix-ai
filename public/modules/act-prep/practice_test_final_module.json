@@ -11,11 +11,11 @@
   "description": "The capstone of ACT Math Prep. A timed 30-question practice test (two-thirds the length of the 45-question ACT Math section) that mirrors real ACT conditions (question distribution, difficulty progression, 4-choice format), followed by a detailed score analysis and targeted remediation recommendations.",
 
   "standardsAlignment": [
-    "ACT-IES: Integrating Essential Skills (40-45%)",
-    "ACT-HOA: Heart of Algebra (15-20%)",
-    "ACT-FUN: Functions (15-20%)",
-    "ACT-GEO: Geometry (15-20%)",
-    "ACT-SPS: Statistics & Probability (8-12%)"
+    "ACT-IES: Integrating Essential Skills (20%)",
+    "ACT-HOA: Heart of Algebra (17-20%)",
+    "ACT-FUN: Functions (17-20%)",
+    "ACT-GEO: Geometry (17-20%)",
+    "ACT-SPS: Statistics & Probability (12-15%)"
   ],
 
   "skillsCovered": [

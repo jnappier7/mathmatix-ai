@@ -58,7 +58,7 @@
       "examples": [
         {
           "problem": "A savings account pays 1.5% annual interest. Inflation averages 3% per year. You deposit $10,000 and leave it for 10 years. What is the account balance after 10 years, and what is the real purchasing power of that balance?",
-          "solution": "Step 1: Calculate the account balance.\n$10,000 x (1.015)^10 = $10,000 x 1.1610 = $11,610.\n\nStep 2: Calculate what $10,000 worth of goods costs after 10 years of 3% inflation.\n$10,000 x (1.03)^10 = $10,000 x 1.3439 = $13,439.\n\nStep 3: Compare.\nYour balance is $11,610 but you need $13,439 to buy the same goods. You lost $1,829 in purchasing power. The savings account did not keep up with inflation."
+          "solution": "Step 1: Calculate the account balance.\n$10,000 x (1.015)^10 = $10,000 x 1.1605 = $11,605.\n\nStep 2: Calculate what $10,000 worth of goods costs after 10 years of 3% inflation.\n$10,000 x (1.03)^10 = $10,000 x 1.3439 = $13,439.\n\nStep 3: Compare.\nYour balance is $11,605 but you need $13,439 to buy the same goods. You lost $1,834 in purchasing power. The savings account did not keep up with inflation."
         },
         {
           "problem": "A movie ticket cost $9.00 in 2015. If prices rose at an average of 3.5% per year, what would the same ticket cost in 2025 (10 years later)?",
@@ -66,7 +66,7 @@
         },
         {
           "problem": "You invest $1,000 in a stock index fund that averages 8% per year. How much is it worth after 10 years? Compare this to keeping $1,000 in a 1.5% savings account for 10 years.",
-          "solution": "Index fund: $1,000 x (1.08)^10 = $1,000 x 2.1589 = $2,158.92.\nSavings account: $1,000 x (1.015)^10 = $1,000 x 1.1610 = $1,161.00.\n\nDifference: $2,158.92 - $1,161.00 = $997.92 more from investing.\n\nThe index fund more than doubled the original amount, while the savings account grew only 16%. Even after accounting for 3% inflation, the index fund preserved and grew real purchasing power."
+          "solution": "Index fund: $1,000 x (1.08)^10 = $1,000 x 2.1589 = $2,158.92.\nSavings account: $1,000 x (1.015)^10 = $1,000 x 1.1605 = $1,160.54.\n\nDifference: $2,158.92 - $1,160.54 = $998.38 more from investing.\n\nThe index fund more than doubled the original amount, while the savings account grew only 16%. Even after accounting for 3% inflation, the index fund preserved and grew real purchasing power."
         }
       ],
       "lessonId": "investing_planning"

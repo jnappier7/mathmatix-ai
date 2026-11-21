@@ -35,8 +35,8 @@
     },
     {
       "id": "pcu8-2",
-      "question": "A ball is dropped from 80 feet. Each bounce reaches 3/4 of the previous height. (a) Write a geometric sequence for the bounce heights. (b) Find the height of the 6th bounce. (c) Find the total vertical distance traveled (up and down) before the ball comes to rest.",
-      "answer": "(a) Heights: 80, 60, 45, ... aₙ = 80(3/4)ⁿ⁻¹. (b) a₆ = 80(3/4)⁵ = 80(243/1024) = 19440/1024 ≈ 18.98 ft. (c) Down first: 80. Then up and down for each bounce: total = 80 + 2·S where S = sum of all bounce heights = 80(3/4)/(1-3/4) = 60/(1/4) = 240. But more carefully: S(bounces) = Σₖ₌₂^∞ aₖ = 80·(3/4)/(1-3/4) = 240. Total distance = 80 + 2(240) = 560 ft.",
+      "question": "A ball is dropped from 80 feet. Each bounce reaches 3/4 of the previous height. (a) Write a formula for hₙ, the height the ball reaches after its nth bounce. (b) Find the height the ball reaches after its 6th bounce. (c) Find the total vertical distance traveled (up and down) before the ball comes to rest.",
+      "answer": "(a) The drop is 80 ft; the bounces reach 60, 45, 33.75, ... so hₙ = 80(3/4)ⁿ (h₁ = 60). (b) h₆ = 80(3/4)⁶ = 80(729/4096) = 58320/4096 ≈ 14.24 ft. (c) Down first: 80. Then up and down for each bounce: total = 80 + 2·S where S = sum of all bounce heights = Σₙ₌₁^∞ hₙ = 60/(1-3/4) = 60/(1/4) = 240. Total distance = 80 + 2(240) = 560 ft.",
       "skill": "sequences-geometric",
       "difficulty": 6,
       "points": 12
@@ -128,7 +128,7 @@
   ],
   "answerKeys": {
     "pcu8-1": "d=4, a₁=3, a₂₅=99, S₂₅=1275.",
-    "pcu8-2": "a₆≈18.98ft. Total distance=560ft.",
+    "pcu8-2": "hₙ=80(3/4)ⁿ. h₆≈14.24ft. Total distance=560ft.",
     "pcu8-3": "(a)4950. (b)21845/32768≈0.6667.",
     "pcu8-4": "S=125.",
     "pcu8-5": "Left=3, Right=5, lim DNE, f(2)=3, jump discontinuity.",

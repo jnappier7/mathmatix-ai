@@ -5,7 +5,7 @@
   "title": "Geometry",
   "weeks": "5-6",
   "estimatedDuration": 35,
-  "description": "Covers 12-15% of the ACT. Master angles, lines, triangles (including Pythagorean theorem and special right triangles), polygons, circles, area/volume/surface area, coordinate geometry, right triangle trig, and congruence/similarity. The ACT provides NO formula sheet — memorization is essential.",
+  "description": "Covers 17-20% of the ACT. Master angles, lines, triangles (including Pythagorean theorem and special right triangles), polygons, circles, area/volume/surface area, coordinate geometry, right triangle trig, and congruence/similarity. The ACT provides NO formula sheet — memorization is essential.",
   "skills": [
     "act-angles-lines-triangles",
     "act-polygons-circles",
@@ -45,7 +45,7 @@
       "lessonPhase": "concept-intro",
       "title": "Angles, Lines & Triangles",
       "skill": "act-angles-lines-triangles",
-      "content": "Geometry accounts for 12-15% of the ACT, and angle/triangle questions are the foundation. The ACT loves parallel lines with transversals, triangle angle sums, and exterior angle problems.",
+      "content": "Geometry accounts for 17-20% of the ACT, and angle/triangle questions are the foundation. The ACT loves parallel lines with transversals, triangle angle sums, and exterior angle problems.",
       "keyPoints": [
         "Complementary angles sum to 90°. Supplementary angles sum to 180°.",
         "Vertical angles are equal (formed by two intersecting lines).",

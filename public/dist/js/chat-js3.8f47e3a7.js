@@ -4260,6 +4260,7 @@ class CourseManager {
         // Remove the search bar so it's rebuilt fresh on next open
         const searchBar = document.getElementById('catalog-search-bar');
         if (searchBar) searchBar.remove();
+        this.clearCapNotice();
         this._catalogCache = null;
     }
 
@@ -4530,6 +4531,8 @@ class CourseManager {
                         // Fallback: redirect to pricing page
                         window.location.href = '/pricing.html';
                     }
+                } else if (data.code === 'COURSE_CAP_REACHED') {
+                    this.showCapNotice(data, courseId);
                 } else {
                     this.showToast(data.message || 'Enrollment failed');
                 }
@@ -4936,6 +4939,8 @@ class CourseManager {
     refreshCatalogIfOpen() {
         const modal = document.getElementById('course-catalog-modal');
         if (!modal?.classList.contains('is-visible') || !this._catalogCache) return;
+        // Enrolment just changed (a course was left) — the limit notice is stale.
+        document.getElementById('catalog-cap-notice')?.remove();
         this._filterCatalog();
     }
 
@@ -5036,8 +5041,14 @@ class CourseManager {
 
         const splash = document.createElement('div');
         splash.className = 'course-welcome-splash';
+        // flex-shrink:0 is load-bearing. The chat column is a flex column, and a
+        // child with overflow:hidden has a min-height of 0 — so the column
+        // squeezed this card to the space left over (about 300px on a laptop,
+        // the header alone on a phone) and clipped the rest, which is where the
+        // baseline button and "Skip for now" live. Unreachable until a reload.
         splash.style.cssText = `
             margin: 20px auto; max-width: 520px; border-radius: 16px; overflow: hidden;
+            flex-shrink: 0; width: 100%;
             box-shadow: 0 4px 20px rgba(102,126,234,0.15); animation: catalogSlideIn 0.4s ease;
         `;
 
@@ -5138,8 +5149,71 @@ class CourseManager {
         return name.split('-').map(w => UPPER.has(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
+    /**
+     * The two-course limit, said where the student is looking and for as long
+     * as they need it. It used to be a 3-second toast at the bottom of the
+     * screen, under a catalog whose every Enroll button still looked live —
+     * easy to miss, and it never said WHICH courses were holding the seats
+     * (the server sends them). The notice sits at the top of the catalog,
+     * directly above "Your courses", where the Leave buttons are.
+     */
+    showCapNotice(data, courseId) {
+        const grid = document.getElementById('catalog-grid');
+        if (!grid || !grid.parentNode) { this.showToast(data.message || 'Enrollment failed'); return; }
+        this.clearCapNotice();
+
+        const wanted = (this._catalogCache || []).find(c => c.courseId === courseId);
+        const names = (data.activeCourses || []).map(c => c.courseName).filter(Boolean);
+        const max = data.maxConcurrent || names.length || 2;
+        const list = names.length > 1
+            ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1]
+            : (names[0] || '');
+
+        const notice = document.createElement('div');
+        notice.id = 'catalog-cap-notice';
+        notice.setAttribute('role', 'alert');
+        notice.style.cssText = 'display:flex; align-items:flex-start; gap:10px; margin:0 0 14px 0; padding:12px 14px; '
+            + 'border-radius:10px; background:#fef2f2; border:1px solid #fecaca; color:#7f1d1d; font-size:13.5px; line-height:1.45;';
+
+        const text = document.createElement('div');
+        text.style.cssText = 'flex:1; min-width:0;';
+        const lead = document.createElement('strong');
+        lead.textContent = `You can take ${max} courses at a time.`;
+        text.appendChild(lead);
+        text.appendChild(document.createTextNode(
+            (list ? ` You're in ${list}.` : '')
+            + ` To start ${wanted ? wanted.title : 'a new course'}, leave one first — use the Leave button beside it`
+            + ' under Your courses. Your progress is saved if you come back.'));
+
+        const close = document.createElement('button');
+        close.type = 'button';
+        close.setAttribute('aria-label', 'Dismiss');
+        close.textContent = '\u00D7';
+        close.style.cssText = 'flex-shrink:0; width:32px; height:32px; border:none; background:transparent; color:#7f1d1d; font-size:20px; line-height:1; cursor:pointer; border-radius:6px;';
+        close.addEventListener('click', () => this.clearCapNotice());
+
+        notice.appendChild(text);
+        notice.appendChild(close);
+        const before = document.getElementById('catalog-search-bar') || grid;
+        before.parentNode.insertBefore(notice, before);
+
+        // Bring it, and the Leave buttons under it, into view.
+        const scroller = grid.closest('.modal-content');
+        if (scroller) {
+            try { scroller.scrollTo({ top: 0, behavior: 'smooth' }); } catch (_) { scroller.scrollTop = 0; }
+        }
+    }
+
+    clearCapNotice() {
+        const old = document.getElementById('catalog-cap-notice');
+        if (old) old.remove();
+    }
+
     showToast(message) {
         const toast = document.createElement('div');
+        // Announced to screen readers; it was silent.
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
         toast.style.cssText = `
             position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
             background: #333; color: white; padding: 12px 24px; border-radius: 10px;

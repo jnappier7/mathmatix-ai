@@ -5,7 +5,7 @@
   "title": "Integrating Essential Skills",
   "weeks": "7-8",
   "estimatedDuration": 35,
-  "description": "Covers 40-43% of the ACT — the LARGEST reporting category. These are multi-step problems that synthesize arithmetic, algebra, geometry, and data skills. They test whether you can combine 'basic' skills under time pressure to solve real-world problems.",
+  "description": "Covers 20% of the ACT — about 1 question in 5. These are multi-step problems that synthesize arithmetic, algebra, geometry, and data skills. They test whether you can combine 'basic' skills under time pressure to solve real-world problems.",
   "skills": [
     "act-multi-step-rate-proportion",
     "act-area-perimeter-composite",
@@ -41,7 +41,7 @@
       "lessonPhase": "concept-intro",
       "title": "Multi-Step Rate & Proportion Problems",
       "skill": "act-multi-step-rate-proportion",
-      "content": "Integrating Essential Skills questions make up 40-43% of the ACT — more than any other category. These are NOT new content; they're combinations of skills you already know. The challenge is chaining multiple steps together accurately under time pressure.",
+      "content": "Integrating Essential Skills questions make up 20% of the ACT — about 1 question in 5. These are NOT new content; they're combinations of skills you already know. The challenge is chaining multiple steps together accurately under time pressure.",
       "keyPoints": [
         "Rate × Time = Amount. Distance = Rate × Time. Work = Rate × Time.",
         "Combined work rates: if A does a job in a hours and B in b hours, together: 1/a + 1/b = 1/total",

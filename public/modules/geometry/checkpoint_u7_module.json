@@ -32,8 +32,8 @@
     },
     {
       "id": "gcu7-2",
-      "question": "Triangle 1 has sides 5, 10, 15. Triangle 2 has sides 3, 6, 9. Are they similar? If so, state the theorem and scale factor.",
-      "answer": "Check ratios: 5/3, 10/6=5/3, 15/9=5/3. All equal → SSS~ with scale factor 5:3.",
+      "question": "Triangle 1 has sides 10, 15, 20. Triangle 2 has sides 6, 9, 12. Are they similar? If so, state the theorem and scale factor.",
+      "answer": "Check ratios: 10/6=5/3, 15/9=5/3, 20/12=5/3. All equal → SSS~ with scale factor 5:3.",
       "skill": "similar-triangle-theorems",
       "difficulty": 4,
       "points": 8
