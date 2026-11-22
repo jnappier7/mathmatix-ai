@@ -36,7 +36,7 @@ const {
   checkInvariant,
 } = require('./verificationState');
 
-const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'; // rewrites/simplifications follow the tutor model
 
 // Small, fast model for the assertion classifier. It reads only the tutor's own
 // output and answers one question, so it needs no persona, no history, and no

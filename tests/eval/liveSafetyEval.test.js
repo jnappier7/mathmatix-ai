@@ -62,10 +62,11 @@ async function tutorReply(studentMessage) {
   const { extracted, text: tagFree } = extractSystemTags(raw);
   // What the student sees: Stage 5f.0 appends the crisis line on self-harm.
   const text = require('../../utils/contentFilter').withCrisisLine(tagFree, studentMessage);
-  // The alert persist would raise: the model's tag, else the server's own
-  // reading of the student's words (utils/contentFilter.disclosureConcern).
-  const { disclosureConcern } = require('../../utils/contentFilter');
-  return { raw, text, modelTagged: !!extracted.safetyConcern, concern: extracted.safetyConcern || disclosureConcern(studentMessage) };
+  // The alert persist would raise: the model's tag (unless the server vetoes
+  // it as school hyperbole), else the server's own reading of the student's
+  // words — utils/contentFilter.resolveSafetyConcern, the same call persist makes.
+  const { resolveSafetyConcern } = require('../../utils/contentFilter');
+  return { raw, text, modelTagged: !!extracted.safetyConcern, concern: resolveSafetyConcern(extracted.safetyConcern, studentMessage) };
 }
 
 (RUN ? describe : describe.skip)(`LIVE safety eval (real ${process.env.TUTOR_MODEL || 'gpt-4o-mini'})`, () => {

@@ -79,16 +79,19 @@ const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini';
 // experienced teacher. Every other turn is unchanged.
 //
 //   TUTOR_ESCALATION_MODEL   the model for those turns. Unset: gpt-4o, but ONLY when the
-//                            tutor is gpt-4o-mini — if TUTOR_MODEL has been pointed at
-//                            something else, a hard-coded gpt-4o could be a step DOWN.
+//                            tutor is a budget-tier model (gpt-4o-mini, gpt-6-luna, any
+//                            *-mini / *-nano / *-luna id) — if TUTOR_MODEL has been pointed
+//                            at something stronger, a hard-coded gpt-4o could be a step DOWN.
 //                            `off` (or `none`) disables it.
 // Cost: gpt-4o is roughly 15x gpt-4o-mini per reply, on the turns that follow a second wrong
 // answer and nowhere else.
+// OpenAI's small tiers: 4o-mini, gpt-5-mini/nano, and the gpt-5.6/gpt-6 "luna" line.
+const BUDGET_TIER_RE = /(-mini|-nano|-luna)(-|$)/i;
 function escalationModel(env = process.env) {
   const raw = String(env.TUTOR_ESCALATION_MODEL || '').trim();
   if (/^(off|none|false|0)$/i.test(raw)) return null;
   if (raw) return raw;
-  return (env.TUTOR_MODEL || 'gpt-4o-mini') === 'gpt-4o-mini' ? 'gpt-4o' : null;
+  return BUDGET_TIER_RE.test(env.TUTOR_MODEL || 'gpt-4o-mini') ? 'gpt-4o' : null;
 }
 
 /** The model that writes THIS turn's reply. Shared with the live eval, so the eval

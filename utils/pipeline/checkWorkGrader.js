@@ -31,7 +31,7 @@ const { detectMathProblem, solveProblem, verifyAnswer } = require('../mathSolver
 const { checkSteps } = require('./checkWorkSteps');
 
 const READ_MODEL = 'gpt-4o';           // vision transcription
-const JUDGE_MODELS = ['gpt-4o', 'claude-haiku-4-5'];  // cross-provider, like llmVerifier
+const JUDGE_MODELS = ['gpt-4o', 'claude-haiku-5-5'];  // cross-provider, like llmVerifier
 const MAX_PROBLEMS = 40;
 const MIN_JUDGE_ERROR_CONFIDENCE = 0.6;
 

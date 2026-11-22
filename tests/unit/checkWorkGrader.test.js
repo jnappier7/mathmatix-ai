@@ -195,7 +195,7 @@ describe('gradeSheet — read, then code, then two blind judges', () => {
     const read = calls.find(c => c[2].json_schema.name === 'check_work_transcription');
     expect(read[1][0].content).toMatch(/do NOT grade/);
     const judges = calls.filter(c => c[2].json_schema.name === 'check_work_judgement');
-    expect(judges.map(c => c[0]).sort()).toEqual(['claude-haiku-4-5', 'gpt-4o']);
+    expect(judges.map(c => c[0]).sort()).toEqual(['claude-haiku-5-5', 'gpt-4o']);
     for (const j of judges) {
       expect(typeof j[1][1].content).toBe('string'); // no image blocks
       expect(j[1][1].content).toMatch(/line 1: 2x = 12/);

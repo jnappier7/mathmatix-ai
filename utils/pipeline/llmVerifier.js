@@ -55,7 +55,12 @@ const verifyMetrics = require('../verifyMetrics');
 //      bad key is a terminal 4xx (isTransientError treats 4xx as terminal on
 //      purpose), so openaiClient's cross-provider fallback does NOT cover it.
 //      verifierCall does — see the fallback note there.
-const VERIFIER_MODEL = 'claude-haiku-4-5';
+// claude-haiku-5-5 since 2026-11-22: same role, a tenth of Haiku 4.5's price
+// ($0.10/$0.50 vs $1/$5 per MTok; the 5x tier above a 100K-token prompt is
+// out of reach for a verifier prompt).
+// VERIFIER_MODEL (env) overrides it, so a rollback or an A/B is a Render env
+// flip, not a deploy; it must stay a claude* id to keep the cross-check.
+const VERIFIER_MODEL = process.env.VERIFIER_MODEL || 'claude-haiku-5-5';
 
 // The OpenAI model to fall back to when the Claude verifier is unreachable.
 // Same id as generate's, which costs us the independence above — but a nominal

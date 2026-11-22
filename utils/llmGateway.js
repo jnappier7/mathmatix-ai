@@ -27,9 +27,9 @@ const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, re
 // ============================================================================
 
 const DEFAULT_MODELS = {
-    chat: 'gpt-4o-mini',                     // Fast, cost-effective teaching model
+    chat: process.env.TUTOR_MODEL || 'gpt-4o-mini',       // the tutor model (TUTOR_MODEL on Render)
     grading: 'gpt-4o',                       // GPT-4o vision for handwriting recognition
-    reasoning: 'gpt-4o-mini',                // Fast reasoning
+    reasoning: process.env.TUTOR_MODEL || 'gpt-4o-mini',  // follows the tutor model
     embedding: 'text-embedding-3-small'      // OpenAI embeddings (specialized task)
 };
 

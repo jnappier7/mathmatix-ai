@@ -77,6 +77,54 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
  * @param {Object} options - Additional options like temperature, max_tokens.
  * @returns {Promise<Object>} The completion object from the AI.
  */
+// ---------------------------------------------------------------------------
+// Per-model request parameters. One place, because the rules differ by model
+// FAMILY and a wrong one is a terminal 400 (isTransientError treats 4xx as
+// terminal on purpose, so there is no fallback — every tutor turn fails).
+// Established against the live API on 2026-11-22 (gpt-6-luna, gpt-4o-mini):
+//   - max_tokens: only gpt-3.5 / gpt-4 (not 4o, not 4.1) still take it. gpt-4o+,
+//     gpt-5.x, gpt-6.x and o-series reject it and want max_completion_tokens.
+//   - temperature: gpt-5.x, gpt-6.x, o-series and *nano accept ONLY the default
+//     (1). Any other value: "Unsupported value: 'temperature' does not support
+//     0.7 with this model". So it is omitted for those families.
+//   - reasoning_effort: gpt-5.x / gpt-6.x / o-series reason before answering by
+//     default — billed as output tokens and ~2x slower to first token on a
+//     streamed reply. The tutor writes short replies the student watches arrive,
+//     so the default here is 'none' (TUTOR_REASONING_EFFORT, or a per-call
+//     options.reasoning_effort, overrides). Chat Completions also refuses
+//     function tools on gpt-6-luna unless effort is 'none', so tools force it.
+//     gpt-5 / gpt-5-mini / gpt-5-nano spell the floor 'minimal'; o-series 'low'.
+// ---------------------------------------------------------------------------
+const LEGACY_MAX_TOKENS_RE = /^(gpt-3\.5|gpt-4(?![o.]))/i;
+const REASONING_FAMILY_RE = /^(o\d|gpt-5|gpt-6)/i;
+const FIXED_TEMPERATURE_RE = /^(o\d|gpt-5|gpt-6)|nano/i;
+
+function reasoningEffortFor(model, options = {}) {
+    let effort = String(options.reasoning_effort || process.env.TUTOR_REASONING_EFFORT || 'none').trim().toLowerCase();
+    if (Array.isArray(options.tools) && options.tools.length > 0 && effort !== 'none') {
+        console.warn(`[openaiClient] ${model}: function tools need reasoning_effort 'none' on Chat Completions; overriding '${effort}'`);
+        effort = 'none';
+    }
+    if (effort === 'none' && /^gpt-5(-|$)/i.test(model)) effort = 'minimal';
+    if (/^o\d/i.test(model) && (effort === 'none' || effort === 'minimal')) effort = 'low';
+    return effort;
+}
+
+function openaiRequestParams(model, options = {}) {
+    const params = {};
+    if (options.max_tokens) {
+        if (LEGACY_MAX_TOKENS_RE.test(model)) params.max_tokens = options.max_tokens;
+        else params.max_completion_tokens = options.max_tokens;
+    }
+    if (!FIXED_TEMPERATURE_RE.test(model)) {
+        params.temperature = options.temperature || 0.7;
+    }
+    if (REASONING_FAMILY_RE.test(model)) {
+        params.reasoning_effort = reasoningEffortFor(model, options);
+    }
+    return params;
+}
+
 // Classify an error as transient (worth failing over to the other provider)
 // vs terminal (surface it). Content refusals are HTTP 200 in the adapter and
 // do NOT throw, so they never reach here — refusals never trigger fallback.
@@ -224,19 +272,7 @@ async function callLLM(model, messages, options = {}) {
     try {
         console.log(`LOG: Calling OpenAI model (${model})`);
 
-        // CRITICAL FIX: Newer OpenAI models (gpt-4o, gpt-5, etc.) require max_completion_tokens
-        // Legacy models still use max_tokens
-        const tokenParam = options.max_tokens ?
-            (model.includes('gpt-5') || model.includes('gpt-4o') ?
-                { max_completion_tokens: options.max_tokens } :
-                { max_tokens: options.max_tokens })
-            : {};
-
-        // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
-        // Don't pass temperature for these models
-        const temperatureParam = model.includes('nano') ?
-            {} :
-            { temperature: options.temperature || 0.7 };
+        const modelParams = openaiRequestParams(model, options);
 
         const toolParams = {};
         if (Array.isArray(options.tools) && options.tools.length > 0) {
@@ -250,8 +286,7 @@ async function callLLM(model, messages, options = {}) {
         const requestBody = {
             model: model,
             messages: messages,
-            ...temperatureParam,
-            ...tokenParam,
+            ...modelParams,
             ...toolParams,
             stream: options.stream || false,
             ...(options.response_format ? { response_format: options.response_format } : {}),
@@ -374,17 +409,7 @@ async function callLLMStreamRaw(model, messages, options = {}) {
     try {
         console.log(`LOG: Calling OpenAI streaming (${model})`);
 
-        // CRITICAL FIX: Newer OpenAI models require max_completion_tokens
-        const tokenParam = options.max_tokens ?
-            (model.includes('gpt-5') || model.includes('gpt-4o') ?
-                { max_completion_tokens: options.max_tokens } :
-                { max_tokens: options.max_tokens })
-            : {};
-
-        // CRITICAL FIX: Some models (like gpt-5-nano) only support default temperature
-        const temperatureParam = model.includes('nano') ?
-            {} :
-            { temperature: options.temperature || 0.7 };
+        const modelParams = openaiRequestParams(model, options);
 
         const toolParams = {};
         if (Array.isArray(options.tools) && options.tools.length > 0) {
@@ -406,8 +431,7 @@ async function callLLMStreamRaw(model, messages, options = {}) {
         const stream = await openai.chat.completions.create({
             model: model,
             messages: messages,
-            ...temperatureParam,
-            ...tokenParam,
+            ...modelParams,
             ...toolParams,
             stream: true,
             ...(options.response_format ? { response_format: options.response_format } : {}),
@@ -545,6 +569,8 @@ module.exports = {
     moderateText,
     moderateImage,
     // Exported for unit testing the chokepoint without standing up the provider SDKs.
+    openaiRequestParams,
+    reasoningEffortFor,
     stripOutboundPII,
     resolveOutboundPiiContext,
     rehydrateCompletion,

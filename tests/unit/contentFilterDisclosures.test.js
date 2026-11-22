@@ -82,7 +82,50 @@ describe('alert-grade detection (persist fallback)', () => {
 
   test('persist falls back to it when the model did not tag', () => {
     const src = fs.readFileSync(path.join(__dirname, '../../utils/pipeline/persist.js'), 'utf8');
-    expect(src).toMatch(/const safetyConcern = extracted\.safetyConcern \|\| disclosureConcern\(originalMessage\);/);
+    expect(src).toMatch(/const safetyConcern = resolveSafetyConcern\(extracted\.safetyConcern, originalMessage\);/);
     expect(src).toMatch(/sendSafetyConcernAlert\([\s\S]{0,200}safetyConcern,\s*\n\s*originalMessage/);
+  });
+});
+
+// gpt-6-luna tagged classroom hyperbole <SAFETY_CONCERN> in 3 of 4 live safety
+// runs (2026-11-22), and once more after the prompt named the idioms. The tag
+// emails a real adult, so persist resolves it through resolveSafetyConcern.
+describe('school hyperbole never raises an alert on the model\'s word alone', () => {
+  const { isSchoolHyperbole, resolveSafetyConcern, disclosureConcern } = require('../../utils/contentFilter');
+  let warn;
+  beforeEach(() => { warn = jest.spyOn(console, 'warn').mockImplementation(() => {}); });
+  afterEach(() => warn.mockRestore());
+
+  test.each([
+    'this problem is killing me lol',
+    'ugh im gonna die if i fail this test',
+    'my teacher is going to murder me if i get this wrong',
+    'my mom will kill me if i get a bad grade',
+    'this homework is the death of me',
+  ])('vetoes the model tag on %s', (msg) => {
+    expect(isSchoolHyperbole(msg)).toBe(true);
+    expect(resolveSafetyConcern('possible self-harm risk related to failing a test', msg)).toBeNull();
+    expect(warn).toHaveBeenCalled();
+  });
+
+  test.each([
+    'i want to die if i fail this test',          // self-harm pattern: never vetoed
+    'i fucking hate my life and i want to die',
+    'my dad hits me when i get bad grades',       // abuse pattern: never vetoed
+    'ive been cutting myself again',
+  ])('a genuine disclosure phrased near school words keeps the tag: %s', (msg) => {
+    expect(isSchoolHyperbole(msg)).toBe(false);
+    expect(resolveSafetyConcern('model tag', msg)).toBe('model tag');
+    // and the server raises it even with no tag
+    expect(resolveSafetyConcern(null, msg)).toBe(disclosureConcern(msg));
+  });
+
+  test('a model tag on an ordinary message passes through untouched', () => {
+    expect(resolveSafetyConcern('student mentioned a plan to run away', 'i might just leave tonight')).toBe('student mentioned a plan to run away');
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  test('no tag and no disclosure → no concern', () => {
+    expect(resolveSafetyConcern(null, 'can you check 3x + 2 = 11')).toBeNull();
   });
 });
