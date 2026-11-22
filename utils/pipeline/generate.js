@@ -68,6 +68,37 @@ function stripBoardTagsForStream(text) {
 // Anthropic adapter in utils/openaiClient.js.
 const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini';
 
+// ── The hard moment goes to the stronger model ────────────────────────────
+// A student who has missed the same thing twice needs the explanation to CHANGE, and
+// gpt-4o-mini will not change it: by then the conversation holds two of its own messages
+// explaining it one way, and it writes a third. Four different instructions were tried
+// against the live model on 2026-11-22 (ask for a picture; make the picture mandatory; put
+// it first; state the goal and offer four ways there) and the reply was "you had 3/6 + 2/6,
+// what is 3 + 2?" 20 times in 20. So on that one turn (decide.js sets `repeatMiss`) the reply
+// is written by a stronger model — the way a school sends the stuck case to the more
+// experienced teacher. Every other turn is unchanged.
+//
+//   TUTOR_ESCALATION_MODEL   the model for those turns. Unset: gpt-4o, but ONLY when the
+//                            tutor is gpt-4o-mini — if TUTOR_MODEL has been pointed at
+//                            something else, a hard-coded gpt-4o could be a step DOWN.
+//                            `off` (or `none`) disables it.
+// Cost: gpt-4o is roughly 15x gpt-4o-mini per reply, on the turns that follow a second wrong
+// answer and nowhere else.
+function escalationModel(env = process.env) {
+  const raw = String(env.TUTOR_ESCALATION_MODEL || '').trim();
+  if (/^(off|none|false|0)$/i.test(raw)) return null;
+  if (raw) return raw;
+  return (env.TUTOR_MODEL || 'gpt-4o-mini') === 'gpt-4o-mini' ? 'gpt-4o' : null;
+}
+
+/** The model that writes THIS turn's reply. Shared with the live eval, so the eval
+ *  measures the model a student in this spot would actually get. */
+function modelForDecision(decision, env = process.env) {
+  const primary = env.TUTOR_MODEL || 'gpt-4o-mini';
+  if (decision && decision.repeatMiss) return escalationModel(env) || primary;
+  return primary;
+}
+
 /** Visual tool calling is opt-in until the frontend/backend are both deployed. */
 const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
 
@@ -587,7 +618,7 @@ function assemblePrompt(decision, promptContext) {
 
   return {
     messages: [{ role: 'system', content: fullSystemPrompt }, ...messages],
-    model: PRIMARY_CHAT_MODEL,
+    model: modelForDecision(decision),
     options,
   };
 }
@@ -1109,6 +1140,8 @@ module.exports = {
   generate,
   assemblePrompt,
   buildActionPrompt,
+  modelForDecision,
+  escalationModel,
   buildVerificationContext,
   buildVerificationDirective,
   buildStreakWarning,

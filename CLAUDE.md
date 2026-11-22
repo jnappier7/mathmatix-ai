@@ -70,6 +70,15 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 > **Claude** constant is `llmVerifier`'s `VERIFIER_MODEL` — it does not read `TUTOR_MODEL` and is not
 > affected by changing it.
 >
+> **One turn is written by a stronger model (2026-11-22): the reply after a SECOND wrong answer.**
+> `decide.js` sets `decision.repeatMiss` there and `generate.js` `modelForDecision` sends that one
+> reply to `gpt-4o` — a student who has missed twice needs the explanation to change, and
+> `gpt-4o-mini` repeated itself under four different instructions (live eval, 20 replies in 20).
+> `TUTOR_ESCALATION_MODEL` names the model; `off` disables it; unset, it escalates only when the
+> tutor is `gpt-4o-mini` (never a step down from a stronger `TUTOR_MODEL`). ~15× the per-reply cost,
+> on those turns only. The live persona eval uses the same function, so it grades the model a
+> student in that spot gets. Pinned by `tests/unit/tutorEscalationModel.test.js`.
+>
 > ⚠️ **`TUTOR_MODEL` cannot take an o-series id as-is.** `utils/openaiClient.js` maps to
 > `max_completion_tokens` only when the id contains `gpt-4o`/`gpt-5`, and drops `temperature` only when
 > it contains `nano`. So `o4-mini` (or any `o1`/`o3`/`o4` reasoning model) is sent `max_tokens` +
