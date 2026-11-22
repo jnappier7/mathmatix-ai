@@ -225,32 +225,28 @@ function applyVisualDirective(decision, observation, context) {
       .some((m) => hasInlineVisual(m.content)),
     recentWrongCount: observation?.streaks?.recentWrongCount || 0,
   });
-  if (!directive) return;
-  // The second-wrong branch tells the tutor to switch to "a concrete number check" and hands
-  // it an example sentence. With a picture asked for on the same turn those two lines are a
-  // second, easier instruction for "a different angle" — and the model took it every time
-  // (the nightly representation-switch persona: 0 of 5, same words louder). The picture is
-  // the different angle; say so once.
-  const kept = decision.directives.filter((d) => !SECOND_WRONG_VERBAL_ANGLE.includes(d));
-  if (kept.length !== decision.directives.length) {
-    kept.push('Try a DIFFERENT angle: the picture asked for below IS the different angle — not the same explanation again in other words.');
-  }
-  decision.directives = kept;
-  // Live run 2026-11-22: with the picture asked for LAST, behind "find the first wrong
-  // step… name that step", the repeat-miss turn was still answered in words 5 times in 5
-  // (while the fraction-comparison turn, where it is the second of two directives, went
-  // 0 → 5). When words are what failed, the picture leads.
-  if ((observation?.streaks?.recentWrongCount || 0) >= 2) decision.directives.unshift(directive);
-  else decision.directives.push(directive);
+  // A picture is a TOOL for reaching the turn's goal, never the goal (owner, 2026-11-22:
+  // "Trying to mimic a human tutor. A picture shouldn't be required, but a tool to reach a
+  // goal"). Two earlier passes here made it mandatory on a repeat miss — stood the verbal
+  // alternative down, then moved the ask to the front — and the live tutor ignored both,
+  // because the turn's actual goal ("do not explain it the same way again") was never what
+  // it was told. That goal now lives in CHANGE_THE_APPROACH; this only adds the offer.
+  if (directive) decision.directives.push(directive);
 }
 
 // ── Teaching moves shared by several branches ──
 
-// The verbal "different angle" for a second wrong answer. Named so applyVisualDirective can
-// stand these two down on a turn that is getting a picture instead.
-const SECOND_WRONG_VERBAL_ANGLE = [
-  'Try a DIFFERENT angle: if you asked a conceptual question last time, try a concrete number check this time.',
-  'Example: "Let\'s test your answer — if x = [their answer], does the equation balance?"',
+// A second wrong answer means the EXPLANATION failed, not the student. The one move that
+// cannot work is the one the tutor has already made — and it is the move a model makes by
+// default, because the conversation above is two copies of it (live eval 2026-11-22:
+// "you had 3/6 + 2/6, what is 3 + 2?" for the third time, 15 replies in 15). So the goal is
+// stated as the goal, with the ways a human tutor reaches it as OPTIONS. Which one is the
+// tutor's call; a picture is one of four, not a requirement.
+const CHANGE_THE_APPROACH = [
+  'ADAPTATION: This is the 2nd wrong answer. Your previous guidance didn\'t land — so the explanation is what has to change, not the volume.',
+  'THE ONE THING YOU MAY NOT DO: explain it the way you already did. Do not restate the same procedure, re-ask the same step, or walk the same lines in smaller pieces. Read your own last message — whatever it did, do something else.',
+  'Come at it a DIFFERENT way, the way a human tutor does when the first explanation has not worked. Pick ONE: (a) test THEIR answer against common sense ("you got 2/5 — is that more or less than the 1/2 you started with? can adding make it smaller?"); (b) a concrete everyday version (pizza slices, money, measuring cups); (c) a picture or model, if seeing it would help; (d) a simpler parallel case with friendlier numbers, then back to theirs. Then ask ONE question from inside that new way.',
+  'Let THEM see the contradiction. Do not hand them the correction.',
 ];
 
 // "I don't know" asks for instruction. Teach the one missing idea, then hand
@@ -277,10 +273,14 @@ const OWN_IT_WITHOUT_ANSWERING =
 // division nobody did, then sent the student to the one step they got right.
 // So: name the bad line as the wrong one, praise only a line diagnose checked,
 // and give no quotable praise sentence to copy.
-function firstWrongStepDirective(diagnosis) {
+function firstWrongStepDirective(diagnosis, opts = {}) {
   const d = diagnosis && diagnosis.derivation;
   const bad = d && d.firstBadStep;
-  const tail = ' Ask about that ONE move. Do not fix it for them, and do not go on to the final answer.';
+  // On a repeat miss the tutor has ALREADY asked about that move, so the diagnosis stays and
+  // the instruction to ask about it again does not.
+  const tail = opts.repeat
+    ? ' That is your DIAGNOSIS — what they are missing. You have already asked about that move once; how you get at it THIS time is set by the directives below. Do not fix it for them, and do not go on to the final answer.'
+    : ' Ask about that ONE move. Do not fix it for them, and do not go on to the final answer.';
   const noFakePraise = ' Be specific: never generic praise ("good try"), and never praise a step they did not take.';
   if (bad) {
     const badLine = String(bad).slice(0, 120);
@@ -1182,11 +1182,12 @@ function decideCore(observation, diagnosis, context) {
         // ── Second wrong: guide differently than the first time ──
         decision.action = ACTIONS.GUIDE_INCORRECT;
         decision.scaffoldLevel = 4;
+        // Read by generate.js: the closing line of the action prompt must not send the
+        // tutor back to "ask about that one move" — that is the move that already failed.
+        decision.repeatMiss = true;
         decision.directives.push(
-          firstWrongStepDirective(diagnosis),
-          'ADAPTATION: This is the 2nd wrong answer. Your previous guidance didn\'t land.',
-          ...SECOND_WRONG_VERBAL_ANGLE,
-          'Let THEM see the contradiction. Do not hand them the correction.'
+          firstWrongStepDirective(diagnosis, { repeat: true }),
+          ...CHANGE_THE_APPROACH
         );
       } else {
         decision.action = ACTIONS.GUIDE_INCORRECT;

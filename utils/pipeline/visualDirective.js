@@ -229,14 +229,19 @@ function buildVisualDirective(input = {}) {
     ? `Reach for: ${topic.tool}.`
     : 'Pick the tool that fits — a graph, a labelled diagram, a number line, or an area/tile model.';
 
-  // On a turn where words are what failed, "alongside your explanation" lost to every other
-  // directive that says "explain in 1-2 plain sentences" — the model explained, and drew nothing.
-  // There the picture is not alongside the explanation; it IS the explanation.
-  const lead = (asked || struggling || REDRAW_MOMENTS.has(action))
-    ? ' The picture IS the explanation this turn — where another instruction says to explain in plain sentences, this is how: write the visual tag on its own line FIRST, then one or two sentences about what it shows. Saying the same thing again in words, or only walking through the procedure, does not count.'
-    : '';
+  const guard = ` Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead. The same goes for a number line: on the student's own problem draw where they START and the hops they have already made, never the hop that lands on their answer, and never shade the solution of an inequality they have not solved yet.`;
 
-  return `DRAW IT: ${why} ${how}${lead} Emit ONE visual this turn alongside your explanation, and then SAY something about it — point at the part that matters ("see how the line crosses at..."). A picture nobody talks about teaches nothing. Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead. The same goes for a number line: on the student's own problem draw where they START and the hops they have already made, never the hop that lands on their answer, and never shade the solution of an inequality they have not solved yet.`;
+  // A picture is a tool for reaching the turn's goal, not the goal (owner, 2026-11-22). Only
+  // one case makes it the goal: the student asked to see it. On a repeat miss the goal is
+  // "do not explain it the same way again" (decide.js CHANGE_THE_APPROACH) and a picture is
+  // one of the ways there, so here it is OFFERED, with the tag ready to use, and never
+  // demanded. #1934 briefly said "the picture IS the explanation this turn" on these turns;
+  // that made the tool the requirement and is gone.
+  if (struggling && !asked) {
+    return `DRAW IT (if it helps): A picture is one good way to change the approach — your call, not a requirement. If you choose it: ${how} ONE visual, and SAY something about it — point at the part that matters. A picture nobody talks about teaches nothing.${guard}`;
+  }
+
+  return `DRAW IT: ${why} ${how} Emit ONE visual this turn alongside your explanation, and then SAY something about it — point at the part that matters ("see how the line crosses at..."). A picture nobody talks about teaches nothing.${guard}`;
 }
 
 module.exports = {

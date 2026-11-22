@@ -23,9 +23,12 @@ describe('buildVisualDirective — when the moment earns a picture', () => {
     expect(buildVisualDirective({ action: 'prerequisite_bridge' })).toBeTruthy();
   });
 
-  it('asks when words have already missed twice, whatever the action', () => {
+  it('offers a picture when words have already missed twice, whatever the action', () => {
+    // Offered, not demanded: on a repeat miss the goal is a different approach, and a
+    // picture is one way to it (owner, 2026-11-22).
     const d = buildVisualDirective({ action: 'guide_incorrect', recentWrongCount: 2 });
-    expect(d).toMatch(/Change the channel/);
+    expect(d).toMatch(/one good way to change the approach/);
+    expect(d).toMatch(/not a requirement/);
   });
 
   it('stays quiet on one miss — a single wrong answer is not a channel problem', () => {
@@ -247,19 +250,55 @@ describe('the two personas the nightly eval never saw drawn (2026-08 → 2026-11
     expect(d).not.toContain('[FRACTION:...]');
   });
 
-  it('when words have failed, the picture is the explanation, not an extra', () => {
-    for (const input of [
-      { action: 'scaffold_down', skillName: 'comparing fractions' },
-      { action: 'guide_incorrect', recentWrongCount: 2 },
-      { action: 'continue_conversation', studentText: 'can you show me?' },
-    ]) {
-      expect(buildVisualDirective(input)).toMatch(/The picture IS the explanation this turn/);
-    }
+  it('on a repeat miss a picture is OFFERED, never required', () => {
+    // Owner, 2026-11-22: "Trying to mimic a human tutor. A picture shouldn't be required,
+    // but a tool to reach a goal."
+    const d = buildVisualDirective({ action: 'guide_incorrect', recentWrongCount: 2, studentText: 'is it 2/5?' });
+    expect(d).toMatch(/^DRAW IT \(if it helps\)/);
+    expect(d).toMatch(/not a requirement/);
+    expect(d).toContain('[FRACTION:compare=');       // the tool is still handed over, ready
+    expect(d).not.toMatch(/IS the explanation|does not count|Emit ONE visual this turn/);
+    expect(d).toMatch(/hands them the answer/);       // the anti-cheat carve-out stays
   });
 
-  it('an ordinary spatial-topic turn keeps the lighter ask', () => {
-    const d = buildVisualDirective({ action: 'continue_conversation', skillName: 'slope' });
-    expect(d).toMatch(/^DRAW IT:/);
-    expect(d).not.toMatch(/The picture IS the explanation/);
+  it('a student who ASKS to see it still gets the firm ask, even mid-struggle', () => {
+    const d = buildVisualDirective({ action: 'guide_incorrect', recentWrongCount: 2, studentText: 'can you show me?' });
+    expect(d).toMatch(/^DRAW IT: The student ASKED/);
+  });
+});
+
+describe('a repeat miss: the goal is a different approach, and the tutor picks how', () => {
+  // Live eval 2026-11-22: "you had 3/6 + 2/6, what is 3 + 2?" for the third time, 15 replies
+  // in 15, across two attempts to make a picture mandatory. The turn's goal was never stated.
+  const fs = require('fs');
+  const path = require('path');
+  const decideSrc = fs.readFileSync(path.join(__dirname, '..', '..', 'utils', 'pipeline', 'decide.js'), 'utf8');
+  const generateSrc = fs.readFileSync(path.join(__dirname, '..', '..', 'utils', 'pipeline', 'generate.js'), 'utf8');
+
+  it('names the one thing that cannot work: the same explanation again', () => {
+    expect(decideSrc).toMatch(/THE ONE THING YOU MAY NOT DO: explain it the way you already did/);
+  });
+
+  it('offers a picture as ONE of several ways, beside common sense, a story and a simpler case', () => {
+    const block = decideSrc.slice(decideSrc.indexOf('const CHANGE_THE_APPROACH'), decideSrc.indexOf('];', decideSrc.indexOf('const CHANGE_THE_APPROACH')));
+    expect(block).toMatch(/Pick ONE/);
+    expect(block).toMatch(/common sense/);
+    expect(block).toMatch(/everyday/);
+    expect(block).toMatch(/a picture or model, if seeing it would help/);
+    expect(block).toMatch(/simpler parallel case/);
+  });
+
+  it('no longer moves the picture to the front or stands the alternatives down', () => {
+    expect(decideSrc).not.toMatch(/directives\.unshift\(directive\)/);
+    expect(decideSrc).not.toMatch(/IS the different angle/);
+  });
+
+  it('the closing line of the prompt agrees, instead of sending the tutor back to the same move', () => {
+    const i = generateSrc.indexOf('if (decision.repeatMiss)');
+    expect(i).toBeGreaterThan(-1);
+    const branch = generateSrc.slice(i, generateSrc.indexOf('} else {', i));
+    expect(branch).toMatch(/do not give it a third time/);
+    expect(branch).not.toMatch(/ask about that one move/);
+    expect(branch).toMatch(/Do NOT reveal the correct answer/);
   });
 });
