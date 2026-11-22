@@ -236,7 +236,12 @@ function applyVisualDirective(decision, observation, context) {
     kept.push('Try a DIFFERENT angle: the picture asked for below IS the different angle — not the same explanation again in other words.');
   }
   decision.directives = kept;
-  decision.directives.push(directive);
+  // Live run 2026-11-22: with the picture asked for LAST, behind "find the first wrong
+  // step… name that step", the repeat-miss turn was still answered in words 5 times in 5
+  // (while the fraction-comparison turn, where it is the second of two directives, went
+  // 0 → 5). When words are what failed, the picture leads.
+  if ((observation?.streaks?.recentWrongCount || 0) >= 2) decision.directives.unshift(directive);
+  else decision.directives.push(directive);
 }
 
 // ── Teaching moves shared by several branches ──
