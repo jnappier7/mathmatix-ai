@@ -586,6 +586,22 @@ npm run seed:all:dry   # preflight + plan, no writes
   `answer.equivalents[]`, `answerType`, `options[]`, `correctOption`. The retired `routes/growthCheck.js`
   compared against `problem.correctAnswer`, i.e. `undefined`, and scored every student 0%.
   MC answers travel as the **letter label** (`'C'`), not the option index.
+- **Which option of a multiple-choice item is right is ONE decision: `mcOptions.resolveKey`.** Both
+  graders use it — `answerComparison.compareAnswer` (behind `problem.checkAnswer()`: practice,
+  review, tests) and `skillChallenge.gradeOne` (the mastery test-out, the course checks). The key is
+  the one option whose text IS `answer.value`; else the option `answer.value` names by letter; else
+  `correctOption`; else the one option equal in value to the answer. An option whose text the author
+  wrote into `equivalents` is right too ("1" beside "2/2"); equal in value alone is not ("81" is not
+  "80 + 1"). They used to decide separately, and on the live bank (2026-11-22, 18,226 MC items):
+  72 items whose `correctOption` contradicts their own answer had the RIGHT pick marked wrong by
+  `gradeOne` and a wrong pick accepted by `compareAnswer`; a letter key with its text as an
+  equivalent passed up to all four options; a fraction key against a rounded-decimal option passed
+  none. Anything that SHOWS the key after grading uses `keyLabelOf(problem)`, never
+  `correctLabelOf` (which reads `correctOption` alone and is only for translating a stored letter
+  to its position). The stored letters themselves are repaired by `scripts/fixMcKeyDefects.js`
+  (re-solves each key from its prompt; `--write`), and the handful of items with no single right
+  option (bimodal "find the mode") are retired by `npm run retire:ungradable-mc` (dry run;
+  `--apply`). Pinned by `tests/unit/mcKeyResolution.test.js`, on items copied from the export.
 - **Skill inference**: mastery can be *inferred* from prerequisites with no cascade-invalidation if a
   prereq later fails — be careful trusting `masteryType: inferred`.
 - **Clever sync is non-blocking** — roster failures are swallowed; surface them when debugging "missing students."

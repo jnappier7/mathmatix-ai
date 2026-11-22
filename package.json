@@ -30,6 +30,7 @@
     "seed:playground:clear": "node scripts/seedPlaygroundAccounts.js --clear",
     "seed:skills": "node scripts/seed-pattern-skills.js",
     "seed:course-level": "node scripts/seedCourseLevelItems.js",
+    "retire:ungradable-mc": "node scripts/retireUngradableMc.js",
     "build:course-level": "node scripts/buildCourseLevelItems.js",
     "seed:all": "node scripts/seedAll.js",
     "seed:all:fresh": "node scripts/seedAll.js --fresh",

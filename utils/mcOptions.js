@@ -142,6 +142,83 @@ function correctLabelOf(problem) {
   return pos !== -1 && pos < stored.length ? LABELS[pos] : null;
 }
 
+/** Text compared the way a student reads it: spacing, case and minus signs aside. */
+function sameText(a, b) {
+  const n = (v) => String(v ?? '').replace(/[−–]/g, '-').replace(/\s+/g, ' ').trim().toLowerCase();
+  return n(a) !== '' && n(a) === n(b);
+}
+
+/**
+ * WHICH OPTION IS RIGHT — decided once, from the whole item, for every grader.
+ *
+ * An item can say what its answer is in three places: `answer.value` (the value
+ * or, on some banks, the letter), `answer.equivalents`, and `correctOption`.
+ * Each grader used to read them its own way, and on the live bank (2026-11-22,
+ * 18,226 multiple-choice items) that went wrong in three ways:
+ *
+ *  1. `correctOption` CONTRADICTS the item's own answer on 72 items — the
+ *     options were shuffled after the letter was written. "Multiply 5/3 × 4/5",
+ *     answer "4/3", options A) 5 B) 6 C) 3 D) 4/3, correctOption "C". One
+ *     grader trusted the letter and marked 4/3 wrong; the other accepted both.
+ *     In every case read by hand the VALUE was right, and it is what the
+ *     generator computed, so the value wins.
+ *  2. A letter key with its text as an equivalent ("D", "2/5 < 3/5") was
+ *     compared by value, where "2/5 > 3/5" and "2/5 = 3/5" also "matched":
+ *     three of four options graded correct.
+ *  3. A distractor EQUAL IN VALUE to the key graded correct: "What is 81 in
+ *     expanded form?" accepted "81" as well as "80 + 1".
+ *
+ * The key is, in order: the one option whose text IS `answer.value`; else the
+ * option `answer.value` names by letter; else `correctOption`; else the one
+ * option equal in value to the answer (`matches`, the caller's comparator — a
+ * key of "97/3" against an option "32.333333333333"). `also` lists other
+ * options the item's author declared equivalent by writing their text in
+ * `equivalents` ("1" beside a key of "2/2"): picking one of those is right too.
+ * Nothing else is — equal in value is not enough.
+ *
+ * @returns {{label: string, also: string[], conflict: boolean}|null} null when
+ *   the item does not say which option is right; the caller falls back.
+ */
+function resolveKey({ options, value, equivalents, correctOption }, matches) {
+  const opts = normalizeOptions(options);
+  if (!opts.length) return null;
+  const val = value === undefined || value === null ? '' : String(value).trim();
+
+  let byValue = null;
+  if (val) {
+    const exact = opts.filter((o) => sameText(o.text, val));
+    if (exact.length === 1) byValue = exact[0].label;
+    else if (!exact.length && /^[A-Ha-h]$/.test(val)) {
+      byValue = correctLabelOf({ options, correctOption: val });
+    }
+  }
+  const byLetter = correctLabelOf({ options, correctOption });
+
+  let label = byValue || byLetter;
+  if (!label && val && typeof matches === 'function') {
+    const equal = opts.filter((o) => { try { return matches(o.text, val); } catch { return false; } });
+    if (equal.length === 1) label = equal[0].label;
+  }
+  if (!label) return null;
+
+  const declared = (Array.isArray(equivalents) ? equivalents : []).filter((e) => !/^[A-Ha-h]$/.test(String(e).trim()));
+  const also = opts
+    .filter((o) => o.label !== label && declared.some((e) => sameText(o.text, e)))
+    .map((o) => o.label);
+
+  return { label, also, conflict: !!(byValue && byLetter && byValue !== byLetter) };
+}
+
+/** The label of the option that is right, read from a Problem (or a lean doc of one). */
+function keyLabelOf(problem) {
+  const answer = (problem && problem.answer) || {};
+  const key = resolveKey({
+    options: problem && problem.options, value: answer.value, equivalents: answer.equivalents,
+    correctOption: problem && problem.correctOption,
+  });
+  return key ? key.label : null;
+}
+
 /**
  * Carry a picked letter from one copy of an item's choices to another, by the
  * choice's TEXT. A test freezes its items' choices when it is assembled; the
@@ -192,4 +269,4 @@ function actDisplayLabel(position, label) {
   return ACT_EVEN_LABELS[String(label || '').toUpperCase()] || label;
 }
 
-module.exports = { LABELS, optionText, storedLabel, normalizeOptions, resolveChoice, correctLabelOf, relabelByText, frozenPickForGrading, actDisplayLabel };
+module.exports = { LABELS, optionText, storedLabel, normalizeOptions, resolveChoice, correctLabelOf, resolveKey, keyLabelOf, sameText, relabelByText, frozenPickForGrading, actDisplayLabel };

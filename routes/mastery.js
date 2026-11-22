@@ -26,7 +26,7 @@ const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
 const Problem = require('../models/problem');
 const { initializeSkillMastery: initializeSkillMasteryEntry } = require('../utils/masteryEngine');
 const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
-const { normalizeOptions, correctLabelOf } = require('../utils/mcOptions');
+const { normalizeOptions, correctLabelOf, keyLabelOf } = require('../utils/mcOptions');
 const { resolveGradeNumber } = require('../utils/gradeLevel');
 // POST /start-skill seeds the tutor's plan directly — the light "the student
 // picked this" path, as opposed to starting a whole badge run.
@@ -2993,7 +2993,7 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
     const review = result.items.map((item) => {
       const p = served.get(item.problemId) || {};
       const opts = normalizeOptions(p.options);
-      const keyLabel = correctLabelOf(p);
+      const keyLabel = keyLabelOf(p);
       const keyOpt = keyLabel ? opts.find((o) => o.label === keyLabel) : null;
       return {
         problemId: item.problemId,
