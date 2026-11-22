@@ -81,7 +81,7 @@
  * Mongo shadow (store.js) carries a game across a deploy and `rearm` restarts its clocks.
  */
 const crypto = require('crypto');
-const { DRILLS, dealPlay, getDrill } = require('./engine');
+const { defOf, dealPlay, getDrill } = require('./engine');
 
 /** The playbooks of the Math Facts bank this game can build chips for. */
 const BOOKS = ['all', 'add', 'sub', 'mul', 'div'];
@@ -294,9 +294,9 @@ const fail = (status, message) => Object.assign(new Error(message), { status });
 // ---------------------------------------------------------------------------
 
 /** 'labels' for a fixed-answer bank (DRILLS[*].arena), else 'facts'. */
-const kindOf = (game) => (DRILLS[game.drill] && DRILLS[game.drill].arena === 'labels' ? 'labels' : 'facts');
+const kindOf = (game) => ((defOf(game.drill) || {}).arena === 'labels' ? 'labels' : 'facts');
 /** Can the arena play this drill and playbook? Math Facts (one operation's books), or any label bank. */
-const playable = (drill, book) => !!DRILLS[drill] && (DRILLS[drill].arena === 'labels' || (!!DRILLS[drill].trackFacts && BOOKS.includes(book)));
+const playable = (drill, book) => { const d = defOf(drill); return !!d && (d.arena === 'labels' || (!!d.trackFacts && BOOKS.includes(book))); };
 
 const strip = (h) => String(h == null ? '' : h).replace(/<[^>]*>/g, '').replace(/&[a-z]+;/g, ' ').replace(/\s+/g, ' ').trim();
 /** What an answer is called on an orb: the bank's own short form ("Not congruent" → "Not ≅"), else the answer. */

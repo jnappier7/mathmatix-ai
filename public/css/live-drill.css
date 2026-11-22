@@ -816,6 +816,19 @@ div.alarm>*{position:relative}
 .hcard .cta,.tcard .cta{font-family:var(--display);font-weight:800;color:var(--led);letter-spacing:.06em;text-transform:uppercase;font-size:.95rem}
 .dsearch-res a{text-align:left;background:var(--night);color:var(--chalk);border:2px solid var(--rail);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0;text-decoration:none}
 .dsearch-res a:hover,.dsearch-res a:focus{border-color:var(--led);outline:none}
+/* the skill bank (/arcade "Any skill", /drill/skills): levels as a segment row, a card per category, a chip per skill */
+.dsearch-res .grp{grid-column:1/-1;margin:6px 0 -2px;font-family:var(--display);font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:.85rem;color:var(--muted)}
+.bank-levels{margin-top:12px;max-width:100%}
+.bank-levels button small{font-family:var(--body);font-weight:400;text-transform:none;letter-spacing:0;opacity:.8}
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:12px}
+.cat{background:var(--board);border:1px solid var(--rail);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.cat h3{margin:0;font-family:var(--display);font-weight:800;font-size:1.15rem;text-transform:uppercase;letter-spacing:.06em;color:var(--led)}
+.cat .chips{gap:6px}
+a.chip{text-decoration:none;font-size:.9rem;padding:6px 10px;line-height:1.2}
+a.chip:hover,a.chip:focus-visible{border-color:var(--led)}
+a.chip .n{color:var(--muted);font-weight:500;font-size:.78rem}
+.skillbank.panel{display:flex;flex-direction:column;gap:4px;margin-top:14px}
+.solo .skillbank .bank-levels{margin-top:0}
 .afoot{font-size:.92rem;text-align:center}
 .afoot a{color:var(--led)}
 .backlink{font-size:.9rem;margin:0 0 8px}

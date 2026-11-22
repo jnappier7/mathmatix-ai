@@ -6,7 +6,7 @@
  * LAUNCHERS for surfaces chat.html already has, not SPA routes —
  *   Tutor    → home: closes whatever surface is open, back to the conversation
  *   Courses  → the course-catalog bottom sheet (#browse-courses-btn)
- *   Practice → a small sheet of existing practice entry points
+ *   Practice → a small sheet of existing practice entry points (the Arcade, the review warm-up, the ACT test)
  *   Progress → the status card (#cr-progress-btn)
  *   More     → the more-tools menu (#more-tools-btn)
  *
@@ -140,6 +140,7 @@
     sheet.setAttribute('aria-label', 'Practice');
     sheet.innerHTML =
       '<h3>🎯 Practice</h3>' +
+      '<button class="mbn-act" id="mbn-arcade" type="button">🕹️ Arcade<span class="d">Games on any skill — beat the clock or play the computer</span></button>' +
       '<button class="mbn-act" id="mbn-warmup" type="button">🔁 Review warm-up<span class="d">Quick spaced review of skills coming due</span></button>' +
       '<button class="mbn-act" id="mbn-acttest" type="button">📝 ACT practice test<span class="d">Full timed section · all-new questions</span></button>' +
       '<button class="mbn-act" id="mbn-sattest" type="button">📝 SAT practice test<span class="d">Full timed section · 44 questions, 70 minutes</span></button>' +
@@ -194,6 +195,8 @@
       syncActive();
     });
 
+    // The Arcade is its own page (/arcade): the games, on any skill in the bank.
+    sheet.querySelector('#mbn-arcade').addEventListener('click', function () { closeSheet(); window.location.href = '/arcade'; });
     var warmup = sheet.querySelector('#mbn-warmup');
     warmup.addEventListener('click', function () {
       closeSheet();

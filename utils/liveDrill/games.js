@@ -25,7 +25,7 @@
  * after it ends (or after two idle hours).
  */
 const crypto = require('crypto');
-const { dealPlay, publicPlay, RECENT, DRILLS, getDrill, resolvePlaybook } = require('./engine');
+const { dealPlay, publicPlay, RECENT, defOf, getDrill, resolvePlaybook } = require('./engine');
 const facts = require('./facts');
 const hill = require('./hill');
 const heist = require('./heist');
@@ -98,7 +98,7 @@ const PREP_SETTINGS = {
   drive: { seconds: [180, 300, 420, 600, 900], defaultSeconds: 300 },
   huddle: { plays: [5, 10, 15, 20, 30], defaultPlays: 10, secondsPerPlay: [20, 30, 45, 60, 90, 120], defaultSecondsPerPlay: 45 },
 };
-const settingsFor = (drill) => ({ facts: FACT_SETTINGS, prep: PREP_SETTINGS })[(DRILLS[drill] || {}).scoring] || SETTINGS;
+const settingsFor = (drill) => ({ facts: FACT_SETTINGS, prep: PREP_SETTINGS })[(defOf(drill) || {}).scoring] || SETTINGS;
 
 // What a play pays. Standard is the course drill's own (+15/+10/+5 at 6 s/12 s, sack −5). Facts
 // come about three times as fast, so each pays about a third as much: a two-minute drive covers
@@ -113,7 +113,7 @@ const SCORING = {
   facts: { gains: [6, 4, 2], driveMs: [3000, 6000], sack: 2, noAnswer: 4 },
   prep: { gains: [15, 10, 5], driveMs: [20000, 40000], sack: 5, noAnswer: 10 },
 };
-const scoringFor = (game) => SCORING[(DRILLS[game.drill] || {}).scoring] || SCORING.standard;
+const scoringFor = (game) => SCORING[(defOf(game.drill) || {}).scoring] || SCORING.standard;
 // Fact fluency: a right answer in this long or less counts as automatic — the usual 3-second bar.
 const FLUENT_MS = 3000;
 
@@ -171,7 +171,7 @@ class GameError extends Error {
  * account name. The code still works for anyone, so a guest device is never locked out.
  */
 function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus, solo }) {
-  if (!DRILLS[drill]) throw new GameError(400, 'Unknown drill.');
+  if (!defOf(drill)) throw new GameError(400, 'Unknown drill.');
   if (!MODES.includes(mode)) throw new GameError(400, 'Mode must be drive, huddle, hill, heist or knockout.');
   const d = getDrill(drill); // throws if the published page can't be read
   // a book of the bank, a numbered section ("5.2" — every book that covers it), or the whole bank
@@ -183,7 +183,7 @@ function createGame({ hostId, hostName, cls, drill, playbook, mode, seconds, pla
     throw new GameError(400, 'Knockout Arena plays Math Facts (Mixed, Addition, Subtraction, Multiplication or Division) or a fluency drill such as Triangle Congruence.');
   }
   // Math Facts only: the numbers the teacher singled out ("× 2s, 5s & 10s").
-  const fx = DRILLS[drill].focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
+  const fx = defOf(drill).focus && facts.FOCUSABLE.includes(book) ? facts.normalizeFocus(focus) : null;
   const S = settingsFor(drill);
   sweep();
   const all = [...games.values()];
@@ -414,7 +414,7 @@ function rulesFor(game) {
       { gain: sc.gains[2], within: null },
     ],
     sack: sc.sack,
-    typed: !!(DRILLS[game.drill] || {}).typed,
+    typed: !!(defOf(game.drill) || {}).typed,
     fluentSec: FLUENT_MS / 1000,
     noAnswer: huddle ? sc.noAnswer : null, // Drive has no "no answer": the next play waits for you
     teamK: TEAM_K[game.mode] || null,
@@ -896,7 +896,7 @@ function base(game) {
     hostName: game.hostName,
     gameNumber: game.games || 1,
     // played alone: the level of the computer rivals, how many there are, and the practice page to go back to
-    solo: game.solo ? { level: game.solo.level, hub: game.solo.hub || null, rivals: [...game.players.values()].filter((p) => p.bot && !p.kicked).length, saves: !!game.solo.saves } : null,
+    solo: game.solo ? { level: game.solo.level, hub: game.solo.hub || null, ...(game.solo.skill ? { skill: game.solo.skill } : {}), rivals: [...game.players.values()].filter((p) => p.bot && !p.kicked).length, saves: !!game.solo.saves } : null,
     teams: teamsView(game),
     rules: rulesFor(game),
     version: game.version,
@@ -1055,7 +1055,7 @@ function hostView(game) {
       // a student who never answered sits at the bottom, never above someone who played and went backwards
       .sort((a, b) => (b.att > 0) - (a.att > 0) || b.yards - a.yards || b.comp - a.comp || a.name.localeCompare(b.name));
     v.final = { mvps, players: scoreboard, film: filmRoom(game), plays: playByPlay(game), att, comp, pct: att ? Math.round((100 * comp) / att) : 0 };
-    if (DRILLS[game.drill] && DRILLS[game.drill].trackFacts) v.final.facts = factsFinal(game, players);
+    if ((defOf(game.drill) || {}).trackFacts) v.final.facts = factsFinal(game, players);
     if (game.mode === 'hill') v.final.hill = hill.finalHill(game);
     if (game.mode === 'heist') v.final.heist = heist.finalHeist(game);
     if (game.mode === 'knockout') v.final.knockout = knockout.finalKnockout(game);
@@ -1246,7 +1246,7 @@ function hydrate(snap) {
   const held = games.get(snap && snap.code);
   if (held) return held;
   const game = unfold(snap);
-  if (!game || !game.code || !DRILLS[game.drill]) return null;
+  if (!game || !game.code || !defOf(game.drill)) return null;
   Object.assign(game, { deck: [], timers: new Set(), listeners: new Set(), pending: false });
   for (const p of game.players.values()) p.conns = 0;
   games.set(game.code, game);

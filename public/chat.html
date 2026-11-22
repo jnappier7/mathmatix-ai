@@ -488,6 +488,11 @@
           <i class="fas fa-project-diagram"></i>
           <span>Skill Map</span>
         </a>
+        <!-- The Arcade: every game on any skill (/arcade — utils/liveDrill/arcade.js, catalog.js) -->
+        <a href="/arcade" id="sidebar-arcade-btn" class="sidebar-tool-btn">
+          <i class="fas fa-gamepad"></i>
+          <span>Arcade</span>
+        </a>
         <button id="sidebar-practice-pack-btn" class="sidebar-tool-btn" onclick="window.open('/api/practice-pack/generate?count=8', '_blank')">
           <i class="fas fa-print"></i>
           <span>Practice Pack</span>
@@ -2435,6 +2440,11 @@
         <i class="fas fa-school"></i>
         <span>My Class</span>
       </button>
+      <!-- The Arcade: the games, on any skill in the bank (/arcade). A plain link — the page is public. -->
+      <a class="more-tool-item" id="more-arcade" href="/arcade">
+        <i class="fas fa-gamepad"></i>
+        <span>Arcade</span>
+      </a>
       <button class="more-tool-item" id="more-join-class" type="button" data-trigger="open-join-class-btn">
         <i class="fas fa-user-plus"></i>
         <span>Join a class</span>
@@ -2585,7 +2595,7 @@
   <script src="/js/guidedPath.js" type="module"></script>
   <script src="/dist/js/chat-js9.b9bd11de.js"></script>
   <!-- Bottom tab bar (phones only; MM_FEATURES.bottomNav) -->
-  <script defer src="/js/bottom-nav.js?v=4"></script>
+  <script defer src="/js/bottom-nav.js?v=5"></script>
   <script defer src="/js/activities-entry.js?v=20261017"></script>
   <link rel="stylesheet" href="/css/join-class.css?v=20261017">
   <script defer src="/js/join-class.js?v=20261017"></script>

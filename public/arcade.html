@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Mathmatix Arcade | MATHMATIX AI</title>
-  <meta name="description" content="Every Mathmatix game in one place: whole-class games on the projector, solo practice drills, and public ACT and SAT practice tests.">
+  <meta name="description" content="Every Mathmatix game in one place: whole-class games on the projector, any skill from counting to calculus as a solo drill, and public ACT and SAT practice tests.">
   <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261106d">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261122">
 </head>
 <body class="arcade">
 <div class="awrap">
@@ -17,7 +17,7 @@
   <header class="hero ahero">
     <div class="eyebrow">Mathmatix</div>
     <h1>The <span>Arcade</span></h1>
-    <p>Every game in one place. Whole-class games go on the projector and the class joins with a code; solo drills need nothing but a phone.</p>
+    <p>Every game in one place. Whole-class games go on the projector and the class joins with a code; solo drills on any skill need nothing but a phone.</p>
   </header>
 
   <!-- a code from the board, or a class game open right now -->
@@ -38,14 +38,21 @@
     <div class="gamegrid" id="games"></div>
   </section>
 
+  <!-- the skill bank: any catalog skill as a game (utils/liveDrill/catalog.js; /drill/skills) -->
+  <section aria-labelledby="k-l" class="skillbank">
+    <div class="sechead"><h2 id="k-l">Any skill</h2><p class="muted">Every skill in Mathmatix — counting to calculus — is a game. Search for one, or browse by level, then beat the clock or play any of the games above against the computer. <span id="k-count"></span></p></div>
+    <form class="dsearch" id="dsearch" role="search" autocomplete="off">
+      <label class="lbl" for="q">Find a skill or topic</label>
+      <input type="search" id="q" name="q" placeholder="e.g. fractions, slope, long division, SOHCAHTOA, module 7" maxlength="80" enterkeyhint="search" spellcheck="false">
+      <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching skills and drills" hidden></div>
+    </form>
+    <div class="seg-ctl bank-levels" id="k-levels" role="group" aria-label="Level" hidden></div>
+    <div class="catgrid" id="k-cats"></div>
+  </section>
+
   <!-- solo practice, by course -->
   <section aria-labelledby="s-l">
-    <div class="sechead"><h2 id="s-l">Play on your own</h2><p class="muted">The class drills, played solo: beat the clock, or play Team Drive, Huddle, King of the Hill, Heist or Knockout Arena against computer rivals. Nothing to join, nothing saved but your best — unless you're signed in, when your rounds land in your teacher's practice log.</p></div>
-    <form class="dsearch" id="dsearch" role="search" autocomplete="off">
-      <label class="lbl" for="q">Find a topic</label>
-      <input type="search" id="q" name="q" placeholder="e.g. completing the square, SOHCAHTOA, box plots, module 7" maxlength="80" enterkeyhint="search" spellcheck="false">
-      <div class="dsearch-res" id="q-res" role="listbox" aria-label="Matching drills" hidden></div>
-    </form>
+    <div class="sechead"><h2 id="s-l">Course drills</h2><p class="muted">The class drills, played solo: beat the clock, or play Team Drive, Huddle, King of the Hill, Heist or Knockout Arena against computer rivals. Nothing to join, nothing saved but your best — unless you're signed in, when your rounds land in your teacher's practice log.</p></div>
     <div class="hubgrid" id="hubs"></div>
   </section>
 
@@ -60,6 +67,6 @@
 </div>
 
 <script src="/js/live-drill/common.js?v=20261106b"></script>
-<script src="/js/live-drill/arcade.js?v=20261121"></script>
+<script src="/js/live-drill/arcade.js?v=20261122"></script>
 </body>
 </html>

@@ -27,7 +27,13 @@
   let autoBegin = false; // "Play again": start as soon as the fresh lobby arrives
   let soloLevel = ''; // the level picked on the final screen for the next game
   const LEVEL_NAMES = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
-  const backUrl = () => `/drill/${encodeURIComponent((st && st.solo && st.solo.hub) || (seat && seat.solo) || '')}`.replace(/\/$/, '');
+  // …and a game on a skill-bank drill (/drill/skills?skill=…) goes back to that skill, not the whole bank
+  const backUrl = () => {
+    const s = (st && st.solo) || null;
+    const hub = (s && s.hub) || (seat && seat.solo) || '';
+    const skill = s && s.skill;
+    return `/drill/${encodeURIComponent(hub)}`.replace(/\/$/, '') + (skill ? `?skill=${encodeURIComponent(skill)}` : '');
+  };
 
   const store = {
     get() { try { return JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch { return null; } },
