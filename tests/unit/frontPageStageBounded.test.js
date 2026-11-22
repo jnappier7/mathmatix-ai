@@ -124,15 +124,102 @@ describe('the transcript scrolls instead of growing', () => {
   });
 });
 
-describe('phones are deliberately exempt', () => {
-  it('releases the ceiling where the portrait is hidden', () => {
-    // ≤1080px hides the hero, so there is nothing to stretch — and a phone
-    // wants the document to scroll, not a short inner pane. The cap is lifted
-    // there on purpose; asserting it keeps a later "simplification" from
-    // applying the desktop frame to a 390px screen.
-    const phone = phoneRuleBody('.lp-trial-stage', 1080);
-    expect(phone).toMatch(/height:\s*auto/);
+/**
+ * THE THIRD BUG, 2026-11-22: "The landing page trial chat expands the page on
+ * mobile." Phones used to be exempt from the frame on purpose (`height: auto`
+ * at ≤1080px — "a phone wants the document to scroll"). Measured on an
+ * iPhone 14 (390x664) in Chromium against the shipped page:
+ *
+ *                 frame height   composer
+ *   on load          641 px      70 px below the fold
+ *   4 turns        1,581 px      moved every turn
+ *   at the gate    2,503 px      (page 1,862 px taller than it loaded)
+ *
+ * and the document scrolled itself each turn, chasing the input's focus.
+ * After: the frame is 468px at every one of those moments, the page height
+ * never changes, and the composer is on screen from load on thirteen
+ * viewports from 320x568 to 1440x788.
+ */
+describe('a phone gets the same fixed frame', () => {
+  const phone = () => phoneRuleBody('.lp-trial-stage', 1080);
+
+  it('never releases the ceiling', () => {
+    // `height: auto` here IS the bug: the row tracks the transcript again.
+    expect(phone()).not.toMatch(/height:\s*auto/);
+    expect(phone()).toMatch(/(?:^|[\s;])height:\s*max\(/);
     expect(phoneRuleBody('.lp-trial-hero', 1080)).toMatch(/display:\s*none/);
+  });
+
+  it('measures the SMALL viewport, with a vh fallback before it', () => {
+    // On iOS Safari 100vh is the viewport with the toolbars hidden, so a vh
+    // frame is ~100px taller than the screen at load. svh must come last so it
+    // wins where it is understood.
+    const body = phone();
+    expect(body).toMatch(/100svh/);
+    expect(body.lastIndexOf('100svh')).toBeGreaterThan(body.lastIndexOf('100vh'));
+  });
+
+  it('caps the floor by the screen, so a phone on its side still fits', () => {
+    expect(phone()).toMatch(/min\(\s*var\(--lp-stage-floor\)\s*,\s*calc\(\s*100svh/);
+  });
+
+  it('is not undone by a narrower media query', () => {
+    const blocks = [...CSS.matchAll(/@media[^{]*max-width[^{]*\{([\s\S]*?)\n\}/g)];
+    for (const b of blocks) {
+      const rules = [...b[1].matchAll(/\.lp-trial-stage\s*\{([^}]*)\}/g)];
+      for (const r of rules) expect(r[1]).not.toMatch(/(?:^|[\s;])height:\s*auto/);
+    }
+  });
+});
+
+describe('the frame keeps room for the transcript', () => {
+  it('the work dock takes a share and scrolls, instead of a fixed 277px', () => {
+    // On a 427px frame (1366x768 laptop) the dock left the transcript 32px.
+    const dock = ruleBody('.lp-trial-main .lp-work-dock:not([hidden])');
+    expect(dock).toMatch(/max-height:[^;]*%/);
+    expect(dock).toMatch(/min-height:\s*0/);
+    const nb = ruleBody('.lp-trial-main .lp-work-dock .lp-trial-notebook');
+    expect(nb).toMatch(/overflow-y:\s*auto/);
+    expect(nb).toMatch(/max-height:\s*none/);
+  });
+
+  it('the gate can shrink and scroll, so its buttons are never clipped', () => {
+    // It was a rigid ~400px item inside overflow:hidden: on that laptop the
+    // trial button was cut in half and the sign-in link was gone.
+    const gate = ruleBody('.lp-trial-main .lp-trial-gate');
+    expect(gate).toMatch(/min-height:\s*0/);
+    expect(gate).toMatch(/overflow-y:\s*auto/);
+  });
+
+  it('the suggestions are one scrolling row on a phone, not a 239px column', () => {
+    expect(CSS).toMatch(/\n {2}\.lp-trial-prompt-btns\s*\{[^}]*flex-wrap:\s*nowrap[^}]*overflow-x:\s*auto/);
+    expect(CSS).not.toMatch(/\.lp-trial-prompt-btns\s*\{\s*flex-direction:\s*column/);
+  });
+});
+
+describe('the script does not move the page', () => {
+  const JS = fs.readFileSync(
+    path.join(__dirname, '..', '..', 'public', 'js', 'landing.js'),
+    'utf8'
+  );
+
+  it('never calls a bare focus() on the composer', () => {
+    // A bare focus() scrolls the document to the input and, on a phone, raises
+    // the keyboard after every reply.
+    expect(JS).not.toMatch(/trialInput\.focus\(\s*\)/);
+  });
+
+  it('Send does not take focus from the composer', () => {
+    expect(JS).toMatch(/keepComposerFocus\(trialSend\)/);
+  });
+
+  it('a reply is shown from its first line', () => {
+    expect(JS).toMatch(/scrollTrialToReply\(row\)/);
+  });
+
+  it('the gate clears the dock out of its way', () => {
+    const gate = JS.slice(JS.indexOf('function showGate()'));
+    expect(gate.slice(0, 900)).toMatch(/workDock\.hidden\s*=\s*true/);
   });
 });
 

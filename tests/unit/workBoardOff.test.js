@@ -147,3 +147,27 @@ describe('the client honours the same switch', () => {
     expect(cw).toMatch(/isOn: function \(\) \{ return ON; \}/);
   });
 });
+
+describe('the landing-page preview follows the same switch', () => {
+  // Owner, 2026-11-22: "We removed the board in the actual app because it was
+  // not consistently updating" — and the preview was still showing it, because
+  // the pipeline runs the board silently and routes/trialChat.js forwarded
+  // whatever it produced. The page's dock opens only when board ops arrive, so
+  // gating the payload is the whole switch.
+  const src = require('fs').readFileSync(
+    require('path').join(__dirname, '..', '..', 'routes', 'trialChat.js'), 'utf8');
+
+  test('the trial route reads isWorkBoardEnabled, not a flag of its own', () => {
+    expect(src).toMatch(/isWorkBoardEnabled\s*\}\s*=\s*require\('\.\.\/utils\/featureFlags'\)/);
+  });
+
+  test('board commands are forwarded only with the board on', () => {
+    expect(src).toMatch(/const board = !isWorkBoardEnabled\(\) \? \[\] :/);
+  });
+
+  test('the pin the verifier grades against is kept either way', () => {
+    const pin = src.indexOf('req.session.trialBoardPin = conversation.boardProblem');
+    expect(pin).toBeGreaterThan(-1);
+    expect(pin).toBeLessThan(src.indexOf('const board = !isWorkBoardEnabled()'));
+  });
+});

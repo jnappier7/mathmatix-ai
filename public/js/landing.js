@@ -198,6 +198,7 @@
   // cap: the server would happily serve turn 5 and the browser would never ask.
   var MAX_CLIENT_TURNS = 9; // 1 greeting + 8 student volleys
   var isSending = false;
+  var stageEl = document.querySelector('.lp-trial-stage');
   var trialTtsAudio = null; // Currently playing TTS audio
 
   /* The tutor-celebration overlay lived here — a levelUp video that played
@@ -214,12 +215,44 @@
      preventScroll keeps the caret without moving the viewport; narrow screens
      skip the focus entirely so an unrequested keyboard never covers the
      greeting on load. */
+  function isNarrow() {
+    return !!(window.matchMedia && window.matchMedia('(max-width: 780px)').matches);
+  }
+
   function focusComposer() {
     if (!trialInput) return;
     if (window.matchMedia && window.matchMedia('(max-width: 780px)').matches) return;
     // The options object is safely ignored by engines that predate it — an
     // unsupported member is simply not read, so this needs no guard.
     trialInput.focus({ preventScroll: true });
+  }
+
+  /* Tapping Send (or a symbol key) must not take focus FROM the composer. On a
+     phone, losing focus drops the keyboard; the reply handler then focused the
+     input again, which raised it — so every turn was keyboard down, page
+     jumps, keyboard up, page jumps. Cancelling the press's default keeps focus
+     where it was; the click still fires. */
+  function keepComposerFocus(el) {
+    if (!el) return;
+    el.addEventListener('mousedown', function (e) { e.preventDefault(); });
+  }
+
+  /* The frame is bounded on a phone now, so the page no longer grows — but on a
+     very small screen its last few pixels can start below the fold. When a
+     visitor taps a suggestion (no keyboard up), bring the whole frame into
+     view once so the reply and the composer are both on screen. Never while
+     the composer has focus: the browser is already positioning the page around
+     the keyboard, and a second scroll fights it. */
+  function keepStageInView() {
+    if (!isNarrow() || !stageEl || !stageEl.scrollIntoView) return;
+    if (document.activeElement === trialInput) return;
+    var r = stageEl.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    if (r.bottom <= vh && r.top >= 0) return;
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try {
+      stageEl.scrollIntoView({ block: 'nearest', behavior: calm ? 'auto' : 'smooth' });
+    } catch (e) { stageEl.scrollIntoView(false); }
   }
 
   /* ── Phase 3: Trial Chat ─────────────────────────── */
@@ -247,6 +280,12 @@
     trialSuggestions.style.display = 'none'; // Hide suggestions until greeting loads
     trialInputArea.style.display = '';
     trialGate.style.display = 'none';
+    if (stageEl) stageEl.classList.remove('lp-trial-gated');
+    // A phone's composer is one row, so the input is ~130px wide; the full
+    // placeholder ("Ask a math question...") does not fit in it.
+    if (window.matchMedia && window.matchMedia('(max-width: 600px)').matches) {
+      trialInput.placeholder = 'Type a problem…';
+    }
     trialSend.disabled = true; // Disable until greeting loads
     trialInput.disabled = true;
 
@@ -316,6 +355,7 @@
 
   /* ── Send Message ────────────────────────────────── */
   trialSend.addEventListener('click', sendTrialMessage);
+  keepComposerFocus(trialSend);
   trialInput.addEventListener('keydown', function (e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -350,6 +390,7 @@
     // Show typing indicator
     trialTyping.style.display = 'flex';
     scrollTrialToBottom();
+    keepStageInView();
 
     // Call API
     csrfFetch('/api/trial-chat', {
@@ -402,7 +443,11 @@
       } else {
         isSending = false;
         trialSend.disabled = false;
-        trialInput.focus();
+        // Not a bare focus(): that scrolls the document to the input, and on a
+        // phone it raises a keyboard nobody asked for (a suggestion chip was
+        // tapped, nothing was typed). Someone who typed still has focus —
+        // Send no longer takes it.
+        if (document.activeElement !== trialInput) focusComposer();
       }
     })
     .catch(function () {
@@ -731,7 +776,7 @@
 
     requestAnimationFrame(function () {
       row.classList.add('lp-chat-visible');
-      scrollTrialToBottom();
+      if (isUser) scrollTrialToBottom(); else scrollTrialToReply(row);
     });
   }
 
@@ -739,8 +784,29 @@
     trialMessages.scrollTop = trialMessages.scrollHeight;
   }
 
+  /* A reply is read from its first line. Pinning the pane to the bottom was
+     fine while the frame was tall; in a phone-sized pane a four-line reply
+     with a display equation is taller than the pane, so its opening scrolled
+     out of sight the moment it arrived and every turn began with scrolling
+     back up. Show the reply from its top — and the question it answers above
+     it, when both fit. */
+  function scrollTrialToReply(row) {
+    var pane = trialMessages.getBoundingClientRect();
+    var max = trialMessages.scrollHeight - trialMessages.clientHeight;
+    if (max <= 0) return;
+    var top = row.getBoundingClientRect().top - pane.top + trialMessages.scrollTop;
+    var prev = row.previousElementSibling;
+    if (prev && prev.classList.contains('lp-chat-row--student')) {
+      var prevTop = prev.getBoundingClientRect().top - pane.top + trialMessages.scrollTop;
+      var bottom = row.getBoundingClientRect().bottom - pane.top + trialMessages.scrollTop;
+      if (bottom - prevTop <= trialMessages.clientHeight - 16) top = prevTop;
+    }
+    trialMessages.scrollTop = Math.min(max, Math.max(0, top - 8));
+  }
+
   /* ── Math Symbol Keyboard ─────────────────────────── */
   if (trialMathToggle && trialMathBar) {
+    keepComposerFocus(trialMathBar);
     trialMathToggle.addEventListener('click', function () {
       var isVisible = trialMathBar.classList.contains('visible');
       trialMathBar.classList.toggle('visible', !isVisible);
@@ -749,7 +815,7 @@
       // honest, otherwise it announces "collapsed" over an open symbol bar.
       trialMathToggle.setAttribute('aria-expanded', String(!isVisible));
       trialMathToggle.setAttribute('aria-label', isVisible ? 'Open math symbols' : 'Close math symbols');
-      if (!isVisible) trialInput.focus();
+      if (!isVisible) trialInput.focus({ preventScroll: true });
     });
 
     trialMathBar.addEventListener('click', function (e) {
@@ -765,7 +831,7 @@
       trialInput.value = val.substring(0, start) + symbol + val.substring(end);
       var newPos = start + symbol.length;
       trialInput.setSelectionRange(newPos, newPos);
-      trialInput.focus();
+      trialInput.focus({ preventScroll: true });
     });
   }
 
@@ -779,6 +845,10 @@
       trialMathToggle.setAttribute('aria-expanded', 'false');
       trialMathToggle.setAttribute('aria-label', 'Open math symbols');
     }
+    // The wall needs the room more than the board does: in a bounded frame the
+    // dock and the gate together left the transcript nothing.
+    if (workDock) workDock.hidden = true;
+    if (stageEl) stageEl.classList.add('lp-trial-gated');
     trialGate.style.display = '';
 
     // Conversion hook: surface the XP earned this session above the message.
@@ -853,7 +923,7 @@
     });
   }
 
-  var previewStage = document.querySelector('.lp-trial-stage');
+  var previewStage = stageEl;
   if (previewStage) {
     previewStage.addEventListener('dragover', function (e) {
       var types = (e.dataTransfer && e.dataTransfer.types) || [];

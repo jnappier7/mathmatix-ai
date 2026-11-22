@@ -57,7 +57,10 @@ describe('the preview mirrors the product as it is now', () => {
     // CLAUDE.md §12: design-system.css and living-workspace.css answer different
     // theme signals before theme-toggle.js stamps data-theme, so a transparent
     // inline surface can put light ink on a dark panel. It shipped that way once.
-    const block = css.slice(css.indexOf('.lp-work-dock {'), css.indexOf('.lp-work-dock-head'));
+    // Anchored to the top-level rule: narrower rules for the dock's parts now
+    // sit earlier in the sheet (the phone frame, 2026-11-22).
+    const start = css.indexOf('\n.lp-work-dock {');
+    const block = css.slice(start, css.indexOf('}', start));
     expect(block).toMatch(/background:\s*#/);
     expect(css).toMatch(/\[data-theme="dark"\] \.lp-work-dock \{[^}]*background:/);
   });

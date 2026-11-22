@@ -51,6 +51,10 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    /* "Log In" and "Start Free" each broke onto two lines at 390px, which
+       doubled the bar's height and took it out of the demo below. */
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .lp-mobile-topbar-link {
@@ -2400,8 +2404,6 @@
   .lp-tutor-card { padding: 1rem 0.75rem 0.75rem; }
   .lp-trial-chat { padding: 0; }
   .lp-trial-chat-inner { border-radius: 0; border-left: 0; border-right: 0; }
-  .lp-trial-prompt-btns { flex-direction: column; }
-  .lp-trial-prompt { text-align: left; }
 
   /* Gate CTA - ensure button text never clips */
   .lp-trial-gate { padding: 1.25rem 1rem; }
@@ -2724,14 +2726,214 @@
      product, the portrait is atmosphere. */
   .lp-trial-stage { grid-template-columns: minmax(0, 1fr); }
   .lp-trial-hero { display: none; }
-  /* With no portrait there is nothing to stretch, and a phone wants the page
-     to grow and the whole document to scroll rather than a short inner pane.
-     Releasing the cap here keeps that behaviour exactly as it was. */
-  .lp-trial-stage { height: auto; }
+
+  /* STILL A FIXED FRAME (2026-11-22). This block used to say `height: auto`,
+     on the theory that a phone wants the document to scroll rather than a
+     short inner pane. Measured on an iPhone 14 in Chromium, that meant the
+     frame was 641px on load (composer 70px below the fold), 1,581px by the
+     fourth turn and 2,503px at the gate: the page grew under the visitor's
+     thumb with every reply, the composer moved each time, and the browser
+     scrolled the document on its own to chase the input's focus.
+
+     So a phone gets the same contract as a laptop: one frame, sized from what
+     is left of the screen, and the transcript scrolls inside it.
+
+     - `svh`, not `vh`: on iOS Safari 100vh is the viewport with the toolbars
+       HIDDEN, so a vh frame is ~100px taller than what is on screen at load.
+       The plain `vh` line above it is the fallback for engines without svh.
+     - --lp-stage-offset is what sits above the frame on this layout (desktop
+       header, eyebrow, headline). Re-measure if that stack changes.
+     - --lp-stage-floor keeps the frame usable on a very short screen, and is
+       itself capped by the screen, so a phone on its side (≈340px tall) gets
+       a frame that fits under the top bar instead of a 360px one that
+       cannot. */
+  .lp-trial-stage {
+    --lp-stage-offset: 200px;
+    --lp-stage-floor: 360px;
+    --lp-stage-clear: 16px;
+    min-height: 0;
+    height: max(min(var(--lp-stage-floor), calc(100vh - var(--lp-stage-clear))),
+                min(calc(100vh - var(--lp-stage-offset)), 640px));
+    height: max(min(var(--lp-stage-floor), calc(100svh - var(--lp-stage-clear))),
+                min(calc(100svh - var(--lp-stage-offset)), 640px));
+    /* scrollIntoView (landing.js keepStageInView) must not park the frame
+       under the sticky top bar. */
+    scroll-margin-top: var(--lp-stage-clear);
+    scroll-margin-bottom: 8px;
+  }
 }
 
-@media (max-width: 780px) {
-  .lp-trial-stage { min-height: 0; }
+@media (max-width: 768px) {
+  /* Phone: the sticky top bar replaces the header, and the headline wraps to
+     two lines. --lp-stage-clear is that bar plus a little air: the frame is
+     never taller than the screen minus it, so it can always be seen whole. */
+  .lp-trial-stage {
+    --lp-stage-offset: 196px;
+    --lp-stage-clear: 56px;
+  }
+
+  /* The headline is sized to the WIDTH so it wraps to the same two lines on
+     every phone. At a fixed 1.7rem it was two lines at 390px and three at
+     320px, which moved the frame 25px down the page and put the composer back
+     under the fold on exactly the smallest screens. (The 1.4rem rule for
+     ≤375px never applied: a later 600px rule out-ordered it.) */
+  #lp-hero { padding-top: 1rem; }
+  #lp-hero .lp-hero-intro { margin-bottom: 0.85rem; }
+  #lp-hero .lp-hero-intro h1 { font-size: clamp(1.3rem, 6.5vw, 1.7rem); margin-bottom: 0; }
+
+  /* Four full-width buttons were 239px — more than half the frame, with the
+     transcript left 46px. One row that scrolls sideways costs 50px; the third
+     chip is cut off at every phone width, which is what says "there are
+     more". */
+  .lp-trial-suggestions { padding: 0.35rem 0 0.4rem; }
+  .lp-trial-suggestions-label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .lp-trial-prompt-btns {
+    flex-direction: row; flex-wrap: nowrap;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    padding: 2px 1rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .lp-trial-prompt-btns::-webkit-scrollbar { display: none; }
+  .lp-trial-prompt { flex: 0 0 auto; white-space: nowrap; }
+
+  /* Every pixel here comes out of the transcript. */
+  .lp-trial-header { padding: 0.35rem 0.75rem; }
+  .lp-trial-messages { padding: 0.75rem; }
+  .lp-trial-main .lp-work-dock:not([hidden]) { --lp-dock-reserve: 290px; margin: 0 0.7rem 0.4rem; }
+  .lp-work-dock .lp-trial-notebook { padding: 8px 12px 8px 32px; }
+  .lp-work-dock .lp-nb-line { font-size: 1.2rem; line-height: 1.4; }
+  .lp-work-dock-head { padding: 0.3rem 0.6rem; }
+
+  /* css/mobile-fixes.css gives every button a 44px minimum height (and the
+     touch rules a 48px minimum width). That is the right floor for a tap
+     target and the wrong shape for these: the round send button rendered as a
+     34x44 oval, and the 26px read-aloud button as a 48x44 slab that took a
+     line of its own at the bottom of every tutor bubble. Each keeps a target
+     of about 44px; only the drawn size changes. */
+  .lp-trial-main .lp-trial-send {
+    width: 44px; height: 44px; min-width: 44px; min-height: 44px;
+  }
+  .lp-trial-main .lp-trial-tts-btn {
+    width: 30px; height: 30px; min-width: 30px; min-height: 30px;
+    padding: 0;   /* base/responsive.css pads every button 14px 22px on a phone */
+    font-size: 0.75rem;
+    position: relative;
+  }
+  .lp-trial-main .lp-trial-tts-btn::after {
+    content: ""; position: absolute; inset: -7px;   /* the target, not the drawing */
+  }
+  .lp-trial-main .lp-trial-signup-btn { min-height: 38px; }
+  .lp-trial-main .lp-trial-prompt { min-height: 40px; }
+
+  /* With the wall up, the header's own sign-up button is a second, smaller
+     copy of the button directly below it. On a phone that row is better spent
+     on the tutor's last line. (landing.js stamps .lp-trial-gated.) */
+  .lp-trial-stage.lp-trial-gated .lp-trial-header { display: none; }
+  .lp-trial-tutor-info span { white-space: nowrap; }
+}
+
+/* The smallest phones (an iPhone SE shows ~548px): the wall and the XP banner
+   together left 24px of transcript — half a clipped bubble. The banner goes;
+   the tutor's line, the terms and both buttons stay. */
+@media (max-width: 768px) and (max-height: 620px) {
+  .lp-trial-main .lp-trial-gate-xp { display: none; }
+}
+
+/* The "+5 XP" popup floated UP out of the pill, and the pill sits in the first
+   row of a frame with overflow:hidden — so the popup was cut off by the
+   frame's top edge on every award, at every size. It drops below the pill
+   instead, over the transcript. */
+.lp-trial-main .lp-trial-xp-pop { top: 100%; z-index: 5; }
+.lp-trial-main .lp-trial-xp-pop.go { animation-name: lpXpDrop; }
+@keyframes lpXpDrop {
+  0% { opacity: 0; transform: translateY(-4px) scale(0.9); }
+  15% { opacity: 1; transform: translateY(4px) scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(22px) scale(1); }
+}
+
+@media (max-width: 600px), (max-width: 1080px) and (max-height: 480px) {
+  /* One row on a phone (upright, or on its side): tools, input, send. The tools on a row of their own
+     made the composer 125px — a quarter of the frame, and with the keyboard up
+     nearly half of what is left of the screen. chat.html can afford the second
+     row because its transcript is the whole page; this one is a frame. */
+  .lp-trial-compose-bar { flex-direction: row; align-items: center; gap: 2px; padding: 4px 6px; }
+  .lp-trial-tool-row { padding: 0; gap: 0; flex: 0 0 auto; }
+  .lp-trial-input-row { flex: 1 1 auto; min-width: 0; gap: 6px; }
+  .lp-trial-main .lp-trial-math-toggle,
+  .lp-trial-main .lp-trial-locked-btn { width: 38px; min-width: 38px; height: 44px; }
+  .lp-trial-compose-bar .lp-trial-input { padding: 8px 6px; text-overflow: ellipsis; }
+}
+
+@media (max-width: 380px) {
+  /* Three tools leave the input too narrow to show its own placeholder. Photo
+     stays (it is what a phone is for); voice is still named at the wall and on
+     the page below. */
+  .lp-trial-main #lp-trial-mic { display: none; }
+}
+
+/* A phone on its side: ~340px of screen. The frame is the floor, so the
+   chrome gives back what it can. */
+@media (max-width: 1080px) and (max-height: 480px) {
+  .lp-trial-header { padding: 0.2rem 0.75rem; }
+  .lp-trial-input-area { padding: 6px 0.7rem 8px; }
+  .lp-trial-suggestions { display: none; }
+  /* No room for the board and a transcript both; the transcript carries the
+     same steps in the tutor's words. */
+  .lp-trial-stage .lp-trial-main .lp-work-dock:not([hidden]) { display: none; }
+}
+
+/* ── The frame's budget ───────────────────────────────────
+   Everything in the column other than the transcript is fixed chrome, and in a
+   bounded frame every one of them is paid for out of the transcript. Two of
+   them used to take all of it:
+
+   The work dock was up to 277px. On a 1366x768 laptop (427px frame) that left
+   the transcript 32px — one clipped line — by the fourth turn. It now takes
+   at most a share of the column and scrolls its own notebook (landing.js keeps
+   it on the newest line).
+
+   The gate is ~400px and was a rigid flex item, so on that same laptop it ran
+   past the frame's overflow:hidden and the trial button — the one thing the
+   wall exists to show — was cut in half, with the sign-in link gone entirely.
+   It may now shrink and scroll, and landing.js hides the dock when it shows. */
+.lp-trial-main .lp-work-dock:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;
+  min-height: 0;
+  /* A share of the column, less whatever it takes to leave the header, the
+     composer and a readable transcript (--lp-dock-reserve) — and never under
+     one line of work, or the dock is a title with nothing below it. */
+  --lp-dock-reserve: 300px;
+  max-height: max(88px, min(38%, calc(100% - var(--lp-dock-reserve))));
+}
+.lp-trial-main .lp-work-dock-head { flex: 0 0 auto; }
+.lp-trial-main .lp-work-dock .lp-trial-notebook {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
+}
+.lp-trial-main .lp-trial-gate {
+  flex: 0 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+/* A short frame (a 13-inch laptop, any phone): the wall tightens so the last
+   thing the tutor said is still readable above it. */
+@media (max-height: 820px), (max-width: 768px) {
+  .lp-trial-main .lp-trial-gate { padding: 0.85rem 1rem 0.6rem; }
+  .lp-trial-main .lp-trial-gate-msg { font-size: 0.98rem; line-height: 1.4; margin-bottom: 0.5rem; }
+  .lp-trial-main .lp-trial-gate-offer { font-size: 0.82rem; line-height: 1.45; margin-bottom: 0.65rem; }
+  .lp-trial-main .lp-trial-gate-offer br { display: none; }
+  .lp-trial-main .lp-trial-gate-xp { font-size: 0.82rem; padding: 5px 10px; margin-bottom: 8px; }
+  .lp-trial-main .lp-trial-gate-btn { margin-bottom: 0.15rem; }
+  .lp-trial-main .lp-trial-gate-signin { padding: 0.45rem 0.5rem; font-size: 0.85rem; }
 }
 
 
@@ -2853,11 +3055,8 @@
   /* The stage is the page now, so four full-width suggestion buttons pushed
      the tutor's own greeting off the top of the screen. */
   .lp-trial-prompt { padding: 5px 11px; font-size: 0.76rem; }
-  .lp-trial-suggestions { padding-bottom: 0.4rem; }
 
-  .lp-hero-intro h1 { font-size: 1.7rem; }
   .lp-hero-intro .lp-hero-sub { font-size: 0.95rem; }
-  .lp-hero { padding-top: 1.5rem; }
   .lp-locked-notice { font-size: 0.78rem; }
   .lp-locked-notice-cta { margin-left: 0; }
 }
