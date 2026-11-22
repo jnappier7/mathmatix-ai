@@ -50,9 +50,23 @@ function buildApp() {
 const TUTOR = 'mr-nappier';
 const send = (app, hdr) => request(app).post('/api/trial-chat').set(hdr).send({ tutorId: TUTOR, message: '3x + 7 = 22' });
 
-beforeEach(() => { mockPinsSeen.length = 0; });
+// The board's own suite opts in (CLAUDE.md §8): the preview forwards board ops
+// only when WORK_BOARD is on, exactly as the app does.
+const BOARD_ENV = process.env.WORK_BOARD;
+beforeEach(() => { mockPinsSeen.length = 0; process.env.WORK_BOARD = 'on'; });
+afterEach(() => {
+  if (BOARD_ENV === undefined) delete process.env.WORK_BOARD; else process.env.WORK_BOARD = BOARD_ENV;
+});
 
 describe('trial living-board wiring', () => {
+  test('board OFF (the default): nothing is forwarded, so the page shows no "Our work"', async () => {
+    delete process.env.WORK_BOARD;
+    const res = await send(buildApp(), { 'x-test-browser': 'off' });
+    expect(res.status).toBe(200);
+    expect(res.body.board).toEqual([]);
+    expect(res.body.reply).toBeTruthy();
+  });
+
   test('forwards notebook-renderable ops; graph gets server points; image dropped', async () => {
     const app = buildApp();
     const res = await send(app, { 'x-test-browser': 'a' });

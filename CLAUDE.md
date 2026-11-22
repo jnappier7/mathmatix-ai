@@ -290,7 +290,9 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
   otherwise). The server **still runs the board pipeline silently**: the synthesizer pins the problem
   from chat text, so `conversation.boardProblem` (the verifier's grading anchor) and the
   `boardLedger` (teacher live view) keep working without a single model tag. Voice board actions
-  (shelved in chat) render nowhere with it off. The board's own suites opt in with `WORK_BOARD=on`;
+  (shelved in chat) render nowhere with it off. The landing-page preview follows the same switch:
+  `routes/trialChat.js` forwards `board` only when `isWorkBoardEnabled()`, so its "Our work" dock
+  (`#lp-work-dock`) never opens with the board off. The board's own suites opt in with `WORK_BOARD=on`;
   board-off is pinned by `tests/unit/workBoardOff.test.js`. The notes below describe the board ON.
 - **The tutor's work is INLINE IN THE CHAT COLUMN** (2026-09), not a right rail. Two surfaces, both
   inside `#chat-container`: the **work dock** (`#cr-work-dock`, between the transcript and the

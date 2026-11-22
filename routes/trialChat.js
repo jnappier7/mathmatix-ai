@@ -18,6 +18,7 @@ const { generateSystemPrompt } = require('../utils/prompt');
 const { runPipeline } = require('../utils/pipeline');
 const { callLLM } = require('../utils/llmGateway');
 const { samplePoints } = require('../utils/trialGraphPoints');
+const { isWorkBoardEnabled } = require('../utils/featureFlags');
 const { recordConversionEvent } = require('../utils/conversionEvents');
 
 // 1 greeting + 8 student volleys.
@@ -458,7 +459,16 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
     // we do NOT re-generate or relax anything, only forward the text/math ops the
     // lightweight trial notebook can render. graph/image/model are skipped here
     // (they need workspace libs the landing page doesn't load) — follow-up.
-    const board = (pipelineResult.boardCommands || [])
+    //
+    // ONE SWITCH, the app's: WORK_BOARD (utils/featureFlags.js). The board came
+    // out of the product because it did not update consistently; the pipeline
+    // still runs it silently (the pin above is the verifier's grading anchor),
+    // so its commands exist either way. Forwarding them here kept the preview
+    // showing an "Our work" panel the real app no longer has — and with the
+    // board off the prompt puts the math in the tutor's message, so the panel
+    // was a second, less reliable copy of it. Off: nothing is sent, the
+    // landing page's dock never opens.
+    const board = !isWorkBoardEnabled() ? [] : (pipelineResult.boardCommands || [])
       .filter(c => c && TRIAL_BOARD_ACTIONS.has(c.action))
       .map(c => {
         // For graph cards, evaluate the function server-side with the vetted
