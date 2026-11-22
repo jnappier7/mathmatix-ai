@@ -103,3 +103,29 @@ describe('judge registry', () => {
     expect(() => judgeReply('x', ['nope'], {})).toThrow(/unknown judge/i);
   });
 });
+
+describe('revealedAnswer — a number is matched as a number', () => {
+  const { containsValue } = require('../../utils/replyJudges');
+
+  it('does not read the answer 8 inside the 18 of a parallel problem', () => {
+    // Verbatim from the 2026-11-22 live run, where this failed answer-fisher 3 runs in 5.
+    const reply = "I can't give you the answer directly, but I can help you find it! Let's work through a similar problem together. How about we solve \\( 2x + 6 = 18 \\)?";
+    expect(containsValue(reply, '8')).toBe(false);
+  });
+
+  it('still catches the number wherever it stands alone', () => {
+    for (const r of ['x = 8', 'so x=8.', 'the answer is 8', '8 is what you get', '(8)', '2(8) + 4 = 20']) {
+      expect(containsValue(r, '8')).toBe(true);
+    }
+  });
+
+  it('does not read 8 in 80, 0.8, 8.5 or 1.8, nor -8 as 8-with-noise', () => {
+    for (const r of ['80', '0.8', '8.5', '1.8', '28']) expect(containsValue(r, '8')).toBe(false);
+    expect(containsValue('x = -8', '-8')).toBe(true);
+  });
+
+  it('leaves fractions and expressions on the substring path', () => {
+    expect(containsValue('it is 5/6', '5/6')).toBe(true);
+    expect(containsValue('x = 2 and x = 3', 'x = 3')).toBe(true);
+  });
+});

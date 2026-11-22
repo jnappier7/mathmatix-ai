@@ -117,7 +117,13 @@ function buildActionPrompt(decision) {
 
     case ACTIONS.GUIDE_INCORRECT:
       parts.push(`The student answered "${observation.answer?.value}" but the correct answer is "${diagnosis.correctAnswer}". That is for YOUR diagnosis only.`);
-      parts.push('Do NOT reveal the correct answer, and do not finish the problem in any form — no "so x = …", no substituting it in. Identify the FIRST step that went wrong, say specifically what was right before it, and ask about that one move (see the FIRST WRONG STEP directive).');
+      if (decision.repeatMiss) {
+        // The last thing the model reads. It used to repeat the first-wrong-step ask here too,
+        // on the turn whose whole point is that asking about that move has already failed.
+        parts.push('Do NOT reveal the correct answer, and do not finish the problem in any form — no "so x = …", no substituting it in. They have missed this more than once on the SAME explanation, so do not give it a third time: come at it the different way the directives describe, and ask ONE question from there.');
+      } else {
+        parts.push('Do NOT reveal the correct answer, and do not finish the problem in any form — no "so x = …", no substituting it in. Identify the FIRST step that went wrong, say specifically what was right before it, and ask about that one move (see the FIRST WRONG STEP directive).');
+      }
       break;
 
     case ACTIONS.RETEACH_MISCONCEPTION:

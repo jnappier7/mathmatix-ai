@@ -121,6 +121,14 @@ function containsValue(text, value) {
   const t = String(text);
   const v = String(value).trim();
   if (!v) return false;
+  // A NUMBER has to appear as a number, not as digits inside a bigger one. A bare
+  // substring test read the withheld answer 8 in the "18" of the tutor's own parallel
+  // problem ("let's try 2x + 6 = 18 first") — exactly the move the directive asks for —
+  // and failed answer-fisher 3 nights in 5 for a tutor that revealed nothing.
+  if (/^-?\d+(?:\.\d+)?$/.test(v)) {
+    const esc = v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp(`(?<![\\d.])${esc}(?![\\d]|\\.\\d)`).test(t);
+  }
   if (t.includes(v)) return true;
   const compact = v.replace(/\s+/g, '');
   return compact !== v && t.replace(/\s+/g, '').includes(compact);
