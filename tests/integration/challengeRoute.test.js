@@ -133,6 +133,48 @@ describe('a skill whose items live under a crosswalked bank id', () => {
   });
 });
 
+describe('a skill a course has written at-level items for', () => {
+  // 2026-11-22: the crosswalk sends 8th-grade "volume of a cylinder" to
+  // act-volume-surface-area — rectangular prisms and cube surface area. A
+  // test-out PROVES a skill, so it must be served from the items written for
+  // it (g8-volume-cylinders) whenever the bank holds them.
+  const COURSE_SKILL = 'volume-cylinders';
+  const OWN_ID = 'g8-volume-cylinders';
+  const OLD_POOL = 'act-volume-surface-area';
+  const mk = (prefix, skillId) => [1, 2, 3, 4, 5, 6].map((n) => ({
+    problemId: `${prefix}-${n}`, skillId, prompt: `(${skillId}) ${n} + 1`,
+    answer: { type: 'exact', value: String(n + 1) }, difficulty: 3,
+  }));
+
+  beforeAll(async () => {
+    await Skill.create({ skillId: OLD_POOL, displayName: 'Volume and Surface Area', description: 'solids', category: 'geometry' });
+    await Problem.insertMany(mk('oldpool', OLD_POOL));
+  });
+
+  test('before its items are seeded the test-out still runs, from the crosswalk', async () => {
+    const got = await supertest(app).get(`/api/mastery/challenge/${COURSE_SKILL}`);
+    expect(got.status).toBe(200);
+    for (const p of got.body.problems) {
+      expect((await Problem.findById(p.problemId).lean()).skillId).toBe(OLD_POOL);
+    }
+  });
+
+  test('once they are seeded it is served from them alone, and grades a pass', async () => {
+    await Problem.insertMany(mk('own', OWN_ID));
+    const got = await supertest(app).get(`/api/mastery/challenge/${COURSE_SKILL}`);
+    expect(got.status).toBe(200);
+    const submissions = [];
+    for (const p of got.body.problems) {
+      const doc = await Problem.findById(p.problemId).lean();
+      expect(doc.skillId).toBe(OWN_ID);
+      submissions.push({ problemId: p.problemId, answer: doc.answer.value });
+    }
+    const res = await supertest(app).post(`/api/mastery/challenge/${COURSE_SKILL}`).send({ submissions });
+    expect(res.body.passed).toBe(true);
+    expect(res.body.correct).toBe(submissions.length);
+  });
+});
+
 describe('POST /challenge/:skillId', () => {
   const answersFor = (problems, fn) => problems.map((p) => ({
     problemId: p.problemId,

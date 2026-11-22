@@ -20,6 +20,8 @@
  * point: until its items are seeded the skill reads as untestable and the check
  * stops there (the course teaches it), rather than falling back to the pool
  * that was wrong. Skills not listed keep the crosswalk.
+ *
+ * Practice surfaces that have no course in hand use atLevelIdsFor (below).
  */
 
 const fs = require('fs');
@@ -65,9 +67,41 @@ function checkSourcesFor(courseId, ...ids) {
   return null;
 }
 
+/**
+ * The at-level bank ids for a skill, WITHOUT a course in hand — for the
+ * surfaces that know only the skill (spaced review, practice packs, the
+ * mastery test-out). A skill id means the same content in every course that
+ * uses it (checked 2026-11-22: of 75 overrides only `transformations` and
+ * `congruence-similarity` appear in a second course, a parent guide to the same
+ * grade band), so the union across courses is the right pool.
+ *
+ * Returns [] when no course has written items for the skill. Callers PREFER
+ * these ids and fall back to the crosswalk when the bank holds nothing under
+ * them — practice with an imperfect item beats no practice, which is the one
+ * place this differs from a course's check.
+ */
+let reverse = null;
+function atLevelIdsFor(...ids) {
+  if (!reverse) {
+    reverse = new Map();
+    for (const skills of Object.values(load())) {
+      for (const [courseSkill, bankIds] of Object.entries(skills)) {
+        const set = reverse.get(courseSkill) || new Set();
+        bankIds.forEach((id) => set.add(id));
+        reverse.set(courseSkill, set);
+      }
+    }
+  }
+  const out = [];
+  for (const id of ids) {
+    for (const bankId of (id && reverse.get(id)) || []) if (!out.includes(bankId)) out.push(bankId);
+  }
+  return out;
+}
+
 /** Every override, for tests and audits: { courseId: { courseSkill: [bankIds] } }. */
 function allCheckSources() {
   return JSON.parse(JSON.stringify(load()));
 }
 
-module.exports = { checkSourcesFor, allCheckSources, _reset: () => { cache = null; } };
+module.exports = { checkSourcesFor, atLevelIdsFor, allCheckSources, _reset: () => { cache = null; reverse = null; } };

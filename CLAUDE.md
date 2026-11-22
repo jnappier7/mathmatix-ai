@@ -493,9 +493,12 @@ npm run seed:all:dry   # preflight + plan, no writes
   `course-level-sources.manual.json` for a better pool that already exists) and
   `coursePlacementService.bankForCourse` uses a listed skill's ids AND NOTHING ELSE — so with the
   items not seeded the skill is untestable and the check stops there; it never falls back to the
-  old pool. The override is per COURSE (8th grade's `transformations` ≠ Algebra 2's). It governs
-  the quick check and the one-skill check only; the tutor's own practice lookup still uses the
-  crosswalk. Every item must pass `isCheckable` (the builder refuses otherwise — so no "figure",
+  old pool. The override is per COURSE (8th grade's `transformations` ≠ Algebra 2's). That strict
+  rule is the two course checks'. The surfaces that practise a skill with no course in hand —
+  spaced review (`routes/review.js` `findProblemForSkill`), practice packs
+  (`routes/practicePack.js`) and the mastery test-out (`routes/mastery.js` `/challenge`) — ask
+  `atLevelIdsFor(skillId)` and PREFER those items, falling back to the crosswalk when the bank
+  holds none (practice with an imperfect item beats none). Every item must pass `isCheckable` (the builder refuses otherwise — so no "figure",
   "shown", "diagram" in a prompt) and each template file has a `tests/unit/courseLevel*.test.js`
   that RE-SOLVES every item from its printed text. To fix another skill: add a template, rebuild,
   commit both seed files, re-seed. Pinned by `tests/unit/courseCheckSources.test.js` (seed files

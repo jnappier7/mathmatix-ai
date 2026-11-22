@@ -11,7 +11,8 @@
  */
 
 const express = require('express');
-const { skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
+const { canonicalSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
+const { atLevelIdsFor } = require('../utils/courseCheckSources');
 const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
@@ -445,7 +446,12 @@ async function findProblemForSkill(skillId, user, excludeIds) {
   // findNearDifficulty takes the 1-5 problem scale, not theta — convert here
   // rather than letting it guess (it used to, and read easy targets as hard).
   const difficulty = Problem.thetaToDifficulty(theta);
-  for (const candidate of skillLookupCandidates(skillId)) {
+  // Items written for this skill at its course's level come first; the
+  // crosswalk's pool is the fallback (courseCheckSources.js says why — it sent
+  // "volume of a cylinder" to prism items).
+  const ordered = atLevelIdsFor(skillId, canonicalSkillId(skillId));
+  for (const id of skillLookupCandidates(skillId)) if (!ordered.includes(id)) ordered.push(id);
+  for (const candidate of ordered) {
     const doc = await Problem.findNearDifficulty(candidate, difficulty, excludeIds, { preferMultipleChoice: false });
     if (doc) return doc;
   }
