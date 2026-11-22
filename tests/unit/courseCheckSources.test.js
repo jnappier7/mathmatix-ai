@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 const { expand, validate, BANK_NAMES, SOURCE, PER_TIER } = require('../../scripts/buildCourseLevelItems');
-const { checkSourcesFor, allCheckSources } = require('../../utils/courseCheckSources');
+const { checkSourcesFor, atLevelIdsFor, allCheckSources } = require('../../utils/courseCheckSources');
 const { courseSkills } = require('../../utils/coursePreAssessment');
 const { skillLookupCandidates } = require('../../utils/skillCanonicalizer');
 
@@ -86,5 +86,36 @@ describe('an overridden skill is tested from its own items and nothing else', ()
 
   test('a hand-picked existing pool can be named too', () => {
     expect(checkSourcesFor('grade-8-math', 'write-linear-equations')).toEqual(['writing-linear-equations-slope-intercept']);
+  });
+});
+
+describe('practice surfaces with no course in hand (review, practice packs, the test-out)', () => {
+  test('a skill some course wrote items for resolves to them', () => {
+    expect(atLevelIdsFor('volume-cylinders')).toEqual(['g8-volume-cylinders']);
+    expect(atLevelIdsFor('g7-unit-rates')).toEqual(['g7-unit-rates']);
+    expect(atLevelIdsFor('arc-length')).toEqual(['geo-arc-length']);
+  });
+
+  test('a skill no course wrote items for resolves to nothing (the crosswalk decides)', () => {
+    expect(atLevelIdsFor('slope-rate-of-change')).toEqual([]);
+    expect(atLevelIdsFor(undefined, null, '')).toEqual([]);
+  });
+
+  test('a skill id never means different at-level content in two courses', () => {
+    // atLevelIdsFor unions across courses, which is only right while this holds.
+    const byRaw = {};
+    for (const [courseId, skills] of Object.entries(allCheckSources())) {
+      for (const [raw, ids] of Object.entries(skills)) (byRaw[raw] = byRaw[raw] || []).push({ courseId, ids });
+    }
+    for (const [raw, uses] of Object.entries(byRaw)) {
+      expect({ raw, pools: new Set(uses.map((u) => u.ids.join(','))).size }).toEqual({ raw, pools: 1 });
+    }
+  });
+
+  test('the routes that practise a skill all ask for them', () => {
+    const src = (f) => fs.readFileSync(path.join(__dirname, '../../routes', f), 'utf8');
+    for (const f of ['review.js', 'practicePack.js', 'mastery.js']) {
+      expect({ f, uses: /atLevelIdsFor\(/.test(src(f)) }).toEqual({ f, uses: true });
+    }
   });
 });

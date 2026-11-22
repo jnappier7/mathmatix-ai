@@ -21,6 +21,7 @@ const Skill = require('../models/skill');
 const TutorPlan = require('../models/tutorPlan');
 const logger = require('../utils/logger').child({ route: 'practicePack' });
 const { skillLookupCandidates } = require('../utils/skillCanonicalizer');
+const { atLevelIdsFor } = require('../utils/courseCheckSources');
 const { normalizedMasteryScore } = require('../utils/masteryScore');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
@@ -276,7 +277,14 @@ async function selectProblemsForPack(user, options = {}) {
     // every id the bank might use, or the skill-targeted select silently
     // matches nothing and the whole pack falls back to generic grade-band
     // problems (owner-hit: an Absolute Value student got a fractions pack).
-    const sidCandidates = skillLookupCandidates(sid);
+    let sidCandidates = skillLookupCandidates(sid);
+    // A skill some course has its own at-level items for is practised from
+    // those when the bank holds them — the crosswalk's pool for such a skill
+    // does not test it (utils/courseCheckSources.js).
+    const atLevel = atLevelIdsFor(sid);
+    if (atLevel.length && await Problem.exists({ skillId: { $in: atLevel }, isActive: true, problemId: { $nin: excludeIds } })) {
+      sidCandidates = atLevel;
+    }
 
     // Try difficulty-banded first, then any difficulty for the skill — better
     // to give problems slightly off-level than to return an empty pack.

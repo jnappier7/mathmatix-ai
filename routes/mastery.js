@@ -19,6 +19,7 @@ const { analyzeError, generateReteaching, recordMisconception, markMisconception
 const { getUnpluggedBadgeProgress } = require('../utils/unpluggedBadges');
 const { isSkillMastered, resolveMasteryKey, getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap, hasActiveBadge } = require('../utils/masteryGuard');
 const { canonicalSkillId, skillLookupCandidates, expandSkillIds, matchSkillDoc } = require('../utils/skillCanonicalizer');
+const { atLevelIdsFor } = require('../utils/courseCheckSources');
 const { buildGraph, boardStates, bandProgress, nearestClosableBand, applyProofCascade } = require('../utils/skillClosure');
 const { currentRung, isInferred, canAdvance, advanceRung, clearsPrerequisites } = require('../utils/skillRung');
 const { confusedStudentOpener, scoreTeachBack } = require('../utils/teachBack');
@@ -2892,10 +2893,17 @@ router.get('/challenge/:skillId', isAuthenticated, async (req, res) => {
     // Skill lookup above. Matching the single canonical id denied test-outs on
     // any skill whose items live under a crosswalked bank id — the student got
     // "Not enough problems" while hundreds of items sat one alias away.
-    const problems = await Problem.aggregate([
-      { $match: { skillId: { $in: skillLookupCandidates(req.params.skillId) }, isActive: { $ne: false } } },
+    // A test-out PROVES the skill, so where a course has written items for it
+    // at level those are the test — the crosswalk's pool for such a skill does
+    // not test it (courseCheckSources.js: cylinder volume → prism items). The
+    // crosswalk is used only when the bank does not hold enough of them.
+    const sample = (ids) => Problem.aggregate([
+      { $match: { skillId: { $in: ids }, isActive: { $ne: false } } },
       { $sample: { size: CHALLENGE_SIZE } }
     ]);
+    const atLevel = atLevelIdsFor(req.params.skillId, skillId);
+    let problems = atLevel.length ? await sample(atLevel) : [];
+    if (problems.length < CHALLENGE_SIZE) problems = await sample(skillLookupCandidates(req.params.skillId));
     if (problems.length < MIN_ITEMS) {
       // Be explicit rather than serving a challenge that cannot possibly pass.
       return res.status(409).json({
@@ -2959,7 +2967,7 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
     // rejects items served from a different crosswalked bank id.
     const problems = await Problem.find({
       _id: { $in: ids },
-      skillId: { $in: skillLookupCandidates(req.params.skillId) }
+      skillId: { $in: skillLookupCandidates(req.params.skillId).concat(atLevelIdsFor(req.params.skillId, skillId)) }
     }).lean();
     const result = gradeChallenge(problems, submissions);
     // Per-item results, so "2 of 5" is never a verdict the student cannot
