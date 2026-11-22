@@ -29,9 +29,14 @@
 const { callLLMStructured } = require('../llmGateway');
 const { detectMathProblem, solveProblem, verifyAnswer } = require('../mathSolver');
 const { checkSteps } = require('./checkWorkSteps');
+const { visionModel, judgeModel, verifierModel } = require('../modelRoles');
 
-const READ_MODEL = 'gpt-4o';           // vision transcription
-const JUDGE_MODELS = ['gpt-4o', 'claude-haiku-5-5'];  // cross-provider, like llmVerifier
+// Model roles (utils/modelRoles.js; each a Render env flip). The judges are
+// cross-provider like llmVerifier's tiers: the OpenAI judge is JUDGE_MODEL and
+// the Claude judge is the verifier's own VERIFIER_MODEL, so the two witnesses
+// to a WRONG call are never the same model family.
+const READ_MODEL = visionModel();                       // vision transcription
+const JUDGE_MODELS = [judgeModel(), verifierModel()];
 const MAX_PROBLEMS = 40;
 const MIN_JUDGE_ERROR_CONFIDENCE = 0.6;
 

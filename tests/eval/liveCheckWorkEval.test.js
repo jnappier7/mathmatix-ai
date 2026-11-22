@@ -70,7 +70,7 @@ d('check-work eval — live', () => {
     if (!judged) throw new Error('INFRA: no judge answered a single problem — check OPENAI_API_KEY and account credit. This is not a grading result.');
     const m = score(rows);
     report.grading = m;
-    console.log(scorecard(`check-work eval — A. grading (judges: ${report.witnesses.judgeAnthropic ? 'gpt-4o + claude' : 'gpt-4o only'})`, m));
+    console.log(scorecard(`check-work eval — A. grading (judges: ${report.witnesses.judgeAnthropic ? 'openai + claude' : 'openai only'})`, m));
     expect(m.missedProblems).toEqual([]);
     expect(m.blankSolved).toEqual([]);
     expect(m.rates.falseAccusationRate).toBeLessThanOrEqual(MAX_FA);

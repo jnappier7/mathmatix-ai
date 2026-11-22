@@ -27,10 +27,11 @@
 
 const { callLLMStructured } = require('../llmGateway');
 const { gradeSheet } = require('./checkWorkGrader');
+const { visionModel } = require('../modelRoles');
 
 // Below this confidence we refuse to assert an error (downgrade to 'uncertain').
 const MIN_ERROR_CONFIDENCE = 0.6;
-const DEFAULT_MODEL = 'gpt-4o'; // vision-capable grader
+const DEFAULT_MODEL = visionModel(); // vision-capable grader (VISION_MODEL)
 
 const SYSTEM_PROMPT = `You are a meticulous, conservative math grader. A student uploaded a PHOTO of their OWN handwritten work — often a whole homework sheet with many problems — and asked you to check it. Go through EVERY problem on the sheet, in the order it appears. For each one, independently re-derive the mathematics yourself, step by step, THEN compare it to what the student wrote.
 
@@ -182,7 +183,7 @@ function normalizeVerdict(raw) {
  * @param {object} args
  * @param {Array} args.imageContents  OpenAI vision content blocks ({type:'image_url', image_url:{url}})
  * @param {string} [args.studentText]  the student's accompanying chat text
- * @param {string} [args.model]        override model (default gpt-4o); forces the single-pass grader
+ * @param {string} [args.model]        override model (default VISION_MODEL); forces the single-pass grader
  * @param {object} [deps]              injectable for tests (callLLMStructured, ocrDetailed)
  * @returns {Promise<{verdict:string, whatIsRight:string, errorStep:string|null, correctedValue:string|null, confidence:number, problems:Array, reason?:string}>}
  */

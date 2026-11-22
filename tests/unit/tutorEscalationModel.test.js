@@ -25,16 +25,18 @@ describe('modelForDecision', () => {
     expect(modelForDecision(null, {})).toBe('gpt-4o-mini');
   });
 
-  it('a repeat miss goes to gpt-4o when the tutor is a budget-tier model', () => {
-    expect(modelForDecision({ repeatMiss: true }, {})).toBe('gpt-4o');
-    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-4o-mini' })).toBe('gpt-4o');
+  it('a repeat miss goes to gpt-6.1-terra when the tutor is a budget-tier model', () => {
+    // gpt-4o until OpenAI's 2027-01-14 retirement; the default now lives in modelRoles.
+    expect(modelForDecision({ repeatMiss: true }, {})).toBe('gpt-6.1-terra');
+    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-4o-mini' })).toBe('gpt-6.1-terra');
     // The 4o-mini successor (OpenAI retires gpt-4o-mini 2027-01-14) is budget tier too.
-    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-6-luna' })).toBe('gpt-4o');
-    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-5.6-luna' })).toBe('gpt-4o');
+    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-6-luna' })).toBe('gpt-6.1-terra');
+    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-5.6-luna' })).toBe('gpt-6.1-terra');
+    expect(modelForDecision({ repeatMiss: true }, {})).not.toMatch(/gpt-4o/);
   });
 
   it('does not "escalate" DOWN when the tutor has been pointed at another model', () => {
-    // A hard-coded gpt-4o would be a downgrade from a stronger TUTOR_MODEL.
+    // A hard-coded stronger id would be a downgrade from a stronger TUTOR_MODEL.
     expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'claude-sonnet-5' })).toBe('claude-sonnet-5');
     expect(escalationModel({ TUTOR_MODEL: 'claude-sonnet-5' })).toBeNull();
   });
@@ -66,8 +68,8 @@ describe('the pipeline asks the stronger model on that turn, and only that turn'
     observation: { answer: { value: '2/5' } }, diagnosis: { correctAnswer: '5/6' },
   });
 
-  it('assemblePrompt carries gpt-4o on a repeat miss', () => {
-    expect(assemblePrompt(decisionFor(true), base).model).toBe('gpt-4o');
+  it('assemblePrompt carries the stronger model on a repeat miss', () => {
+    expect(assemblePrompt(decisionFor(true), base).model).toBe('gpt-6.1-terra');
   });
 
   it('and the tutor model on a first miss', () => {

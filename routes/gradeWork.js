@@ -8,7 +8,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const { userHasRole } = require('../utils/roleQuery');
 const User = require('../models/user');
 const GradingResult = require('../models/gradingResult');
-const { gradeWithVision, callLLM } = require('../utils/llmGateway');
+const { gradeWithVision, callLLM, DEFAULT_MODELS } = require('../utils/llmGateway');
 const { validateUpload, uploadRateLimiter } = require('../middleware/uploadSecurity');
 const { detectBlankWork, stripCorrectAnswers } = require('../utils/worksheetGuard');
 const pdfOcr = require('../utils/pdfOcr');
@@ -108,7 +108,8 @@ ${detailBlock}
 
 Write your short greeting now:`;
 
-        const completion = await callLLM('gpt-4o', [
+        // A short line in the tutor's voice — the tutor's own model writes it.
+        const completion = await callLLM(DEFAULT_MODELS.chat, [
             { role: 'system', content: systemMsg },
             { role: 'user', content: userMsg }
         ], { max_tokens: 220, temperature: 0.7 });
@@ -391,9 +392,9 @@ router.post('/',
             // For PDFs with extracted text, use the text-based grading prompt
             const pdfPrompt = `${ANALYSIS_PROMPT}\n\n--- STUDENT'S WORK (extracted from uploaded PDF) ---\n${extractedText.substring(0, 15000)}${extractedText.length > 15000 ? '\n\n[Content truncated — analyze only the problems shown above]' : ''}`;
 
-            // Use callLLM for text-based analysis (no vision needed)
-            const { callLLM } = require('../utils/llmGateway');
-            const completion = await callLLM('gpt-4o', [
+            // Text-based analysis (no vision needed) on the stronger text model —
+            // this grades a whole sheet of a student's work (JUDGE_MODEL).
+            const completion = await callLLM(DEFAULT_MODELS.judge, [
                 { role: 'user', content: pdfPrompt }
             ], { max_tokens: 4000, temperature: 0.2 });
 

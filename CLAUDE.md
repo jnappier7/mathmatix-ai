@@ -31,7 +31,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 |-------|------|
 | Backend | Node.js ≥20.14 (pinned 20.11.1) / Express 4 |
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
-| **LLM (runtime)** | **Dual-provider, split by role.** OpenAI for the tutor's generate stage (`TUTOR_MODEL`, **`gpt-4o-mini` as of 2026-08-18**), vision grading (`gpt-4o`), and embeddings; **Anthropic for the answer verifier** (`claude-haiku-5-5` since 2026-11-22, `VERIFIER_MODEL` env overrides) so the model checking the tutor's answer isn't the model that wrote it. Both keys are required in prod. See §7. |
+| **LLM (runtime)** | **Dual-provider, split by role.** OpenAI for the tutor's generate stage (`TUTOR_MODEL`, **`gpt-4o-mini` as of 2026-08-18**), reading photos of handwritten work (`VISION_MODEL`, `gpt-6-sol`), the stronger text judge (`JUDGE_MODEL`, `gpt-6.1-terra`), and embeddings; **Anthropic for the answer verifier** (`claude-haiku-5-5` since 2026-11-22, `VERIFIER_MODEL` env overrides) so the model checking the tutor's answer isn't the model that wrote it. Both keys are required in prod. See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
 | Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
@@ -63,20 +63,21 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 > `TUTOR_FALLBACK_MODEL` (the *generate* stage has no Claude call to fail over from — the verifier's own
 > fallback is separate, in `llmVerifier.verifierCall`).
 >
-> OpenAI regardless of `TUTOR_MODEL`: **vision grading** (deliberately — `llmGateway` calls the
-> OpenAI SDK directly for it), **embeddings**, `llmGateway`'s `DEFAULT_MODELS` for any caller that
-> doesn't pass a model explicitly, and every hard-coded `PRIMARY_CHAT_MODEL = 'gpt-4o-mini'` outside
-> generate.js (`pipeline/verify.js`, `routes/chat.js`, `routes/courseChat.js`). The one hard-coded
-> **Claude** constant is `llmVerifier`'s `VERIFIER_MODEL` — it does not read `TUTOR_MODEL` and is not
-> affected by changing it.
+> OpenAI regardless of `TUTOR_MODEL`: **vision grading** (`VISION_MODEL`, through `callLLM` like
+> everything else), the **stronger text judge** (`JUDGE_MODEL`), **embeddings**, and `llmGateway`'s
+> `DEFAULT_MODELS` for any caller that doesn't pass a model explicitly (`chat`/`reasoning` follow
+> `TUTOR_MODEL`; `grading`/`judge` are the two roles above). The one hard-coded **Claude** constant
+> is `llmVerifier`'s `VERIFIER_MODEL` — it does not read `TUTOR_MODEL` and is not affected by
+> changing it.
 >
 > **One turn is written by a stronger model (2026-11-22): the reply after a SECOND wrong answer.**
 > `decide.js` sets `decision.repeatMiss` there and `generate.js` `modelForDecision` sends that one
-> reply to `gpt-4o` — a student who has missed twice needs the explanation to change, and
-> `gpt-4o-mini` repeated itself under four different instructions (live eval, 20 replies in 20).
-> `TUTOR_ESCALATION_MODEL` names the model; `off` disables it; unset, it escalates only when the
-> tutor is `gpt-4o-mini` (never a step down from a stronger `TUTOR_MODEL`). ~15× the per-reply cost,
-> on those turns only. The live persona eval uses the same function, so it grades the model a
+> reply to `gpt-6.1-terra` (was `gpt-4o` until the move below) — a student who has missed twice
+> needs the explanation to change, and `gpt-4o-mini` repeated itself under four different
+> instructions (live eval, 20 replies in 20). `TUTOR_ESCALATION_MODEL` names the model; `off`
+> disables it; unset, it escalates only when the tutor is a budget-tier id (`gpt-4o-mini`,
+> `gpt-6-luna`, any `-mini`/`-nano`/`-luna`; never a step down from a stronger `TUTOR_MODEL`).
+> ~7-10× the per-reply cost, on those turns only. The live persona eval uses the same function, so it grades the model a
 > student in that spot gets. Pinned by `tests/unit/tutorEscalationModel.test.js`.
 >
 > ⚠️ **OpenAI retires `gpt-4o-mini` and `gpt-4o` on 2027-01-14** (snapshots `-2024-07-18` /
@@ -84,9 +85,20 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 > ($0.10/$0.50 per MTok vs 4o-mini's $0.15/$0.60). Every `gpt-4o-mini` constant now follows
 > `TUTOR_MODEL` (`generate.js`, `verify.js`, `routes/chat.js`, `routes/courseChat.js`, `llmGateway`
 > `DEFAULT_MODELS`; `boardLlm` has its own `BOARD_LLM_MODEL`), so the tutor side of that move is
-> one Render env flip. The `gpt-4o` side (vision grading, `checkWork*`, `gradeWork`, the verifier's
-> `ESCALATION_MODEL`, the repeat-miss `TUTOR_ESCALATION_MODEL` default) is still hard-coded and
-> has to move before that date.
+> one Render env flip. **The `gpt-4o` side moved on 2026-11-22, by role, in `utils/modelRoles.js`**
+> (each a Render env flip, read at boot): `VISION_MODEL` (default `gpt-6-sol`, $2/$10 per MTok —
+> where gpt-4o's quality mattered) reads photos of handwritten work: `checkWorkGrader`'s READ,
+> `checkWorkVerifier`'s single-pass grader, `gradeWithVision`. `JUDGE_MODEL` (default
+> `gpt-6.1-terra`, $1/$5) is the stronger TEXT model: the verifier's tier 2 (`ESCALATION_MODEL`;
+> `VERIFIER_ESCALATION_MODEL` overrides it alone and it must stay OpenAI while tier 1 is Claude),
+> the check-work OpenAI judge (its Claude judge is `VERIFIER_MODEL`), the method audit,
+> `gradeWork`'s PDF-text grading, the Animation Studio's clip author. The repeat-miss
+> `TUTOR_ESCALATION_MODEL` defaults to the same `gpt-6.1-terra`; `aiService`'s assessment chat and
+> `gradeWork`'s greeting follow `TUTOR_MODEL`. Every default was probed through `openaiClient` on
+> every request shape its sites send (plain, `json_object`, strict `json_schema`, `image_url`)
+> before it was written down, and `tests/unit/modelRoles.test.js` scans the runtime dirs for a
+> quoted `'gpt-4o'` so one cannot come back. Evidence for the switch is in the PR that made it
+> (verdict eval, check-work false-accusation gate, the repeat-miss persona).
 >
 > ⚠️ **Request parameters differ by model family, and a wrong one is a terminal 400 with no fallback.**
 > `utils/openaiClient.js` `openaiRequestParams()` is the one place that knows the rules, probed live
@@ -96,6 +108,9 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 > slower first token) unless `reasoning_effort` is sent — the default is `none`
 > (`TUTOR_REASONING_EFFORT` or a per-call `options.reasoning_effort` overrides), and Chat
 > Completions refuses function tools on `gpt-6-luna` at any other effort, so tools force `none`.
+> The gpt-6 **astra** line and **sol from 6.1** (`gpt-6-astra`, `gpt-6.1-sol`, `gpt-6.2-sol`,
+> `gpt-6.2-astra`) refuse `none` outright and get `low` — which also means none of them can be the
+> tutor behind a board tool call (`gpt-6-sol`, `gpt-6-luna`, `gpt-6.1-terra` take `none`).
 > Pinned by `tests/unit/openaiModelParams.test.js`. Add a new family there, not at a call site.
 
 ---
@@ -195,7 +210,7 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
 1. **observe** — classify the message (answer attempt / question / confusion / off-topic / …).
 2. **diagnose** — verify the student's answer two ways in parallel: deterministic `utils/mathSolver.js`
    (~30% of topics, fast/exact) **and** an LLM verifier (`pipeline/llmVerifier.js`). The verifier is
-   **tiered and cross-provider**: `claude-haiku-5-5` first, escalating to `gpt-4o` when it can't resolve
+   **tiered and cross-provider**: `claude-haiku-5-5` first, escalating to `JUDGE_MODEL` (`gpt-6.1-terra`, OpenAI) when it can't resolve
    (low confidence / parse fail) instead of silently giving up. The provider split is the point — the
    verifier checks the tutor's *own* answer, so tier 1 must not be the model that produced it
    (`TUTOR_MODEL`, currently `gpt-4o-mini`); one model grading itself is not a cross-check. Two things

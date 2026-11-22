@@ -19,6 +19,7 @@ const {
   llmVerifyAnswer,
   pickProblemContext,
   VERIFIER_MODEL,
+  ESCALATION_MODEL,
   CONFIDENCE_THRESHOLD,
 } = require('../../utils/pipeline/llmVerifier');
 
@@ -486,7 +487,8 @@ describe('LLMVerifier: llmVerifyMethod', () => {
     expect(audit.error).toBeNull();
     // The audit runs on the STRONGER judge by default — gpt-4o-mini's
     // counterexamples satisfied the bad rule they were meant to break.
-    expect(callLLM.mock.calls[0][0]).toBe('gpt-4o');
+    expect(callLLM.mock.calls[0][0]).toBe(ESCALATION_MODEL);
+    expect(ESCALATION_MODEL).toBe('gpt-6.1-terra');
   });
 
   test('an invalid verdict below the negative bar is NOT suspect', async () => {

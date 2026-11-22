@@ -8,6 +8,10 @@ jest.mock('openai', () => {
   }));
 });
 
+// The assessment chat follows TUTOR_MODEL (it was a hard-coded gpt-4o). Pin the
+// default, not whatever a local .env says.
+delete process.env.ASSESSMENT_MODEL;
+delete process.env.TUTOR_MODEL;
 const { callYourLLMService, chat } = require('../../services/aiService');
 
 beforeEach(() => {
@@ -24,7 +28,7 @@ describe('callYourLLMService', () => {
     expect(r).toBe('hello world');
   });
 
-  test('passes the prompt as a system message and uses gpt-4o', async () => {
+  test('passes the prompt as a system message and uses the tutor model', async () => {
     mockChatCreate.mockResolvedValue({ choices: [{ message: { content: 'ok' } }] });
     await callYourLLMService('Generate an opener', 'user-2');
 
@@ -32,7 +36,7 @@ describe('callYourLLMService', () => {
     // second argument — assert on the request body alone.
     expect(mockChatCreate.mock.calls[0][0]).toEqual(
       expect.objectContaining({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [{ role: 'system', content: 'Generate an opener' }],
         temperature: expect.any(Number)
       })
@@ -65,7 +69,7 @@ describe('chat (what routes/assessment.js actually calls)', () => {
       { role: 'assistant', content: 'Welcome' },
       { role: 'user', content: '3/4' }
     ]);
-    expect(body.model).toBe('gpt-4o');
+    expect(body.model).toBe('gpt-4o-mini');
   });
 
   test('returns an empty string rather than throwing on an empty completion', async () => {

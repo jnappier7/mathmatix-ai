@@ -6,7 +6,7 @@
 //   node scripts/estimateActDifficulty.js --validate[=N]   rate N held-out Fable items, compare to their authored ratings
 //   node scripts/estimateActDifficulty.js --run            rate every unrated item, write seeds/act-difficulty-estimates.json
 //   node scripts/estimateActDifficulty.js --fit            map the estimates onto the Fable scale (run after --run)
-//   options: --model=gpt-4o  --bank=ies,enhanced  --force (re-rate rated items)
+//   options: --model=<id> (default: JUDGE_MODEL, see utils/modelRoles.js)  --bank=ies,enhanced  --force (re-rate rated items)
 //
 // WHY
 // Forms are ordered by difficulty, and no item is calibrated yet (calibration
@@ -51,7 +51,7 @@ const BANK_FILES = {
 
 const args = process.argv.slice(2);
 const arg = (k) => { const a = args.find((x) => x === `--${k}` || x.startsWith(`--${k}=`)); return a ? (a.split('=')[1] || true) : null; };
-const MODEL = arg('model') || 'gpt-4o';
+const MODEL = arg('model') || require('../utils/modelRoles').judgeModel();
 const BATCH = 15;
 
 const RUBRIC = `You rate ACT Math questions for difficulty on a 1-5 scale, as a typical high-school junior taking the ACT would experience them.
