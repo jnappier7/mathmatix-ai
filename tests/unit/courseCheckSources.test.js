@@ -23,10 +23,7 @@ const readSeed = (f) => JSON.parse(fs.readFileSync(path.join(SEEDS, f), 'utf8'))
 const pathwayOf = (courseId) => JSON.parse(fs.readFileSync(
   path.join(__dirname, '../../public/resources', `${courseId}-pathway.json`), 'utf8'));
 
-// WIP: tolerate banks not yet written. Tightened before this branch is ready.
-const banks = BANK_NAMES
-  .filter((n) => ['Grade8', 'GeometryA'].includes(n))
-  .map((n) => require(`../../scripts/lib/courseLevel${n}.js`));
+const banks = BANK_NAMES.map((n) => require(`../../scripts/lib/courseLevel${n}.js`));
 
 describe('the committed seed files are what the templates build', () => {
   const built = banks.flatMap((b) => b.TEMPLATES.flatMap((t) => expand(t, b.GB)));
