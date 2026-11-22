@@ -18851,9 +18851,9 @@
   "svg": null,
   "answer": {
    "type": "exact",
-   "value": "The student is wrong: the longest side, 17, must be tested alone, and 8² + 15² = 17², so the triangle is right.",
+   "value": "The student is wrong: 17 is the longest side, and 8² + 15² = 17², so the triangle is right.",
    "equivalents": [
-    "Thestudentiswrong:thelongestside,17,mustbetestedalone,and8²+15²=17²,sothetriangleisright."
+    "Thestudentiswrong:17isthelongestside,and8²+15²=17²,sothetriangleisright."
    ]
   },
   "answerType": "multiple-choice",
@@ -18865,24 +18865,24 @@
    "subskill:geo-pythagorean-converse"
   ],
   "source": "course-level-2026-11",
-  "contentHash": "03e6fb891ddee47a27617c1186110f31e254a5b7fe9cf84e71505025b7ca781e",
+  "contentHash": "e7e03868ee9083d636827f09beec2086413656e5bfa9ffc1e48bbd7d5f020b47",
   "isActive": true,
   "options": [
    {
     "label": "A",
-    "text": "The student is correct: 353 ≠ 225, so the triangle is not right."
+    "text": "The student is correct: 17² + 8² = 353, and 353 ≠ 225, so the triangle is not right."
    },
    {
     "label": "B",
-    "text": "The student is correct, and since 353 > 225 the triangle is acute."
+    "text": "The student is correct: 353 > 225, so the triangle is acute, and it is not right."
    },
    {
     "label": "C",
-    "text": "The student is wrong: the triangle is right because 8 + 15 > 17."
+    "text": "The student is wrong: 17 is the longest side, and 8 + 15 > 17, so the triangle is right."
    },
    {
     "label": "D",
-    "text": "The student is wrong: the longest side, 17, must be tested alone, and 8² + 15² = 17², so the triangle is right."
+    "text": "The student is wrong: 17 is the longest side, and 8² + 15² = 17², so the triangle is right."
    }
   ],
   "correctOption": "D"

@@ -631,6 +631,91 @@ describe('"I think I already know this!" — the one-skill check', () => {
   });
 });
 
+describe('the one-skill check cannot be passed without doing it (QA, 2026-11-22)', () => {
+  const check = (id, skillId) => get(`/api/course-sessions/${id}/skill-check/${encodeURIComponent(skillId)}`);
+  const submit = (id, skillId, submissions) =>
+    post(`/api/course-sessions/${id}/skill-check/${encodeURIComponent(skillId)}`, { submissions });
+  const enroll = async () => (await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' })).body.session._id;
+  const RAW = G6.modules[0].skills[3];
+  let extra = [];
+
+  beforeAll(async () => {
+    // A pool the size of an at-level skill's (12), so a second attempt has
+    // other items to draw.
+    const bankId = (bankIdFor(RAW) && !G6_RAW.has(bankIdFor(RAW))) ? bankIdFor(RAW) : RAW;
+    const have = await Problem.countDocuments({ skillId: bankId });
+    const docs = [];
+    for (let n = have; n < 12; n += 1) {
+      docs.push({
+        problemId: `bank-${bankId}-${n}`, skillId: bankId, prompt: `(${bankId}) ${n} + 1`,
+        answer: { type: 'exact', value: String(n + 1) }, difficulty: 2,
+      });
+    }
+    extra = await Problem.insertMany(docs);
+  });
+  afterAll(async () => { await Problem.deleteMany({ _id: { $in: extra.map((e) => e._id) } }); });
+
+  test('five copies of one right answer are not five right answers', async () => {
+    const id = await enroll();
+    const before = (await CourseSession.findById(id).lean()).modules;
+    const served = await check(id, RAW);
+    const [one] = await answer(served.body.problems);
+    const res = await submit(id, RAW, [one, one, one, one, one]);
+    expect(res.body.passed).toBe(false);
+    expect(res.body).toMatchObject({ correct: 1, total: 1 });
+    expect(res.body.items).toHaveLength(1);
+    expect(res.body.message).toMatch(/every question/i);
+    // Nothing was earned: no mastery entry, no module touched.
+    expect((await User.findById(currentUser._id)).skillMastery.size).toBe(0);
+    const after = await CourseSession.findById(id).lean();
+    expect(after.modules).toEqual(before);
+    expect(after.skillsProvenHere).toEqual([]);
+  });
+
+  test('five distinct served items, all right, still pass', async () => {
+    const id = await enroll();
+    const served = await check(id, RAW);
+    const subs = await answer(served.body.problems);
+    expect(new Set(subs.map((s) => s.problemId)).size).toBe(5);
+    const res = await submit(id, RAW, subs);
+    expect(res.body).toMatchObject({ passed: true, correct: 5, total: 5 });
+    expect(Array.isArray(res.body.closedModules)).toBe(true);
+    expect(typeof res.body.modulesLeft).toBe('number');
+  });
+
+  test('a failed attempt\'s items are not asked again, and the key runs out before the pool does', async () => {
+    const id = await enroll();
+    const miss = async () => {
+      const served = await check(id, RAW);
+      expect(served.status).toBe(200);
+      const res = await submit(id, RAW, await answer(served.body.problems, { wrong: () => true }));
+      expect(res.body.passed).toBe(false);
+      // The feedback is still there — it is the re-serving that is closed.
+      expect(res.body.items.every((i) => typeof i.expected === 'string')).toBe(true);
+      return served.body.problems.map((p) => p.problemId);
+    };
+    const first = await miss();
+    const second = await miss();
+    expect(second.filter((x) => first.includes(x))).toEqual([]);
+
+    // Two failed tries have shown ten of the twelve: no third check from the two left.
+    const third = await check(id, RAW);
+    expect(third.status).toBe(409);
+    expect(third.body.reason).toMatch(/learned in the lesson/);
+    const seen = (await CourseSession.findById(id).lean()).skillCheckSeen;
+    expect(seen).toHaveLength(1);
+    expect(seen[0].problemIds.sort()).toEqual(first.concat(second).sort());
+  });
+
+  test('opening a check and walking away spends nothing', async () => {
+    const id = await enroll();
+    await check(id, RAW);
+    await check(id, RAW);
+    expect((await CourseSession.findById(id).lean()).skillCheckSeen).toBeNull();
+    expect((await check(id, RAW)).status).toBe(200);
+  });
+});
+
 describe('starting a course over', () => {
   const restart = (id) => post(`/api/course-sessions/${id}/restart`);
 

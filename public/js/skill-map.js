@@ -575,11 +575,13 @@
         toast(cleared ? '+' + cleared : 'Proved', cleared ? 'cleared from above' : 'rung 2 of 3');
         setTimeout(function () { closeDrawer(); load(); }, 1900);
       }
-    }).catch(function () {
+    }).catch(function (err) {
       var out = $('runner-result');
       out.hidden = false;
       out.className = 'runner-result miss';
-      out.textContent = 'Could not score that run. Nothing was lost — try again.';
+      // 409 = the run was already graded (one shot) — the server says so.
+      out.textContent = (err && err.status === 409 && err.body && err.body.error)
+        || 'Could not score that run. Nothing was lost — try again.';
     }).then(function () { btn.disabled = false; });
   }
 

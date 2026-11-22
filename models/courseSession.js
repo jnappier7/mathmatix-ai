@@ -118,6 +118,10 @@ const courseSessionSchema = new Schema({
   // The one-skill check in flight ("I think I already know this!"):
   // { skillId, problemIds: [String], at }. Cleared when it is graded.
   skillCheckServed: { type: Schema.Types.Mixed, default: null },
+  // Items shown in recent FAILED one-skill checks: [{ skillId, problemIds: [String] }],
+  // capped per skill. A failed check reveals what was missed, so the next
+  // attempt at that skill is drawn from other items.
+  skillCheckSeen: { type: Schema.Types.Mixed, default: null },
   // Course skills proved by a one-skill check in THIS session (canonical ids).
   // In a restarted course these — and only these — are skipped.
   skillsProvenHere: { type: [String], default: [] },

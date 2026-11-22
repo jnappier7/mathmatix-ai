@@ -813,6 +813,10 @@ const userSchema = new Schema({
   activeConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
   activeMasteryConversationId: { type: Schema.Types.ObjectId, ref: 'Conversation' },
   activeCourseSessionId: { type: Schema.Types.ObjectId, ref: 'CourseSession', default: null },
+  // The mastery test-out in flight (GET /api/mastery/challenge/:skillId):
+  // { skillId, problemIds: [String], at }. The POST grades exactly these items
+  // and clears it — the client never chooses what it is graded on.
+  challengeServed: { type: Schema.Types.Mixed, default: null },
 
   /* Subscription & Billing — Free (30 min/week) or Mathmatix+ ($9.95/mo unlimited)
      pack_60/pack_120 kept in enum for legacy users only; no longer sold */

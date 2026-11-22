@@ -111,10 +111,17 @@ function gradeOne(problem, submitted) {
 function gradeChallenge(problems, submissions) {
   const byId = new Map(problems.map((p) => [String(p._id || p.problemId), p]));
   const items = [];
+  // One answer per problem — the FIRST one. Without this, five copies of one
+  // correct answer were five graded items: a 5-of-5 "pass" on a single problem
+  // (QA, 2026-11-22). The first is kept so a later copy cannot overwrite a miss.
+  const gradedIds = new Set();
 
   for (const sub of submissions || []) {
+    if (!sub) continue;
     const problem = byId.get(String(sub.problemId));
     if (!problem) continue;                       // ignore unknown ids rather than trust them
+    if (gradedIds.has(String(sub.problemId))) continue;
+    gradedIds.add(String(sub.problemId));
     const graded = gradeOne(problem, sub.answer);
     items.push({
       problemId: String(sub.problemId),
