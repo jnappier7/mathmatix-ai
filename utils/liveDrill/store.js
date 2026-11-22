@@ -103,6 +103,15 @@ async function load(code) {
     return null;
   }
   if (!doc || stale(doc)) { misses.set(c, Date.now()); return null; }
+  // a class game on a skill-bank drill: its bank lived in the old process, so build it again first
+  const drill = doc.state && doc.state.drill;
+  if (typeof drill === 'string' && drill.startsWith('skill:')) {
+    const catalog = require('./catalog');
+    try { if (!(await catalog.ready(drill))) { misses.set(c, Date.now()); return null; } } catch (err) {
+      logger.error('skill bank unavailable for revived game', { code: c, drill, error: err.message });
+      return null;
+    }
+  }
   const game = G.hydrate(doc.state);
   if (game) logger.info('live drill revived from snapshot', { code: c, phase: game.phase, players: game.players.size });
   return game;

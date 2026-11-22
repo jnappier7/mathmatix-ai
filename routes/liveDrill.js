@@ -44,6 +44,7 @@ const G = require('../utils/liveDrill/games');
 const { DRILLS, listPlaybooks, listSections } = require('../utils/liveDrill/engine');
 const { FOCUSABLE, FOCUS_MAX } = require('../utils/liveDrill/facts');
 const solo = require('../utils/liveDrill/solo');
+const catalog = require('../utils/liveDrill/catalog'); // the skill bank: any catalog skill as a drill (`skill:<id>`)
 const arcade = require('../utils/liveDrill/arcade');
 const drillSearch = require('../utils/liveDrill/search');
 const practice = require('../utils/liveDrill/practice');
@@ -268,6 +269,7 @@ hostRouter.post('/games', async (req, res) => {
       if (!c) return res.status(404).json({ message: 'That class was not found.' });
       cls = { id: c._id, name: [c.className, c.period].filter(Boolean).join(' · ') };
     }
+    if (catalog.isSkillDrill(drill) && !(await catalog.ready(drill))) return res.status(404).json({ message: 'That skill is not in the bank.' });
     const game = G.createGame({ hostId: req.user._id, hostName: personName(req.user), cls, drill, playbook, mode, seconds, plays, secondsPerPlay, focus });
     logger.info('live drill hosted', { code: game.code, drill: game.drill, mode: game.mode, teacher: String(req.user._id) });
     res.status(201).json(G.hostView(game));
@@ -410,17 +412,19 @@ const soloGameLimiter = rateLimit({
   message: { message: 'Too many new games from this network. Wait a minute and try again.' },
 });
 const DEVICE_RE = /^[A-Za-z0-9_-]{8,48}$/;
-playRouter.post('/solo', soloGameLimiter, notHandingOff, (req, res) => {
+playRouter.post('/solo', soloGameLimiter, notHandingOff, async (req, res) => {
   try {
     const b = req.body || {};
     const drill = String(b.drill || '');
-    if (!solo.onAHub(drill)) return res.status(400).json({ message: 'No such game.' });
-    const hub = Object.hasOwn(solo.HUBS, String(b.hub || '')) ? String(b.hub) : Object.keys(solo.HUBS).find((h) => solo.HUBS[h].games.some((g) => g.drill === drill));
+    // a skill-bank drill is built on first use (catalog.prepare); a course drill is always there
+    const skill = catalog.isSkillDrill(drill);
+    if (skill ? !(await catalog.ready(drill)) : !solo.onAHub(drill)) return res.status(400).json({ message: 'No such game.' });
+    const hub = skill ? solo.SKILLS_HUB : Object.hasOwn(solo.HUBS, String(b.hub || '')) ? String(b.hub) : Object.keys(solo.HUBS).find((h) => solo.HUBS[h].games.some((g) => g.drill === drill));
     const user = runUser(req);
     const { game, token, player } = rivals.open({
       drill, playbook: String(b.book || b.playbook || 'all').slice(0, 60), mode: String(b.mode || ''), level: String(b.level || ''),
       seconds: b.seconds, focus: Array.isArray(b.focus) ? b.focus : String(b.focus || '').split(',').filter(Boolean),
-      name: user ? accountName(user) : 'You', userId: user ? user._id : null, hub,
+      name: user ? accountName(user) : 'You', userId: user ? user._id : null, hub, skill: skill ? catalog.skillIdOf(drill) : null,
       owner: DEVICE_RE.test(String(b.device || '')) ? String(b.device) : null,
     });
     res.status(201).json({ token, code: game.code, playerId: player.id, name: player.name, team: player.team });
@@ -585,25 +589,47 @@ soloRouter.get('/arcade', (req, res) => { res.set('Cache-Control', 'public, max-
 /** Find a game and playbook by skill or topic ("completing the square", "SOHCAHTOA", "box plots").
  *  Public like the rest of solo practice: it reads only the banks' own titles and blurbs. Both the
  *  host's picker and the solo page use it, so a teacher and a student get the same answer. */
-soloRouter.get('/search', (req, res) => {
+soloRouter.get('/search', async (req, res) => {
   try {
     const q = String(req.query.q || '').slice(0, drillSearch.MAX_Q);
     res.set('Cache-Control', 'public, max-age=300');
+    // The skill bank answers beside the course drills (catalog.search): every catalog skill with enough
+    // items. The index is one read every few minutes; a bank that cannot be read leaves `skills` empty
+    // rather than failing the drills, which never touch the database.
+    let skills = [];
+    try { await catalog.index(); skills = catalog.search(q); } catch (err) { logger.warn('skill bank index unavailable', { error: err.message }); }
     // `hub` (the course page the box is on) only re-orders: that course first, the others beneath
-    res.json({ q, results: drillSearch.search(q, { hub: String(req.query.hub || '').slice(0, 40) }) });
+    res.json({ q, results: drillSearch.search(q, { hub: String(req.query.hub || '').slice(0, 40) }), skills });
   } catch (err) { send(res, err); }
 });
 
-soloRouter.get('/hubs/:hub', (req, res) => {
+// The skill bank for browsing: every drillable catalog skill, by level and category (catalog.browse).
+soloRouter.get('/skills', async (req, res) => {
   try {
+    await catalog.index();
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json(catalog.browse());
+  } catch (err) { send(res, err); }
+});
+
+soloRouter.get('/hubs/:hub', async (req, res) => {
+  try {
+    if (req.params.hub === solo.SKILLS_HUB) {
+      // one skill of the bank as a hub of its own: /drill/skills?skill=<skillId>
+      const def = await catalog.prepare(String(req.query.skill || ''));
+      if (!def) return res.status(404).json({ message: 'That skill is not in the bank.' });
+      res.set('Cache-Control', 'no-store');
+      return res.json(catalog.hubView(def));
+    }
     const view = solo.hubView(req.params.hub);
     if (!view) return res.status(404).json({ message: 'No such course.' });
     res.json(view);
   } catch (err) { send(res, err); }
 });
 
-soloRouter.get('/plays', (req, res) => {
+soloRouter.get('/plays', async (req, res) => {
   try {
+    if (catalog.isSkillDrill(String(req.query.drill || ''))) await catalog.ready(String(req.query.drill)); // builds the bank after a restart
     const q = solo.parseDeal(req.query);
     if (q.error) return res.status(400).json({ message: q.error });
     res.set('Cache-Control', 'no-store');
@@ -622,7 +648,7 @@ function selectionOf(src) {
   const focus = String(src.focus || '')
     .split(',').map((n) => parseInt(n, 10)).filter(Number.isInteger).slice(0, FOCUS_MAX);
   return {
-    drill: String(src.drill || '').slice(0, 40),
+    drill: String(src.drill || '').slice(0, 90), // `skill:<skillId>` — ids run to ~45 (models/drillResult.js allows 90)
     playbook: String(src.book || src.playbook || '').slice(0, 60),
     seconds: Math.max(0, Math.min(3600, parseInt(src.seconds, 10) || 0)),
     focus: focus.sort((x, y) => x - y),
@@ -679,11 +705,12 @@ soloRouter.post('/result', async (req, res) => {
     const sel = selectionOf(body);
     // The drill has to be a game we actually offer; otherwise a typo (or a
     // script) could file rounds under names no teacher view will ever show.
-    if (!sel.drill || !solo.onAHub(sel.drill)) {
+    const skill = catalog.isSkillDrill(sel.drill);
+    if (!sel.drill || (skill ? !(await catalog.ready(sel.drill)) : !solo.onAHub(sel.drill))) {
       return res.status(400).json({ message: 'No such game.' });
     }
-    const hub = String(body.hub || '').slice(0, 40);
-    if (!Object.hasOwn(solo.HUBS, hub)) return res.status(400).json({ message: 'No such course.' });
+    const hub = skill ? solo.SKILLS_HUB : String(body.hub || '').slice(0, 40);
+    if (!skill && !Object.hasOwn(solo.HUBS, hub)) return res.status(400).json({ message: 'No such course.' });
 
     const num = (v, max) => {
       const n = Math.floor(Number(v));

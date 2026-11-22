@@ -1,5 +1,5 @@
 // Mathmatix Arcade — the front door to every game (/arcade; catalogue from utils/liveDrill/arcade.js
-// via GET /api/live-drill/solo/arcade). Public: a guest sees every game and the join box; a signed-in
+// via GET /api/live-drill/solo/arcade), and the skill bank (utils/liveDrill/catalog.js via /solo/skills and /solo/search). Public: a guest sees every game and the join box; a signed-in
 // student also sees any class game open right now; a teacher gets a Host button on each game.
 (function () {
   const { $, esc } = window.LiveDrill;
@@ -85,21 +85,46 @@
     } catch { /* not signed in, or no games */ }
   }
 
-  // ---- find a topic: the same index the solo page and the host use ----
+  // ---- find a skill or topic: the skill bank (catalog.search) and the course drills (the solo page's index) ----
+  const LEVEL_NAMES = { elem: 'Elementary', ms: 'Middle school', alg1: 'Algebra 1', geo: 'Geometry', alg2: 'Algebra 2', prec: 'Precalculus', hs: 'High school', stat: 'Statistics', calc: 'Calculus', other: 'More' };
   let qSeq = 0;
   async function runSearch(text) {
     const res = $('q-res');
     const seq = ++qSeq;
     const words = String(text || '').trim();
     if (!words) { res.hidden = true; res.innerHTML = ''; return; }
-    let results;
-    try { ({ results } = await getJSON(`${SOLO}/search?q=${encodeURIComponent(words)}`)); } catch { return; }
+    let results; let skills;
+    try { ({ results, skills = [] } = await getJSON(`${SOLO}/search?q=${encodeURIComponent(words)}`)); } catch { return; }
     if (seq !== qSeq) return;
     res.hidden = false;
-    if (!results.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try the module or chapter number, or a word from the lesson.</p>`; return; }
-    res.innerHTML = results.map((x) => `<a role="option" href="/drill/${encodeURIComponent(x.hub)}?game=${encodeURIComponent(x.drill)}&book=${encodeURIComponent(x.key)}">`
+    if (!results.length && !skills.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try another word for it, or the module or chapter number.</p>`; return; }
+    const grp = (t, html) => (html ? `<span class="grp">${t}</span>${html}` : '');
+    res.innerHTML = grp('Skills', skills.map((k) => `<a role="option" href="${esc(k.url)}">`
+      + `<span class="bk-ch">${esc(LEVEL_NAMES[k.level] || '')} · ${esc(k.categoryTitle || k.category)}</span>`
+      + `<span class="nm">${esc(k.name)}</span><span class="bl">${esc(k.formal !== k.name ? k.formal : k.blurb || '')} · ${k.items} problems</span></a>`).join(''))
+      + grp('Course drills', results.map((x) => `<a role="option" href="/drill/${encodeURIComponent(x.hub)}?game=${encodeURIComponent(x.drill)}&book=${encodeURIComponent(x.key)}">`
       + `<span class="bk-ch">${esc(x.title)}${x.ch ? ` · ${esc(x.ch)}` : ''}</span>`
-      + `<span class="nm">${esc(x.name)}</span><span class="bl">${esc(x.blurb || '')}</span></a>`).join('');
+      + `<span class="nm">${esc(x.name)}</span><span class="bl">${esc(x.blurb || '')}</span></a>`).join(''));
+  }
+
+  // ---- the skill bank, by level and category (GET /skills; catalog.browse) ----
+  const local = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
+  };
+  function renderBank(bank) {
+    if (!bank || !bank.levels || !bank.levels.length) return;
+    $('k-count').textContent = `${bank.skills} skills so far.`;
+    let level = local.get('mm-drill-bank-level');
+    if (!bank.levels.some((l) => l.id === level)) level = bank.levels[0].id;
+    $('k-levels').hidden = false;
+    const draw = () => {
+      $('k-levels').innerHTML = bank.levels.map((l) => `<button type="button" data-l="${esc(l.id)}" aria-pressed="${l.id === level}">${esc(l.title)}${l.sub ? ` <small>${esc(l.sub)}</small>` : ''}</button>`).join('');
+      $('k-levels').querySelectorAll('button').forEach((b) => { b.onclick = () => { level = b.dataset.l; local.set('mm-drill-bank-level', level); draw(); }; });
+      const L = bank.levels.find((l) => l.id === level);
+      $('k-cats').innerHTML = (L ? L.categories : []).map((c) => `<div class="cat"><h3>${esc(c.title)}</h3><div class="chips">${c.skills.map((k) => `<a class="chip" href="${esc(k.url)}">${esc(k.name)} <span class="n">${k.items}</span></a>`).join('')}</div></div>`).join('');
+    };
+    draw();
   }
   function wireSearch() {
     const q = $('q'); const res = $('q-res');
@@ -135,6 +160,7 @@
       renderHubs(cat.hubs);
       renderTests(cat.tests);
       wireSearch();
+      getJSON(`${SOLO}/skills`).then(renderBank).catch(() => { $('k-count').textContent = ''; }); // the bank is extra: the page stands without it
       $('foot').innerHTML = me.teacher
         ? 'Teachers: your class results live in the <a href="/drill-practice">practice log</a> and <a href="/fact-fluency">fact fluency</a>; the <a href="/live-drill">host screen</a> is where a game starts.'
         : me.signedIn

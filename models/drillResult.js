@@ -27,12 +27,13 @@ const Schema = mongoose.Schema;
 
 const drillResultSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-  // Which hub the game was played from ('algebra', 'geometry') and which game
-  // ('algebra', 'alg1m3', 'facts', 'geometry', 'hgeo3'). Both are stored as plain
-  // strings rather than enums so adding a game in utils/liveDrill/solo.js does not
-  // need a migration; the route validates them against HUBS at write time.
+  // Which hub the game was played from ('algebra', 'geometry', or 'skills' for the skill
+  // bank) and which game ('algebra', 'alg1m3', 'facts', 'geometry', 'hgeo3', or
+  // 'skill:<skillId>' — utils/liveDrill/catalog.js). Both are stored as plain strings
+  // rather than enums so adding a game in utils/liveDrill/solo.js does not need a
+  // migration; the route validates them against HUBS / the bank at write time.
   hub: { type: String, required: true, trim: true, maxlength: 40 },
-  drill: { type: String, required: true, trim: true, maxlength: 40 },
+  drill: { type: String, required: true, trim: true, maxlength: 90 },
   playbook: { type: String, trim: true, maxlength: 60, default: '' },
   // The clock the student chose, in seconds, and (Math Facts only) which tables.
   seconds: { type: Number, min: 0, max: 3600, default: 0 },

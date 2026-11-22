@@ -16,7 +16,7 @@
  * one is a run to play again), keyed by an unguessable id that is the run's bearer token.
  */
 const crypto = require('crypto');
-const { DRILLS, dealPlay, publicPlay, resolvePlaybook, RECENT } = require('./engine');
+const { defOf, dealPlay, publicPlay, resolvePlaybook, RECENT } = require('./engine');
 const { SCORING } = require('./games');
 const facts = require('./facts');
 const { HUBS } = require('./solo');
@@ -33,8 +33,8 @@ let _now = () => Date.now();
 
 class RunError extends Error { constructor(status, message) { super(message); this.status = status; } }
 
-const scoringFor = (drill) => SCORING[(DRILLS[drill] || {}).scoring] || SCORING.standard;
-const isGraded = (drill) => !!(DRILLS[drill] && DRILLS[drill].graded);
+const scoringFor = (drill) => SCORING[(defOf(drill) || {}).scoring] || SCORING.standard;
+const isGraded = (drill) => !!(defOf(drill) || {}).graded;
 /** The hub a drill is filed under (the first one that lists it). */
 function hubOf(drill) {
   for (const [id, h] of Object.entries(HUBS)) if (h.games.some((g) => g.drill === drill)) return id;

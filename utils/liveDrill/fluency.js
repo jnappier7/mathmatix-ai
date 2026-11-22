@@ -12,7 +12,7 @@
  *   slow   — right, but typically over FLUENT_MS
  *   new    — one fast right answer: promising, not yet proof
  */
-const { DRILLS } = require('./engine');
+const { defOf } = require('./engine');
 const { FLUENT_MS } = require('./games');
 const logger = require('../logger');
 
@@ -68,7 +68,7 @@ function updateFor(player, at = new Date()) {
 
 /** Fold a finished Math Facts game into every signed-in student's record. Never throws. */
 async function saveGame(game, Model = require('../../models/factFluency')) {
-  if (!(DRILLS[game.drill] && DRILLS[game.drill].trackFacts)) return 0;
+  if (!(defOf(game.drill) || {}).trackFacts) return 0;
   const at = new Date();
   const updates = [...game.players.values()].filter((p) => !p.kicked).map((p) => updateFor(p, at)).filter(Boolean);
   let saved = 0;

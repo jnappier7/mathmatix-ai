@@ -1,4 +1,6 @@
-// Solo practice — a course's Live Drill games, played alone (/drill/<hub>; utils/liveDrill/solo.js).
+// Solo practice — a course's Live Drill games, played alone (/drill/<hub>; utils/liveDrill/solo.js), and the
+// SKILL BANK (/drill/skills?skill=<id>; utils/liveDrill/catalog.js): any catalog skill as the one game of a hub
+// of its own. /drill/skills with no skill shows the whole bank by level and category.
 // The server deals whole plays, answer included, in batches; this page clocks, grades and scores
 // them itself. A guest's personal best stays in this browser; a signed-in STUDENT also files
 // every finished round to their account (POST /result → models/drillResult.js), which is what
@@ -21,6 +23,8 @@
   const showNum = (v) => String(v).replace('-', MINUS);
 
   const hubId = (location.pathname.match(/^\/drill\/([a-z0-9-]+)/) || [])[1] || null;
+  const SKILLS = 'skills'; // the skill bank's hub id (solo.SKILLS_HUB)
+  const skillParam = hubId === SKILLS ? (new URLSearchParams(location.search).get('skill') || '') : '';
   let hub = null; // the hub view from the server
   // `book` is what the server deals from: a playbook key, or one or more numbered sections
   // ("5.1,5.2" — every playbook any of them covers); `secs` is the pick on the Section row.
@@ -53,6 +57,8 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* private mode */ } },
   };
   const bestKey = () => `mm-drill-best:${game().drill}:${sel.book}:${sel.seconds}${focusNow().length ? `:f${focusNow().join('-')}` : ''}`;
+  // the remembered pick is per hub — and per skill on the bank, where every skill is a hub of its own
+  const pickKey = () => `mm-drill-pick:${hub.id}${hub.skill ? `:${hub.skill.skillId}` : ''}`;
   const game = () => hub.games[sel.gi];
 
   // Who is playing. `saves` is the server's answer, not ours: rounds are filed
@@ -119,13 +125,15 @@
     loadMe();                    // not awaited: the strip can fill in late
     wireSearch();
     if (!hubId) return renderHubList();
-    try { hub = await get(`/hubs/${encodeURIComponent(hubId)}`); } catch (err) { $('pick-err').textContent = err.message; return; }
+    if (hubId === SKILLS && !skillParam) return renderBank();
+    try { hub = await get(hubId === SKILLS ? `/hubs/${SKILLS}?skill=${encodeURIComponent(skillParam)}` : `/hubs/${encodeURIComponent(hubId)}`); } catch (err) { $('pick-err').textContent = err.message; return; }
     get('/arcade').then((c) => { catalog = c; if (hub && !$('setup').hidden) renderModes(game()); }).catch(() => {});
-    document.title = `${hub.title} Drills | MATHMATIX AI`;
-    $('h-title').innerHTML = `${esc(hub.title)} <span>Drills</span>`;
-    $('h-hubs').innerHTML = hub.hubs.filter((h) => h.id !== hub.id)
-      .map((h) => `<a href="/drill/${esc(h.id)}">${esc(h.title)} drills →</a>`).join(' · ');
-    const saved = local.get(`mm-drill-pick:${hub.id}`);
+    document.title = `${hub.title} ${hub.skill ? 'Drill' : 'Drills'} | MATHMATIX AI`;
+    $('h-title').innerHTML = `${esc(hub.title)} <span>${hub.skill ? 'Drill' : 'Drills'}</span>`;
+    if (hub.skill) $('h-sub').textContent = `${hub.skill.items} problems from the Mathmatix bank. Beat the clock, or play any game against the computer.`;
+    $('h-hubs').innerHTML = (hub.skill ? [`<a href="/drill/${SKILLS}">← Every skill</a>`] : [`<a href="/drill/${SKILLS}">Any skill →</a>`])
+      .concat(hub.hubs.filter((h) => h.id !== hub.id).map((h) => `<a href="/drill/${esc(h.id)}">${esc(h.title)} drills →</a>`)).join(' · ');
+    const saved = local.get(pickKey());
     if (saved && hub.games[saved.gi]) Object.assign(sel, saved);
     if (!Array.isArray(sel.focus)) sel.focus = [];
     if (typeof sel.mode !== 'string') sel.mode = '';
@@ -172,17 +180,26 @@
     const seq = ++qSeq;
     const words = String(text || '').trim();
     if (!words) { res.hidden = true; res.innerHTML = ''; return; }
-    let results;
+    let results; let skills;
     // this page's course first: two courses teach "completing the square", and the student is in this one
-    try { ({ results } = await get(`/search?q=${encodeURIComponent(words)}${hubId ? `&hub=${encodeURIComponent(hubId)}` : ''}`)); } catch { return; }
+    try { ({ results, skills = [] } = await get(`/search?q=${encodeURIComponent(words)}${hubId ? `&hub=${encodeURIComponent(hubId)}` : ''}`)); } catch { return; }
     if (seq !== qSeq) return; // a newer keystroke answered already
     res.hidden = false;
-    if (!results.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try the module or chapter number, or a word from the lesson.</p>`; return; }
-    res.innerHTML = results.map((r, i) => `<button type="button" role="option" data-i="${i}">`
+    if (!results.length && !skills.length) { res.innerHTML = `<p class="muted none">Nothing for “${esc(words)}”. Try the module or chapter number, or a word from the lesson.</p>`; return; }
+    // the skill bank first on the bank's own pages; a course's drills first on a course page
+    const skillBtns = skills.map((k, i) => `<button type="button" role="option" data-k="${i}">`
+      + `<span class="bk-ch">${esc(levelName(k.level))} · ${esc(k.categoryTitle || k.category)}</span>`
+      + `<span class="nm">${esc(k.name)}</span><span class="bl">${esc(k.formal !== k.name ? k.formal : k.blurb || '')} · ${k.items} problems</span></button>`).join('');
+    const drillBtns = results.map((r, i) => `<button type="button" role="option" data-i="${i}">`
       + `<span class="bk-ch">${esc(r.hubTitle || r.title)} · ${esc(r.game)}${r.ch ? ` · ${esc(r.ch)}` : ''}</span>`
       + `<span class="nm">${esc(r.name)}</span><span class="bl">${esc(r.blurb || '')}</span></button>`).join('');
-    res.querySelectorAll('button').forEach((b) => { b.onclick = () => goTo(results[Number(b.dataset.i)]); });
+    const grp = (t, html) => (html ? `<span class="grp">${t}</span>${html}` : '');
+    res.innerHTML = hubId === SKILLS ? grp('Skills', skillBtns) + grp('Course drills', drillBtns) : grp('Course drills', drillBtns) + grp('Skills', skillBtns);
+    res.querySelectorAll('button[data-i]').forEach((b) => { b.onclick = () => goTo(results[Number(b.dataset.i)]); });
+    res.querySelectorAll('button[data-k]').forEach((b) => { b.onclick = () => { location.href = skills[Number(b.dataset.k)].url; }; });
   }
+  const LEVEL_NAMES = { elem: 'Elementary', ms: 'Middle school', alg1: 'Algebra 1', geo: 'Geometry', alg2: 'Algebra 2', prec: 'Precalculus', hs: 'High school', stat: 'Statistics', calc: 'Calculus', other: 'More' };
+  const levelName = (id) => LEVEL_NAMES[id] || id || '';
 
   /** Open a search result: pick it here when it is on this page, else go to its course page. */
   function goTo(r) {
@@ -203,7 +220,29 @@
   async function renderHubList() {
     let list;
     try { list = (await get('/hubs')).hubs; } catch (err) { $('pick-err').textContent = err.message; return; }
-    $('h-hubs').innerHTML = `<span class="books">${list.map((h) => `<a class="book" href="/drill/${esc(h.id)}"><span class="nm">${esc(h.title)}</span><span class="bl">${esc(h.games.join(' · '))}</span></a>`).join('')}</span>`;
+    $('h-hubs').innerHTML = `<span class="books">${list.map((h) => `<a class="book" href="/drill/${esc(h.id)}"><span class="nm">${esc(h.title)}</span><span class="bl">${esc(h.games.join(' · '))}</span></a>`).join('')}`
+      + `<a class="book" href="/drill/${SKILLS}"><span class="nm">Any skill</span><span class="bl">Every skill in the Mathmatix bank, K to calculus — search it, or browse by level.</span></a></span>`;
+  }
+
+  /** /drill/skills with no skill: the whole bank — pick a level, then a skill (GET /skills; catalog.browse). */
+  async function renderBank() {
+    document.title = 'Any Skill | MATHMATIX AI';
+    $('h-title').innerHTML = 'Any <span>Skill</span>';
+    $('h-sub').textContent = 'Every skill in Mathmatix is a game. Search for one, or pick a level below.';
+    $('q').placeholder = 'e.g. fractions, slope, long division, derivatives';
+    let bank;
+    try { bank = await get('/skills'); } catch (err) { $('pick-err').textContent = err.message; return; }
+    $('h-hubs').innerHTML = `${bank.skills} skills. ` + (await get('/hubs').catch(() => ({ hubs: [] }))).hubs.map((h) => `<a href="/drill/${esc(h.id)}">${esc(h.title)} drills →</a>`).join(' · ');
+    $('bank').hidden = false;
+    let level = local.get('mm-drill-bank-level');
+    if (!bank.levels.some((l) => l.id === level)) level = (bank.levels[0] || {}).id;
+    const draw = () => {
+      $('k-levels').innerHTML = bank.levels.map((l) => `<button type="button" data-l="${esc(l.id)}" aria-pressed="${l.id === level}">${esc(l.title)}${l.sub ? ` <small>${esc(l.sub)}</small>` : ''}</button>`).join('');
+      $('k-levels').querySelectorAll('button').forEach((b) => { b.onclick = () => { level = b.dataset.l; local.set('mm-drill-bank-level', level); draw(); }; });
+      const L = bank.levels.find((l) => l.id === level);
+      $('k-cats').innerHTML = (L ? L.categories : []).map((c) => `<div class="cat"><h3>${esc(c.title)}</h3><div class="chips">${c.skills.map((k) => `<a class="chip" href="${esc(k.url)}">${esc(k.name)} <span class="n">${k.items}</span></a>`).join('')}</div></div>`).join('');
+    };
+    draw();
   }
 
   function pickGame(gi, keep) {
@@ -256,7 +295,7 @@
     $('best').hidden = vs;
     $('rules').innerHTML = rulesHTML(g);
     if (vs) { $('lb').hidden = true; bestSeq++; boardSeq++; } else { showBest(); renderBoard($('lb'), false); }
-    local.set(`mm-drill-pick:${hub.id}`, sel);
+    local.set(pickKey(), sel);
   }
 
   /** Can this drill, at this playbook, be played as that game? (Knockout Arena only builds orbs for some.) */

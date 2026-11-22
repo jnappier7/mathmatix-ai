@@ -991,8 +991,9 @@ function registerHtmlRoutes(app) {
   // Live Two-Minute Drill. /play is what goes on the board; the host screen is teachers only.
   app.get(['/play', '/play.html'], (req, res) => res.sendFile(path.join(publicDir, 'play.html')));
   // Solo practice: a course's games on one page, no host, no account (utils/liveDrill/solo.js).
+  // /drill/skills is the skill bank (utils/liveDrill/catalog.js): any catalog skill, ?skill=<skillId>.
   app.get(['/drill', '/drill/:hub'], (req, res, next) => {
-    if (req.params.hub && !Object.hasOwn(liveDrillSolo.HUBS, req.params.hub)) return next();
+    if (req.params.hub && req.params.hub !== liveDrillSolo.SKILLS_HUB && !Object.hasOwn(liveDrillSolo.HUBS, req.params.hub)) return next();
     res.sendFile(path.join(publicDir, 'drill.html'));
   });
   app.get(['/live-drill', '/live-drill-host.html'], isAuthenticated, isTeacher,

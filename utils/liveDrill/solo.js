@@ -11,7 +11,7 @@
  * That is why this can be public with no account: there is no record to protect and no score to
  * cheat. A class game's plays never come through here; a solo seed is the student's own.
  */
-const { DRILLS, dealPlay, listPlaybooks, listSections, resolvePlaybook, RECENT } = require('./engine');
+const { defOf, dealPlay, listPlaybooks, listSections, resolvePlaybook, RECENT } = require('./engine');
 const { settingsFor, SCORING } = require('./games');
 const { FOCUSABLE, FOCUS_MAX, normalizeFocus } = require('./facts');
 
@@ -71,7 +71,11 @@ const BATCH = 40; // plays per request: a fast Math Facts round is ~60–80 in t
 const MAX_PLAY = 400; // a five-minute facts round at a fact a second is 300; bounds the work per request
 const SEED_RE = /^[A-Za-z0-9]{8,32}$/;
 
-const scoringOf = (drill) => SCORING[(DRILLS[drill] || {}).scoring] || SCORING.standard;
+const scoringOf = (drill) => SCORING[(defOf(drill) || {}).scoring] || SCORING.standard;
+
+// The skill bank (utils/liveDrill/catalog.js) is a hub of its own at /drill/skills: not a course, and not
+// in HUBS — its games are every catalog skill, registered on demand as `skill:<skillId>` drills.
+const SKILLS_HUB = 'skills';
 
 const hubList = () => Object.entries(HUBS).map(([id, h]) => ({ id, title: h.title, games: h.games.map((g) => g.name) }));
 
@@ -83,32 +87,35 @@ function arenaBooks(drill) {
   return ok.length === keys.length ? ok.length > 0 : ok.length ? ok : false;
 }
 
+/** Every game type can be played alone against computer rivals: the levels, and how many rivals each seats. */
+function versusView() {
+  const rivals = require('./rivals');
+  return { levels: Object.entries(rivals.LEVELS).map(([id, l]) => ({ id, name: l.name })), level: rivals.DEFAULT_LEVEL, rivals: { ...rivals.RIVALS } };
+}
+
+/** One game as the solo page renders it: its playbooks, clock choices and scoring. Any registered drill. */
+function gameView(g) {
+  const d = defOf(g.drill);
+  const { drive } = settingsFor(g.drill);
+  const s = scoringOf(g.drill);
+  return {
+    drill: g.drill, name: g.name, blurb: g.blurb, typed: !!d.typed, graded: !!d.graded,
+    playbooks: listPlaybooks(g.drill),
+    sections: listSections(g.drill),
+    clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },
+    scoring: { gains: s.gains, withinMs: s.driveMs, miss: s.sack },
+    ...(d.focus ? { focusable: { books: FOCUSABLE, max: FOCUS_MAX } } : {}),
+    // played alone against computer rivals (rivals.js): every game type; Knockout Arena only in the
+    // playbooks it can build orbs for (`arenaBooks`, or true for all of them)
+    arena: arenaBooks(g.drill),
+  };
+}
+
 /** One hub, as the page renders it: each game with its playbooks, clock choices and scoring. */
 function hubView(hubId) {
   const hub = Object.hasOwn(HUBS, hubId) ? HUBS[hubId] : null;
   if (!hub) return null;
-  return {
-    id: hubId,
-    title: hub.title,
-    hubs: hubList(),
-    // every game type can be played alone against computer rivals: the levels, and how many rivals each seats
-    versus: (() => { const rivals = require('./rivals'); return { levels: Object.entries(rivals.LEVELS).map(([id, l]) => ({ id, name: l.name })), level: rivals.DEFAULT_LEVEL, rivals: { ...rivals.RIVALS } }; })(),
-    games: hub.games.map((g) => {
-      const { drive } = settingsFor(g.drill);
-      const s = scoringOf(g.drill);
-      return {
-        drill: g.drill, name: g.name, blurb: g.blurb, typed: !!DRILLS[g.drill].typed, graded: !!DRILLS[g.drill].graded,
-        playbooks: listPlaybooks(g.drill),
-        sections: listSections(g.drill),
-        clock: { seconds: drive.seconds, defaultSeconds: drive.defaultSeconds },
-        scoring: { gains: s.gains, withinMs: s.driveMs, miss: s.sack },
-        ...(DRILLS[g.drill].focus ? { focusable: { books: FOCUSABLE, max: FOCUS_MAX } } : {}),
-        // played alone against computer rivals (rivals.js): every game type; Knockout Arena only in the
-        // playbooks it can build orbs for (`arenaBooks`, or true for all of them)
-        arena: arenaBooks(g.drill),
-      };
-    }),
-  };
+  return { id: hubId, title: hub.title, hubs: hubList(), versus: versusView(), games: hub.games.map(gameView) };
 }
 
 /**
@@ -126,8 +133,10 @@ function hubFor(...labels) {
   return null;
 }
 
-/** Is this drill on some hub? Only those are dealt here. */
+/** Is this drill on some hub? Those, and a registered skill-bank drill (routes check that first), are dealt here. */
 const onAHub = (drill) => Object.values(HUBS).some((h) => h.games.some((g) => g.drill === drill));
+/** A drill the solo page may deal: on a course hub, or a skill registered from the catalog. */
+const playable = (drill) => onAHub(drill) || !!(defOf(drill) || {}).dynamic;
 
 /**
  * Plays from+1 … from+count of a solo round. Dealt from play 1 every time so each play's
@@ -149,16 +158,16 @@ function deal(drill, playbook, seed, from, count = BATCH, focus = null) {
 /** Validate a deal request; returns { drill, playbook, seed, from, focus } or { error }. */
 function parseDeal(q) {
   const drill = String(q.drill || '');
-  if (!onAHub(drill)) return { error: 'Unknown game.' };
+  if (!playable(drill)) return { error: 'Unknown game.' };
   const seed = String(q.seed || '');
   if (!SEED_RE.test(seed)) return { error: 'Bad seed.' };
   const from = Number(q.from || 0);
   if (!Number.isInteger(from) || from < 0 || from > MAX_PLAY - BATCH) return { error: 'Bad position.' };
   const playbook = resolvePlaybook(drill, q.book).key; // a book, a numbered section, or all
   // Math Facts: "only 2s, 5s and 10s" — the same focus a teacher sets in a class game.
-  const focus = DRILLS[drill].focus && FOCUSABLE.includes(playbook) && q.focus
+  const focus = defOf(drill).focus && FOCUSABLE.includes(playbook) && q.focus
     ? normalizeFocus(String(q.focus).split(',').slice(0, FOCUS_MAX + 1)) : null;
   return { drill, playbook, seed, from, focus };
 }
 
-module.exports = { HUBS, BATCH, MAX_PLAY, hubList, hubView, hubFor, deal, parseDeal, onAHub };
+module.exports = { HUBS, SKILLS_HUB, BATCH, MAX_PLAY, hubList, hubView, gameView, versusView, hubFor, deal, parseDeal, onAHub, playable };

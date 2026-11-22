@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Practice Drills | MATHMATIX AI</title>
-  <meta name="description" content="Solo practice: the class drills and test prep, played on your own.">
+  <meta name="description" content="Solo practice: the class drills, test prep and any skill in the Mathmatix bank, played on your own or against the computer.">
   <link rel="icon" type="image/png" href="/images/favicon-256x256.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Math&display=swap">
-  <link rel="stylesheet" href="/css/live-drill.css?v=20261121">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/css/live-drill.css?v=20261122">
 </head>
 <body class="solo">
 <div class="pwrap">
@@ -33,6 +34,11 @@
       </form>
       <p class="hubs" id="h-hubs"></p>
       <p class="acct" id="acct"></p>
+    </div>
+    <!-- /drill/skills with no skill picked: the whole bank, by level and category (utils/liveDrill/catalog.js) -->
+    <div class="panel skillbank" id="bank" hidden>
+      <div class="seg-ctl bank-levels" id="k-levels" role="group" aria-label="Level"></div>
+      <div class="catgrid" id="k-cats"></div>
     </div>
     <div class="panel solo-setup" id="setup" hidden>
       <div><span class="lbl" id="g-l">Game</span><div class="books games" id="games" role="group" aria-labelledby="g-l"></div></div>
@@ -96,6 +102,6 @@
 <script src="/js/live-drill/common.js?v=20261106b"></script>
 <script>window.LiveDrillSoundConfig = { defaultMuted: true, defaultCrowd: false, storagePrefix: 'mm-drill-solo', cheersFollowCrowd: false };</script>
 <script src="/js/live-drill/sound.js?v=20261106"></script>
-<script src="/js/live-drill/solo.js?v=20261121"></script>
+<script src="/js/live-drill/solo.js?v=20261122"></script>
 </body>
 </html>

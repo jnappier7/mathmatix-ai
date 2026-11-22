@@ -16,5 +16,5 @@ test('the nav reserves its own height inside the More Tools sheet', () => {
 });
 
 test('bottom-nav.js cache-buster moved', () => {
-  expect(read('public/chat.html')).toMatch(/\/js\/bottom-nav\.js\?v=4"/);
+  expect(read('public/chat.html')).toMatch(/\/js\/bottom-nav\.js\?v=5"/); // bumped again when the Practice sheet gained the Arcade (2026-11-22)
 });

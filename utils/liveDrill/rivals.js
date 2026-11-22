@@ -30,7 +30,7 @@
 const crypto = require('crypto');
 const G = require('./games');
 const knockout = require('./knockout');
-const { DRILLS } = require('./engine');
+const { defOf } = require('./engine');
 
 // How good the rivals are. `acc` = chance an answer is right; `pace` = thinking time as a multiple
 // of the drill's FAST tier (3 s a fact, 6 s a course play, 20 s a test question). Calibrated with
@@ -101,13 +101,13 @@ function arm(game) {
  * starts it with `begin` once it has loaded, so no clock runs while a page is opening).
  * `owner` is the device (or account) that asked: opening another game retires its last one.
  */
-function open({ drill, playbook, mode, seconds, plays, secondsPerPlay, focus, level, name, userId, owner, hub }) {
+function open({ drill, playbook, mode, seconds, plays, secondsPerPlay, focus, level, name, userId, owner, hub, skill }) {
   if (!G.MODES.includes(mode)) throw fail(400, 'No such game.');
   const lv = levelOf(level);
   const game = G.createGame({
     hostId: `solo:${String(owner || crypto.randomBytes(12).toString('hex')).slice(0, 60)}`, hostName: '',
     drill, playbook, mode, seconds, plays, secondsPerPlay, focus,
-    solo: { level: lv, hub: hub || null, humanId: null, saves: !!userId },
+    solo: { level: lv, hub: hub || null, skill: skill || null, humanId: null, saves: !!userId }, // skill: the bank skill a /drill/skills game came from
   });
   const seat = G.join(game, String(name || '').trim() || 'You', { userId });
   game.solo.humanId = seat.player.id;
@@ -365,7 +365,7 @@ function result(game) {
 
 /** Which games a drill can be played as, alone (Knockout Arena only plays some drills). */
 function modesFor(drill, playbook) {
-  if (!DRILLS[drill]) return [];
+  if (!defOf(drill)) return [];
   return G.MODES.filter((m) => m !== 'knockout' || knockout.playable(drill, playbook));
 }
 

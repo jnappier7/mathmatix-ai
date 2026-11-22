@@ -109,8 +109,36 @@ function extractBank(html) {
 
 const cache = new Map();
 
+// ---------- dynamic drills (the skill bank, utils/liveDrill/catalog.js) ----------
+// A catalog skill becomes a drill at request time: its items are read from the Problem collection,
+// shaped into a native bank, and registered here under `skill:<skillId>`. Kept OUT of DRILLS on
+// purpose — DRILLS is the fixed list the host picker, the search index and the tests enumerate,
+// and a skill bank of several hundred entries that come and go would make every one of those lie.
+// Every reader of a drill's definition goes through `defOf`, which sees both tables.
+const DYNAMIC = new Map();
+function defOf(drillId) {
+  if (Object.prototype.hasOwnProperty.call(DRILLS, drillId)) return DRILLS[drillId];
+  const d = DYNAMIC.get(drillId);
+  if (d) d.touchedAt = Date.now();
+  return d || null;
+}
+/** Register (or replace) a dynamic drill. `def.native` is the bank; `def.title` what the card says. */
+function registerDrill(drillId, def) {
+  if (Object.prototype.hasOwnProperty.call(DRILLS, drillId)) throw new Error(`${drillId} is a fixed drill`);
+  const d = { ...def, dynamic: true, touchedAt: Date.now() };
+  DYNAMIC.set(drillId, d);
+  cache.delete(drillId); // a replaced bank is the one dealt from now on; open plays keep what they were dealt
+  return d;
+}
+function unregisterDrill(drillId) { DYNAMIC.delete(drillId); cache.delete(drillId); }
+/** Drop dynamic drills nobody has touched for `ms` (a game is minutes; a bank is rebuilt on the next request). */
+function sweepDynamic(ms) {
+  const cut = Date.now() - ms;
+  for (const [id, d] of DYNAMIC) if (d.touchedAt < cut) unregisterDrill(id);
+}
+
 function getDrill(drillId) {
-  const def = DRILLS[drillId];
+  const def = defOf(drillId);
   if (!def) return null;
   if (cache.has(drillId)) return cache.get(drillId);
   if (def.native) {
@@ -325,4 +353,4 @@ function publicPlay(play) {
   return pub;
 }
 
-module.exports = { DRILLS, getDrill, listPlaybooks, listSections, sectionsOfLabel, resolvePlaybook, dealPlay, publicPlay, RECENT, _extractBank: extractBank };
+module.exports = { DRILLS, defOf, registerDrill, unregisterDrill, sweepDynamic, getDrill, listPlaybooks, listSections, sectionsOfLabel, resolvePlaybook, dealPlay, publicPlay, RECENT, _extractBank: extractBank, _dynamic: DYNAMIC };
