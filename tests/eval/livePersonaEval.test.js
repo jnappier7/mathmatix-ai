@@ -51,7 +51,11 @@ async function liveGenerateReply({ scenario, turn, history, decision }) {
   ), decision);
 
   const messages = [{ role: 'system', content: systemPrompt }, ...history];
-  const model = process.env.TUTOR_MODEL || 'gpt-4o-mini';
+  // The model production would use for THIS turn — a repeat miss is escalated
+  // (generate.js modelForDecision), and an eval that pinned every turn to TUTOR_MODEL
+  // would be grading a reply no student in that spot receives.
+  const { modelForDecision } = require('../../utils/pipeline/generate');
+  const model = modelForDecision(decision);
   let completion;
   try {
     completion = await callLLM(model, messages, { temperature: 0.5, max_tokens: 400 });
