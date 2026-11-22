@@ -40,7 +40,7 @@ const boardLlmLogger = log.child({ service: 'board-llm' });
 const MODES = { OFF: 'off', SHADOW: 'shadow', LIVE: 'live' };
 
 // The app's fast model — the concrete stand-in for the design's "Haiku".
-const BOARD_LLM_MODEL = 'gpt-4o-mini';
+const BOARD_LLM_MODEL = process.env.BOARD_LLM_MODEL || 'gpt-4o-mini';
 // Tight bound: this is a secondary call, never worth a 90s hang. On timeout we
 // fall back to the deterministic path.
 const BOARD_LLM_TIMEOUT_MS = 8000;

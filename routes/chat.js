@@ -203,7 +203,7 @@ const conditionalValidation = (req, res, next) => {
     }
 };
 
-const PRIMARY_CHAT_MODEL = "gpt-4o-mini"; // Fast, cost-effective teaching model (GPT-4o-mini)
+const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'; // the tutor model — same knob as pipeline/generate.js
 const MAX_MESSAGE_LENGTH = 2000;
 
 // Validate an IANA timezone string by asking Intl whether it can format

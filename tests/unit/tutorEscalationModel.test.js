@@ -25,9 +25,12 @@ describe('modelForDecision', () => {
     expect(modelForDecision(null, {})).toBe('gpt-4o-mini');
   });
 
-  it('a repeat miss goes to gpt-4o when the tutor is the default gpt-4o-mini', () => {
+  it('a repeat miss goes to gpt-4o when the tutor is a budget-tier model', () => {
     expect(modelForDecision({ repeatMiss: true }, {})).toBe('gpt-4o');
     expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-4o-mini' })).toBe('gpt-4o');
+    // The 4o-mini successor (OpenAI retires gpt-4o-mini 2027-01-14) is budget tier too.
+    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-6-luna' })).toBe('gpt-4o');
+    expect(modelForDecision({ repeatMiss: true }, { TUTOR_MODEL: 'gpt-5.6-luna' })).toBe('gpt-4o');
   });
 
   it('does not "escalate" DOWN when the tutor has been pointed at another model', () => {

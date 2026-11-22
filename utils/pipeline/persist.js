@@ -17,7 +17,7 @@
 const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
-const { disclosureConcern } = require('../contentFilter');
+const { resolveSafetyConcern } = require('../contentFilter');
 const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
 const { solvePosedProblem, isWordProblemPose } = require('./llmVerifier');
 
@@ -270,8 +270,10 @@ async function persist(params) {
   // The model's <SAFETY_CONCERN> tag first; else the server's own reading of
   // the student's words. The model does not reliably tag — on gpt-4o-mini it
   // answered 7 of 8 disclosures kindly and tagged ONE (live safety eval,
-  // 2026-10-17), so without this fallback no adult was told.
-  const safetyConcern = extracted.safetyConcern || disclosureConcern(originalMessage);
+  // 2026-10-17), so without this fallback no adult was told. The other way
+  // round too: a tag on school hyperbole ("gonna die if I fail") is vetoed —
+  // see resolveSafetyConcern.
+  const safetyConcern = resolveSafetyConcern(extracted.safetyConcern, originalMessage);
   if (safetyConcern) {
     console.error(`[Persist] SAFETY CONCERN - User ${user._id} (${user.firstName}) - ${safetyConcern}`);
     sendSafetyConcernAlert(

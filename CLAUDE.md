@@ -31,7 +31,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 |-------|------|
 | Backend | Node.js ≥20.14 (pinned 20.11.1) / Express 4 |
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
-| **LLM (runtime)** | **Dual-provider, split by role.** OpenAI for the tutor's generate stage (`TUTOR_MODEL`, **`gpt-4o-mini` as of 2026-08-18**), vision grading (`gpt-4o`), and embeddings; **Anthropic for the answer verifier** (`claude-haiku-4-5`) so the model checking the tutor's answer isn't the model that wrote it. Both keys are required in prod. See §7. |
+| **LLM (runtime)** | **Dual-provider, split by role.** OpenAI for the tutor's generate stage (`TUTOR_MODEL`, **`gpt-4o-mini` as of 2026-08-18**), vision grading (`gpt-4o`), and embeddings; **Anthropic for the answer verifier** (`claude-haiku-5-5` since 2026-11-22, `VERIFIER_MODEL` env overrides) so the model checking the tutor's answer isn't the model that wrote it. Both keys are required in prod. See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
 | Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
@@ -46,7 +46,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 
 > **`TUTOR_MODEL` is `gpt-4o-mini` (the default), and the Claude path is live anyway — via the
 > verifier.** The tutor generates on OpenAI; `utils/pipeline/llmVerifier.js` grades on
-> `claude-haiku-4-5`. So **`ANTHROPIC_API_KEY` is a production dependency even though `TUTOR_MODEL`
+> `claude-haiku-5-5`. So **`ANTHROPIC_API_KEY` is a production dependency even though `TUTOR_MODEL`
 > names an OpenAI model** — an unfunded balance degrades grading rather than tutoring, which is quieter
 > and easier to miss (see §7 diagnose). (This note has been wrong in *both* directions historically;
 > check the Render env before trusting any statement about which model runs where.)
@@ -79,12 +79,24 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 > on those turns only. The live persona eval uses the same function, so it grades the model a
 > student in that spot gets. Pinned by `tests/unit/tutorEscalationModel.test.js`.
 >
-> ⚠️ **`TUTOR_MODEL` cannot take an o-series id as-is.** `utils/openaiClient.js` maps to
-> `max_completion_tokens` only when the id contains `gpt-4o`/`gpt-5`, and drops `temperature` only when
-> it contains `nano`. So `o4-mini` (or any `o1`/`o3`/`o4` reasoning model) is sent `max_tokens` +
-> `temperature` and 400s — and 4xx is **terminal by design** in `isTransientError`, so there is no
-> fallback and every tutor turn fails. Widen the param logic before pointing `TUTOR_MODEL` at a
-> reasoning model.
+> ⚠️ **OpenAI retires `gpt-4o-mini` and `gpt-4o` on 2027-01-14** (snapshots `-2024-07-18` /
+> `-2024-08-06` / `-2024-11-20`; notice 2026-10-14). The named replacement is **`gpt-6-luna`**
+> ($0.10/$0.50 per MTok vs 4o-mini's $0.15/$0.60). Every `gpt-4o-mini` constant now follows
+> `TUTOR_MODEL` (`generate.js`, `verify.js`, `routes/chat.js`, `routes/courseChat.js`, `llmGateway`
+> `DEFAULT_MODELS`; `boardLlm` has its own `BOARD_LLM_MODEL`), so the tutor side of that move is
+> one Render env flip. The `gpt-4o` side (vision grading, `checkWork*`, `gradeWork`, the verifier's
+> `ESCALATION_MODEL`, the repeat-miss `TUTOR_ESCALATION_MODEL` default) is still hard-coded and
+> has to move before that date.
+>
+> ⚠️ **Request parameters differ by model family, and a wrong one is a terminal 400 with no fallback.**
+> `utils/openaiClient.js` `openaiRequestParams()` is the one place that knows the rules, probed live
+> 2026-11-22: gpt-4o+/gpt-5/gpt-6/o-series want `max_completion_tokens` (only gpt-3.5 / plain gpt-4
+> still take `max_tokens`); gpt-5/gpt-6/o-series/`*nano` accept **only the default temperature**, so
+> it is omitted for them; gpt-5/gpt-6/o-series **reason by default** (billed output tokens, ~2x
+> slower first token) unless `reasoning_effort` is sent — the default is `none`
+> (`TUTOR_REASONING_EFFORT` or a per-call `options.reasoning_effort` overrides), and Chat
+> Completions refuses function tools on `gpt-6-luna` at any other effort, so tools force `none`.
+> Pinned by `tests/unit/openaiModelParams.test.js`. Add a new family there, not at a call site.
 
 ---
 
@@ -183,7 +195,7 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
 1. **observe** — classify the message (answer attempt / question / confusion / off-topic / …).
 2. **diagnose** — verify the student's answer two ways in parallel: deterministic `utils/mathSolver.js`
    (~30% of topics, fast/exact) **and** an LLM verifier (`pipeline/llmVerifier.js`). The verifier is
-   **tiered and cross-provider**: `claude-haiku-4-5` first, escalating to `gpt-4o` when it can't resolve
+   **tiered and cross-provider**: `claude-haiku-5-5` first, escalating to `gpt-4o` when it can't resolve
    (low confidence / parse fail) instead of silently giving up. The provider split is the point — the
    verifier checks the tutor's *own* answer, so tier 1 must not be the model that produced it
    (`TUTOR_MODEL`, currently `gpt-4o-mini`); one model grading itself is not a cross-check. Two things
@@ -541,6 +553,13 @@ npm run seed:all:dry   # preflight + plan, no writes
   one-skill check may close only that skill's own unit. Their skill record is never erased.
   Pinned by the last two blocks of `tests/integration/coursePlacementClosesModules.test.js`.
 - **Per-user chat lock** in `routes/chat.js` serializes a user's concurrent messages — don't remove it.
+- **The safety alert has a server veto.** `persist.js` raises `<SAFETY_CONCERN>` through
+  `contentFilter.resolveSafetyConcern()`: the model's tag, unless the message is school hyperbole
+  ("gonna die if I fail this test") that trips none of `ALERT_PATTERNS` — then the tag is dropped and
+  the server's own reading stands. gpt-6-luna tagged such idioms in 3 of 4 live runs and still hedged
+  after the prompt named them; a tag emails a real adult. The veto can only remove a tag the server
+  would not have raised itself — a genuine disclosure in hyperbole words ("I want to die if I fail")
+  matches the self-harm pattern and is never vetoed. Pinned in `contentFilterDisclosures.test.js`.
 - **Math-answer injection gate**: the verified answer is injected into context **only** on an
   `ANSWER_ATTEMPT`, never when the student is *asking* — preserve this or you'll leak answers.
 - **The giveaway guard checks VALUE, not just form.** A student-posed problem never gets a

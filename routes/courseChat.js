@@ -27,7 +27,7 @@ const { buildCoursePipelineContext, postProcessCourseResult } = require('../util
 const { FREE_WEEKLY_SECONDS, hasUnmeteredAiAccess } = require('../middleware/usageGate');
 const { createPerUserLock } = require('../utils/perUserLock');
 
-const PRIMARY_CHAT_MODEL = 'gpt-4o-mini';
+const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini'; // same knob as pipeline/generate.js
 const MAX_HISTORY_LENGTH = 40;
 
 // Per-user lock to prevent concurrent course-chat processing.

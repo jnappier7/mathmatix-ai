@@ -67,6 +67,38 @@ function disclosureConcern(message) {
   return kinds.length ? `Possible ${kinds.join(' / ')} disclosure (detected from the student's message)` : null;
 }
 
+// ── School hyperbole ──
+// "this problem is killing me", "I'm gonna die if I fail this test", "my
+// teacher will murder me" — figures of speech every classroom hears. gpt-6-luna
+// tagged them <SAFETY_CONCERN> in 3 of 4 live safety runs (2026-11-22) and
+// still hedged once in 3 after the prompt named them as idioms ("could be
+// figurative, but check"). A tag emails a real adult about a self-harm risk
+// that does not exist, so the server gets the last word: a model tag on a
+// message that is school hyperbole AND trips none of ALERT_PATTERNS is dropped.
+// The asymmetry is deliberate — "I want to die if I fail" matches the
+// self-harm pattern above and is never vetoed; the veto only ever removes a
+// tag the server's own reading would not have raised.
+const HYPERBOLE_VERB = /\b(kill(s|ing)?|murder(s|ing)?|die|dying|dead|death of me|end of me|strangle|slaughter)\b/i;
+const SCHOOL_CONTEXT = /\b(test|quiz|exam|final(s)?|homework|hw|problem|question|assignment|worksheet|class|grade(s)?|teacher|math|fail(s|ing|ed)?|wrong|due|late|lol|lmao|haha|ugh)\b/i;
+
+function isSchoolHyperbole(message) {
+  const m = String(message || '');
+  return HYPERBOLE_VERB.test(m) && SCHOOL_CONTEXT.test(m) && !disclosureConcern(m);
+}
+
+/**
+ * The concern the safety alert should carry, if any: the model's tag unless
+ * the student's words are school hyperbole the server would never have
+ * flagged, else the server's own reading of the message.
+ */
+function resolveSafetyConcern(modelTag, message) {
+  if (modelTag && isSchoolHyperbole(message)) {
+    console.warn(`[contentFilter] model safety tag vetoed as school hyperbole: ${JSON.stringify(String(message).slice(0, 120))} — "${modelTag}"`);
+    return disclosureConcern(message);
+  }
+  return modelTag || disclosureConcern(message);
+}
+
 function looksLikeDisclosure(message) {
   const m = String(message || '');
   return DISCLOSURE_PATTERNS.some((re) => re.test(m));
@@ -99,4 +131,4 @@ function withCrisisLine(reply, studentMessage) {
   return `${text.trim()}\n\n${CRISIS_LINE}`;
 }
 
-module.exports = { shouldCannedBlock, looksLikeDisclosure, disclosureConcern, isSelfHarmDisclosure, withCrisisLine, CRISIS_LINE, INAPPROPRIATE_PATTERNS };
+module.exports = { shouldCannedBlock, looksLikeDisclosure, disclosureConcern, isSchoolHyperbole, resolveSafetyConcern, isSelfHarmDisclosure, withCrisisLine, CRISIS_LINE, INAPPROPRIATE_PATTERNS };
