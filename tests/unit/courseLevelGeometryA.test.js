@@ -528,7 +528,11 @@ const RESOLVERS = {
     if ((m = p.match(/side lengths (\d+), (\d+) and (\d+)\. A student computes/))) {
       const [c, a, b] = [+m[1], +m[2], +m[3]];
       expect(a * a + b * b).toBe(c * c);        // it IS a right triangle, so the student is wrong
-      return onlyOption(item, (t) => /^The student is wrong: the longest side/.test(t) && t.includes(`${a}² + ${b}² = ${c}²`));
+      const key = onlyOption(item, (t) => /^The student is wrong: /.test(t) && t.includes(`${a}² + ${b}² = ${c}²`));
+      // No length giveaway: the key used to be twice as long as the other three.
+      const lens = item.options.map((o) => String(o.text).length);
+      expect(Math.max(...lens) / Math.min(...lens)).toBeLessThan(1.25);
+      return key;
     }
     return undefined;
   },

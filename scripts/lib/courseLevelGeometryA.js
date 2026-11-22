@@ -1226,10 +1226,12 @@ const TEMPLATES = [
           default: {
             const sum = sq(c0) + sq(a);
             return { prompt: `A triangle has side lengths ${c0}, ${a} and ${b}. A student computes ${c0}² + ${a}² = ${sum}, compares it with ${b}² = ${sq(b)}, and concludes the triangle is not a right triangle. Which statement is true?`,
-              ...mc(r, `The student is wrong: the longest side, ${c0}, must be tested alone, and ${a}² + ${b}² = ${c0}², so the triangle is right.`, [
-                `The student is correct: ${sum} ≠ ${sq(b)}, so the triangle is not right.`,
-                `The student is correct, and since ${sum} > ${sq(b)} the triangle is acute.`,
-                `The student is wrong: the triangle is right because ${a} + ${b} > ${c0}.`,
+              // Four choices of one shape and length: a verdict and its reason. The
+              // key used to be twice as long as the rest, and the only one argued.
+              ...mc(r, `The student is wrong: ${c0} is the longest side, and ${a}² + ${b}² = ${c0}², so the triangle is right.`, [
+                `The student is correct: ${c0}² + ${a}² = ${sum}, and ${sum} ≠ ${sq(b)}, so the triangle is not right.`,
+                `The student is correct: ${sum} > ${sq(b)}, so the triangle is acute, and it is not right.`,
+                `The student is wrong: ${c0} is the longest side, and ${a} + ${b} > ${c0}, so the triangle is right.`,
               ]),
               explanation: `In the converse of the Pythagorean Theorem, c must be the LONGEST side. ${a}² + ${b}² = ${sq(a)} + ${sq(b)} = ${sq(c0)} = ${c0}², so the triangle is right. The student put the longest side on the wrong side of the equation.` };
           }

@@ -2913,6 +2913,11 @@ router.get('/challenge/:skillId', isAuthenticated, async (req, res) => {
       });
     }
 
+    // Remember what was served. The POST grades these and nothing else.
+    await User.updateOne({ _id: req.user._id }, {
+      $set: { challengeServed: { skillId, problemIds: problems.map((p) => String(p._id)), at: new Date() } }
+    });
+
     res.json({
       skillId,
       label: skill.studentLabel || skill.displayName,
@@ -2958,18 +2963,28 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
     const skill = await Skill.findOne({ skillId: { $in: skillLookupCandidates(req.params.skillId) } }).lean();
     if (!skill) return res.status(404).json({ error: 'Skill not found' });
 
-    // Re-fetch the served problems by id so grading uses stored answers, never
-    // anything the client sent about correctness.
-    const ids = submissions.map((s) => s.problemId).filter(Boolean);
-    // Filter by the SAME candidate set the GET samples from, so the two ends
-    // agree by construction. Filtering by any single id has broken this twice:
-    // the canonical id graded an empty set (#1333), and the catalog doc's key
-    // rejects items served from a different crosswalked bank id.
-    const problems = await Problem.find({
-      _id: { $in: ids },
-      skillId: { $in: skillLookupCandidates(req.params.skillId).concat(atLevelIdsFor(req.params.skillId, skillId)) }
-    }).lean();
-    const result = gradeChallenge(problems, submissions);
+    // Grade exactly the items the GET served for this skill — never ids the
+    // client names. It used to grade any item of the skill's pool, so a student
+    // could pick four they already knew (QA, 2026-11-22). Claiming the record
+    // clears it in the same write: one shot, and a replay finds nothing.
+    const claimed = await User.findOneAndUpdate(
+      { _id: req.user._id, 'challengeServed.skillId': skillId },
+      { $set: { challengeServed: null } },
+      { new: false, projection: { challengeServed: 1 } }
+    ).lean();
+    const servedIds = claimed && claimed.challengeServed && Array.isArray(claimed.challengeServed.problemIds)
+      ? claimed.challengeServed.problemIds.map(String) : null;
+    if (!servedIds || !servedIds.length) {
+      return res.status(409).json({ error: 'This challenge has expired — start it again.' });
+    }
+    const allowed = new Set(servedIds);
+    const mine = submissions.filter((s) => s && allowed.has(String(s.problemId)));
+    const problems = await Problem.find({ _id: { $in: servedIds } }).lean();
+    const result = gradeChallenge(problems, mine);
+    // Every served item must be answered, counted over distinct ids.
+    const answered = new Set(mine.map((s) => String(s.problemId)));
+    const complete = servedIds.every((id) => answered.has(id));
+    if (!complete) result.passed = false;
     // Per-item results, so "2 of 5" is never a verdict the student cannot
     // inspect (student audit, 2026-10-14: a correct run scored 2/5 and nothing
     // said which answers failed or why). The key is shown only AFTER grading,
@@ -3003,7 +3018,9 @@ router.post('/challenge/:skillId', isAuthenticated, async (req, res) => {
         total: result.total,
         missedProblemIds: result.missedProblemIds,
         items: review,
-        message: result.total < MIN_ITEMS
+        message: !complete
+          ? 'Answer every question to finish the challenge — try it again.'
+          : result.total < MIN_ITEMS
           ? 'Not enough graded answers to call it — try again.'
           : `${result.correct} of ${result.total}. Found the gap — let's close it.`
       });

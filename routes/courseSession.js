@@ -3,6 +3,7 @@
 // PURELY ADDITIVE — does not touch conversations, chat, or session routes
 
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
@@ -1220,6 +1221,30 @@ async function loadSkillCheck(req) {
   return { session, pathway, bankSkill };
 }
 
+// How many failed attempts' worth of items stay out of the next check. Wide on
+// purpose: with a short memory a 14-item pool hands attempt one's items (key
+// already shown) back on attempt four. An at-level skill has 12 items, so two
+// misses end the checking there either way.
+const SKILL_CHECK_SEEN_ATTEMPTS = 6;
+
+/** Items this student was shown in recent FAILED checks of a skill (id strings). */
+function seenInSkillCheck(session, skillId) {
+  const row = (Array.isArray(session.skillCheckSeen) ? session.skillCheckSeen : [])
+    .find(r => r && r.skillId === skillId);
+  return row && Array.isArray(row.problemIds) ? row.problemIds.map(String) : [];
+}
+
+/** Record a failed attempt's items, newest last, capped at the last N attempts. */
+function rememberSkillCheck(session, skillId, problemIds) {
+  const cap = SKILL_CHECK_SEEN_ATTEMPTS * CHALLENGE_SIZE;
+  const ids = Array.from(new Set([...seenInSkillCheck(session, skillId), ...problemIds.map(String)])).slice(-cap);
+  // A list of rows, not a map: skill ids can contain dots, which Mongo reads as paths.
+  const rest = (Array.isArray(session.skillCheckSeen) ? session.skillCheckSeen : [])
+    .filter(r => r && r.skillId !== skillId);
+  session.skillCheckSeen = rest.concat([{ skillId, problemIds: ids }]);
+  session.markModified('skillCheckSeen');
+}
+
 router.get('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
   try {
     const ctx = await loadSkillCheck(req);
@@ -1231,11 +1256,18 @@ router.get('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
       return res.status(409).json({ error: 'Already proved', reason: 'You already own this one.' });
     }
 
-    const items = await pickItems(bankSkill, CHALLENGE_SIZE);
+    // A failed check shows the student what they missed, so the items of
+    // their recent failed attempts are not asked again — otherwise two or
+    // three tries at a 12-item skill are the answer key.
+    const seen = seenInSkillCheck(session, bankSkill.skillId);
+    const items = await pickItems(bankSkill, CHALLENGE_SIZE,
+      seen.filter(id => mongoose.isValidObjectId(id)).map(id => new mongoose.Types.ObjectId(id)));
     if (items.length < MIN_ITEMS) {
       return res.status(409).json({
         error: 'Not enough problems to check this skill',
-        reason: 'There are not enough questions to check this skill yet — it is learned in the lesson.'
+        reason: seen.length
+          ? 'You have seen the questions for this one — it is learned in the lesson now.'
+          : 'There are not enough questions to check this skill yet — it is learned in the lesson.'
       });
     }
 
@@ -1283,8 +1315,11 @@ router.post('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
     const mine = submissions.filter(s => s && allowed.has(String(s.problemId)));
     const problems = await Problem.find({ _id: { $in: served.problemIds } }).lean();
     const result = gradeChallenge(problems.map(forGrading), mine);
-    // Every served item must be answered: a check passed on the two easy ones is not a check.
-    const complete = result.items.length === served.problemIds.length;
+    // Every served item must be answered: a check passed on the two easy ones
+    // is not a check. Counted over DISTINCT served ids — five copies of one
+    // answer are one answer.
+    const answered = new Set(mine.map(s => String(s.problemId)));
+    const complete = served.problemIds.every(id => answered.has(String(id)));
     const passed = result.passed && complete;
 
     const byId = new Map(problems.map(p => [String(p._id), p]));
@@ -1308,6 +1343,8 @@ router.post('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
     session.skillCheckServed = null;          // one shot
 
     if (!passed) {
+      // The reply below shows what was missed; those items are spent.
+      rememberSkillCheck(session, bankSkill.skillId, served.problemIds);
       await session.save();
       return res.json({
         passed: false,

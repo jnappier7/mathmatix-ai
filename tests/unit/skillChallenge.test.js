@@ -222,3 +222,39 @@ describe('the evidence handed to the ladder', () => {
     expect(currentRung(entry)).toBe('none');
   });
 });
+
+describe('gradeChallenge — one answer per problem', () => {
+  // QA, 2026-11-22: five copies of one correct answer were five graded items,
+  // a 5-of-5 pass on a single problem.
+  test('duplicate ids count once', () => {
+    const problems = [p('1', '12'), p('2', '7'), p('3', '9'), p('4', '4'), p('5', '1')];
+    const copies = Array.from({ length: 5 }, () => ({ problemId: '1', answer: '12' }));
+    const result = gradeChallenge(problems, copies);
+    expect(result.items).toHaveLength(1);
+    expect(result).toMatchObject({ correct: 1, total: 1, passed: false });
+  });
+
+  test('the FIRST submission for a problem is the one graded', () => {
+    const result = gradeChallenge([p('1', '12')], [
+      { problemId: '1', answer: '13' },
+      { problemId: '1', answer: '12' }
+    ]);
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toMatchObject({ correct: false, submitted: '13' });
+  });
+
+  test('ids that differ only in type are the same problem', () => {
+    const result = gradeChallenge([p(1, '12')], [{ problemId: 1, answer: '12' }, { problemId: '1', answer: '12' }]);
+    expect(result.items).toHaveLength(1);
+  });
+
+  test('five distinct correct answers still pass', () => {
+    const problems = [p('1', '12'), p('2', '7'), p('3', '9'), p('4', '4'), p('5', '1')];
+    const result = gradeChallenge(problems, problems.map((q) => ({ problemId: q._id, answer: q.answer.value })));
+    expect(result).toMatchObject({ correct: 5, total: 5, passed: true });
+  });
+
+  test('a null entry in the submissions is skipped, not thrown on', () => {
+    expect(gradeChallenge([p('1', '12')], [null, { problemId: '1', answer: '12' }]).items).toHaveLength(1);
+  });
+});

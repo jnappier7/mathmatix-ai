@@ -237,3 +237,87 @@ describe('POST /challenge/:skillId', () => {
     expect(again.body.reason).toMatch(/already own/i);
   });
 });
+
+describe('the challenge grades what it SERVED (QA, 2026-11-22)', () => {
+  const submit = (submissions) => supertest(app).post(`/api/mastery/challenge/${SKILL}`).send({ submissions });
+  const key = async (id) => (await Problem.findById(id).lean()).answer.value;
+  const rungOf = async () => {
+    const entry = getSkillMasteryEntry(await User.findById(currentUserId), SKILL);
+    return entry ? entry.rung : null;
+  };
+  let extra = [];
+
+  beforeAll(async () => {
+    // More items of the skill than a challenge serves, so there are items of
+    // the right skill that a given challenge did NOT serve.
+    extra = await Problem.insertMany([6, 7, 8, 9, 10, 11].map((n) => ({
+      problemId: `chal-${n}`, skillId: SKILL, prompt: `What is ${n} + ${n}?`,
+      answer: { type: 'exact', value: String(n * 2) }, difficulty: 2
+    })));
+  });
+  afterAll(async () => { await Problem.deleteMany({ _id: { $in: extra.map((e) => e._id) } }); });
+
+  test('a POST with no challenge started is refused', async () => {
+    const ids = (await Problem.find({ skillId: SKILL }).limit(5).lean());
+    const res = await submit(ids.map((q) => ({ problemId: String(q._id), answer: q.answer.value })));
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/expired/i);
+    expect(await rungOf()).not.toBe('proved');
+  });
+
+  test('items of the skill that were not served are not graded', async () => {
+    const served = (await fetchChallenge()).body.problems.map((q) => q.problemId);
+    const others = await Problem.find({ skillId: SKILL, _id: { $nin: served } }).limit(5).lean();
+    expect(others.length).toBe(5);
+    const res = await submit(others.map((q) => ({ problemId: String(q._id), answer: q.answer.value })));
+    expect(res.body.passed).toBe(false);
+    expect(res.body.total).toBe(0);
+    expect(await rungOf()).not.toBe('proved');
+  });
+
+  test('five copies of one served answer are one answer, not a pass', async () => {
+    const [one] = (await fetchChallenge()).body.problems;
+    const answer = await key(one.problemId);
+    const res = await submit(Array.from({ length: 5 }, () => ({ problemId: one.problemId, answer })));
+    expect(res.body).toMatchObject({ passed: false, correct: 1, total: 1 });
+    expect(await rungOf()).not.toBe('proved');
+  });
+
+  test('answering four of the five served is not a pass', async () => {
+    const served = (await fetchChallenge()).body.problems;
+    const four = [];
+    for (const q of served.slice(0, 4)) four.push({ problemId: q.problemId, answer: await key(q.problemId) });
+    const res = await submit(four);
+    expect(res.body.passed).toBe(false);
+    expect(res.body.message).toMatch(/every question/i);
+    expect(await rungOf()).not.toBe('proved');
+  });
+
+  test('one shot: a POST cannot be replayed, after a miss or after a pass', async () => {
+    // After a miss, with the key now on screen.
+    let served = (await fetchChallenge()).body.problems;
+    expect((await submit(served.map((q) => ({ problemId: q.problemId, answer: 'nope' })))).body.passed).toBe(false);
+    const right = [];
+    for (const q of served) right.push({ problemId: q.problemId, answer: await key(q.problemId) });
+    expect((await submit(right)).status).toBe(409);
+    expect(await rungOf()).not.toBe('proved');
+
+    // The normal flow still passes — and its POST cannot be replayed either.
+    served = (await fetchChallenge()).body.problems;
+    const again = [];
+    for (const q of served) again.push({ problemId: q.problemId, answer: await key(q.problemId) });
+    const pass = await submit(again);
+    expect(pass.body).toMatchObject({ passed: true, correct: 5, total: 5, rung: 'proved' });
+    expect((await submit(again)).status).toBe(409);
+  });
+
+  test('a challenge served for one skill cannot be submitted to another', async () => {
+    const served = (await fetchChallenge()).body.problems;
+    const subs = [];
+    for (const q of served) subs.push({ problemId: q.problemId, answer: await key(q.problemId) });
+    const res = await supertest(app).post('/api/mastery/challenge/MS.PRP.3').send({ submissions: subs });
+    expect(res.status).toBe(409);
+    // …and the challenge that IS in flight is still good.
+    expect((await submit(subs)).body.passed).toBe(true);
+  });
+});
