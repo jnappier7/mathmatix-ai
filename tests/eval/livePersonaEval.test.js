@@ -139,7 +139,7 @@ function checkVerdict(name, spec, verdict) {
           }
           const turnFailures = checkVerdict(name, spec, verdict);
           for (const f of turnFailures) {
-            failures.push(`  ${f}\n    student: "${turnRecord.student}"\n    reply: "${String(turnRecord.reply).slice(0, 200)}"${verdict.evidence ? `\n    evidence: ${verdict.evidence}` : ''}`);
+            failures.push(`  ${f}\n    student: "${turnRecord.student}"\n    reply: "${String(turnRecord.reply).slice(0, 700)}"${verdict.evidence ? `\n    evidence: ${verdict.evidence}` : ''}`);
           }
         }
       }

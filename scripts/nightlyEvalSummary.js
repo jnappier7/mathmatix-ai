@@ -48,6 +48,34 @@ if (results.size === 0) {
   process.exit(2);
 }
 
+// What the tutor actually SAID on a failing test, lifted from jest's failure blocks.
+// A pass rate says a test failed; only the reply says why — and the per-run logs are an
+// artifact on a storage host that changes run to run, so anyone reading the job log (or the
+// run's summary page) had the verdict and nothing else. One block per failing test per run.
+// { model: { testName: [ 'run N: …' ] } }
+const evidence = new Map();
+// eslint-disable-next-line no-control-regex
+const ANSI = /\x1b\[[0-9;]*m/g;
+for (const file of fs.readdirSync(dir).sort()) {
+  const m = file.match(/^(.+)-run(\d+)\.log$/);
+  if (!m) continue;
+  const text = fs.readFileSync(path.join(dir, file), 'utf8').replace(ANSI, '');
+  const blocks = text.split(/\n\s*● /).slice(1);
+  for (const block of blocks) {
+    const head = block.split('\n')[0];
+    const name = head.includes(' › ') ? head.slice(head.lastIndexOf(' › ') + 3).trim() : head.trim();
+    // Stop at jest's code frame / stack — the evidence is above it.
+    const end = block.search(/\n\s+(?:>?\s*\d+ \||at )/);
+    const body = (end > 0 ? block.slice(head.length, end) : block.slice(head.length))
+      .split('\n').map((l) => l.trim()).filter(Boolean).join('\n').slice(0, 1200);
+    if (!body) continue;
+    if (!evidence.has(m[1])) evidence.set(m[1], new Map());
+    const perTest = evidence.get(m[1]);
+    if (!perTest.has(name)) perTest.set(name, []);
+    perTest.get(name).push(`run ${m[2]}:\n${body}`);
+  }
+}
+
 const regressions = [];
 const flaky = [];
 const lines = ['# Nightly tutor eval', ''];
@@ -80,6 +108,17 @@ if (flaky.length) {
   for (const f of flaky) lines.push(`- ${f}`);
   lines.push('');
 }
+
+// Replies for every test that failed at least once. Two runs each is enough to see the
+// pattern without burying the table.
+const SHOWN_PER_TEST = 2;
+const shown = [];
+for (const [model, perTest] of evidence) {
+  for (const [name, runs] of perTest) {
+    shown.push(`### ${model}: ${name}`, '', '```', runs.slice(0, SHOWN_PER_TEST).join('\n\n'), '```', '');
+  }
+}
+if (shown.length) lines.push('## What the tutor said on the failing tests', '', ...shown);
 
 const summary = lines.join('\n');
 console.log(summary);
