@@ -97,6 +97,16 @@ const STEPS = [
     ids: jsonIds('skills-pattern-based.json', 'skillId'),
   },
   {
+    key: 'catalog-skills',
+    label: 'Course and legacy catalog skills (insert-only)',
+    script: 'seedCatalogSkills.js',
+    supportsFresh: false, // insert-only by design — it never clears or overwrites a skill
+    files: require('./seedCatalogSkills').FILES,
+    model: 'Skill',
+    idField: 'skillId',
+    ids: () => require('./seedCatalogSkills').loadSkills().map((s) => s.skillId),
+  },
+  {
     key: 'act-items',
     label: 'ACT Math items (Fable)',
     script: 'seedActItems.js',

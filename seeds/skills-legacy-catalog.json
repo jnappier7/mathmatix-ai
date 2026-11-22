@@ -1,0 +1,1658 @@
+[
+ {
+  "skillId": "adding-fractions-different-denominators",
+  "displayName": "Adding Fractions Different Denominators",
+  "description": "Practice problems for adding fractions different denominators",
+  "category": "fractions",
+  "prerequisites": [
+   "add-fractions"
+  ],
+  "enables": [
+   "adding-fractions-same-denominator"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations—Fractions",
+  "isActive": true,
+  "strand": "fractions",
+  "depth": 1,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "adding-fractions-same-denominator",
+  "displayName": "Adding Fractions Same Denominator",
+  "description": "Practice problems for adding fractions same denominator",
+  "category": "fractions",
+  "prerequisites": [
+   "adding-fractions-different-denominators",
+   "addition-within-10"
+  ],
+  "enables": [
+   "subtract-fractions"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations—Fractions",
+  "isActive": true,
+  "strand": "fractions",
+  "depth": 4,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "adding-subtracting-integers",
+  "displayName": "Adding Subtracting Integers",
+  "description": "Practice problems for adding subtracting integers",
+  "category": "integers-rationals",
+  "prerequisites": [],
+  "enables": [
+   "multiplying-dividing-integers"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "The Number System",
+  "isActive": true,
+  "strand": "number_system",
+  "depth": 0,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "addition-within-10",
+  "displayName": "Addition Within 10",
+  "description": "Practice problems for addition within 10",
+  "category": "operations",
+  "prerequisites": [
+   "addition-as-joining"
+  ],
+  "enables": [
+   "addition-within-100",
+   "adding-fractions-same-denominator",
+   "decimals-add-subtract"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "K-5",
+  "ohioDomain": "Operations & Algebraic Thinking",
+  "isActive": true,
+  "strand": "operations",
+  "depth": 3,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "area-triangles",
+  "displayName": "Area Triangles",
+  "description": "Practice problems for area triangles",
+  "category": "area-perimeter",
+  "prerequisites": [
+   "3d-shapes"
+  ],
+  "enables": [
+   "circles-circumference-area"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Geometry",
+  "isActive": true,
+  "strand": "geometry",
+  "depth": 5,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "calc3-divergence-theorem",
+  "displayName": "Divergence Theorem Reasoning",
+  "description": "Relate flux through a closed surface to triple integral of divergence; justify conditions.",
+  "category": "calc3",
+  "prerequisites": [
+   "calc3-greens-theorem"
+  ],
+  "enables": [
+   "calc3-stokes-theorem"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 7,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "calc3-dot-cross",
+  "displayName": "Dot and Cross Products",
+  "description": "Compute dot products and cross products and interpret magnitudes.",
+  "category": "calc3",
+  "prerequisites": [],
+  "enables": [
+   "calc3-partial-derivatives"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 0,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "calc3-double-integrals",
+  "displayName": "Double Integrals",
+  "description": "Compute double integrals over rectangular regions.",
+  "category": "calc3",
+  "prerequisites": [
+   "calc3-gradient",
+   "definite-integrals"
+  ],
+  "enables": [
+   "calc3-greens-theorem"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 5,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "calc3-gradient",
+  "displayName": "Gradients",
+  "description": "Compute ∇f and evaluate it at a point.",
+  "category": "calc3",
+  "prerequisites": [
+   "calc3-partial-derivatives"
+  ],
+  "enables": [
+   "calc3-double-integrals"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 4,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "calc3-greens-theorem",
+  "displayName": "Green’s Theorem Reasoning + Computation",
+  "description": "Use Green’s Theorem to compute a line integral and justify applicability.",
+  "category": "calc3",
+  "prerequisites": [
+   "calc3-double-integrals"
+  ],
+  "enables": [
+   "calc3-divergence-theorem",
+   "calc3-stokes-theorem"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 6,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "calc3-partial-derivatives",
+  "displayName": "Partial Derivatives",
+  "description": "Compute ∂f/∂x and ∂f/∂y for functions of two variables.",
+  "category": "calc3",
+  "prerequisites": [
+   "calc3-dot-cross",
+   "derivatives"
+  ],
+  "enables": [
+   "calc3-gradient"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 3,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "calc3-stokes-theorem",
+  "displayName": "Stokes’ Theorem Reasoning",
+  "description": "Relate line integral around boundary to surface integral of curl; justify conditions.",
+  "category": "calc3",
+  "prerequisites": [
+   "calc3-divergence-theorem",
+   "calc3-greens-theorem"
+  ],
+  "enables": [],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "Calc 3",
+  "ohioDomain": "Calculus",
+  "isActive": true,
+  "strand": "calc3",
+  "depth": 8,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "comparing-fractions",
+  "displayName": "Comparing Fractions",
+  "description": "Practice problems for comparing fractions",
+  "category": "fractions",
+  "prerequisites": [
+   "probability-fractions"
+  ],
+  "enables": [
+   "equivalent-fractions"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations—Fractions",
+  "isActive": true,
+  "strand": "fractions",
+  "depth": 9,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "decimals-add-subtract",
+  "displayName": "Add and Subtract Decimals",
+  "description": "Compute sums and differences of decimals.",
+  "category": "decimals",
+  "prerequisites": [
+   "decimals-rounding",
+   "equivalent-fractions",
+   "addition-within-10"
+  ],
+  "enables": [
+   "decimals-divide"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations in Base Ten",
+  "isActive": true,
+  "strand": "place_value",
+  "depth": 13,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "decimals-divide",
+  "displayName": "Divide Decimals",
+  "description": "Divide decimals (including by powers of 10).",
+  "category": "decimals",
+  "prerequisites": [
+   "decimals-add-subtract",
+   "equivalent-fractions"
+  ],
+  "enables": [
+   "decimals-multiply"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations in Base Ten",
+  "isActive": true,
+  "strand": "place_value",
+  "depth": 14,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "decimals-multiply",
+  "displayName": "Multiply Decimals",
+  "description": "Multiply decimals and interpret the product.",
+  "category": "decimals",
+  "prerequisites": [
+   "decimals-divide",
+   "equivalent-fractions"
+  ],
+  "enables": [],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations in Base Ten",
+  "isActive": true,
+  "strand": "place_value",
+  "depth": 15,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "decimals-rounding",
+  "displayName": "Round Decimals",
+  "description": "Round decimals to a given place.",
+  "category": "decimals",
+  "prerequisites": [
+   "decimals-place-value"
+  ],
+  "enables": [
+   "decimals-add-subtract"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations in Base Ten",
+  "isActive": true,
+  "strand": "place_value",
+  "depth": 12,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "equivalent-fractions",
+  "displayName": "Equivalent Fractions",
+  "description": "Practice problems for equivalent fractions",
+  "category": "fractions",
+  "prerequisites": [
+   "comparing-fractions"
+  ],
+  "enables": [
+   "fraction-concepts",
+   "decimals-place-value",
+   "decimals-add-subtract",
+   "decimals-divide",
+   "decimals-multiply"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations—Fractions",
+  "isActive": true,
+  "strand": "fractions",
+  "depth": 10,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "exponent-properties",
+  "displayName": "Exponent Properties",
+  "description": "Practice problems for exponent properties",
+  "category": "operations",
+  "prerequisites": [
+   "addition-within-100"
+  ],
+  "enables": [
+   "fact-families"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "K-5",
+  "ohioDomain": "Operations & Algebraic Thinking",
+  "isActive": true,
+  "strand": "operations",
+  "depth": 5,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "financial-literacy",
+  "displayName": "Financial Literacy",
+  "description": "Practice problems for financial literacy",
+  "category": "operations",
+  "prerequisites": [
+   "fact-families"
+  ],
+  "enables": [
+   "missing-addend"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "K-5",
+  "ohioDomain": "Operations & Algebraic Thinking",
+  "isActive": true,
+  "strand": "operations",
+  "depth": 7,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "fractions-basics",
+  "displayName": "Fractions Basics",
+  "description": "Practice problems for fractions basics",
+  "category": "fractions",
+  "prerequisites": [
+   "fractions-as-parts"
+  ],
+  "enables": [],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Number & Operations—Fractions",
+  "isActive": true,
+  "strand": "fractions",
+  "depth": 13,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "irrational-numbers",
+  "displayName": "Irrational Numbers",
+  "description": "Practice problems for irrational numbers",
+  "category": "integers-rationals",
+  "prerequisites": [
+   "divide-rational-expressions"
+  ],
+  "enables": [
+   "multiply-rational-expressions"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "The Number System",
+  "isActive": true,
+  "strand": "ratios_percent",
+  "depth": 3,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "linear-equations",
+  "displayName": "Linear Equations",
+  "description": "Practice problems for linear equations",
+  "category": "equations",
+  "prerequisites": [
+   "graph-linear-equations"
+  ],
+  "enables": [
+   "solving-linear-equations"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Expressions & Equations",
+  "isActive": true,
+  "strand": "algebra_equations",
+  "depth": 6,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "multiplying-dividing-integers",
+  "displayName": "Multiplying Dividing Integers",
+  "description": "Practice problems for multiplying dividing integers",
+  "category": "integers-rationals",
+  "prerequisites": [
+   "adding-subtracting-integers"
+  ],
+  "enables": [
+   "number-system"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "The Number System",
+  "isActive": true,
+  "strand": "number_system",
+  "depth": 1,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "number-system",
+  "displayName": "Number System",
+  "description": "Practice problems for number system",
+  "category": "number-system",
+  "prerequisites": [
+   "multiplying-dividing-integers"
+  ],
+  "enables": [],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "The Number System",
+  "isActive": true,
+  "strand": "number_system",
+  "depth": 2,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "operations",
+  "displayName": "Operations",
+  "description": "Practice problems for operations",
+  "category": "operations",
+  "prerequisites": [],
+  "enables": [
+   "add-subtract-rational-expressions"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "K-5",
+  "ohioDomain": "Operations & Algebraic Thinking",
+  "isActive": true,
+  "strand": "ratios_percent",
+  "depth": 0,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "precalculus",
+  "displayName": "Precalculus",
+  "description": "Practice problems for precalculus",
+  "category": "operations",
+  "prerequisites": [
+   "part-part-whole"
+  ],
+  "enables": [
+   "related-facts"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "K-5",
+  "ohioDomain": "Operations & Algebraic Thinking",
+  "isActive": true,
+  "strand": "operations",
+  "depth": 14,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "prek-compare-sets",
+  "displayName": "Compare Sets (More, Less, Equal)",
+  "description": "Compare two groups and decide which has more, less, or the same.",
+  "category": "counting-cardinality",
+  "prerequisites": [
+   "compare-numbers"
+  ],
+  "enables": [
+   "rounding"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 8,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-count-0-10",
+  "displayName": "Count Objects 0–10",
+  "description": "Count a set up to 10 and give the total.",
+  "category": "counting-cardinality",
+  "prerequisites": [
+   "counting-up"
+  ],
+  "enables": [
+   "prek-count-0-5"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 4,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-count-0-5",
+  "displayName": "Count Objects 0–5",
+  "description": "Count a small set and give the total.",
+  "category": "counting-cardinality",
+  "prerequisites": [
+   "prek-count-0-10"
+  ],
+  "enables": [
+   "skip-counting"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 5,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-number-words",
+  "displayName": "Number Words 0–10",
+  "description": "Match number words to numerals from 0 to 10.",
+  "category": "number-recognition",
+  "prerequisites": [
+   "ordering-numbers"
+  ],
+  "enables": [
+   "prek-patterns"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 16,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-patterns",
+  "displayName": "Complete Simple Patterns",
+  "description": "Complete AB and AAB patterns.",
+  "category": "operations",
+  "prerequisites": [
+   "prek-number-words"
+  ],
+  "enables": [
+   "prek-position-words"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 17,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-position-words",
+  "displayName": "Positional Words",
+  "description": "Use positional words like above/below/next to in simple situations.",
+  "category": "measurement",
+  "prerequisites": [
+   "prek-patterns"
+  ],
+  "enables": [
+   "prek-shapes-basic"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 18,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-shapes-basic",
+  "displayName": "Identify Basic Shapes",
+  "description": "Identify circle, triangle, square, rectangle from descriptions.",
+  "category": "geometry",
+  "prerequisites": [
+   "prek-position-words"
+  ],
+  "enables": [
+   "prek-sort-attributes"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 19,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "prek-sort-attributes",
+  "displayName": "Sort by Attribute",
+  "description": "Sort objects by size, color, or shape based on description.",
+  "category": "operations",
+  "prerequisites": [
+   "prek-shapes-basic"
+  ],
+  "enables": [],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "preK",
+  "ohioDomain": "Counting & Cardinality",
+  "isActive": true,
+  "strand": "prek_foundations",
+  "depth": 20,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "ratio-tables",
+  "displayName": "Ratio Tables",
+  "description": "Practice problems for ratio tables",
+  "category": "ratios-proportions",
+  "prerequisites": [
+   "ratio-concepts"
+  ],
+  "enables": [
+   "ratios"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Ratios & Proportional Relationships",
+  "isActive": true,
+  "strand": "ratios_percent",
+  "depth": 11,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "solving-equations",
+  "displayName": "Solving Equations",
+  "description": "Practice problems for solving equations",
+  "category": "equations",
+  "prerequisites": [
+   "simplify-expressions"
+  ],
+  "enables": [
+   "solving-inequalities"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Expressions & Equations",
+  "isActive": true,
+  "strand": "algebra_equations",
+  "depth": 27,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "solving-linear-equations",
+  "displayName": "Solving Linear Equations",
+  "description": "Practice problems for solving linear equations",
+  "category": "equations",
+  "prerequisites": [
+   "linear-equations"
+  ],
+  "enables": [
+   "absolute-value-inequalities"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Expressions & Equations",
+  "isActive": true,
+  "strand": "algebra_equations",
+  "depth": 7,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "statistics",
+  "displayName": "Statistics",
+  "description": "Practice problems for statistics",
+  "category": "statistics",
+  "prerequisites": [
+   "standard-deviation"
+  ],
+  "enables": [
+   "tally-charts"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "5-8",
+  "ohioDomain": "Statistics & Probability",
+  "isActive": true,
+  "strand": "stats_prob",
+  "depth": 16,
+  "source": "cleaned_from_archive"
+ },
+ {
+  "skillId": "trig-degree-radian-conversion",
+  "displayName": "Degree ↔ Radian Conversion",
+  "description": "Convert between degrees and radians using π.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-right-triangle-ratios"
+  ],
+  "enables": [
+   "trig-unit-circle-evaluation"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 21,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-elevation-depression",
+  "displayName": "Angles of Elevation and Depression",
+  "description": "Model and solve real-world problems using right-triangle trig.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-solve-right-triangles",
+   "slope"
+  ],
+  "enables": [
+   "trig-law-of-sines"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 27,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-identities-basic",
+  "displayName": "Basic Trig Identities",
+  "description": "Use sin^2θ + cos^2θ = 1 and related identities.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-tan-unit-circle",
+   "trig-unit-circle-evaluation"
+  ],
+  "enables": [
+   "trig-solve-equations-special"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 24,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-law-of-cosines",
+  "displayName": "Law of Cosines",
+  "description": "Solve oblique triangles using the Law of Cosines.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-law-of-sines"
+  ],
+  "enables": [],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 29,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-law-of-sines",
+  "displayName": "Law of Sines",
+  "description": "Solve oblique triangles using the Law of Sines.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-elevation-depression",
+   "trig-solve-right-triangles"
+  ],
+  "enables": [
+   "trig-law-of-cosines"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 28,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-right-triangle-ratios",
+  "displayName": "Trig Ratios in Right Triangles",
+  "description": "Compute sin, cos, tan from opposite/adjacent/hypotenuse or side ratios.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "pythagorean-theorem"
+  ],
+  "enables": [
+   "trig-degree-radian-conversion",
+   "trig-solve-right-triangles"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 20,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-solve-equations-special",
+  "displayName": "Solve Simple Trig Equations (Special Angles)",
+  "description": "Solve trig equations using unit circle values on [0, 2π).",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-identities-basic",
+   "trig-unit-circle-evaluation"
+  ],
+  "enables": [
+   "trig-solve-right-triangles"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 25,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-solve-right-triangles",
+  "displayName": "Solve Right Triangles",
+  "description": "Use trig ratios to find missing sides in right triangles.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-solve-equations-special",
+   "trig-right-triangle-ratios"
+  ],
+  "enables": [
+   "trig-elevation-depression",
+   "trig-law-of-sines"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 26,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-tan-unit-circle",
+  "displayName": "Evaluate tan at Special Angles",
+  "description": "Evaluate tan(θ) exactly at special angles.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-unit-circle-evaluation"
+  ],
+  "enables": [
+   "trig-identities-basic"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 23,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "trig-unit-circle-evaluation",
+  "displayName": "Unit Circle Exact Values",
+  "description": "Evaluate sin and cos at special angles using the unit circle.",
+  "category": "trigonometry",
+  "prerequisites": [
+   "trig-degree-radian-conversion"
+  ],
+  "enables": [
+   "trig-tan-unit-circle",
+   "trig-identities-basic",
+   "trig-solve-equations-special"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Functions",
+  "isActive": true,
+  "strand": "trigonometry",
+  "depth": 22,
+  "source": "generated_skill"
+ },
+ {
+  "skillId": "writing-expressions",
+  "displayName": "Writing Expressions",
+  "description": "Practice problems for writing expressions",
+  "category": "expressions",
+  "prerequisites": [
+   "systems-substitution"
+  ],
+  "enables": [
+   "factoring-quadratics"
+  ],
+  "standardsAlignment": [],
+  "teachingGuidance": {
+   "coreConcepts": [],
+   "commonMistakes": [],
+   "teachingTips": [],
+   "exampleTypes": [],
+   "connectionsToPriorKnowledge": []
+  },
+  "difficultyLevel": 5,
+  "irtDifficulty": 0,
+  "fluencyMetadata": {
+   "baseFluencyTime": 30,
+   "fluencyType": "process",
+   "toleranceFactor": 2
+  },
+  "gradeBand": "8-12",
+  "ohioDomain": "Expressions & Equations",
+  "isActive": true,
+  "strand": "algebra_equations",
+  "depth": 34,
+  "source": "cleaned_from_archive"
+ }
+]

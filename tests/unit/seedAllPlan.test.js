@@ -45,6 +45,28 @@ describe('seed plan integrity', () => {
     expect(lastSkill).toBeLessThan(firstItem);
   });
 
+  test('every skill an item bank names is in a catalog the plan seeds', () => {
+    // The plan used to seed only the unified and pattern catalogs. Production
+    // had the rest from older hand-run scripts, so it worked there and nowhere
+    // else: on an empty database seedBankTopupItems stopped with "15 skillId(s)
+    // not found in the Skill collection" and nothing after it was seeded.
+    const skills = new Set(STEPS.filter((s) => s.model === 'Skill').flatMap((s) => s.ids()));
+    const topup = JSON.parse(fs.readFileSync(path.join(SCRIPTS, '../seeds/bank-topup-items.generated.json'), 'utf8'));
+    const missing = [...new Set(topup.map((i) => i.skillId))].filter((id) => !skills.has(id));
+    expect(missing).toEqual([]);
+  });
+
+  test('the catalog step only ever INSERTS — it cannot overwrite a skill production has tuned', () => {
+    const step = STEPS.find((s) => s.key === 'catalog-skills');
+    expect(step.supportsFresh).toBe(false);
+    const src = fs.readFileSync(path.join(SCRIPTS, step.script), 'utf8');
+    expect(src).toMatch(/\$setOnInsert: skill/);
+    expect(src).not.toMatch(/\$set:\s|deleteMany|insertMany/);
+    // …and it runs after the two catalogs it defers to.
+    const keys = STEPS.map((s) => s.key);
+    expect(keys.indexOf('catalog-skills')).toBeGreaterThan(keys.indexOf('pattern-skills'));
+  });
+
   test('the answer.equivalents backfill runs last', () => {
     // Each Fable bank re-upserts answer.value from JSON, dropping the
     // typography equivalents. Backfilling before them would be a no-op.
