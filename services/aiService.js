@@ -11,7 +11,10 @@
 
 const { callLLM } = require('../utils/llmGateway');
 
-const ASSESSMENT_MODEL = process.env.ASSESSMENT_MODEL || 'gpt-4o';
+// A conversational turn with a student, so it follows the tutor's model unless
+// ASSESSMENT_MODEL names another (it was a hard-coded gpt-4o, which OpenAI
+// retires 2027-01-14).
+const ASSESSMENT_MODEL = process.env.ASSESSMENT_MODEL || process.env.TUTOR_MODEL || 'gpt-4o-mini';
 
 /**
  * Multi-turn chat: the conversation so far plus an optional system prompt.

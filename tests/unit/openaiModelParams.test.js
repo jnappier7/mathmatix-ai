@@ -81,4 +81,16 @@ describe('reasoning_effort', () => {
     expect(reasoningEffortFor('gpt-5.6-luna', {})).toBe('none');
     expect(reasoningEffortFor('o4-mini', {})).toBe('low');           // o-series: low/medium/high only
   });
+  it("the gpt-6 astra line and sol from 6.1 refuse 'none' — their floor is 'low' (probed 2026-11-22)", () => {
+    for (const m of ['gpt-6-astra', 'gpt-6.2-astra', 'gpt-6.1-sol', 'gpt-6.2-sol']) {
+      expect(reasoningEffortFor(m, {})).toBe('low');
+      expect(openaiRequestParams(m, {})).toMatchObject({ reasoning_effort: 'low' });
+    }
+    // ...and the ids that take 'none' still get it (the new vision / judge defaults among them).
+    for (const m of ['gpt-6-sol', 'gpt-6-luna', 'gpt-6.1-terra', 'gpt-5.6-terra']) {
+      expect(reasoningEffortFor(m, {})).toBe('none');
+    }
+    // A caller asking for more than the floor is left alone.
+    expect(reasoningEffortFor('gpt-6.2-sol', { reasoning_effort: 'medium' })).toBe('medium');
+  });
 });

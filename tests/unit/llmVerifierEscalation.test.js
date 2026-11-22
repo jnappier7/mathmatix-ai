@@ -1,8 +1,8 @@
 /**
  * Tests for verifyWithEscalation — the tiered answer verifier.
  *
- * Tier 1 (gpt-4o-mini) handles the common case; when it can't produce a usable
- * verdict (low confidence, parse failure, error) we escalate to Tier 2 (gpt-4o)
+ * Tier 1 (VERIFIER_MODEL, Claude) handles the common case; when it can't produce a usable
+ * verdict (low confidence, parse failure, error) we escalate to Tier 2 (ESCALATION_MODEL, OpenAI)
  * instead of giving up. These tests drive the tier transitions by scripting the
  * mocked LLM gateway, asserting both the resulting verdict and the call counts
  * (so we don't escalate when we shouldn't, or skip escalation when we should).
@@ -56,7 +56,7 @@ test('low-confidence tier 1 escalates and the stronger judge resolves it', async
   expect(v.escalationResolved).toBe(true);
   expect(v.isCorrect).toBe(true);
   expect(v.tier).toBe(ESCALATION_MODEL);
-  expect(callLLM).toHaveBeenCalledTimes(4); // mini (2) + gpt-4o (2)
+  expect(callLLM).toHaveBeenCalledTimes(4); // tier 1 (2) + tier 2 (2)
   expect(callLLM.mock.calls.some(([model]) => model === ESCALATION_MODEL)).toBe(true);
 });
 

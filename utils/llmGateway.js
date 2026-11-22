@@ -26,9 +26,12 @@ const { createAnonymizationContext, anonymizeMessages, anonymizeSystemPrompt, re
 // CONFIGURATION
 // ============================================================================
 
+const { visionModel, judgeModel } = require('./modelRoles');
+
 const DEFAULT_MODELS = {
     chat: process.env.TUTOR_MODEL || 'gpt-4o-mini',       // the tutor model (TUTOR_MODEL on Render)
-    grading: 'gpt-4o',                       // GPT-4o vision for handwriting recognition
+    grading: visionModel(),                  // reads photos of handwritten work (VISION_MODEL)
+    judge: judgeModel(),                     // the stronger text model for grading text (JUDGE_MODEL)
     reasoning: process.env.TUTOR_MODEL || 'gpt-4o-mini',  // follows the tutor model
     embedding: 'text-embedding-3-small'      // OpenAI embeddings (specialized task)
 };

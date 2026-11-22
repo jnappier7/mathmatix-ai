@@ -78,20 +78,23 @@ const PRIMARY_CHAT_MODEL = process.env.TUTOR_MODEL || 'gpt-4o-mini';
 // is written by a stronger model — the way a school sends the stuck case to the more
 // experienced teacher. Every other turn is unchanged.
 //
-//   TUTOR_ESCALATION_MODEL   the model for those turns. Unset: gpt-4o, but ONLY when the
-//                            tutor is a budget-tier model (gpt-4o-mini, gpt-6-luna, any
-//                            *-mini / *-nano / *-luna id) — if TUTOR_MODEL has been pointed
-//                            at something stronger, a hard-coded gpt-4o could be a step DOWN.
-//                            `off` (or `none`) disables it.
-// Cost: gpt-4o is roughly 15x gpt-4o-mini per reply, on the turns that follow a second wrong
-// answer and nowhere else.
+//   TUTOR_ESCALATION_MODEL   the model for those turns. Unset: gpt-6.1-terra
+//                            (modelRoles.STRONG_TEXT_MODEL_DEFAULT; it was gpt-4o until OpenAI's
+//                            2027-01-14 retirement), but ONLY when the tutor is a budget-tier
+//                            model (gpt-4o-mini, gpt-6-luna, any *-mini / *-nano / *-luna id) —
+//                            if TUTOR_MODEL has been pointed at something stronger, a
+//                            hard-coded id could be a step DOWN. `off` (or `none`) disables it.
+// Cost: gpt-6.1-terra is $1/$5 per MTok against gpt-6-luna's $0.10/$0.50 (gpt-4o-mini's
+// $0.15/$0.60), so roughly 7-10x per reply, on the turns that follow a second wrong answer
+// and nowhere else — and 2.5x cheaper than the gpt-4o it replaces.
 // OpenAI's small tiers: 4o-mini, gpt-5-mini/nano, and the gpt-5.6/gpt-6 "luna" line.
+const { STRONG_TEXT_MODEL_DEFAULT } = require('../modelRoles');
 const BUDGET_TIER_RE = /(-mini|-nano|-luna)(-|$)/i;
 function escalationModel(env = process.env) {
   const raw = String(env.TUTOR_ESCALATION_MODEL || '').trim();
   if (/^(off|none|false|0)$/i.test(raw)) return null;
   if (raw) return raw;
-  return BUDGET_TIER_RE.test(env.TUTOR_MODEL || 'gpt-4o-mini') ? 'gpt-4o' : null;
+  return BUDGET_TIER_RE.test(env.TUTOR_MODEL || 'gpt-4o-mini') ? STRONG_TEXT_MODEL_DEFAULT : null;
 }
 
 /** The model that writes THIS turn's reply. Shared with the live eval, so the eval

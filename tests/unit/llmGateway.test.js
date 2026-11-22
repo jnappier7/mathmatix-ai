@@ -124,7 +124,7 @@ describe('gradeWithVision', () => {
 
     expect(mockChatCreate).not.toHaveBeenCalled();
     const [model, messages, options] = callLLM.mock.calls[0];
-    expect(model).toBe('gpt-4o');
+    expect(model).toBe('gpt-6-sol'); // VISION_MODEL default (modelRoles) — gpt-4o retires 2027-01-14
     expect(options.max_tokens).toBe(1500);
     // The user's context rides along so the chokepoint strips/rehydrates with it.
     expect(options.anonContext).toEqual({ ctx: 'anon' });

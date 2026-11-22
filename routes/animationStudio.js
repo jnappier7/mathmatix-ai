@@ -7,6 +7,7 @@ const express = require('express');
 const path = require('path');
 const router = express.Router();
 const { callLLMStructured } = require('../utils/llmGateway');
+const { judgeModel } = require('../utils/modelRoles');
 const TUTOR_CONFIG = require('../utils/tutorConfig');
 const RigCore = require('../public/js/rig/rig-core');
 // The rig definition the clip generator validates against (plain JSON).
@@ -266,7 +267,8 @@ router.post('/clip', isTeacherOrAdmin, async (req, res) => {
     let clip = null;
     let errors = [];
     for (let attempt = 0; attempt < 2; attempt++) {
-      const raw = await callLLMStructured('gpt-4o', messages, CLIP_FORMAT, {
+      // Authoring a validated clip is the stronger text model's job (JUDGE_MODEL).
+      const raw = await callLLMStructured(judgeModel(), messages, CLIP_FORMAT, {
         temperature: 0.6,
         max_tokens: 3000,
       });

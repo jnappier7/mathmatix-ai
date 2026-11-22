@@ -60,7 +60,8 @@ const verifyMetrics = require('../verifyMetrics');
 // out of reach for a verifier prompt).
 // VERIFIER_MODEL (env) overrides it, so a rollback or an A/B is a Render env
 // flip, not a deploy; it must stay a claude* id to keep the cross-check.
-const VERIFIER_MODEL = process.env.VERIFIER_MODEL || 'claude-haiku-5-5';
+const { verifierModel, verifierEscalationModel } = require('../modelRoles');
+const VERIFIER_MODEL = verifierModel();
 
 // The OpenAI model to fall back to when the Claude verifier is unreachable.
 // Same id as generate's, which costs us the independence above — but a nominal
@@ -84,12 +85,14 @@ const MAX_PROBLEM_CHARS = 2000;
 const MAX_ANSWER_CHARS = 500;
 
 // Stronger judge for the minority of attempts the fast model can't resolve.
-// gpt-4o is already used for vision grading, so it needs no extra provider.
-// Escalation only fires on uncertain cases, so the cost/latency hit is bounded
-// to a small fraction of answer attempts. Keeping tier 2 on OpenAI while tier 1
-// is Claude is a feature, not an oversight: an attempt Haiku can't resolve gets
-// a genuinely different model rather than a bigger version of the same one.
-const ESCALATION_MODEL = 'gpt-4o';
+// VERIFIER_ESCALATION_MODEL (env), else JUDGE_MODEL, else gpt-6.1-terra — see
+// utils/modelRoles.js (it was a hard-coded gpt-4o, which OpenAI retires
+// 2027-01-14). Escalation only fires on uncertain cases, so the cost/latency
+// hit is bounded to a small fraction of answer attempts. Keeping tier 2 on
+// OpenAI while tier 1 is Claude is a feature, not an oversight: an attempt
+// Haiku can't resolve gets a genuinely different model rather than a bigger
+// version of the same one — pinned by tests/unit/verifierCrossProvider.test.js.
+const ESCALATION_MODEL = verifierEscalationModel();
 
 // ── JSON-mode plumbing for the cross-provider verifier ──────────────────────
 // Every call below asks for bare JSON mode. On the Claude path that constraint
@@ -651,7 +654,7 @@ async function llmVerifyConceptual(questionText, studentAnswer, options = {}) {
  *
  * Tier 1 (gpt-4o-mini) handles the common cases cheaply. When it returns no
  * usable verdict — low confidence, a parse failure, or an upstream error — we
- * escalate to Tier 2 (gpt-4o) rather than silently giving up, which is where the
+ * escalate to Tier 2 (ESCALATION_MODEL) rather than silently giving up, which is where the
  * tutor would otherwise be left to judge correctness itself (the false
  * affirm/reject risk). Missing-input cases never escalate (nothing to verify).
  *

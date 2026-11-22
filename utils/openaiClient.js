@@ -94,10 +94,18 @@ async function retryWithExponentialBackoff(fn, retries = 5, delay = 1000) {
 //     options.reasoning_effort, overrides). Chat Completions also refuses
 //     function tools on gpt-6-luna unless effort is 'none', so tools force it.
 //     gpt-5 / gpt-5-mini / gpt-5-nano spell the floor 'minimal'; o-series 'low'.
+//     The gpt-6 "astra" line (gpt-6-astra, gpt-6.2-astra) and "sol" from 6.1 on
+//     (gpt-6.1-sol, gpt-6.2-sol) refuse 'none' outright — "Supported values are:
+//     'low', 'medium', 'high', and 'xhigh'" — while gpt-6-sol, gpt-6-luna,
+//     gpt-6.1-terra and gpt-5.6-terra take it (all probed 2026-11-22). So those
+//     get 'low'. Note Chat Completions' tools rule above: an id whose floor is
+//     'low' cannot be the tutor behind a board tool call.
 // ---------------------------------------------------------------------------
 const LEGACY_MAX_TOKENS_RE = /^(gpt-3\.5|gpt-4(?![o.]))/i;
 const REASONING_FAMILY_RE = /^(o\d|gpt-5|gpt-6)/i;
 const FIXED_TEMPERATURE_RE = /^(o\d|gpt-5|gpt-6)|nano/i;
+// Ids whose lowest reasoning_effort is 'low' (no 'none' / 'minimal').
+const LOW_EFFORT_FLOOR_RE = /^(o\d|gpt-6(\.\d+)?-astra|gpt-6\.[1-9]\d*-sol)/i;
 
 function reasoningEffortFor(model, options = {}) {
     let effort = String(options.reasoning_effort || process.env.TUTOR_REASONING_EFFORT || 'none').trim().toLowerCase();
@@ -106,7 +114,7 @@ function reasoningEffortFor(model, options = {}) {
         effort = 'none';
     }
     if (effort === 'none' && /^gpt-5(-|$)/i.test(model)) effort = 'minimal';
-    if (/^o\d/i.test(model) && (effort === 'none' || effort === 'minimal')) effort = 'low';
+    if (LOW_EFFORT_FLOOR_RE.test(model) && (effort === 'none' || effort === 'minimal')) effort = 'low';
     return effort;
 }
 
