@@ -339,7 +339,7 @@ npm run seed:all       # ⭐ every skill catalog + item bank, in dependency orde
 npm run seed:all:dry   # preflight + plan, no writes
 ```
 
-- **Seeding skills and items → `npm run seed:all`** (`scripts/seedAll.js`). It runs the nine
+- **Seeding skills and items → `npm run seed:all`** (`scripts/seedAll.js`). It runs its
   seeders in the one order that works and then the `answer.equivalents` backfill, verifies row
   counts against the payloads, and exits non-zero if the DB came up short. Idempotent — every step
   is a source-scoped upsert, so re-running is safe. `--fresh` makes each bank clear **its own**
@@ -349,6 +349,13 @@ npm run seed:all:dry   # preflight + plan, no writes
   bank re-upserts `answer.value` from JSON, dropping the typography equivalents — backfill before
   them and students get marked wrong for correct answers again). Both are pinned by
   `tests/unit/seedAllPlan.test.js`.
+  The plan seeds THREE skill catalogs: unified, pattern, and `catalog-skills`
+  (`scripts/seedCatalogSkills.js`: the per-course `seeds/skills-*.json` files plus
+  `seeds/skills-legacy-catalog.json`). The third was missing until 2026-11-22 — production had those
+  268 skills from older hand-run scripts, so `seed:all` passed there and failed on any empty
+  database at the bank top-up. It is INSERT-ONLY (`$setOnInsert`): a no-op where the skill exists,
+  so it can never overwrite a prerequisite graph or guidance tuned in production
+  (`seed-curriculum.js` writes the same files with `$set` and does overwrite — not in the plan).
   **`scripts/seed-skills.js` is NOT in the plan and must never be** — it runs `Skill.deleteMany({})`,
   wiping the whole catalog down to ~40 Ready-for-Algebra skills. Empty-DB bootstrap only.
   The pathway crosswalk (`seeds/unified-taxonomy/pathway-crosswalk*.json`) needs no seeding —
