@@ -21,6 +21,7 @@ const mongoose = require('mongoose');
 const Problem = require('../models/problem');
 const CourseSession = require('../models/courseSession');
 const { skillLookupCandidates } = require('./skillCanonicalizer');
+const { checkSourcesFor } = require('./courseCheckSources');
 const { courseSkills, buildStageBlueprint, ITEMS_PER_SKILL } = require('./coursePreAssessment');
 const { ownedCourseSkills, applyPlacement } = require('./coursePlacement');
 const { pathwayAudience } = require('./courseAudience');
@@ -134,11 +135,20 @@ function checkableMatch(ids, { testBanks }) {
  * a skill that has too few of those may also draw on the practice-test banks
  * (`testBanks: true` on the skill).
  *
+ * A skill named in courseCheckSources draws ONLY on the ids listed there
+ * (`atLevel: true`), practice-test banks included.
+ *
  * @returns {{ skills: Array<{skillId,rawId,moduleId,bankIds:string[],count:number,testBanks:boolean}>,
  *             available: Object<string,number>, bankToCourse: Map<string,string[]> }}
  */
 async function bankForCourse(pathway) {
+  const courseId = pathway && pathway.courseId;
   const skills = courseSkills(pathway).map((s) => {
+    // A skill the course has its own at-level items for is tested from those
+    // and nothing else — never from the general pool the crosswalk points at
+    // (courseCheckSources.js says why).
+    const own = checkSourcesFor(courseId, s.rawId, s.skillId);
+    if (own) return { ...s, bankIds: own, count: 0, testBanks: false, atLevel: true };
     const bankIds = [];
     for (const id of skillLookupCandidates(s.rawId).concat(skillLookupCandidates(s.skillId))) {
       if (!bankIds.includes(id)) bankIds.push(id);
@@ -166,7 +176,7 @@ async function bankForCourse(pathway) {
     const own = s.bankIds.reduce((sum, id) => sum + (tutoring.get(id) || 0), 0);
     const exam = s.bankIds.reduce((sum, id) => sum + (testBank.get(id) || 0), 0);
     // Headroom of 2x: a few sampled items may still fail isCheckable.
-    s.testBanks = own < ITEMS_PER_SKILL * 2;
+    s.testBanks = !s.atLevel && own < ITEMS_PER_SKILL * 2;
     s.count = s.testBanks ? own + exam : own;
     available[s.skillId] = s.count;
     for (const id of s.bankIds) {

@@ -34,12 +34,15 @@ const { setSkillMasteryEntry } = require('../../utils/masteryGuard');
 const { advanceRung } = require('../../utils/skillRung');
 const { buildCourseDiagnostic } = require('../../utils/courseDiagnostic');
 const service = require('../../utils/coursePlacementService');
+const { checkSourcesFor } = require('../../utils/courseCheckSources');
 
 const G6 = require('../../public/resources/6th-grade-math-pathway.json');
 const ALG1 = require('../../public/resources/algebra-1-pathway.json');
 
 const G6_RAW = new Set(G6.modules.flatMap((m) => m.skills || []));
 const BANK_KEYED = [];   // course skills whose items live under a different (bank) id
+const AT_LEVEL = new Map();   // course skill → the id its own at-level items live under
+const OLD_POOLS = new Set();  // pools the crosswalk points an at-level skill at
 
 let mem;
 let app;
@@ -82,7 +85,22 @@ beforeAll(async () => {
   for (const m of G6.modules) {
     for (const raw of m.skills || []) {
       const mapped = bankIdFor(raw);
-      const bankId = mapped && !G6_RAW.has(mapped) ? mapped : raw;
+      // A skill the course has its own at-level items for is held under the id
+      // courseCheckSources names. The pool the crosswalk points at is seeded as
+      // well, the way production still holds it — the check must not touch it.
+      const own = checkSourcesFor('6th-grade-math', raw);
+      if (own && mapped && !G6_RAW.has(mapped) && !seen.has(mapped)) {
+        seen.add(mapped);
+        OLD_POOLS.add(mapped);
+        for (let n = 0; n < 4; n += 1) {
+          docs.push({
+            problemId: `oldpool-${mapped}-${n}`, skillId: mapped, prompt: `(old pool ${mapped}) ${n} + 1`,
+            answer: { type: 'exact', value: String(n + 1) }, difficulty: 1,
+          });
+        }
+      }
+      const bankId = own ? own[0] : (mapped && !G6_RAW.has(mapped) ? mapped : raw);
+      if (own) AT_LEVEL.set(raw, own[0]);
       if (seen.has(bankId)) continue;
       seen.add(bankId);
       if (bankId !== raw) BANK_KEYED.push(raw);
@@ -149,6 +167,69 @@ describe('the quick check finds the bank', () => {
 
     // And the card is gone for good.
     expect(await buildCourseDiagnostic(user, '6th-grade-math')).toBeNull();
+  });
+});
+
+describe('a skill with its own at-level items is tested from those alone', () => {
+  // 2026-11-22: the crosswalk sent ~70 course skills to pools that do not test
+  // them (6th grade "compare and order rationals" → "Order 14, 16, 6"). Those
+  // skills have their own items now; the old pool is still in the bank.
+  test('the fixture is honest: the old pools are seeded, and some at-level skills are in play', () => {
+    expect(AT_LEVEL.size).toBeGreaterThan(5);
+    expect(OLD_POOLS.size).toBeGreaterThan(0);
+  });
+
+  test('every stage of a clean run serves an at-level skill only its own items', async () => {
+    const enroll = await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' });
+    const id = enroll.body.session._id;
+    const servedAtLevel = new Set();
+    for (let stage = 0; stage < 12; stage += 1) {
+      const served = await get(`/api/course-sessions/${id}/preassessment`);
+      if (served.status !== 200) break;
+      for (const p of served.body.problems) {
+        const doc = await Problem.findById(p.problemId).lean();
+        expect(OLD_POOLS.has(doc.skillId)).toBe(false);
+        const raw = [...AT_LEVEL.keys()].find((k) => k === p.skillId);
+        if (raw) {
+          servedAtLevel.add(raw);
+          expect({ skill: raw, from: doc.skillId }).toEqual({ skill: raw, from: AT_LEVEL.get(raw) });
+        }
+      }
+      const result = await post(`/api/course-sessions/${id}/preassessment`,
+        { submissions: await answer(served.body.problems) });
+      if (!result.body.canContinue) break;
+    }
+    expect(servedAtLevel.size).toBeGreaterThan(5);
+  });
+
+  test('with its own items not seeded the skill is untestable — the old pool is not a fallback', async () => {
+    const [raw, ownId] = [...AT_LEVEL.entries()][0];
+    const held = await Problem.find({ skillId: ownId }).lean();
+    await Problem.deleteMany({ skillId: ownId });
+    try {
+      const { skills } = await service.bankForCourse(G6);
+      const skill = skills.find((s) => s.rawId === raw);
+      expect(skill.bankIds).toEqual([ownId]);
+      expect(skill.count).toBe(0);
+      expect(await service.pickItems(skill, 2)).toEqual([]);
+    } finally {
+      await Problem.insertMany(held);
+    }
+  });
+
+  test('"I think I already know this!" draws on the same items', async () => {
+    const [raw, ownId] = [...AT_LEVEL.entries()][0];
+    await Problem.insertMany([4, 5].map((n) => ({
+      problemId: `bank-${ownId}-${n}`, skillId: ownId, prompt: `(${ownId}) ${n} + 1`,
+      answer: { type: 'exact', value: String(n + 1) }, difficulty: 2,
+    })));
+    const enroll = await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' });
+    const served = await get(`/api/course-sessions/${enroll.body.session._id}/skill-check/${raw}`);
+    expect(served.status).toBe(200);
+    for (const p of served.body.problems) {
+      const doc = await Problem.findById(p.problemId).lean();
+      expect(doc.skillId).toBe(ownId);
+    }
   });
 });
 

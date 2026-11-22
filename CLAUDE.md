@@ -479,6 +479,28 @@ npm run seed:all:dry   # preflight + plan, no writes
   module in 4-5 stages) — but `docs/mathmatixdb.problems.json` in this repo is an OLD export
   (12,619 of 21,797 items) and says otherwise; do not size a content gap from it. Pinned by
   `tests/integration/coursePlacementClosesModules.test.js` (real Mongo, CI).
+- **A course's check tests a skill from ITS OWN items where the course has them — never from the
+  crosswalk's pool (2026-11-22).** The crosswalk points each course skill at the nearest large pool,
+  and for ~70 skills of the six quick-check courses that pool did not test the skill: 8th-grade
+  cylinder/cone/sphere volume → prism items, "ordering real numbers" → "Order 14, 16, 6" (preK),
+  rigid transformations → shifting y = x², four Geometry circle skills → the equation of a circle,
+  7th-grade unit rates → "travel 15 apples in 7.5 bags". Those skills now have 12 items each
+  (3 tiers × 4, difficulty 2–4), written at the course's level: templates in
+  `scripts/lib/courseLevel*.js` (one file per course; `courseSkill` = the course's id, `skillId` =
+  the bank id), built by `npm run build:course-level` into `seeds/course-level-items.generated.json`
+  + `seeds/course-level-sources.generated.json`, seeded by `npm run seed:course-level` (also a
+  `seed:all` step). `utils/courseCheckSources.js` reads the sources files (the generated one plus
+  `course-level-sources.manual.json` for a better pool that already exists) and
+  `coursePlacementService.bankForCourse` uses a listed skill's ids AND NOTHING ELSE — so with the
+  items not seeded the skill is untestable and the check stops there; it never falls back to the
+  old pool. The override is per COURSE (8th grade's `transformations` ≠ Algebra 2's). It governs
+  the quick check and the one-skill check only; the tutor's own practice lookup still uses the
+  crosswalk. Every item must pass `isCheckable` (the builder refuses otherwise — so no "figure",
+  "shown", "diagram" in a prompt) and each template file has a `tests/unit/courseLevel*.test.js`
+  that RE-SOLVES every item from its printed text. To fix another skill: add a template, rebuild,
+  commit both seed files, re-seed. Pinned by `tests/unit/courseCheckSources.test.js` (seed files
+  current, every override a real course skill) and the "tested from those alone" block of
+  `tests/integration/coursePlacementClosesModules.test.js`.
 - **"I think I already know this!" and "Start over" (courses, 2026-11-21).** The lesson tracker
   lists the current unit's skills (`lesson-progress` → `progressUpdate.skills`, names from
   `utils/courseSkillLabels.js` — course skills mostly have no Skill document, so the seed files

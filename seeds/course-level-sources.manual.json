@@ -1,0 +1,6 @@
+{
+ "_about": "Course skills whose check must draw on a specific existing pool. See utils/courseCheckSources.js. Written by hand; the generated sibling is written by scripts/buildCourseLevelItems.js.",
+ "grade-8-math": {
+  "write-linear-equations": ["writing-linear-equations-slope-intercept"]
+ }
+}
