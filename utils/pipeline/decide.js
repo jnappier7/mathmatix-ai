@@ -225,10 +225,28 @@ function applyVisualDirective(decision, observation, context) {
       .some((m) => hasInlineVisual(m.content)),
     recentWrongCount: observation?.streaks?.recentWrongCount || 0,
   });
-  if (directive) decision.directives.push(directive);
+  if (!directive) return;
+  // The second-wrong branch tells the tutor to switch to "a concrete number check" and hands
+  // it an example sentence. With a picture asked for on the same turn those two lines are a
+  // second, easier instruction for "a different angle" — and the model took it every time
+  // (the nightly representation-switch persona: 0 of 5, same words louder). The picture is
+  // the different angle; say so once.
+  const kept = decision.directives.filter((d) => !SECOND_WRONG_VERBAL_ANGLE.includes(d));
+  if (kept.length !== decision.directives.length) {
+    kept.push('Try a DIFFERENT angle: the picture asked for below IS the different angle — not the same explanation again in other words.');
+  }
+  decision.directives = kept;
+  decision.directives.push(directive);
 }
 
 // ── Teaching moves shared by several branches ──
+
+// The verbal "different angle" for a second wrong answer. Named so applyVisualDirective can
+// stand these two down on a turn that is getting a picture instead.
+const SECOND_WRONG_VERBAL_ANGLE = [
+  'Try a DIFFERENT angle: if you asked a conceptual question last time, try a concrete number check this time.',
+  'Example: "Let\'s test your answer — if x = [their answer], does the equation balance?"',
+];
 
 // "I don't know" asks for instruction. Teach the one missing idea, then hand
 // over ONE step — never the same question again in smaller words.
@@ -1162,8 +1180,7 @@ function decideCore(observation, diagnosis, context) {
         decision.directives.push(
           firstWrongStepDirective(diagnosis),
           'ADAPTATION: This is the 2nd wrong answer. Your previous guidance didn\'t land.',
-          'Try a DIFFERENT angle: if you asked a conceptual question last time, try a concrete number check this time.',
-          'Example: "Let\'s test your answer — if x = [their answer], does the equation balance?"',
+          ...SECOND_WRONG_VERBAL_ANGLE,
           'Let THEM see the contradiction. Do not hand them the correction.'
         );
       } else {

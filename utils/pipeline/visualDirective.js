@@ -127,8 +127,14 @@ const VISUAL_TOPICS = [
     tool: '[DIAGRAM:parabola:...] or [FUNCTION_GRAPH:...] / [DERIVATIVE_GRAPH:...]',
   },
   {
-    rx: /\b(fractions?|numerators?|denominators?|mixed numbers?|percents?|percentages?|ratios?|proportions?)\b/i,
-    tool: '[FRACTION:...] bar/area model',
+    // …or a written numeric fraction. "which is bigger, 2/3 or 3/4?" and "is it 2/5?" never say
+    // the word, so neither matched and the ask fell back to "pick the tool that fits".
+    rx: /\b(fractions?|numerators?|denominators?|mixed numbers?|percents?|percentages?|ratios?|proportions?)\b|(?<![\w/.])\d{1,3}\s*\/\s*\d{1,3}(?![\w/.])/i,
+    // Spelled out, like the slope entry. As a bare "[FRACTION:...]" this was the one topic the
+    // nightly eval never saw drawn (0-1 of 5 on "which is bigger, 2/3 or 3/4?" every night from
+    // 2026-08 to 2026-11): the model was told to reach for a tag it had to go and look up, and
+    // explained common denominators in words instead.
+    tool: '[FRACTION:compare=2/3,3/4] — same-size bars side by side, with the fractions in play (comparing, or adding unlike parts), or [FRACTION:numerator=V,denominator=V,type=bar] for one fraction',
   },
   // The three number-line pictures are different pictures. They used to share one entry that
   // pointed at [DIAGRAM:number_line], a static figure — so signed-number arithmetic never got
@@ -223,7 +229,14 @@ function buildVisualDirective(input = {}) {
     ? `Reach for: ${topic.tool}.`
     : 'Pick the tool that fits — a graph, a labelled diagram, a number line, or an area/tile model.';
 
-  return `DRAW IT: ${why} ${how} Emit ONE visual this turn alongside your explanation, and then SAY something about it — point at the part that matters ("see how the line crosses at..."). A picture nobody talks about teaches nothing. Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead. The same goes for a number line: on the student's own problem draw where they START and the hops they have already made, never the hop that lands on their answer, and never shade the solution of an inequality they have not solved yet.`;
+  // On a turn where words are what failed, "alongside your explanation" lost to every other
+  // directive that says "explain in 1-2 plain sentences" — the model explained, and drew nothing.
+  // There the picture is not alongside the explanation; it IS the explanation.
+  const lead = (asked || struggling || REDRAW_MOMENTS.has(action))
+    ? ' The picture IS the explanation this turn — where another instruction says to explain in plain sentences, this is how: write the visual tag on its own line FIRST, then one or two sentences about what it shows. Saying the same thing again in words, or only walking through the procedure, does not count.'
+    : '';
+
+  return `DRAW IT: ${why} ${how}${lead} Emit ONE visual this turn alongside your explanation, and then SAY something about it — point at the part that matters ("see how the line crosses at..."). A picture nobody talks about teaches nothing. Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead. The same goes for a number line: on the student's own problem draw where they START and the hops they have already made, never the hop that lands on their answer, and never shade the solution of an inequality they have not solved yet.`;
 }
 
 module.exports = {
