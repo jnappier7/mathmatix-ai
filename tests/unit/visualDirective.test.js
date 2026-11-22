@@ -233,3 +233,33 @@ describe('buildVisualDirective — number lines must not do the last step', () =
     expect(d).toMatch(/never shade the solution of an inequality they have not solved/);
   });
 });
+
+describe('the two personas the nightly eval never saw drawn (2026-08 → 2026-11)', () => {
+  // Read from the run logs: on "which is bigger, 2/3 or 3/4?" and on a third miss at
+  // 1/2 + 1/3 the tutor was TOLD to draw and explained common denominators in words, 5 runs
+  // in 5. These pin what the directive now says; whether the model follows it is the live
+  // tier's question (npm run test:eval:live), not this file's.
+  const { buildVisualDirective } = require('../../utils/pipeline/visualDirective');
+
+  it('fractions name a tag that can be copied, not "[FRACTION:...]"', () => {
+    const d = buildVisualDirective({ action: 'scaffold_down', studentText: 'which is bigger, 2/3 or 3/4?' });
+    expect(d).toContain('[FRACTION:compare=');
+    expect(d).not.toContain('[FRACTION:...]');
+  });
+
+  it('when words have failed, the picture is the explanation, not an extra', () => {
+    for (const input of [
+      { action: 'scaffold_down', skillName: 'comparing fractions' },
+      { action: 'guide_incorrect', recentWrongCount: 2 },
+      { action: 'continue_conversation', studentText: 'can you show me?' },
+    ]) {
+      expect(buildVisualDirective(input)).toMatch(/The picture IS the explanation this turn/);
+    }
+  });
+
+  it('an ordinary spatial-topic turn keeps the lighter ask', () => {
+    const d = buildVisualDirective({ action: 'continue_conversation', skillName: 'slope' });
+    expect(d).toMatch(/^DRAW IT:/);
+    expect(d).not.toMatch(/The picture IS the explanation/);
+  });
+});
