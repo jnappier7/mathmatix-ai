@@ -5,6 +5,7 @@ const router = express.Router();
 const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 const logger = require('../utils/logger').child({ route: 'weeklyChallenges' });
+const { createPerUserLock } = require('../utils/perUserLock');
 
 // Weekly challenge templates
 const WEEKLY_CHALLENGE_TEMPLATES = {
@@ -121,6 +122,11 @@ function getWeekStart(date = new Date()) {
   return d;
 }
 
+const updateLock = createPerUserLock();
+
+// A weekly-accuracy challenge is judged only once this many problems are in.
+const MIN_ACCURACY_SAMPLE = 10;
+
 // Check if date is in current week
 function isCurrentWeek(date) {
   const weekStart = getWeekStart();
@@ -194,26 +200,45 @@ router.get('/weekly-challenges', isAuthenticated, async (req, res) => {
       return res.status(401).json({ success: false, error: 'Not authenticated' });
     }
 
-    // Initialize weekly challenges if not exists
-    if (!user.weeklyChallenges) {
-      user.weeklyChallenges = {
-        challenges: [],
-        weekStartDate: null,
-        completedChallengesAllTime: 0,
-        weeklyProgress: {}
-      };
-    }
-
-    // Check if we need new challenges (new week)
-    const needsNewChallenges = !user.weeklyChallenges.weekStartDate ||
-                               !isCurrentWeek(user.weeklyChallenges.weekStartDate);
+    // A new week (or a first visit) needs a fresh set.
+    //
+    // This used to set the fields on the loaded document and `user.save()`.
+    // The chat page fires this GET alongside several other requests that also
+    // load and save the user, and a whole-document save carries the version it
+    // was loaded at — so whichever landed second threw VersionError ("No
+    // matching document found for id … version 0") and the student's weekly
+    // challenges answered 500 on exactly the load that was meant to create
+    // them. The roll-over is now ONE conditional update: it writes only these
+    // three fields, only if the week has not already been rolled, and never
+    // looks at the document's version. Two requests racing produce one set —
+    // the loser's update matches nothing and it reads the winner's.
+    let weekly = user.weeklyChallenges;
+    const needsNewChallenges = !weekly || !weekly.weekStartDate || !isCurrentWeek(weekly.weekStartDate);
 
     if (needsNewChallenges) {
-      user.weeklyChallenges.challenges = generateWeeklyChallenges(user);
-      user.weeklyChallenges.weekStartDate = getWeekStart();
-      user.weeklyChallenges.weeklyProgress = {}; // Reset weekly progress
-      await user.save();
+      const weekStartNow = getWeekStart();
+      const rolled = await User.findOneAndUpdate(
+        {
+          _id: user._id,
+          $or: [
+            { 'weeklyChallenges.weekStartDate': { $exists: false } },
+            { 'weeklyChallenges.weekStartDate': null },
+            { 'weeklyChallenges.weekStartDate': { $lt: weekStartNow } }
+          ]
+        },
+        {
+          $set: {
+            'weeklyChallenges.challenges': generateWeeklyChallenges(user),
+            'weeklyChallenges.weekStartDate': weekStartNow,
+            'weeklyChallenges.weeklyProgress': {}
+          }
+        },
+        { new: true, projection: { weeklyChallenges: 1 } }
+      ).lean();
+      const current = rolled || await User.findById(user._id, { weeklyChallenges: 1 }).lean();
+      weekly = (current && current.weeklyChallenges) || { challenges: [] };
     }
+    const challenges = weekly.challenges || [];
 
     // Calculate time remaining
     const weekStart = getWeekStart();
@@ -224,14 +249,14 @@ router.get('/weekly-challenges', isAuthenticated, async (req, res) => {
 
     res.json({
       success: true,
-      challenges: user.weeklyChallenges.challenges,
+      challenges,
       weekStart: weekStart,
       weekEnd: weekEnd,
       hoursRemaining,
       daysRemaining,
-      completedCount: user.weeklyChallenges.challenges.filter(c => c.completed).length,
-      totalCount: user.weeklyChallenges.challenges.length,
-      completedAllTime: user.weeklyChallenges.completedChallengesAllTime || 0
+      completedCount: challenges.filter(c => c.completed).length,
+      totalCount: challenges.length,
+      completedAllTime: weekly.completedChallengesAllTime || 0
     });
   } catch (error) {
     logger.error('Error fetching weekly challenges:', error);
@@ -241,8 +266,36 @@ router.get('/weekly-challenges', isAuthenticated, async (req, res) => {
 
 // POST /api/weekly-challenges/update - Update challenge progress
 router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
+  // Progress is applied to the loaded document and saved whole, so a save that
+  // loses a race with another request's save throws VersionError. Nothing has
+  // been written at that point (XP, coins and progress all live on the
+  // document), so the honest answer is to load the fresh document and apply
+  // the event again — not to tell the student their progress failed.
+  //
+  // And a student's own updates are taken ONE AT A TIME. A burst of them (a
+  // solved problem fires several events) each loaded the same document, each
+  // added one, and each saved "progress: 1": editing a field inside an array
+  // element is not something mongoose's version check covers, so nothing threw
+  // and three of four answers were silently lost.
+  const release = await updateLock.acquire(req.user._id);
   try {
-    const { event, data } = req.body;
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await applyChallengeEvent(req, res);
+      } catch (error) {
+        if (error && error.name === 'VersionError' && attempt < 3) continue;
+        logger.error('Error updating weekly challenges:', error);
+        return res.status(500).json({ success: false, error: error.message });
+      }
+    }
+  } finally {
+    release();
+  }
+});
+
+async function applyChallengeEvent(req, res) {
+  {
+    const { event, data = {} } = req.body;
     const user = await User.findById(req.user._id);
 
     if (!user || !user.weeklyChallenges) {
@@ -254,10 +307,25 @@ router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
       return res.json({ success: true, message: 'Week has ended, new challenges coming' });
     }
 
-    // Initialize weekly progress if needed
-    if (!user.weeklyChallenges.weeklyProgress) {
-      user.weeklyChallenges.weeklyProgress = {};
+    // weeklyProgress is a Mongoose Map. It was read and written as a plain
+    // object (`weeklyProgress.totalProblems++`, `new Set()` on a property), and
+    // properties set on a Map are not saved — so every request started from
+    // zero: the weekly-accuracy challenge completed on the first right answer,
+    // and the quest-streak and domains challenges could never pass 1. Counters
+    // and lists go through get/set, lists as arrays.
+    if (!(user.weeklyChallenges.weeklyProgress instanceof Map)) {
+      user.weeklyChallenges.weeklyProgress = new Map();
     }
+    const progress = user.weeklyChallenges.weeklyProgress;
+    const num = (key) => Number(progress.get(key)) || 0;
+    const addToList = (key, value) => {
+      const list = Array.isArray(progress.get(key)) ? progress.get(key).slice() : [];
+      if (value !== undefined && value !== null && !list.includes(value)) list.push(value);
+      progress.set(key, list);
+      return list.length;
+    };
+    // An event is counted once per request, however many challenges read it.
+    let accuracyCounted = false;
 
     const completedChallenges = [];
 
@@ -276,19 +344,15 @@ router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
         case 'weeklyAccuracy':
           if (event === 'problemSolved') {
             // Track weekly accuracy
-            if (!user.weeklyChallenges.weeklyProgress.totalProblems) {
-              user.weeklyChallenges.weeklyProgress.totalProblems = 0;
-              user.weeklyChallenges.weeklyProgress.correctProblems = 0;
+            if (!accuracyCounted) {
+              progress.set('totalProblems', num('totalProblems') + 1);
+              if (data.correct) progress.set('correctProblems', num('correctProblems') + 1);
+              accuracyCounted = true;
             }
-            user.weeklyChallenges.weeklyProgress.totalProblems++;
-            if (data.correct) {
-              user.weeklyChallenges.weeklyProgress.correctProblems++;
-            }
+            const accuracy = Math.round((num('correctProblems') / num('totalProblems')) * 100);
 
-            const accuracy = Math.round(
-              (user.weeklyChallenges.weeklyProgress.correctProblems /
-                user.weeklyChallenges.weeklyProgress.totalProblems) * 100
-            );
+            // A percentage needs a sample: one right answer is "100%".
+            if (num('totalProblems') < MIN_ACCURACY_SAMPLE) break;
 
             if (accuracy >= challenge.targetCount) {
               challenge.progress = challenge.targetCount;
@@ -304,26 +368,15 @@ router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
 
         case 'dailyQuestStreak':
           if (event === 'dailyQuestCompleted') {
-            // Check if all daily quests completed
-            if (!user.weeklyChallenges.weeklyProgress.daysWithAllQuests) {
-              user.weeklyChallenges.weeklyProgress.daysWithAllQuests = new Set();
-            }
-
-            const today = new Date().toDateString();
             if (data.allQuestsCompleted) {
-              user.weeklyChallenges.weeklyProgress.daysWithAllQuests.add(today);
-              challenge.progress = user.weeklyChallenges.weeklyProgress.daysWithAllQuests.size;
+              challenge.progress = addToList('daysWithAllQuests', new Date().toDateString());
             }
           }
           break;
 
         case 'domainsPracticed':
           if (event === 'domainPracticed') {
-            if (!user.weeklyChallenges.weeklyProgress.domainsPracticed) {
-              user.weeklyChallenges.weeklyProgress.domainsPracticed = new Set();
-            }
-            user.weeklyChallenges.weeklyProgress.domainsPracticed.add(data.domain);
-            challenge.progress = user.weeklyChallenges.weeklyProgress.domainsPracticed.size;
+            if (data.domain) challenge.progress = addToList('domainsPracticed', String(data.domain));
           }
           break;
 
@@ -389,11 +442,8 @@ router.post('/weekly-challenges/update', isAuthenticated, async (req, res) => {
       challenges: user.weeklyChallenges.challenges,
       completedChallenges: completedChallenges.length > 0 ? completedChallenges : undefined
     });
-  } catch (error) {
-    logger.error('Error updating weekly challenges:', error);
-    res.status(500).json({ success: false, error: error.message });
   }
-});
+}
 
 // GET /api/weekly-challenges/leaderboard - Get weekly leaderboard
 router.get('/weekly-challenges/leaderboard', async (req, res) => {
