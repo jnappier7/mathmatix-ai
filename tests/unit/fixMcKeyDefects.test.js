@@ -49,10 +49,14 @@ describe('planFix: a wrong correctOption', () => {
     ...over
   });
 
-  test('before: BOTH the right pick and the wrongly keyed one grade correct', () => {
+  test('before: the wrongly keyed option is NOT what the item\'s own answer names', () => {
     const p = conceptItem();
     const spec = { ...p.answer, answerType: p.answerType, options: p.options, correctOption: p.correctOption };
-    expect(['A', 'B', 'C', 'D'].filter((L) => compareAnswer(L, spec))).toEqual(['B', 'D']);
+    // Until 2026-11-22 the grader passed BOTH 'B' (the stored letter) and 'D'
+    // (the answer). It now decides the key from the whole item (mcOptions
+    // resolveKey) and passes only the answer — but the stored letter is still
+    // wrong for everything else that reads it, which is what this script fixes.
+    expect(['A', 'B', 'C', 'D'].filter((L) => compareAnswer(L, spec))).toEqual(['D']);
     expect(bankDefect(p)).toBe('correctOption does not grade correct');
   });
 

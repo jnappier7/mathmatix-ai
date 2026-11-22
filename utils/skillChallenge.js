@@ -17,7 +17,7 @@
 
 const { verifyAnswer } = require('./mathSolver');
 const { GATES } = require('./skillRung');
-const { normalizeOptions, resolveChoice, correctLabelOf } = require('./mcOptions');
+const { normalizeOptions, resolveChoice, resolveKey } = require('./mcOptions');
 const { gradeMultipart } = require('./multipartAnswer');
 
 // A challenge is a controlled, opt-in demonstration: fewer problems than ambient
@@ -56,13 +56,21 @@ function gradeOne(problem, submitted) {
     return { correct: false, reason: 'ungradable' };
   }
 
-  // `correctOption` is authoritative when the item has one.
-  const correctLabel = correctLabelOf(problem);
-  if (correctLabel && chosen) {
-    return { correct: chosen.label === correctLabel, reason: null };
+  // Which option is right is decided once, from the whole item (resolveKey):
+  // the option that IS the answer, then the letter the item names. `correctOption`
+  // alone used to be authoritative here, and on 72 live items it contradicts the
+  // item's own answer — a right pick was marked wrong.
+  const answer = problem.answer || {};
+  if (chosen) {
+    const key = resolveKey({
+      options: problem.options, value: answer.value, equivalents: answer.equivalents,
+      correctOption: problem.correctOption,
+    }, same);
+    if (key) {
+      return { correct: chosen.label === key.label || key.also.includes(chosen.label), reason: null };
+    }
   }
 
-  const answer = problem.answer || {};
   const candidates = [answer.value, ...(answer.equivalents || [])].filter(
     (v) => v !== undefined && v !== null && String(v).length > 0
   );

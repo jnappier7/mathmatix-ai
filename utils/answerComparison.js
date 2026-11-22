@@ -10,7 +10,7 @@
 // equivalence of expressions. This module judges a student's literal answer
 // against a known answer key.
 
-const { normalizeOptions, correctLabelOf } = require('./mcOptions');
+const { normalizeOptions, resolveKey } = require('./mcOptions');
 
 /**
  * Parse a string as either a fraction or decimal number.
@@ -334,17 +334,28 @@ function compareAnswer(userAnswer, spec = {}) {
     // options with their labels attached (correctOption:'C' can mean slot 0).
     // normalizeOptions/correctLabelOf translate between the two; comparing the
     // submission to the raw stored letter instead would pass a wrong pick.
-    const correctLabel = mcOptions.length ? correctLabelOf(spec) : null;
+    //
+    // WHICH option is right is decided by resolveKey, from the whole item —
+    // the option that IS the answer first, `correctOption` second. This used
+    // to trust `correctOption` and then ALSO accept any option whose text
+    // matched the answer or an equivalent, so on the 72 live items whose
+    // letter contradicts their own answer a wrong pick graded correct, and on
+    // a bimodal "Find the mode" item so did half an answer.
+    const key = mcOptions.length
+      ? resolveKey({ options: spec.options, value: correctValue, equivalents, correctOption: spec.correctOption },
+        (a, b) => valuesMatch(String(a), b, tolerance))
+      : null;
+    const correctLabel = key ? key.label : null;
 
-    // Method 1: direct correctOption comparison
-    if (mcOptions.length ? (correctLabel && userUpper === correctLabel)
+    // Method 1: the keyed option (or one the item declares equivalent to it)
+    if (mcOptions.length ? (key && (userUpper === key.label || key.also.includes(userUpper)))
       : (spec.correctOption && userUpper === String(spec.correctOption).toUpperCase())) {
       return true;
     }
 
-    // Method 2: user sent a letter (A–F) — look up that option's text and
-    // compare to the correct answer value
-    if (/^[A-F]$/.test(userUpper) && mcOptions.length > 0) {
+    // Method 2: user sent a letter (A–F) on an item that does not say which
+    // option is right — look up that option's text and compare it to the answer
+    if (!key && /^[A-F]$/.test(userUpper) && mcOptions.length > 0) {
       const optionIndex = userUpper.charCodeAt(0) - 65; // A=0, B=1, …
 
       if (optionIndex >= 0 && optionIndex < mcOptions.length) {

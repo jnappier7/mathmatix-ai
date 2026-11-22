@@ -20,7 +20,7 @@ const Skill = require('../models/skill');
 const { configCache } = require('../utils/cache');
 const { buildStageBlueprint, scoreBySkill } = require('../utils/coursePreAssessment');
 const { CHALLENGE_SIZE, MIN_ITEMS, gradeChallenge, toRungEvidence } = require('../utils/skillChallenge');
-const { normalizeOptions, correctLabelOf } = require('../utils/mcOptions');
+const { normalizeOptions, correctLabelOf, keyLabelOf } = require('../utils/mcOptions');
 const { resolveGradeNumber, levelToGradeNumber, assessedLevel } = require('../utils/gradeLevel');
 const { advanceRung } = require('../utils/skillRung');
 const { getSkillMasteryEntry, setSkillMasteryEntry, decodedMasteryMap } = require('../utils/masteryGuard');
@@ -1326,7 +1326,7 @@ router.post('/:id/skill-check/:skillId', isAuthenticated, async (req, res) => {
     const review = result.items.map(item => {
       const p = byId.get(item.problemId) || {};
       const typed = servedForm(p) === 'typed';
-      const keyLabel = typed ? null : correctLabelOf(p);
+      const keyLabel = typed ? null : keyLabelOf(p);
       const keyOpt = keyLabel ? normalizeOptions(p.options).find(o => o.label === keyLabel) : null;
       return {
         problemId: item.problemId,
