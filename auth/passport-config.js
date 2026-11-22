@@ -63,25 +63,39 @@ passport.deserializeUser(async (id, done) => {
 });
 
 /* ----------------------------  LOCAL STRATEGY --------------------------- */
+// A bcrypt hash of a random string nobody knows. Compared against when there
+// is no real hash to compare, so "no such account", "account has no password"
+// and "wrong password" all take the same time and say the same thing.
+const NO_PASSWORD_HASH = bcrypt.hashSync(require("crypto").randomBytes(24).toString("hex"), 10);
+
+/**
+ * Email + password sign-in.
+ *
+ * An account made through Google, Microsoft or Clever has NO passwordHash.
+ * bcrypt.compare(password, undefined) throws, so typing that account's email
+ * into the password form used to come back as a 500 ("something went wrong")
+ * instead of "Incorrect email or password" — for the student, a broken site;
+ * for anyone probing, a way to tell which emails are SSO accounts. It is a
+ * failed sign-in like any other.
+ */
+async function verifyLocalLogin(email, password, done) {
+  try {
+    const user = await User.findOne({ email: String(email || "").trim().toLowerCase() });
+    const hash = user && typeof user.passwordHash === "string" && user.passwordHash ? user.passwordHash : null;
+
+    const isMatch = await bcrypt.compare(String(password ?? ""), hash || NO_PASSWORD_HASH);
+    if (!user || !hash || !isMatch) return done(null, false, { message: "Incorrect email or password." });
+
+    logger.debug(`LocalStrategy authenticated user: ${user.username}`);
+    return done(null, user);
+  } catch (err) {
+    console.error("ERROR: LocalStrategy error:", err);
+    return done(err);
+  }
+}
+
 passport.use(
-  new LocalStrategy(
-    { usernameField: "email", passwordField: "password" },
-    async (email, password, done) => {
-      try {
-        const user = await User.findOne({ email: email.trim().toLowerCase() });
-        if (!user) return done(null, false, { message: "Incorrect email or password." });
-
-        const isMatch = await bcrypt.compare(password, user.passwordHash);
-        if (!isMatch) return done(null, false, { message: "Incorrect email or password." });
-
-        console.log("LOG: LocalStrategy authenticated user:", user.username);
-        return done(null, user);
-      } catch (err) {
-        console.error("ERROR: LocalStrategy error:", err);
-        return done(err);
-      }
-    }
-  )
+  new LocalStrategy({ usernameField: "email", passwordField: "password" }, verifyLocalLogin)
 );
 
 /* ---------------------------  GOOGLE STRATEGY --------------------------- */
@@ -371,3 +385,4 @@ if (process.env.CLEVER_CLIENT_ID && process.env.CLEVER_CLIENT_SECRET) {
 
 module.exports = passport;
 module.exports.generateUniqueUsername = generateUniqueUsername;
+module.exports.verifyLocalLogin = verifyLocalLogin;

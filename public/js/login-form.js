@@ -69,7 +69,13 @@ loginForm.addEventListener('submit', async function(event) {
         window.location.href = '/chat.html';
       }
     } else {
-      loginMessage.textContent = result.message || 'Login failed. Please check your email and password.';
+      let text = result.message || 'Login failed. Please check your email and password.';
+      // An account made with Google or Microsoft has no password. The server
+      // answers every failed sign-in the same way (it must not reveal which
+      // emails are which), so the pointer is shown on EVERY wrong-credentials
+      // answer, not only to the accounts it applies to.
+      if (response.status === 401) text += ' If you signed up with Google or Microsoft, use that button instead.';
+      loginMessage.textContent = text;
       loginMessage.style.display = 'block';
     }
   } catch (error) {

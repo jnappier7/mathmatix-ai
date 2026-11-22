@@ -26,7 +26,8 @@ jest.mock('../../routes/student', () => ({
 }));
 
 const User = require('../../models/user');
-const { generateUniqueUsername } = require('../../auth/passport-config');
+const { generateUniqueUsername, verifyLocalLogin } = require('../../auth/passport-config');
+const bcrypt = require('bcryptjs');
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -60,5 +61,49 @@ describe('generateUniqueUsername', () => {
     User.findOne.mockResolvedValue(null);
     const r = await generateUniqueUsername('Sam   Le E', 'x');
     expect(r).toBe('samlee');
+  });
+});
+
+describe('email + password sign-in (verifyLocalLogin)', () => {
+  // An account made through Google, Microsoft or Clever has no passwordHash.
+  // bcrypt.compare(password, undefined) throws, so typing such an account's
+  // email into the password form used to answer 500 — a broken page for the
+  // student, and a tell for anyone probing which emails are SSO accounts.
+  const run = (email, password) => new Promise((resolve) => {
+    verifyLocalLogin(email, password, (err, user, info) => resolve({ err, user, info }));
+  });
+  const WRONG = { message: 'Incorrect email or password.' };
+
+  test('an SSO account with no password is a failed sign-in, not an error', async () => {
+    User.findOne.mockResolvedValue({ username: 'sso', googleId: 'g-1' });
+    expect(await run('sso@example.com', 'anything')).toEqual({ err: null, user: false, info: WRONG });
+  });
+
+  test('an empty-string hash is treated the same way', async () => {
+    User.findOne.mockResolvedValue({ username: 'sso', passwordHash: '' });
+    expect(await run('sso@example.com', '')).toEqual({ err: null, user: false, info: WRONG });
+  });
+
+  test('no such account and a wrong password give the same answer', async () => {
+    User.findOne.mockResolvedValue(null);
+    const none = await run('nobody@example.com', 'pw');
+    User.findOne.mockResolvedValue({ username: 'ava', passwordHash: bcrypt.hashSync('right', 4) });
+    const wrong = await run('ava@example.com', 'not-right');
+    expect(none).toEqual({ err: null, user: false, info: WRONG });
+    expect(wrong).toEqual(none);
+  });
+
+  test('the right password signs in, with the email trimmed and lower-cased', async () => {
+    const account = { username: 'ava', passwordHash: bcrypt.hashSync('right', 4) };
+    User.findOne.mockResolvedValue(account);
+    const out = await run('  Ava@Example.com ', 'right');
+    expect(out.user).toBe(account);
+    expect(User.findOne).toHaveBeenCalledWith({ email: 'ava@example.com' });
+  });
+
+  test('a database failure is still reported as an error', async () => {
+    User.findOne.mockRejectedValue(new Error('db down'));
+    const out = await run('ava@example.com', 'right');
+    expect(out.err).toBeInstanceOf(Error);
   });
 });
