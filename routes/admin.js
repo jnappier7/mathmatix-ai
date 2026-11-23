@@ -1558,6 +1558,9 @@ router.get('/health-check', isAdmin, (req, res) => {
     // state, because the rate means two different things depending on whether
     // the verdicts behind it came from an independent model or the tutor's own.
     verifier: healthReport.verifierReport({ includeDetail: true }),
+    // Teacher-upload storage as observed; includeDetail adds the provider's
+    // own error sentence (e.g. "Credential access key has length 64, should be 32").
+    storage: require('../utils/cloudStorage').storageReport({ includeDetail: true }),
   });
 });
 

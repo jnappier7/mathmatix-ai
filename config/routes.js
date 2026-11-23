@@ -221,6 +221,12 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
     // DESMOS_API_KEY: the SAT test's graphing calculator. 'off' falls back to
     // the scientific calculator, so like foundingSchool it never sets `status`.
     checks.desmos = require('../utils/desmos').desmosReport();
+    // Teacher-upload storage, by OBSERVATION (a signed read + real upload
+    // outcomes), not key presence — a mistyped credential passes every presence
+    // check and fails every upload. 'off' and 'unconfirmed' are notes; 'error'
+    // degrades (a 200), since uploads are refused but tutoring is untouched.
+    checks.storage = require('../utils/cloudStorage').storageReport();
+    if (checks.storage.status === 'error' && status === 'healthy') status = 'degraded';
     // Deliberately 'degraded', never 'unhealthy'. 'degraded' is a 200 below, so
     // Render keeps routing here — a verifier grading without independence is a
     // quality problem, and answering 503 would turn it into an outage.
