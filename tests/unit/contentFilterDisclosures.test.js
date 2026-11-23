@@ -120,6 +120,45 @@ describe('school hyperbole never raises an alert on the model\'s word alone', ()
     expect(resolveSafetyConcern(null, msg)).toBe(disclosureConcern(msg));
   });
 
+  // The first veto was "a death word near a school word", and `class`, `math`,
+  // `test`, `problem`, `lol` all counted as school words. Every line below had
+  // its model tag DROPPED by that version — no email, one console.warn — and
+  // ALERT_PATTERNS does not re-raise any of them. The veto is now an allow-list
+  // of idiom shapes; these must never match one.
+  test.each([
+    'i wish i was dead, i hate this class',
+    'id rather be dead than take this test',
+    'sometimes i think about dying. anyway what\'s the next problem',
+    'nobody would care if i was dead lol',
+    'a kid in my class said he is going to kill me tomorrow',
+    'my dad said he is going to kill me when I get home, I got a bad grade',
+    'i want to kill my teacher',
+    'im dead inside, this math is pointless',
+    'he is going to kill me after class',
+    'my dad is going to kill me when i get home',            // no grade at stake
+    // an idiom beside a real statement does not launder it
+    'this class is killing me and i wish i was dead',
+    'this homework is the death of me. nobody would care if i was gone',
+    'my mom will kill me if i fail and im actually scared to go back',
+    'my teacher is going to kill me if i get this wrong, not joking',
+  ])('a model tag is never vetoed on: %s', (msg) => {
+    expect(isSchoolHyperbole(msg)).toBe(false);
+    expect(resolveSafetyConcern('model tag', msg)).not.toBeNull();
+  });
+
+  test.each([
+    'omg this quiz is literally killing me',
+    'this is killing me',
+    'these fractions are going to kill me',
+    'im gonna die if i fail',
+    'my parents are gonna kill me, i bombed the test',
+    'if i flunk this my dad will kill me',
+    'ms. carter is going to murder me, my homework is late',
+  ])('still vetoes the idiom: %s', (msg) => {
+    expect(isSchoolHyperbole(msg)).toBe(true);
+    expect(resolveSafetyConcern('model tag', msg)).toBeNull();
+  });
+
   test('a model tag on an ordinary message passes through untouched', () => {
     expect(resolveSafetyConcern('student mentioned a plan to run away', 'i might just leave tonight')).toBe('student mentioned a plan to run away');
     expect(warn).not.toHaveBeenCalled();
