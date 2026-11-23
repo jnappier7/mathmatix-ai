@@ -160,17 +160,40 @@ function buildTrialUserProfile() {
   };
 }
 
+// The pictures the landing page draws. It loads the chat's own renderer on
+// demand (public/js/landing.js loadTrialVisuals → inlineChatVisuals.js +
+// mathGraph.js), so these arrive in `reply` as tags and are drawn there exactly
+// as the signed-in chat draws them. Until 2026-11-23 EVERY tag was stripped,
+// which deleted the picture and kept the sentence about it: "notice the bars
+// are split into different numbers of pieces", over nothing, on the page a
+// parent first meets the tutor.
+//
+// Left out on purpose, and still stripped: pictures that open the signed-in
+// workspace (ALGEBRA_TILES, MULTI_REP), need libraries this page does not load
+// (GRAPH_3D, DIAGRAM, TRIANGLE_PROBLEM, SEARCH_IMAGE), or print a computed
+// result as their caption (AREA_MODEL "12 × 13 = 156", PYTHAGOREAN and
+// RIGHT_TRIANGLE with c worked out) — on the page that says the tutor never
+// hands over answers. Every name here was rendered in headless Chromium with
+// only the scripts the landing page loads before it was listed.
+const TRIAL_DRAWABLE = Object.freeze([
+  'FRACTION', 'NUMBER_LINE', 'INEQUALITY', 'SLOPE', 'POINTS',
+  'PIE_CHART', 'BAR_CHART', 'PERCENT_BAR', 'PLACE_VALUE',
+  'UNIT_CIRCLE', 'ANGLE', 'REGULAR_POLYGON', 'CIRCLE_DIAGRAM', 'COUNTERS',
+  'FUNCTION_GRAPH', 'SLIDER_GRAPH', 'SYSTEM_GRAPH', 'RATIONAL_GRAPH', 'DERIVATIVE_GRAPH',
+]);
+const TRIAL_DRAWABLE_SET = new Set(TRIAL_DRAWABLE);
+
 /**
  * Strip inline visual DIRECTIVES ([FUNCTION_GRAPH:...], [SLIDER_GRAPH:...], etc.)
- * from a trial reply. The authenticated chat renders these via inlineChatVisuals.js,
- * but the lightweight trial client doesn't load that system — so an unstripped tag
- * leaks into the bubble as raw text (e.g. `[FUNCTION_GRAPH:fn=2x-5,...]`).
+ * from a trial reply — all of them, or all but the names in `keep`. A tag the
+ * client cannot draw leaks into the bubble as raw text
+ * (e.g. `[GRAPH_3D:fn=...]`), so anything not explicitly kept goes.
  *
  * Uses a bracket-depth scan (handles nested brackets in params) but only treats
  * `[UPPERCASE…]` as a directive and NEVER when preceded by a backslash, so LaTeX
  * display math (`\[ ... \]`) is preserved.
  */
-function stripVisualDirectives(text) {
+function stripVisualDirectives(text, keep = null) {
   if (!text || typeof text !== 'string') return text || '';
   let out = '';
   let i = 0;
@@ -185,7 +208,12 @@ function stripVisualDirectives(text) {
         else if (text[j] === ']') depth--;
         j++;
       }
-      if (depth === 0) { i = j; continue; } // skip the whole [ ... ]
+      if (depth === 0) {
+        const name = keep && (text.slice(i, j).match(/^\[\s*([A-Z][A-Z0-9_]*)\s*:/) || [])[1];
+        if (name && keep.has(name)) out += text.slice(i, j);   // a picture this page draws
+        i = j;                                                  // else skip the whole [ ... ]
+        continue;
+      }
     }
     out += text[i];
     i++;
@@ -411,6 +439,14 @@ NEVER mention you're in a trial or limited mode. Act like their full tutor.
 CRITICAL: You are a TUTOR, not a calculator. NEVER give direct answers or solve problems for the student.
 When the student states a math problem, jump straight into guiding the first step. Do NOT ask "what are you working on?" or "what have you tried?" — they just told you the problem. Be specific to THEIR math question. Break it into the first step and ask them to try it.`;
 
+    // The preview draws a subset of the pictures; say which, or the tutor
+    // points at a picture that was never on the page.
+    systemPrompt += `
+
+--- PICTURES ON THIS PAGE ---
+This page draws ONLY these picture tags: ${TRIAL_DRAWABLE.map(n => `[${n}:…]`).join(' ')}.
+Any other visual tag ([DIAGRAM:…], [ALGEBRA_TILES:…], [SEARCH_IMAGE:…], <BOARD/>, <TILES/>, <GRAPH/> …) is removed before the student sees your message. So: use one of the tags above when a picture helps, put it on its own line, and NEVER mention a picture, graph, bars or diagram unless you wrote one of those tags in this same message.`;
+
     if (isLastTurn) {
       systemPrompt += `
 
@@ -442,11 +478,12 @@ CRITICAL FOR THIS RESPONSE: You MUST end your response with a question or a next
       res: null,
       aiProcessingStartTime: Date.now(),
       skipPersist: true,
+      drawableVisuals: TRIAL_DRAWABLE,
     });
 
-    // Strip inline visual directives the trial client can't render (they'd leak
-    // as raw `[FUNCTION_GRAPH:...]` text). Fall back if the reply was only a tag.
-    const reply = stripVisualDirectives(pipelineResult.text) || "Let's take a look at this together — what's the first step you'd try?";
+    // Keep the pictures the landing page draws; strip every other directive (it
+    // would leak as raw `[GRAPH_3D:...]` text). Fall back if nothing is left.
+    const reply = stripVisualDirectives(pipelineResult.text, TRIAL_DRAWABLE_SET) || "Let's take a look at this together — what's the first step you'd try?";
 
     console.log(`[Trial Pipeline] ${pipelineResult._pipeline.messageType} → ${pipelineResult._pipeline.action} (flags: ${pipelineResult._pipeline.flags.join(', ') || 'none'})`);
 
@@ -605,8 +642,10 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
     return res.status(503).json({ error: 'TTS unavailable.' });
   }
 
-  // Clean text for TTS (strip LaTeX and markdown)
-  let cleaned = text;
+  // Clean text for TTS (strip picture tags, LaTeX and markdown). The text
+  // arrives exactly as the tutor's reply was sent — tags included, or
+  // tutorSaidThis would not recognise it — and a tag is not read aloud.
+  let cleaned = stripVisualDirectives(text);
   cleaned = cleaned.replace(/\\\[([^\]]+)\\\]/g, '$1');
   cleaned = cleaned.replace(/\$\$([^$]+)\$\$/g, '$1');
   cleaned = cleaned.replace(/\\\(([^)]+)\\\)/g, '$1');
@@ -648,6 +687,7 @@ router.post('/speak', trialTtsLimiter, async (req, res) => {
 
 module.exports = router;
 module.exports.stripVisualDirectives = stripVisualDirectives; // exported for tests
+module.exports.TRIAL_DRAWABLE = TRIAL_DRAWABLE;
 module.exports.computeTrialXp = computeTrialXp; // exported for tests
 // The preview's turn cap, exported so tests drive off the real number instead
 // of a literal. tests/integration/trialChatGate.test.js used to hardcode 4, so
