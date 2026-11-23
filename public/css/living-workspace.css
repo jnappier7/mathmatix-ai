@@ -375,6 +375,63 @@ html[data-theme="dark"] .lws-root {
   color: var(--lws-card-ink); opacity: .7;
 }
 
+/* ── lined up on the sign ───────────────────────────────────────
+   Every line of a solve keeps its "=" (or <, ≥, …) in ONE column, the way a
+   teacher writes it, so the eye runs straight down what changed on each side.
+   derivationView.js typesets such a line as three pieces — .lws-eq-lhs,
+   .lws-eq-rel, .lws-eq-rhs — and the card lays them in three shared tracks:
+
+       | spine | left side (right-aligned) | sign | right side … |
+
+   The tracks belong to the CARD and are handed down by subgrid (card → head /
+   body → step → main → line), which is what lets separate rows — and the
+   problem in the head — agree on where the sign goes with no measuring in
+   script. A line with no top-level relation (prose, an expression, a system)
+   spans all three and starts at the left edge as before.
+
+   Without subgrid the pieces simply sit inline and the line reads exactly as
+   it did before: not lined up, never broken. */
+.lws-eq-rel { padding: 0 .28em; }
+.lws-eq-rhs .lws-step-answer-badge { margin-left: 10px; }
+
+@supports (grid-template-columns: subgrid) {
+  .lws-card {
+    display: grid;
+    /* The right side is the flexible track: a row spanning a flexible track is
+       not counted when sizing the others, so a long sentence cannot push the
+       sign column sideways. */
+    grid-template-columns: 56px auto auto minmax(0, 1fr);
+    /* 56px = the head/body's 18px side padding + the 26px spine + the 12px
+       gap after it. A subgrid's padding is taken OUT of its edge tracks, so
+       the first track has to carry it; change that padding and change this. */
+  }
+  .lws-card > * { grid-column: 1 / -1; min-width: 0; }
+  .lws-card-head, .lws-card-body,
+  .lws-card-body > .lws-step, .lws-card-body > .lws-step > .lws-step-main,
+  .lws-card-problem.is-eq, .lws-step-tex.is-eq {
+    display: grid; grid-template-columns: subgrid;
+  }
+  .lws-card-head > *, .lws-card-body > *, .lws-step-main > * { grid-column: 1 / -1; min-width: 0; }
+
+  /* The spine keeps its 26px at the start of the first track. */
+  /* No gaps of their own anywhere down the chain: a subgrid with a different
+     column-gap shifts its tracks by half the difference (the answer row's
+     10px flex gap put its sign 5px right of every other line). */
+  .lws-card-body > .lws-step, .lws-card-body > .lws-step > .lws-step-main { gap: 0; }
+  .lws-card-body > .lws-step > .lws-step-spine { grid-column: 1; width: 26px; }
+  .lws-card-body > .lws-step > .lws-step-main { grid-column: 2 / -1; }
+  /* The problem steps in over the spine track so its sign sits above the steps'. */
+  .lws-card-head > .lws-card-problem.is-eq { grid-column: 2 / -1; }
+
+  .lws-card-problem.is-eq, .lws-step-tex.is-eq { align-items: baseline; overflow: visible; }
+  .lws-eq-lhs { grid-column: 1; text-align: right; }
+  .lws-eq-rel { grid-column: 2; }
+  .lws-eq-rhs { grid-column: 3; }
+  /* A side too wide for the card scrolls inside its own cell. */
+  .lws-eq-lhs, .lws-eq-rhs { min-width: 0; overflow-x: auto; overflow-y: hidden; white-space: nowrap; }
+  .lws-eq-lhs::-webkit-scrollbar, .lws-eq-rhs::-webkit-scrollbar { height: 4px; }
+}
+
 /* ── foot: how this one is going ─────────────────────────────── */
 .lws-card-foot {
   display: flex; align-items: center; gap: 8px;
