@@ -87,5 +87,37 @@
     }).join(',');
   }
 
-  return { PARAM: PARAM, tokenRegex: tokenRegex, quoteBareValues: quoteBareValues };
+  /**
+   * The fractions named by a [FRACTION:compare=2/3,3/4] tag.
+   *
+   * The key=value matcher stops an unquoted value at the first comma, so
+   * "compare=2/3,3/4" used to arrive as "2/3" alone: the comparison picture
+   * drew ONE bar (2026-11-23 — the tutor said "notice the bars are split into
+   * different numbers of pieces" over a single solid bar). This reads the list
+   * straight from the raw params, quoted or bracketed or bare.
+   *
+   * Only what a bar model can show is returned: whole-number parts, a
+   * denominator of 1–20, at most one whole (numerator ≤ denominator), at most
+   * four bars. If ANY entry is something else the answer is [] — a picture of
+   * some of the fractions the tutor named is a wrong picture.
+   *
+   * @returns {Array<{num:number, denom:number}>}
+   */
+  function fractionList(paramStr) {
+    const m = String(paramStr || '').match(/\bcompare\s*=\s*["'\[]?\s*([\d\s/,]+?)\s*["'\]]?\s*(?:,\s*[A-Za-z_]\w*\s*=|$)/);
+    if (!m) return [];
+    const items = m[1].split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+    if (items.length === 0 || items.length > 4) return [];
+    const out = [];
+    for (let i = 0; i < items.length; i++) {
+      const f = items[i].match(/^(\d{1,3})\s*\/\s*(\d{1,3})$/);
+      if (!f) return [];
+      const num = Number(f[1]); const denom = Number(f[2]);
+      if (denom < 1 || denom > 20 || num > denom) return [];
+      out.push({ num: num, denom: denom });
+    }
+    return out;
+  }
+
+  return { PARAM: PARAM, tokenRegex: tokenRegex, quoteBareValues: quoteBareValues, fractionList: fractionList };
 }));

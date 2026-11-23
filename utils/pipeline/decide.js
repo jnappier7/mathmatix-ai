@@ -224,6 +224,8 @@ function applyVisualDirective(decision, observation, context) {
       .filter((m) => m && m.role === 'assistant').slice(-2)
       .some((m) => hasInlineVisual(m.content)),
     recentWrongCount: observation?.streaks?.recentWrongCount || 0,
+    // The landing-page preview draws a subset (routes/trialChat.js TRIAL_DRAWABLE).
+    drawable: context.drawableVisuals || null,
   });
   // A picture is a TOOL for reaching the turn's goal, never the goal (owner, 2026-11-22:
   // "Trying to mimic a human tutor. A picture shouldn't be required, but a tool to reach a

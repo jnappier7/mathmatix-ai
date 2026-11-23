@@ -709,6 +709,8 @@ async function runPipeline(message, ctx) {
     modeTransition: modeTransition?.shouldTransition ? modeTransition : null,
     hasRecentUpload: ctx.hasRecentUpload || false,
     user: ctx.user || null,
+    // Surfaces that draw only some pictures say which (the landing preview).
+    drawableVisuals: ctx.drawableVisuals || null,
     // For the one-ask guard: decide reads the LAST assistant message to know
     // whether the tutor already asked this student to explain this work.
     conversation: ctx.conversation || null,

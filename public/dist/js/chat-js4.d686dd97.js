@@ -1753,8 +1753,10 @@ class InlineChatVisuals {
         const label = params.label || `${numerator}/${denominator}`;
         const compare = params.compare || null;
 
-        if (compare) {
-            return this.createFractionComparison(compare, id);
+        // The list is read from the RAW params: parseParams ends an unquoted
+        // value at its first comma, so params.compare is only the first fraction.
+        if (compare || /\bcompare\s*=/.test(String(paramStr))) {
+            return this.createFractionComparison(paramStr, id);
         }
 
         const width = type === 'circle' ? 120 : 200;
@@ -1854,32 +1856,37 @@ class InlineChatVisuals {
         });
     }
 
-    createFractionComparison(compareStr, id) {
-        const fractions = compareStr.split(',').map(f => {
-            const [num, denom] = f.trim().split('/').map(Number);
-            return { num, denom, value: num / denom };
-        });
+    /**
+     * Fractions side by side: same-size bars, one under the other, each cut
+     * into its own number of equal pieces with the numerator's share shaded.
+     *
+     * The bars are the whole lesson — same whole, different-sized pieces — so
+     * the picture carries no decimal and no verdict. (It used to print each
+     * fraction's decimal value under a solid bar, which IS the answer to
+     * "which is bigger?", and — because the comma in compare=2/3,3/4 ended the
+     * value — it only ever drew the first fraction.)
+     *
+     * @param {string} paramStr the tag's raw params
+     */
+    createFractionComparison(paramStr, id) {
+        const VTP = (typeof window !== 'undefined' && window.VisualTokenParser) || null;
+        const fractions = VTP && VTP.fractionList ? VTP.fractionList(paramStr) : [];
+        // Not something bars can show (or the grammar did not load): draw
+        // nothing rather than a picture of part of what the tutor named.
+        if (fractions.length === 0) return '';
 
-        let html = `<div class="icv-container icv-fraction-compare" id="${id}">
-            <div class="icv-title">Fraction Comparison</div>
-            <div class="icv-fraction-row">`;
+        const W = 240, H = 30;
+        const colours = ['#667eea', '#f59e0b', '#10b981', '#ef4444'];
+        const rows = fractions.map((f, idx) => {
+            const seg = W / f.denom;
+            let rects = '';
+            for (let i = 0; i < f.denom; i++) {
+                rects += `<rect x="${(i * seg + 1).toFixed(2)}" y="1" width="${(seg - 2).toFixed(2)}" height="${H - 2}" rx="3" fill="${i < f.num ? colours[idx % colours.length] : '#e8e8e8'}" stroke="#333" stroke-width="1"/>`;
+            }
+            return `<div class="icv-fcmp-row"><div class="icv-fcmp-label" aria-hidden="true"><span class="icv-fcmp-n">${f.num}</span><span class="icv-fcmp-d">${f.denom}</span></div><svg viewBox="0 0 ${W} ${H}" class="icv-fcmp-bar" role="img" aria-label="${f.num} of ${f.denom} equal parts shaded">${rects}</svg></div>`;
+        }).join('');
 
-        fractions.forEach((f, idx) => {
-            const barWidth = 100;
-            const filledWidth = (f.num / f.denom) * barWidth;
-
-            html += `
-            <div class="icv-fraction-item">
-                <div class="icv-fraction-label">${f.num}/${f.denom}</div>
-                <div class="icv-fraction-bar-wrapper">
-                    <div class="icv-fraction-bar" style="width: ${filledWidth}px; background: hsl(${240 - idx * 40}, 70%, 60%)"></div>
-                </div>
-                <div class="icv-fraction-decimal">${f.value.toFixed(3)}</div>
-            </div>`;
-        });
-
-        html += `</div></div>`;
-        return html;
+        return `<div class="icv-container icv-fraction-compare" id="${id}"><div class="icv-fcmp-rows">${rows}</div><div class="icv-caption" style="font-size: 11px; color: #94a3b8; margin-top: 6px;">Each bar is one whole.</div></div>`;
     }
 
     // ==========================================
@@ -4265,6 +4272,15 @@ class InlineChatVisuals {
             .icv-fraction-compare {
                 text-align: center;
             }
+
+            /* Fractions side by side: the bars share a left edge and a width,
+               so the eye compares shaded length against shaded length. */
+            .icv-fcmp-rows { display: grid; gap: 10px; }
+            .icv-fcmp-row { display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 10px; }
+            .icv-fcmp-label { display: inline-grid; justify-items: center; font-weight: 700; font-size: 17px; line-height: 1.15; color: #333; }
+            .icv-fcmp-n { padding: 0 5px 1px; border-bottom: 2px solid #333; }
+            .icv-fcmp-d { padding: 1px 5px 0; }
+            .icv-fcmp-bar { display: block; width: 100%; max-width: 320px; height: auto; }
 
             .icv-fraction-row {
                 display: flex;

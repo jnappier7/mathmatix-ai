@@ -427,6 +427,26 @@
 .lp-chat-bubble p { margin: 0 0 0.55em; }
 .lp-chat-bubble p:last-of-type { display: inline; margin-bottom: 0; }
 
+/* A reply with a picture in it is laid out as blocks: words, the picture, more
+   words (landing.js renderTutorReply). The picture is drawn by the signed-in
+   chat's own renderer, which brings its own styles; this only places it. */
+.lp-chat-bubble .lp-chat-text + .lp-chat-visual,
+.lp-chat-bubble .lp-chat-visual + .lp-chat-text { margin-top: 10px; }
+.lp-chat-bubble .lp-chat-text:not(:last-of-type) p:last-of-type { display: block; }
+.lp-chat-bubble .lp-chat-visual:empty { display: none; }
+.lp-chat-bubble .lp-chat-visual { max-width: 100%; overflow-x: auto; }
+.lp-chat-bubble .lp-chat-visual .icv-container { margin: 0; box-sizing: border-box; }
+.lp-chat-bubble .lp-chat-visual .icv-container:not(.icv-collapsed) { max-width: 100%; }
+/* A bubble holding a picture may use the whole row beside the avatar — a
+   number line squeezed into 82% of a phone-width pane is unreadable — but on
+   a wide screen it stops at a readable 520px instead of stretching across. */
+.lp-chat-bubble:has(.lp-chat-visual) { max-width: none; flex: 0 1 520px; min-width: 0; }
+/* Controls that hand work to the signed-in tutor or workspace have nowhere to
+   go on this page. */
+.lp-chat-bubble .icv-numline-send-btn,
+.lp-chat-bubble .icv-counter-send-btn,
+.lp-chat-bubble .icv-to-workspace { display: none !important; }
+
 /* Student bubble — purple gradient (matches app) */
 .lp-chat-student {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
