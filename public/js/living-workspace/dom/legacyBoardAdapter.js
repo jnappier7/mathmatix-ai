@@ -47,6 +47,8 @@
       case 'graph':    return cmd.fn  ? { type: ELEMENT_TYPES.GRAPH, semantic: Object.assign({ fn: cmd.fn }, cmd.caption ? { caption: cmd.caption } : null) } : null;
       case 'image':    return cmd.query ? { type: ELEMENT_TYPES.IMAGE, semantic: Object.assign({ query: cmd.query }, cmd.caption ? { caption: cmd.caption } : null) } : null;
       case 'diagram':  return (cmd.diagram_type || cmd.diagram_params) ? { type: ELEMENT_TYPES.GEOMETRY, semantic: { diagramType: cmd.diagram_type || null, params: cmd.diagram_params || null } } : null;
+      // Algebra tiles: `mat` is the server's reading of the line — drawn, never parsed here.
+      case 'tiles':    return (cmd.mat && Array.isArray(cmd.mat.sides)) ? { type: ELEMENT_TYPES.ALGEBRA_TILES, semantic: Object.assign({ mat: cmd.mat }, cmd.caption ? { caption: cmd.caption } : null) } : null;
       // Interactive concept model (CONCEPT_MODELS): a curated name OR a full
       // spec (JSON string, validated client-side before it can render).
       case 'model':    return (cmd.model || cmd.spec) ? { type: ELEMENT_TYPES.MODEL, semantic: { model: cmd.model || null, spec: cmd.spec || null, prompt: cmd.prompt || cmd.caption || null } } : null;

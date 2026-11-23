@@ -17,6 +17,7 @@
 'use strict';
 
 const { residualRatio, scaffoldBlankIsGiven } = require('./pipeline/boardContinuity');
+const { parseTileMat } = require('./workspace/tileMat');
 
 // Verbs that map to allowed `apply` operations. Match fuzzy: we only
 // need ONE of these words to appear in the student's recent message
@@ -346,7 +347,17 @@ function enforcePedagogyRule({
         });
 
         if (decision.allowed) {
-            allowed.push(command);
+            // A tiles card leaves the guard as the mat it was read into, with
+            // NO top-level tex: every later stage that walks the board's
+            // equation lines (continuity, the ledger's step count, the pin)
+            // would otherwise count the picture as a line of the solve.
+            if (decision.mat) {
+                const tiles = { action: 'tiles', mat: decision.mat };
+                if (command.caption) tiles.caption = command.caption;
+                allowed.push(tiles);
+            } else {
+                allowed.push(command);
+            }
             if (command.action === 'pose' && command.tex) activeProblemTex = command.tex;
         } else {
             dropped.push({ command, reason: decision.reason });
@@ -562,6 +573,40 @@ function evaluate(command, ctx) {
             return { allowed: false, reason: 'model_missing_name' };
         }
         return { allowed: true };
+    }
+
+    // Algebra tiles. The tutor names a line; utils/workspace/tileMat.js reads
+    // it into tiles, so the picture cannot disagree with the line. Two gates:
+    //   1. it must be drawable with certainty (one variable, whole numbers,
+    //      nothing above x², a plain sum) — otherwise no card;
+    //   2. on the student's own problem it must be a line ALREADY theirs: the
+    //      problem in focus, or something they have stated. Tiles for the next
+    //      line of the solve are that line, shown early — the same thing the
+    //      resolve rule exists to stop. In a worked example the tutor's own
+    //      lines are fine, never the student's graded problem or its answer.
+    if (action === 'tiles') {
+        // Already read by an earlier pass of this guard.
+        if (command.mat && !command.tex) return { allowed: true };
+        if (!command.tex) {
+            return { allowed: false, reason: 'tiles_missing_tex' };
+        }
+        const mat = parseTileMat(command.tex);
+        if (!mat) {
+            return { allowed: false, reason: 'tiles_not_drawable' };
+        }
+        if (ctx.workedExample) {
+            if (revealsPinnedProblem(command.tex, ctx)) {
+                return { allowed: false, reason: 'worked_example_reveals_active_problem' };
+            }
+            return { allowed: true, reason: 'worked_example_step', mat };
+        }
+        const line = normalizeForMatch(command.tex);
+        const onBoard = [ctx.activeProblemTex, ctx.pinnedProblemTex]
+            .some(t => t && normalizeForMatch(t) === line);
+        if (onBoard || texMatchesStudentText(command.tex, ctx.combinedText)) {
+            return { allowed: true, mat };
+        }
+        return { allowed: false, reason: 'tiles_line_not_on_board' };
     }
 
     return { allowed: false, reason: 'unknown_action' };

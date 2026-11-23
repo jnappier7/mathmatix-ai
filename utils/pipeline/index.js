@@ -1273,6 +1273,28 @@ async function runPipeline(message, ctx) {
       || ctx.conversation?.boardProblem?.tex || null,
   });
 
+  // The same promise, kept on the card: "let me get the tiles out" with no
+  // tiles card is the board contradicting the chat. The line is the problem in
+  // focus — nothing the student has not already been given — and it goes
+  // through the guard like any other card (not drawable → no card).
+  if (tilesTabBackfill && !verified.boardCommands.some(c => c.action === 'tiles')) {
+    const tilesTex = (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
+      || ctx.conversation?.boardProblem?.tex || null;
+    if (tilesTex) {
+      const tilesGuard = enforcePedagogyRule({
+        commands: [{ action: 'tiles', tex: tilesTex }],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+        pinnedProblemTex: tilesTex,
+      });
+      if (tilesGuard.allowed.length > 0) {
+        verified.boardCommands = verified.boardCommands.concat(tilesGuard.allowed);
+        boardLogger.info('Tiles-promise backfill added tiles card', { tex: tilesTex });
+      }
+    }
+  }
+
   if (!tilesTabBackfill
       && !verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
     const fallbackImage = synthesizeFallbackImage({

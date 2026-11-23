@@ -60,7 +60,7 @@ const BOARD_TOOL = {
               },
               tex: {
                 type: 'string',
-                description: 'LaTeX. Required for pose/resolve/verify/scaffold/example. A scaffold MUST contain at least one empty \\boxed{} slot for the student to fill.',
+                description: 'LaTeX. Required for pose/resolve/verify/scaffold/example/tiles. A scaffold MUST contain at least one empty \\boxed{} slot for the student to fill.',
               },
               op: {
                 type: 'string',
@@ -164,6 +164,7 @@ The pedagogy is unchanged:
 - verify — when a final answer is checked; optionally include their substitution check.
 - clear — only on a new problem or right after a verify lands.
 - graph / image — reference aids (fn of x, or a safe image query) with an optional caption.
+- tiles — algebra tiles for a line ALREADY on the board (the problem, or a line the student stated): { action: "tiles", tex: "2x + 3 = 7" }. You only name the line; the board lays out the tiles, and the student can drag them, flip them and cancel zero pairs. Plain terms in one variable, whole-number coefficients, nothing above x^2, no brackets or fractions. Use it for zero pairs, like terms, keeping an equation balanced, a quadratic as an area.
 - scaffold — the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. Every scaffold MUST contain at least one \\boxed{} blank; never fill the blanks yourself. The blank marks EXACTLY what you are asking them to produce: never blank a known value while displaying the result (asking "what's 0.3 × 1000?" → "0.3 \\times 1000 = \\boxed{}", NOT "0.3 \\times \\boxed{} = 300"), and never write "?" as the unknown — the empty box IS the unknown.
 - example — ONE step of a derivation YOU are teaching, in order, one card per step — only on a teaching example that is NOT the student's graded problem.
 

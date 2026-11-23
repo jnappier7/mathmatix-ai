@@ -122,11 +122,11 @@ function parseBoardJsonCommands(text) {
 
         const command = { action };
         if (action === 'pose' || action === 'resolve' || action === 'verify'
-            || action === 'scaffold' || action === 'example') {
+            || action === 'scaffold' || action === 'example' || action === 'tiles') {
             if (!tex) continue; // required
             command.tex = tex;
         }
-        if (action === 'example' && caption) command.caption = caption;
+        if ((action === 'example' || action === 'tiles') && caption) command.caption = caption;
         if (action === 'apply') {
             if (!op) continue;
             command.op = op;
