@@ -9,10 +9,11 @@ jest.mock('@aws-sdk/client-s3', () => {
   const PutObjectCommand = jest.fn(function (input) { this.input = input; this.kind = 'put'; });
   const DeleteObjectCommand = jest.fn(function (input) { this.input = input; this.kind = 'delete'; });
   const GetObjectCommand = jest.fn(function (input) { this.input = input; this.kind = 'get'; });
+  const ListObjectsV2Command = jest.fn(function (input) { this.input = input; this.kind = 'list'; });
   const S3Client = jest.fn().mockImplementation(() => ({
     send: (cmd) => global.__sendMock(cmd)
   }));
-  return { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand };
+  return { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command };
 });
 
 jest.mock('fs', () => ({
@@ -166,5 +167,70 @@ describe('getObjectStream — the private-bucket read path', () => {
     sendMock.mockRejectedValue(new Error('NoSuchKey'));
     const cs = require('../../utils/cloudStorage');
     await expect(cs.getObjectStream('missing.pdf')).rejects.toThrow('NoSuchKey');
+  });
+});
+
+describe('storageReport — observed health, not key presence', () => {
+  // 2026-11-23: S3_BUCKET + S3_REGION were set, AWS_ACCESS_KEY_ID held the
+  // secret, every upload failed, and /api/health said 'healthy'.
+  const badKey = () => Object.assign(
+    new Error('Credential access key has length 64, should be 32'),
+    { name: 'InvalidArgument' }
+  );
+  let errSpy;
+  beforeEach(() => { errSpy = jest.spyOn(console, 'error').mockImplementation(() => {}); });
+  afterEach(() => errSpy.mockRestore());
+
+  test("unconfigured is 'off' and never touches S3", () => {
+    const cs = require('../../utils/cloudStorage');
+    expect(cs.storageReport()).toEqual({ status: 'off' });
+    expect(sendMock).not.toHaveBeenCalled();
+  });
+
+  test('configured with a bad credential reports error — the case presence checks miss', async () => {
+    process.env.S3_BUCKET = 'b'; process.env.S3_REGION = 'auto';
+    sendMock.mockRejectedValue(badKey());
+    const cs = require('../../utils/cloudStorage');
+    expect(cs.isConfigured).toBe(true);
+    expect(cs.storageReport().status).toBe('unconfirmed'); // kicks off the probe
+    await cs.probe();
+    const cmd = sendMock.mock.calls[0][0];
+    expect(cmd.kind).toBe('list');
+    expect(cmd.input).toEqual({ Bucket: 'b', MaxKeys: 1 });
+    expect(cs.storageReport()).toMatchObject({ status: 'error', code: 'InvalidArgument', source: 'probe', lastOkAt: null });
+  });
+
+  test("the provider's sentence reaches admin only, never the public report", async () => {
+    process.env.S3_BUCKET = 'b'; process.env.S3_REGION = 'auto';
+    sendMock.mockRejectedValue(badKey());
+    const cs = require('../../utils/cloudStorage');
+    await cs.probe();
+    expect(cs.storageReport()).not.toHaveProperty('message');
+    expect(cs.storageReport({ includeDetail: true }).message).toMatch(/length 64/);
+  });
+
+  test('a healthy probe reports ok and is not repeated on every poll', async () => {
+    process.env.S3_BUCKET = 'b'; process.env.S3_REGION = 'auto';
+    sendMock.mockResolvedValue({});
+    const cs = require('../../utils/cloudStorage');
+    cs.storageReport();
+    await cs.probe();
+    cs.storageReport(); cs.storageReport();
+    expect(sendMock).toHaveBeenCalledTimes(1);
+    expect(cs.storageReport().status).toBe('ok');
+    expect(cs.storageReport().lastOkAt).not.toBeNull();
+  });
+
+  test('a failed real upload flips the report and still throws to the route', async () => {
+    process.env.S3_BUCKET = 'b'; process.env.S3_REGION = 'auto';
+    sendMock.mockResolvedValueOnce({});
+    const cs = require('../../utils/cloudStorage');
+    await cs.probe();
+    sendMock.mockRejectedValueOnce(badKey());
+    await expect(cs.uploadFile('/tmp/f', 'k', 'application/pdf')).rejects.toThrow(/length 64/);
+    expect(cs.storageReport()).toMatchObject({ status: 'error', source: 'upload' });
+    sendMock.mockResolvedValueOnce({});
+    await cs.uploadFile('/tmp/f', 'k', 'application/pdf');
+    expect(cs.storageReport()).toMatchObject({ status: 'ok', source: 'upload', code: null });
   });
 });

@@ -1,7 +1,7 @@
 // utils/cloudStorage.js
 // S3-compatible cloud storage for persistent file uploads (AWS S3, Cloudflare R2, DigitalOcean Spaces, etc.)
 
-const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 const fs = require('fs');
 const path = require('path');
 
@@ -40,12 +40,18 @@ async function uploadFile(localFilePath, s3Key, contentType) {
     const fileStream = fs.createReadStream(localFilePath);
     const bucket = process.env.S3_BUCKET;
 
-    await s3Client.send(new PutObjectCommand({
-        Bucket: bucket,
-        Key: s3Key,
-        Body: fileStream,
-        ContentType: contentType
-    }));
+    try {
+        await s3Client.send(new PutObjectCommand({
+            Bucket: bucket,
+            Key: s3Key,
+            Body: fileStream,
+            ContentType: contentType
+        }));
+    } catch (err) {
+        observe(err, 'upload');
+        throw err;
+    }
+    observe(null, 'upload');
 
     // Build public URL
     const publicUrl = process.env.S3_PUBLIC_URL
@@ -113,8 +119,106 @@ async function getObjectStream(s3Key) {
     return { body: out.Body, contentType: out.ContentType };
 }
 
+// ---------------------------------------------------------------------------
+// Observed health
+//
+// isConfigured only says the two env vars are present. On 2026-11-23 they were,
+// and AWS_ACCESS_KEY_ID held the 64-character secret instead of the 32-character
+// key id: every upload since the bucket was switched on had failed, /api/health
+// said 'healthy', and the first report came from a teacher uploading a practice
+// test two days before the real one. Presence cannot see that; only a signed
+// request can.
+//
+// So: one cheap signed read (list, max 1 key) on first ask and every
+// PROBE_INTERVAL_MS after, plus the outcome of every real upload. Latest
+// observation wins. The probe is a LIST, not a write — a health poll should not
+// create objects — so a token that can write but not list would read 'error'
+// here until a real upload succeeds and corrects it.
+// ---------------------------------------------------------------------------
+const PROBE_INTERVAL_MS = 10 * 60 * 1000;
+const PROBE_TIMEOUT_MS = 8000;
+
+const health = {
+    status: isConfigured ? 'unconfirmed' : 'off',
+    code: null,        // SDK error name — safe for the public endpoint
+    message: null,     // provider's own sentence — admin surfaces only
+    source: null,      // 'probe' | 'upload'
+    checkedAt: null,
+    lastOkAt: null,
+};
+let probeInFlight = null;
+let lastProbeAt = 0;
+
+function observe(err, source) {
+    const now = Date.now();
+    health.source = source;
+    health.checkedAt = now;
+    if (!err) {
+        health.status = 'ok';
+        health.code = null;
+        health.message = null;
+        health.lastOkAt = now;
+        return;
+    }
+    const firstFailure = health.status !== 'error';
+    health.status = 'error';
+    health.code = err.name || err.Code || 'Error';
+    health.message = err.message || null;
+    if (firstFailure) {
+        console.error(`❌ [Cloud Storage] ${source} failed — teacher uploads will be refused: ${health.code}: ${health.message}`);
+    }
+}
+
+/** One signed read against the bucket. Never throws; resolves to the status. */
+function probe() {
+    if (!isConfigured) return Promise.resolve('off');
+    if (probeInFlight) return probeInFlight;
+    lastProbeAt = Date.now();
+    const abort = new AbortController();
+    const timer = setTimeout(() => abort.abort(), PROBE_TIMEOUT_MS);
+    if (timer.unref) timer.unref();
+    probeInFlight = Promise.resolve()
+        .then(() => s3Client.send(
+            new ListObjectsV2Command({ Bucket: process.env.S3_BUCKET, MaxKeys: 1 }),
+            { abortSignal: abort.signal }
+        ))
+        .then(() => observe(null, 'probe'), (err) => observe(err, 'probe'))
+        .then(() => {
+            clearTimeout(timer);
+            probeInFlight = null;
+            return health.status;
+        });
+    return probeInFlight;
+}
+
+/**
+ * Synchronous snapshot for the health endpoints; kicks off a background probe
+ * when the last one is stale. 'unconfirmed' (nothing observed yet) lasts only
+ * until the first probe returns.
+ *
+ * @param {Object} [opts]
+ * @param {boolean} [opts.includeDetail] - add the provider's error sentence.
+ *   Admin only: it is third-party prose and /api/health is unauthenticated.
+ */
+function storageReport({ includeDetail = false } = {}) {
+    if (!isConfigured) return { status: 'off' };
+    if (Date.now() - lastProbeAt > PROBE_INTERVAL_MS) probe();
+    const iso = (ms) => (ms ? new Date(ms).toISOString() : null);
+    const out = {
+        status: health.status,
+        code: health.code,
+        source: health.source,
+        checkedAt: iso(health.checkedAt),
+        lastOkAt: iso(health.lastOkAt),
+    };
+    if (includeDetail) out.message = health.message;
+    return out;
+}
+
 module.exports = {
     isConfigured,
+    probe,
+    storageReport,
     uploadFile,
     getObjectStream,
     deleteFile,
