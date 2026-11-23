@@ -17,6 +17,7 @@ const logger = require('../utils/logger');
 const { csrfProtection } = require('../middleware/csrf');
 const { handleImpersonation, enforceReadOnly } = require('../middleware/impersonation');
 const { outboundPiiScope } = require('../middleware/outboundPii');
+const { boardPreviewScope } = require('../utils/featureFlags');
 const { trackErrors, clientErrorHandler } = require('../middleware/errorTracking');
 const { requestId } = require('../middleware/requestId');
 const { isPracticeTestRunnerPath } = require('../middleware/practiceTestLimiter');
@@ -222,6 +223,11 @@ function configureMiddleware(app) {
   // and embedding call downstream strips/rehydrates that user's name through
   // it (utils/openaiClient.js chokepoint) without opting in.
   app.use(outboundPiiScope);
+
+  // Work Board preview: on for the accounts named in WORK_BOARD_PREVIEW while
+  // it is off for everyone else. Same placement rule as the scope above —
+  // after passport and impersonation, so it is decided from the acting user.
+  app.use(boardPreviewScope);
 
   // CSP Nonce middleware
   app.use((req, res, next) => {
