@@ -292,6 +292,10 @@
     // Show chat panel
     trialChat.style.display = 'block';
 
+    // Fetch the picture renderer now, while the greeting loads, so the first
+    // picture the tutor draws does not wait on a download.
+    loadTrialVisuals();
+
     // No scroll: the stage is already the top of the page. This used to jump
     // the viewport because the chat replaced a hero the visitor had scrolled past.
 
@@ -758,7 +762,7 @@
       bubble.style.whiteSpace = 'pre-wrap';
       bubble.textContent = text;
     } else {
-      bubble.innerHTML = renderTrialMath(text);
+      renderTutorReply(bubble, text, row);
       // Add TTS button for tutor messages
       var ttsBtn = document.createElement('button');
       ttsBtn.className = 'lp-trial-tts-btn';
@@ -777,6 +781,150 @@
     requestAnimationFrame(function () {
       row.classList.add('lp-chat-visible');
       if (isUser) scrollTrialToBottom(); else scrollTrialToReply(row);
+    });
+  }
+
+  /* ── Pictures the tutor draws ──────────────────────────────────────
+     The tutor's reply can carry picture tags — [FRACTION:compare=2/3,3/4],
+     [NUMBER_LINE:…], [FUNCTION_GRAPH:…] — and the server sends through the ones
+     this page draws (routes/trialChat.js TRIAL_DRAWABLE). They are drawn by the
+     signed-in chat's own renderer, fetched on demand, so a picture here is the
+     picture a student gets after signing up.
+
+     Before this the server stripped every tag: the picture vanished and the
+     sentence about it stayed ("notice the bars are split into different numbers
+     of pieces", over nothing).
+
+     Nothing here may ever show a raw tag. If the renderer cannot be fetched, or
+     a tag does not draw, its slot is removed and the words stand alone. */
+  /* The pictures this page draws — the server's list (routes/trialChat.js
+     TRIAL_DRAWABLE), held here too so a tag outside it is never handed to the
+     renderer even if one arrives. tests/unit/trialDrawsPictures.test.js fails
+     if the two lists differ. */
+  var TRIAL_DRAWABLE = [
+    'FRACTION', 'NUMBER_LINE', 'INEQUALITY', 'SLOPE', 'POINTS',
+    'PIE_CHART', 'BAR_CHART', 'PERCENT_BAR', 'PLACE_VALUE',
+    'UNIT_CIRCLE', 'ANGLE', 'REGULAR_POLYGON', 'CIRCLE_DIAGRAM', 'COUNTERS',
+    'FUNCTION_GRAPH', 'SLIDER_GRAPH', 'SYSTEM_GRAPH', 'RATIONAL_GRAPH', 'DERIVATIVE_GRAPH'
+  ];
+
+  var TRIAL_VISUAL_SCRIPTS = [
+    '/js/visualTokenParser.js?v=20261123',
+    '/js/mathGraph.js?v=20261111',
+    '/js/inlineChatVisuals.js?v=20261123'
+  ];
+  var trialVisualsReady = null;
+
+  function loadScriptOnce(src) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error('failed: ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function loadTrialVisuals() {
+    if (trialVisualsReady) return trialVisualsReady;
+    trialVisualsReady = TRIAL_VISUAL_SCRIPTS.reduce(function (chain, src) {
+      return chain.then(function () { return loadScriptOnce(src); });
+    }, Promise.resolve()).then(function () {
+      // The staged drawing (hops one after another, an endpoint then its
+      // shading) is a nicety: its absence must not cost the picture.
+      loadScriptOnce('/js/visual-motion.js?v=20261111').catch(function () {});
+      return !!window.inlineChatVisuals;
+    }).catch(function () {
+      trialVisualsReady = null;   // a dropped connection may be back next turn
+      return false;
+    });
+    return trialVisualsReady;
+  }
+
+  /* Split a reply into words and picture tags. A tag is "[NAME:…]" with NAME
+     in capitals, brackets balanced, never preceded by a backslash (so display
+     math "\\[ … \\]" is words). The same scan the server filters with. */
+  function splitTrialVisuals(text) {
+    var parts = [];
+    var buf = '';
+    var i = 0;
+    while (i < text.length) {
+      if (text[i] === '[' && text[i - 1] !== '\\' && /^\[\s*[A-Z][A-Z0-9_]*\s*:/.test(text.slice(i, i + 40))) {
+        var depth = 1;
+        var j = i + 1;
+        while (j < text.length && depth > 0) {
+          if (text[j] === '[') depth++;
+          else if (text[j] === ']') depth--;
+          j++;
+        }
+        if (depth === 0) {
+          if (buf.trim()) parts.push({ text: buf });
+          buf = '';
+          parts.push({ tag: text.slice(i, j) });
+          i = j;
+          continue;
+        }
+      }
+      buf += text[i];
+      i++;
+    }
+    if (buf.trim()) parts.push({ text: buf });
+    return parts;
+  }
+
+  function sanitizeTrialVisual(html) {
+    if (!window.DOMPurify) return html;
+    // Handlers are attached by initializeVisuals, so losing inline onclick
+    // attributes here costs nothing.
+    return window.DOMPurify.sanitize(html, { USE_PROFILES: { html: true, svg: true, svgFilters: true } });
+  }
+
+  function renderTutorReply(bubble, text, row) {
+    var parts = splitTrialVisuals(text);
+    var hasTag = parts.some(function (p) { return !!p.tag; });
+    if (!hasTag) {
+      bubble.innerHTML = renderTrialMath(text);
+      return;
+    }
+
+    var slots = [];
+    bubble.innerHTML = '';
+    parts.forEach(function (p) {
+      var el = document.createElement('div');
+      if (p.tag) {
+        el.className = 'lp-chat-visual';
+        slots.push({ el: el, tag: p.tag });
+      } else {
+        el.className = 'lp-chat-text';
+        el.innerHTML = renderTrialMath(p.text.trim());
+      }
+      bubble.appendChild(el);
+    });
+
+    loadTrialVisuals().then(function (ok) {
+      var drew = false;
+      slots.forEach(function (slot) {
+        var html = '';
+        var name = (slot.tag.match(/^\[\s*([A-Z][A-Z0-9_]*)\s*:/) || [])[1];
+        if (ok && TRIAL_DRAWABLE.indexOf(name) !== -1) {
+          try {
+            var r = window.inlineChatVisuals.processMessage(slot.tag);
+            // Drawn only if the tag was consumed whole and without an error card.
+            if (r && r.hasVisuals && r.html && r.html.indexOf('icv-error') === -1 && !/\[\s*[A-Z][A-Z0-9_]*\s*:/.test(r.html.replace(/<[^>]*>/g, ''))) {
+              html = sanitizeTrialVisual(r.html);
+            }
+          } catch (e) { html = ''; }
+        }
+        if (html && html.trim()) { slot.el.innerHTML = html; drew = true; }
+        else if (slot.el.parentNode) slot.el.parentNode.removeChild(slot.el);
+      });
+      if (!drew) return;
+      try {
+        window.inlineChatVisuals.initializeVisuals(bubble);
+        if (window.VisualMotion && window.VisualMotion.play) window.VisualMotion.play(bubble);
+      } catch (e) { /* a picture that will not animate is still a picture */ }
+      // The bubble just grew: keep the reply's first line where it was put.
+      requestAnimationFrame(function () { if (row && row.parentNode) scrollTrialToReply(row); });
     });
   }
 

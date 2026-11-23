@@ -196,6 +196,10 @@ function matchTopic(text) {
  * @param {boolean} [input.recentInlineVisual] - the tutor drew an inline picture in one of
  *        its last two replies; asking again every turn turns a lesson into a slideshow
  * @param {number}  [input.recentWrongCount]
+ * @param {string[]} [input.drawable] - the ONLY picture tags this surface can draw (the
+ *        landing-page preview loads a subset). A topic whose pictures are all outside it
+ *        is not asked for: a tag that cannot be drawn is stripped, and the sentence that
+ *        points at it is left pointing at nothing. Absent = everything (the signed-in chat).
  * @returns {string|null} the directive, or null to stay quiet
  */
 function buildVisualDirective(input = {}) {
@@ -205,7 +209,12 @@ function buildVisualDirective(input = {}) {
   // Already drawn for this problem — refer to it, don't produce another.
   if (input.boardHasVisual) return null;
 
-  const topic = matchTopic(`${input.skillName || ''} ${input.studentText || ''}`);
+  const drawable = Array.isArray(input.drawable) && input.drawable.length ? new Set(input.drawable) : null;
+  let topic = matchTopic(`${input.skillName || ''} ${input.studentText || ''}`);
+  if (drawable && topic) {
+    const named = (topic.tool.match(/\[[A-Z_]+(?=[:\]])/g) || []).map((t) => t.slice(1));
+    if (!named.some((n) => drawable.has(n))) topic = null;
+  }
   const isMoment = VISUAL_MOMENTS.has(action);
   const struggling = (input.recentWrongCount || 0) >= 2;
 
@@ -225,9 +234,14 @@ function buildVisualDirective(input = {}) {
         ? 'Words have missed twice on this. Change the channel: show it.'
         : 'This topic is spatial by nature — a picture is the normal way to teach it, not a bonus.';
 
-  const how = topic
+  const only = drawable
+    ? ` On THIS page only these tags draw: ${[...drawable].map((n) => `[${n}:…]`).join(' ')}. Anything else will not appear, so never refer to a picture you did not draw with one of them.`
+    : '';
+  const how = (topic
     ? `Reach for: ${topic.tool}.`
-    : 'Pick the tool that fits — a graph, a labelled diagram, a number line, or an area/tile model.';
+    : drawable
+      ? 'Pick the picture that fits from the tags this page can draw.'
+      : 'Pick the tool that fits — a graph, a labelled diagram, a number line, or an area/tile model.') + only;
 
   const guard = ` Do NOT plot or diagram the student's own unsolved expression in a way that hands them the answer (a server-side gate will strip it); illustrate the IDEA, a simpler case, or a reference figure instead. The same goes for a number line: on the student's own problem draw where they START and the hops they have already made, never the hop that lands on their answer, and never shade the solution of an inequality they have not solved yet.`;
 
