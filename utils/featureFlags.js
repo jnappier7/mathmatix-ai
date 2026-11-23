@@ -17,6 +17,12 @@
  */
 'use strict';
 
+const { AsyncLocalStorage } = require('async_hooks');
+
+// One scope per request: is the Work Board on for THIS user as a preview?
+// Opened by boardPreviewScope (mounted after passport + impersonation).
+const previewScope = new AsyncLocalStorage();
+
 const LWS_MODES = ['off', 'dev', 'beta', 'live'];
 
 function boolFlag(v) {
@@ -35,12 +41,61 @@ function boolFlag(v) {
  * the server reads it here for the prompt, and the client reads the same value
  * through /api/features.js for the dock — so the two can never disagree.
  *
+ * PREVIEW (2026-11-23, owner: "how can I see it without the world seeing
+ * it?"): WORK_BOARD_PREVIEW lists accounts — emails or user ids, comma-
+ * separated — for whom the board is on while it is off for everyone else.
+ * boardPreviewScope decides it once per request from req.user and every reader
+ * of this function inside that request (the prompt, structured mode, the board
+ * tool, the per-turn board block, /api/features.js) gets the same answer, so
+ * server and client still cannot disagree. Outside a request (voice sockets,
+ * crons, the landing-page trial with no user) only the global switch counts.
+ * An explicitly passed `env` is a test or a caller asking about that env — the
+ * request scope is consulted only for the real process.env.
+ *
  * @param {object} env - process.env (injectable for tests)
  * @returns {boolean}
  */
 function isWorkBoardEnabled(env = process.env) {
   const v = String(env.WORK_BOARD || '').trim().toLowerCase();
-  return v === 'on' || v === 'true' || v === '1';
+  if (v === 'on' || v === 'true' || v === '1') return true;
+  if (env !== process.env) return false;
+  const scope = previewScope.getStore();
+  return !!(scope && scope.workBoard === true);
+}
+
+/** The accounts named in WORK_BOARD_PREVIEW, lower-cased. */
+function boardPreviewList(env = process.env) {
+  return new Set(String(env.WORK_BOARD_PREVIEW || '')
+    .split(',').map(s => s.trim().toLowerCase()).filter(Boolean));
+}
+
+/**
+ * Is this account on the preview list? Matched on email or user id, exactly —
+ * no patterns, no roles: a preview is a short list of named people.
+ */
+function isBoardPreviewUser(user, env = process.env) {
+  if (!user) return false;
+  const list = boardPreviewList(env);
+  if (list.size === 0) return false;
+  const email = typeof user.email === 'string' ? user.email.trim().toLowerCase() : '';
+  const id = user._id != null ? String(user._id).toLowerCase() : '';
+  return (!!email && list.has(email)) || (!!id && list.has(id));
+}
+
+/**
+ * Express middleware: open the preview scope for this request. Mount AFTER
+ * passport and impersonation, so an admin viewing a student's chat gets the
+ * student's board state, not their own.
+ */
+function boardPreviewScope(req, res, next) {
+  let on = false;
+  try { on = isBoardPreviewUser(req.user || null); } catch { on = false; }
+  return previewScope.run({ workBoard: on }, () => next());
+}
+
+/** Run `fn` as if inside a request for a preview (or non-preview) account. Tests. */
+function runWithBoardPreview(on, fn) {
+  return previewScope.run({ workBoard: on === true }, fn);
 }
 
 /**
@@ -70,4 +125,7 @@ function buildFeaturesScript(env = process.env) {
   return '// server feature-flag overrides — see utils/featureFlags.js\n' + body + '\n';
 }
 
-module.exports = { buildFeaturesScript, isWorkBoardEnabled, LWS_MODES };
+module.exports = {
+  buildFeaturesScript, isWorkBoardEnabled, LWS_MODES,
+  boardPreviewScope, isBoardPreviewUser, boardPreviewList, runWithBoardPreview,
+};

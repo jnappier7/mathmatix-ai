@@ -325,7 +325,7 @@ describe('boardResponseSchema — schema shape (OpenAI strict mode)', () => {
 
   test('BOARD_ACTIONS lists the supported actions', () => {
     expect(BOARD_ACTIONS).toEqual([
-      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example',
+      'pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example', 'tiles',
     ]);
   });
 

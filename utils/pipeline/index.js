@@ -52,6 +52,7 @@ const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
 const { assembleEvidence } = require('./evidenceAccumulator');
 const { settleBoardTurn } = require('./boardSettle');
+const { isWorkBoardEnabled } = require('../featureFlags');
 const { assistanceLevelForTurn } = require('./assistanceLadder');
 const { buildBoardStateBlock } = require('./boardStateBlock');
 
@@ -1274,6 +1275,30 @@ async function runPipeline(message, ctx) {
     pinnedProblemTex: (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
       || ctx.conversation?.boardProblem?.tex || null,
   });
+
+  // The same promise, kept on the card: "let me get the tiles out" with no
+  // tiles card is the board contradicting the chat. The line is the problem in
+  // focus — nothing the student has not already been given — and it goes
+  // through the guard like any other card (not drawable → no card).
+  // Board ON only: with it off nothing draws the card, and a tiles step in the
+  // ledger would only pad the step count the teacher's live view reads.
+  if (isWorkBoardEnabled() && tilesTabBackfill && !verified.boardCommands.some(c => c.action === 'tiles')) {
+    const tilesTex = (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
+      || ctx.conversation?.boardProblem?.tex || null;
+    if (tilesTex) {
+      const tilesGuard = enforcePedagogyRule({
+        commands: [{ action: 'tiles', tex: tilesTex }],
+        userMessage: message,
+        recentUserMessages: recentUserMessagesForBoard,
+        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
+        pinnedProblemTex: tilesTex,
+      });
+      if (tilesGuard.allowed.length > 0) {
+        verified.boardCommands = verified.boardCommands.concat(tilesGuard.allowed);
+        boardLogger.info('Tiles-promise backfill added tiles card', { tex: tilesTex });
+      }
+    }
+  }
 
   if (!tilesTabBackfill
       && !verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {

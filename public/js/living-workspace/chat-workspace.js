@@ -114,14 +114,14 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261025a';
+  var ASSET_V = '?v=20261123b';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
     'core/snapshotManager.js', 'core/a11yCommands.js', 'core/ledgerReplay.js',
     'core/sourceList.js', 'dom/sourceDock.js', 'dom/notebookPanel.js', 'dom/modelElement.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
-    'dom/tileElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
+    'dom/tileElement.js', 'dom/tileMatElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
     'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
     'dom/derivationView.js', 'dom/voiceBoardTranslate.js',
@@ -340,6 +340,9 @@
     else if (window.LWS.NoteElement) r.image = window.LWS.NoteElement.makeRenderer();
     // Geometry (P17): titled note card until a real figure renderer lands.
     if (window.LWS.NoteElement) r.geometry = window.LWS.NoteElement.makeRenderer();
+    // Algebra tiles on the card: the server decides which tiles a line is
+    // (utils/workspace/tileMat.js); the student drags, flips and cancels them.
+    if (window.LWS.TileMatElement) r.algebra_tiles = window.LWS.TileMatElement.makeRenderer();
     // Interactive concept models (§6.8) — bridges to the page's
     // ConceptModelRenderer engine (JSXGraph/tokens, linked representations).
     // §6.9: settled manipulations become exploration StudentMoves — verified

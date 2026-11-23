@@ -60,7 +60,7 @@ const { isWorkBoardEnabled } = require('./featureFlags');
 // are only admitted in teaching mode (WORKED_EXAMPLE_BOARD + an "I-do" decision
 // action), still re-checked against the student's pinned problem/answer so a
 // "worked example" can never become a cover for solving the graded problem.
-const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example'];
+const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example', 'tiles'];
 
 // The kind of turn Maya is serving. The model self-declares this
 // on every structured response. Server-side audit (utils/turnTypeAudit.js)
@@ -96,7 +96,7 @@ const BOARD_COMMAND_SCHEMA = {
     },
     tex: {
       type: ['string', 'null'],
-      description: 'LaTeX expression. Required for pose, resolve, verify, scaffold, and example. For scaffold it MUST contain at least one empty slot the student fills, written as \\boxed{} (e.g. "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"). For example it is one step of the tutor\'s derivation. Null for apply, clear, graph, image.',
+      description: 'LaTeX expression. Required for pose, resolve, verify, scaffold, and example. For scaffold it MUST contain at least one empty slot the student fills, written as \\boxed{} (e.g. "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"). For example it is one step of the tutor\'s derivation. For tiles it is the expression or equation to lay out in algebra tiles, a plain sum of terms in one variable (e.g. "2x + 3 = 7"). Null for apply, clear, graph, image.',
     },
     op: {
       type: ['string', 'null'],
@@ -311,6 +311,7 @@ CARD SHAPE (fields not used for an action are null):
 - clear:   { action: "clear" }                                            — only on a new problem or right after a verify lands.
 - graph:   { action: "graph", fn: "x^2 - 4", caption: "Where it crosses zero" } — reference plot in the board timeline.
 - image:   { action: "image", query: "unit circle labeled", caption: "Reference" } — reference diagram from the safe whitelist.
+- tiles:   { action: "tiles", tex: "2x + 3 = 7" }                       — algebra tiles for a line ALREADY on the board (the problem, or a line the student stated). You only name the line; the board lays out the tiles and the student can drag them, flip them and cancel zero pairs. Plain terms in one variable, whole-number coefficients, nothing above x^2, no brackets or fractions — anything else is dropped. Reach for it for zero pairs, combining like terms, keeping an equation balanced, or seeing a quadratic as an area.
 - scaffold:{ action: "scaffold", tex: "x^2 + 4x + \\boxed{} = 12 + \\boxed{}" } — show the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. This is the one card you may put on the student's own problem without them stating it first, BECAUSE the blanks reveal nothing — they're a hint, not the answer. Every scaffold MUST contain at least one \\boxed{} blank; never fill the boxes in yourself (that would be handing over the answer). Use it when a student is stuck and a partially-drawn step would unstick them. The blank marks EXACTLY what you are asking them to produce: never blank an already-known value while displaying the result (asking "what's 0.3 × 1000?" the card is "0.3 \\times 1000 = \\boxed{}", NOT "0.3 \\times \\boxed{} = 300"), and never write "?" as the unknown — the empty box IS the unknown ("0 + 50 + 300 = \\boxed{}", never "0 + \\boxed{} + \\boxed{} = ?"). The server drops backwards or "?"-marked scaffolds.
 - example: { action: "example", tex: "\\int x^2\\,dx = \\tfrac{1}{3}x^3 + C", caption: "Power rule" } — ONE step of a derivation YOU are teaching (worked_example turns only). Emit them in order, one card per step; caption is an optional short label. These carry your full worked steps, which is allowed ONLY because the work is yours on a teaching example — never put the student's graded problem or its answer in an example card.
 

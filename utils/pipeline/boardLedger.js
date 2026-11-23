@@ -58,6 +58,7 @@ const COMMAND_FIELDS = [
   'query',                           // image
   'diagram_type', 'diagram_params',  // diagram
   'model', 'spec', 'prompt',         // interactive concept model
+  'mat',                             // algebra tiles (utils/workspace/tileMat.js)
 ];
 /**
  * Heal board tex before it is stored. Board tex is BARE math — KaTeX renders

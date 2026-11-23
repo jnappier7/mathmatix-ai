@@ -446,7 +446,9 @@ function registerRoutes(app, { authLimiter, signupLimiter }) {
   // beyond Render's own env-save restart. no-store: flips apply on next load.
   app.get('/api/features.js', (req, res) => {
     res.set('Content-Type', 'application/javascript');
-    res.set('Cache-Control', 'no-store');
+    // private: workBoard can differ per account (WORK_BOARD_PREVIEW), so no
+    // shared cache may ever hand one user's flags to another.
+    res.set('Cache-Control', 'private, no-store');
     res.send(buildFeaturesScript());
   });
   // "Scan with your phone" desktop endpoints (session-authed). The public

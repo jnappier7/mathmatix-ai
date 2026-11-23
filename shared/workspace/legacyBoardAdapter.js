@@ -86,6 +86,12 @@ function mapCommand(cmd) {
       return (cmd.diagram_type || cmd.diagram_params)
         ? { type: ELEMENT_TYPES.GEOMETRY, semantic: { diagramType: cmd.diagram_type || null, params: cmd.diagram_params || null } }
         : null;
+    case 'tiles':
+      // Algebra tiles. `mat` is the server's reading of the line
+      // (utils/workspace/tileMat.js) — the client draws it, never parses math.
+      return (cmd.mat && Array.isArray(cmd.mat.sides))
+        ? { type: ELEMENT_TYPES.ALGEBRA_TILES, semantic: Object.assign({ mat: cmd.mat }, cmd.caption ? { caption: cmd.caption } : null) }
+        : null;
     case 'model':
       // Interactive concept model (CONCEPT_MODELS): a curated name OR a full
       // spec (JSON string, validated client-side before it can render).

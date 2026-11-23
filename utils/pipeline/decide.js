@@ -207,7 +207,7 @@ function decide(observation, diagnosis, context = {}) {
 function applyVisualDirective(decision, observation, context) {
   const ledger = context.conversation?.boardLedger;
   const steps = Array.isArray(ledger?.current?.steps) ? ledger.current.steps : [];
-  const VISUAL_ACTIONS = new Set(['graph', 'image', 'diagram', 'model']);
+  const VISUAL_ACTIONS = new Set(['graph', 'image', 'diagram', 'model', 'tiles']);
 
   const directive = buildVisualDirective({
     action: decision.action,

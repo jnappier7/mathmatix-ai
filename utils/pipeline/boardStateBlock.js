@@ -40,6 +40,8 @@ function describeStep(cmd) {
     case 'graph': return 'graph: ' + trunc(cmd.fn || cmd.tex || 'plotted');
     case 'image': return 'picture: ' + trunc(cmd.query || cmd.caption || '');
     case 'diagram': return 'diagram: ' + trunc(cmd.diagram_type || cmd.caption || 'shown');
+    case 'tiles': return 'ALGEBRA TILES the student can move, flip and cancel, laid out for: '
+      + trunc((cmd.mat && cmd.mat.tex) || cmd.tex || '');
     case 'model': return 'INTERACTIVE model the student can manipulate: '
       + trunc(cmd.model || 'custom')
       + (cmd.prompt ? ' — “' + trunc(cmd.prompt) + '”' : '');

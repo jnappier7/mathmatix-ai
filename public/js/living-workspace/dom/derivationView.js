@@ -192,8 +192,17 @@
         var run = proseRunClean(tex.slice(last, m.index));
         if (run) target.appendChild(doc.createTextNode(run));
       }
-      var span = doc.createElement('span');
       var frag = m[0].replace(/^\$|\$$/g, '');
+      // A \text{…} run inside a sentence IS the sentence: plain, wrapping
+      // words, not a KaTeX span (which never wraps).
+      var words = frag.match(/^\\text\s*\{([^{}]*)\}$/);
+      if (words) {
+        target.appendChild(doc.createTextNode(words[1]));
+        found = true;
+        last = m.index + m[0].length;
+        continue;
+      }
+      var span = doc.createElement('span');
       if (katex && typeof katex.render === 'function') {
         try { katex.render(frag, span, { throwOnError: false, displayMode: false }); }
         catch (_) { span.textContent = m[0]; }
@@ -209,17 +218,99 @@
     if (!found) target.textContent = unwrapText(tex);   // pure prose, no math
   }
 
-  function typeset(target, latex) {
+  // ── lining the work up on the relation sign ────────────────────────────
+  // A teacher writing a solve keeps every "=" in one column, so the eye can
+  // run down what changed on each side. To do that the card needs each line
+  // as three pieces — left side, the sign, right side — which the stylesheet
+  // then places in three shared columns (living-workspace.css, "lined up on
+  // the sign"). This finds the FIRST relation at the top level of a line.
+  //
+  // It answers null — "typeset this line whole" — whenever a clean split is
+  // not certain: a multi-line environment, an alignment tab, a relation that
+  // only appears inside a group, a fence or brackets, a two-character ASCII
+  // operator (<=, =>, ->, !=). A line left whole is merely not lined up; a
+  // line split in the wrong place would be wrong math on the student's page.
+  var REL_COMMANDS = {
+    le: 1, leq: 1, leqslant: 1, lt: 1, ge: 1, geq: 1, geqslant: 1, gt: 1,
+    ne: 1, neq: 1, approx: 1,
+  };
+  var REL_CHARS = '=<>\u2264\u2265\u2260\u2248';
+  function splitRelation(tex) {
+    var t = String(tex == null ? '' : tex);
+    if (!t || /\\begin|\\\\|&|\\not(?![a-zA-Z])/.test(t)) return null;
+    var brace = 0, fence = 0, paren = 0;
+    for (var i = 0; i < t.length; i++) {
+      var c = t.charAt(i);
+      var at = i, len = 1, isRel = false;
+      if (c === '\\') {
+        var m = /^\\([a-zA-Z]+)/.exec(t.slice(i));
+        if (!m) { i++; continue; }                 // \{  \,  \%  — an escaped char
+        var name = m[1];
+        len = m[0].length;
+        i += len - 1;
+        if (name === 'left') fence++;
+        else if (name === 'right') fence = Math.max(0, fence - 1);
+        else if (REL_COMMANDS[name] === 1) isRel = true;
+      } else if (c === '{') brace++;
+      else if (c === '}') brace = Math.max(0, brace - 1);
+      else if (c === '(' || c === '[') paren++;
+      else if (c === ')' || c === ']') paren = Math.max(0, paren - 1);
+      else if (REL_CHARS.indexOf(c) !== -1) isRel = true;
+      if (!isRel || brace || fence || paren) continue;
+      if (len === 1) {
+        var prev = t.charAt(at - 1), next = t.charAt(at + 1);
+        if ('=<>'.indexOf(next) !== -1 && next !== '') return null;      // <=  =>  ==
+        if (prev === '!' || prev === '-' || prev === ':') return null;   // !=  ->  :=
+      }
+      var lhs = t.slice(0, at).trim();
+      var rhs = t.slice(at + len).trim();
+      if (!rhs) return null;                       // "x =" — nothing to line up yet
+      return { lhs: lhs, rel: t.slice(at, at + len), rhs: rhs };
+    }
+    return null;
+  }
+
+  // Typeset a line as its three pieces. All-or-nothing: if any piece fails to
+  // parse on its own, the caller typesets the whole line the ordinary way.
+  function renderAligned(target, parts, katex) {
+    var doc = target.ownerDocument;
+    var made = [];
+    var spec = [['lws-eq-lhs', parts.lhs], ['lws-eq-rel', parts.rel], ['lws-eq-rhs', parts.rhs]];
+    for (var i = 0; i < spec.length; i++) {
+      var span = doc.createElement('span');
+      span.className = spec[i][0];
+      if (spec[i][1]) {
+        try { katex.render(spec[i][1], span, { throwOnError: false, displayMode: false }); }
+        catch (_) { return false; }
+        if (span.querySelector('.katex-error')) return false;
+      }
+      made.push(span);
+    }
+    target.textContent = '';
+    made.forEach(function (n) { target.appendChild(n); });
+    target.className += ' is-eq';
+    return true;
+  }
+
+  // `align` — line this up on its relation sign with the rest of the card.
+  function typeset(target, latex, align) {
     var katex = root.katex;
     var tex = cleanLatex(latex);
     if (looksLikeProse(tex)) {
       target.className += ' lws-dv-prose';
-      var whole = tex.trim().match(/^\\text\s*\{[\s\S]*\}$/);   // a pure \text{…} sentence
+      // A pure \text{…} sentence — ONE group. A greedy match here also took
+      // "\text{Subtract } 2x \text{ from both sides}" for one group and
+      // printed the second "\text" at the student as words.
+      var whole = tex.trim().match(/^\\text\s*\{[^{}]*\}$/);
       if (whole) target.textContent = unwrapText(tex);
       else renderProseWithMath(target, tex, katex);            // prose w/ inline math (\frac…)
       return;
     }
     if (katex && typeof katex.render === 'function') {
+      if (align) {
+        var parts = splitRelation(tex);
+        if (parts && renderAligned(target, parts, katex)) return;
+      }
       try {
         katex.render(tex, target, { throwOnError: false, displayMode: false });
         if (!target.querySelector('.katex-error')) return;
@@ -655,7 +746,7 @@
     var pstate = d.createElement('span'); pstate.className = 'lws-card-state'; pstate.textContent = '✓ Solved';
     eyebrow.appendChild(plab); eyebrow.appendChild(pstate);
     var ptex = d.createElement('div'); ptex.className = 'lws-card-problem';
-    typeset(ptex, entry.problemTex);
+    typeset(ptex, entry.problemTex, true);
     problem.appendChild(eyebrow); problem.appendChild(ptex);
     var lines = d.createElement('div'); lines.className = 'lws-card-body';
     card.appendChild(problem); card.appendChild(lines);
@@ -790,7 +881,7 @@
     var state = d.createElement('span'); state.className = 'lws-card-state'; state.textContent = '✓ Solved';
     eyebrow.appendChild(lab); eyebrow.appendChild(state);
     var body = d.createElement('div'); body.className = 'lws-card-problem';
-    typeset(body, latex);
+    typeset(body, latex, true);
     this.el.problem.appendChild(eyebrow);
     this.el.problem.appendChild(body);
     this.el.card.style.display = '';
@@ -869,7 +960,7 @@
       // chat had no concept of; this lane the tutor fully understands.)
       var tex = d.createElement('div'); tex.className = 'lws-step-tex';
       var latex = element.semantic && element.semantic.latex;
-      typeset(tex, latex);
+      typeset(tex, latex, true);
       main.appendChild(tex);
       var caption = element.semantic && element.semantic.caption;
       if (caption) {
@@ -878,7 +969,9 @@
       }
       if (kind === 'solution') {
         var badge = d.createElement('span'); badge.className = 'lws-step-answer-badge'; badge.textContent = 'Answer';
-        main.appendChild(badge);
+        // On a lined-up answer the badge rides beside the right-hand side —
+        // as a child of `main` it would take a row of its own in the grid.
+        (tex.querySelector('.lws-eq-rhs') || main).appendChild(badge);
       }
       if (latex && /\\boxed/.test(String(latex))) this._wireBlanks(wrap, tex, String(latex));
     }
@@ -1133,6 +1226,7 @@
   DerivationView.classify = classify;
   DerivationView.groupRows = groupRows;
   DerivationView.cleanLatex = cleanLatex;
+  DerivationView.splitRelation = splitRelation;
   DerivationView.detex = detex;
   DerivationView.looksLikeProse = looksLikeProse;
   DerivationView.unwrapText = unwrapText;
@@ -1141,5 +1235,5 @@
   DerivationView.assistanceSummary = assistanceSummary;
   DerivationView.MAX_ARCHIVE = MAX_ARCHIVE;
   LWS.DerivationView = DerivationView;
-  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, groupRows: groupRows, cleanLatex: cleanLatex, detex: detex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
+  if (typeof module !== 'undefined' && module.exports) module.exports = { DerivationView: DerivationView, classify: classify, groupRows: groupRows, cleanLatex: cleanLatex, splitRelation: splitRelation, detex: detex, looksLikeProse: looksLikeProse, unwrapText: unwrapText, freshNodes: freshNodes, hasSolution: hasSolution, assistanceSummary: assistanceSummary, MAX_ARCHIVE: MAX_ARCHIVE };
 })(typeof self !== 'undefined' ? self : this);

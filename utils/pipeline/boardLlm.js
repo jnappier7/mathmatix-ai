@@ -104,6 +104,8 @@ const BOARD_TRANSLATOR_SYSTEM = [
   '            (NOT "0.3 \\\\times \\\\boxed{} = 300" when the chat asks for 0.3 × 1000), and never use "?" as the unknown.',
   '- graph:    { action:"graph", fn:"x^2-4", caption:"..." }       a function plot',
   '- image:    { action:"image", query:"unit circle labeled", caption:"..." } a reference image',
+  '- tiles:    { action:"tiles", tex:"2x+3=7" }                    algebra tiles for a line already on the board,',
+  '            ONLY when the tutor says it is getting the tiles out',
   '- clear:    { action:"clear" }                                  wipe before a brand-new problem',
   '',
   'Return board_commands in the order the cards should appear on the board.',
