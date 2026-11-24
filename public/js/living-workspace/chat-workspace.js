@@ -114,7 +114,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261123b';
+  var ASSET_V = '?v=20261124a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -342,7 +342,9 @@
     if (window.LWS.NoteElement) r.geometry = window.LWS.NoteElement.makeRenderer();
     // Algebra tiles on the card: the server decides which tiles a line is
     // (utils/workspace/tileMat.js); the student drags, flips and cancels them.
-    if (window.LWS.TileMatElement) r.algebra_tiles = window.LWS.TileMatElement.makeRenderer();
+    if (window.LWS.TileMatElement) {
+      r.algebra_tiles = window.LWS.TileMatElement.makeRenderer({ onChange: queueTilesReport, onAsk: showTutorTheTiles });
+    }
     // Interactive concept models (§6.8) — bridges to the page's
     // ConceptModelRenderer engine (JSXGraph/tokens, linked representations).
     // §6.9: settled manipulations become exploration StudentMoves — verified
@@ -450,6 +452,56 @@
     if (!src) src = { uploadId: ref.uploadId, fileType: 'image', mimeType: null };
     try { dock.openSource(src, 'My worksheet', ref.region || null); }
     catch (e) { console.error('[LWS_CHAT] open linked source failed', e); }
+  }
+
+  // ── The tutor sees the tile mat ──────────────────────────────────────
+  // Each change on a mat is reported to the server as tile COUNTS plus the kind
+  // of move (never text); the server writes what the tutor reads from those
+  // (utils/workspace/tileMatState.js) and keeps it on the tiles card, which is
+  // also what brings the mat back after a reload. Reports are batched — a burst
+  // of drags is one request carrying the latest counts and the moves in order.
+  var tilesPending = {};     // start line → { sides, moves[] }
+  var tilesTimer = null;
+  var tilesInFlight = Promise.resolve();
+
+  function queueTilesReport(detail) {
+    if (!detail || !detail.start || !Array.isArray(detail.sides)) return;
+    var slot = tilesPending[detail.start] || (tilesPending[detail.start] = { sides: null, moves: [] });
+    slot.sides = detail.sides;
+    if (detail.move) slot.moves.push(detail.move);
+    if (tilesTimer) clearTimeout(tilesTimer);
+    tilesTimer = setTimeout(flushTilesReports, 700);
+  }
+
+  // Send everything queued. Resolves when the server has it (or has refused
+  // it) — never rejects: a mat that cannot report is still a working mat.
+  function flushTilesReports() {
+    if (tilesTimer) { clearTimeout(tilesTimer); tilesTimer = null; }
+    var batch = tilesPending;
+    tilesPending = {};
+    var doFetch = window.csrfFetch || window.fetch;
+    Object.keys(batch).forEach(function (start) {
+      var body = JSON.stringify({ start: start, sides: batch[start].sides, moves: batch[start].moves });
+      tilesInFlight = tilesInFlight.then(function () {
+        return doFetch('/api/student-moves/tiles', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' }, body: body,
+        });
+      }).catch(function () { /* the next change reports the whole mat again */ });
+    });
+    return tilesInFlight;
+  }
+
+  // "Show my tutor": make sure the server has the mat as it is NOW, then send
+  // an ordinary chat message — the tutor's reply comes down the normal turn,
+  // reading the mat from the board block like everything else on the board.
+  function showTutorTheTiles(detail) {
+    if (detail) { queueTilesReport({ start: detail.start, sides: detail.sides, move: null }); }
+    flushTilesReports().then(function () {
+      if (typeof window.mmSendChatMessage === 'function') {
+        window.mmSendChatMessage('Look at what I did with the tiles.');
+      }
+    });
   }
 
   // A settled concept-model manipulation (§6.9): one exploration StudentMove

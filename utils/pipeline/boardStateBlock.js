@@ -21,6 +21,7 @@
 'use strict';
 
 const { isWorkBoardEnabled } = require('../featureFlags');
+const { describeForTutor: describeTilesForTutor } = require('../workspace/tileMatState');
 const MAX_STEPS_SHOWN = 6;
 const MAX_TEX = 90;
 
@@ -40,8 +41,10 @@ function describeStep(cmd) {
     case 'graph': return 'graph: ' + trunc(cmd.fn || cmd.tex || 'plotted');
     case 'image': return 'picture: ' + trunc(cmd.query || cmd.caption || '');
     case 'diagram': return 'diagram: ' + trunc(cmd.diagram_type || cmd.caption || 'shown');
-    case 'tiles': return 'ALGEBRA TILES the student can move, flip and cancel, laid out for: '
-      + trunc((cmd.mat && cmd.mat.tex) || cmd.tex || '');
+    // What the student has DONE on the mat is part of the board the tutor
+    // reads (utils/workspace/tileMatState.js writes every word of it from
+    // tile counts — never from client text).
+    case 'tiles': return describeTilesForTutor(cmd.mat || { tex: cmd.tex || '' });
     case 'model': return 'INTERACTIVE model the student can manipulate: '
       + trunc(cmd.model || 'custom')
       + (cmd.prompt ? ' — “' + trunc(cmd.prompt) + '”' : '');

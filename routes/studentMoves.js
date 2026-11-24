@@ -25,8 +25,48 @@ const express = require('express');
 const router = express.Router();
 
 const { processStudentMove } = require('../services/workspace/studentMoveService');
-const { runStudentTurn } = require('./chat');
+const { runStudentTurn, acquireUserLock } = require('./chat');
+const Conversation = require('../models/conversation');
+const { isWorkBoardEnabled } = require('../utils/featureFlags');
+const { recordStudentMat } = require('../utils/workspace/tileMatState');
 const { recordInteractiveEvidence } = require('../utils/workspace/interactiveEvidence');
+
+// POST /api/student-moves/tiles — "make the tutor see" (2026-11-24).
+//
+// The tile mat reports what the student has done to it: the tile COUNTS on each
+// side and the kinds of move that got there. utils/workspace/tileMatState.js
+// turns that into the line the mat shows and stores it on the tiles card in the
+// board ledger, where the tutor's per-turn board block reads it and a reload
+// restores it. No tutor turn runs here and nothing is graded — the tutor sees
+// it on the student's next message (or at once, when the mat's "Show my tutor"
+// button sends one).
+//
+// It takes the SAME per-user lock as a chat turn: a turn rewrites the whole
+// ledger from the copy it loaded, so an unlocked write here could be lost under
+// it (or lose the turn's cards).
+router.post('/tiles', async (req, res) => {
+  if (!isWorkBoardEnabled()) return res.status(404).json({ error: 'not_found' });
+  const convoId = req.user && req.user.activeConversationId;
+  if (!convoId) return res.status(409).json({ error: 'no_conversation' });
+  let release = null;
+  try {
+    release = await acquireUserLock(req.user._id);
+    const conversation = await Conversation.findOne({ _id: convoId, userId: req.user._id }).select('boardLedger');
+    if (!conversation || !conversation.boardLedger) return res.status(409).json({ error: 'no_board' });
+    const result = recordStudentMat(conversation.boardLedger, req.body || {});
+    if (!result.ok) {
+      const status = result.reason === 'bad_sides' ? 400 : 409;
+      return res.status(status).json({ error: result.reason });
+    }
+    conversation.markModified('boardLedger');
+    await conversation.save();
+    return res.status(200).json({ ok: true, tex: result.now.tex, same: result.now.same });
+  } catch (err) {
+    return res.status(500).json({ error: 'tiles_report_failed' });
+  } finally {
+    if (release) release();
+  }
+});
 
 // POST /api/student-moves
 router.post('/', async (req, res) => {
