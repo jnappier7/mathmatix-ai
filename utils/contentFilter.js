@@ -73,17 +73,61 @@ function disclosureConcern(message) {
 // tagged them <SAFETY_CONCERN> in 3 of 4 live safety runs (2026-11-22) and
 // still hedged once in 3 after the prompt named them as idioms ("could be
 // figurative, but check"). A tag emails a real adult about a self-harm risk
-// that does not exist, so the server gets the last word: a model tag on a
-// message that is school hyperbole AND trips none of ALERT_PATTERNS is dropped.
-// The asymmetry is deliberate — "I want to die if I fail" matches the
-// self-harm pattern above and is never vetoed; the veto only ever removes a
-// tag the server's own reading would not have raised.
-const HYPERBOLE_VERB = /\b(kill(s|ing)?|murder(s|ing)?|die|dying|dead|death of me|end of me|strangle|slaughter)\b/i;
-const SCHOOL_CONTEXT = /\b(test|quiz|exam|final(s)?|homework|hw|problem|question|assignment|worksheet|class|grade(s)?|teacher|math|fail(s|ing|ed)?|wrong|due|late|lol|lmao|haha|ugh)\b/i;
+// that does not exist, so the server may drop a model tag on such a message.
+//
+// The veto is an ALLOW-LIST OF IDIOM SHAPES, never "a death word near a school
+// word". The first version was the latter, and because `class`, `math`, `test`,
+// `problem` and `lol` all counted as school context it dropped the model's tag
+// on "i wish i was dead, i hate this class", "nobody would care if i was dead
+// lol" and "a kid in my class said he is going to kill me tomorrow" — real
+// disclosures the model had caught and ALERT_PATTERNS is too narrow to re-raise.
+// A missed alert costs far more than a needless email, so:
+//   1. the message must match one of the idiom shapes below,
+//   2. it must trip none of NEVER_HYPERBOLE (first-person state, a reported
+//      threat, the student as the one doing harm, stated fear or sincerity),
+//   3. it must trip none of ALERT_PATTERNS.
+// Anything else keeps the model's tag. When in doubt, the adult hears about it.
+const TASK_NOUN = '(?:this|that|it|these|those|test|quiz|exam|finals?|homework|hw|problems?|questions?|assignment|worksheet|class|math|algebra|geometry|calc(?:ulus)?|trig|fractions?|unit|chapter|lesson|equations?|proofs?|packet|project|essay|school)';
+const ADULT_NOUN = '(?:mom|mum|mommy|mama|mother|dad|daddy|father|parents|folks|grandma|grandpa|teacher|coach|tutor|(?:mr|mrs|ms|miss)\\.? ?\\w+)';
+const INTENSIFIER = '(?:(?:literally|totally|actually|seriously|so|just|legit|absolutely)\\s+)*';
+const GRADE_OUTCOME = /\b(fail(s|ed|ing)?|flunk\w*|bomb(ed|ing)?|grades?|test|quiz|exam|finals?|homework|hw|report card|scores?|wrong|late|missing|assignment|worksheet|detention|pass(ed|ing)?)\b/i;
+
+const HYPERBOLE_SHAPES = [
+  // the WORK is the one doing the killing: "this problem is killing me"
+  new RegExp(`\\b${TASK_NOUN}\\s+(?:is|are|was|were|'?s)\\s+${INTENSIFIER}(?:killing|murdering|slaughtering|destroying)\\s+me\\b`, 'i'),
+  new RegExp(`\\b${TASK_NOUN}\\s+(?:is|are|'?s)?\\s*(?:going to|gonna|will|'?ll)\\s+${INTENSIFIER}(?:kill|murder|destroy)\\s+me\\b`, 'i'),
+  // "the death of me" / "the end of me" is an idiom whatever the subject
+  /\b(the\s+)?(death|end) of me\b/i,
+  // dying conditional on an outcome: "gonna die if I fail"
+  new RegExp(`\\b(?:gonna|going to|will|'?ll|would|might)\\s+${INTENSIFIER}die\\s+if\\b`, 'i'),
+];
+// "my mom will kill me if I get a bad grade" — only with a grade at stake.
+const ADULT_WILL_KILL_ME = new RegExp(`\\b${ADULT_NOUN}\\s+(?:is|are|'?s|'?re)?\\s*(?:going to|gonna|will|would|'?ll|'?d)\\s+${INTENSIFIER}(?:kill|murder|strangle|slaughter)\\s+me\\b`, 'i');
+
+// Never a figure of speech, whatever idiom sits beside it.
+const NEVER_HYPERBOLE = [
+  // first-person state: being dead, wishing for it, thinking about it
+  /\b(wish(ed|ing)?|rather)\b[^.!?]*\b(dead|die|died|dying|gone|never (been )?born)\b/i,
+  /\b(i|i'?d|we)\s+(was|were|am|could be|would be|be|been)\s+(dead|gone)\b/i,
+  /\bthink(s|ing)?\s+(about|of)\s+(dying|death|killing|ending)\b/i,
+  /\b(care|notice|miss me|be (sad|happier|better))\s+if\s+i\b/i,
+  /\b(dead|dying|empty|numb)\s+inside\b/i,
+  // a threat someone actually made
+  /\b(said|says|saying|told|tells|texted|messaged|threat\w*|warned|swore|promised)\b/i,
+  // the student as the one doing harm: "i want to kill my teacher"
+  /\b(i|we|i'?m|i'?ll|i'?d)\s+((am|will|would|could|should|might|really|just|so|literally|totally|gonna|wanna|going|want|wanted|to)\s+){0,4}(kill|murder|strangle|slaughter|shoot|stab|hurt)\b/i,
+  // fear, or saying they mean it
+  /\b(scared|afraid|terrified|frightened|not (joking|kidding)|for real|mean it|no joke|help me)\b/i,
+  // a peer or unnamed person as the one who will do it
+  /\b(he|she|they|kid|kids|boy|girl|guy|someone|somebody|brother|sister|boyfriend|girlfriend|stepdad|stepmom|uncle)\s+(is|are|'?s|'?re)?\s*(going to|gonna|will|'?ll|wants? to)\s+(kill|murder|hurt|shoot|stab)\s+me\b/i,
+];
 
 function isSchoolHyperbole(message) {
   const m = String(message || '');
-  return HYPERBOLE_VERB.test(m) && SCHOOL_CONTEXT.test(m) && !disclosureConcern(m);
+  const idiom = HYPERBOLE_SHAPES.some((re) => re.test(m)) || (ADULT_WILL_KILL_ME.test(m) && GRADE_OUTCOME.test(m));
+  if (!idiom) return false;
+  if (NEVER_HYPERBOLE.some((re) => re.test(m))) return false;
+  return !disclosureConcern(m);
 }
 
 /**
