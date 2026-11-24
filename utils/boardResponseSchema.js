@@ -42,6 +42,7 @@
 'use strict';
 
 const { isWorkBoardEnabled } = require('./featureFlags');
+const { RESOLVE_RULE, MIRROR_RULE } = require('./boardStepRule');
 
 // NOTE: 'diagram' (deterministic JSXGraph geometry, gated behind DIAGRAM_BOARD)
 // is recognized so the verb + guard + client renderer can be exercised, but the
@@ -291,7 +292,7 @@ function buildStructuredResponseInstructions() {
   return `--- STRUCTURED RESPONSE MODE (OVERRIDES THE WORKBOARD TAG PROTOCOL) ---
 Your reply is a structured object, not free text. You fill three fields:
 - chat_message: what the student reads in the chat bubble. Talk like a tutor, in your voice. Do NOT write <BOARD .../> tags anywhere — the board is driven by the board_commands array below, not by tags in your prose. (The other inline tags still work normally: <XP/>, <GRAPH/>, <TILES/>, and the silent signal tags.)
-- board_commands: an array of cards for the WorkBoard beside the chat, in the order they should appear. Same actions as before — pose, apply, resolve, verify, clear, graph, image — now as JSON objects instead of tags. The board mirrors the STUDENT's reasoning: never emit a resolve/apply for a step the student hasn't said, and never pose the answer.
+- board_commands: an array of cards for the WorkBoard beside the chat, in the order they should appear. Same actions as before — pose, apply, resolve, verify, clear, graph, image — now as JSON objects instead of tags. ${MIRROR_RULE}
 - turn_type: classify this turn so the board matches the pedagogy. Pick the single best fit:
   • problem_introduction — you put a NEW problem in front of the student. board_commands MUST include a pose card. This is the rule we most often miss: if you're giving them something to work on, the pose card is mandatory, every time.
   • step_acknowledgment — you're reacting to a step the student took in an open problem. apply/resolve cards are common; any combination is fine.
@@ -306,7 +307,7 @@ Your reply is a structured object, not free text. You fill three fields:
 CARD SHAPE (fields not used for an action are null):
 - pose:    { action: "pose", tex: "2x + 4 = 20" }                         — at the moment a problem starts, once per problem.
 - apply:   { action: "apply", op: "subtract 4 from both sides" }          — AFTER the student names the move; op restates THEIR move.
-- resolve: { action: "resolve", tex: "2x = 16" }                          — AFTER the student states the result; tex is what THEY wrote.
+- resolve: { action: "resolve", tex: "2x = 16" }                          — ${RESOLVE_RULE}
 - verify:  { action: "verify", tex: "x = 8", check: "2(8) + 4 = 20" }     — when the solution is checked.
 - clear:   { action: "clear" }                                            — only on a new problem or right after a verify lands.
 - graph:   { action: "graph", fn: "x^2 - 4", caption: "Where it crosses zero" } — reference plot in the board timeline.

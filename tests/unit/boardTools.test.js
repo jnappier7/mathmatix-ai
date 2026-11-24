@@ -124,6 +124,9 @@ describe('isBoardToolCall / instructions', () => {
     expect(text).toContain('OVERRIDES THE WORKBOARD TAG PROTOCOL');
     expect(text).toContain(BOARD_TOOL_NAME);
     expect(text).toContain('\\boxed{}');
-    expect(text).toContain('never pose the answer');
+    // The step rule is one shared wording (utils/boardStepRule.js): the board
+    // follows the student's work, one line per move, never the answer.
+    expect(text).toContain('and never the answer');
+    expect(text).toContain('NEVER the final answer');
   });
 });

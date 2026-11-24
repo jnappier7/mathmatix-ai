@@ -16,7 +16,7 @@
 
 'use strict';
 
-const { residualRatio, scaffoldBlankIsGiven } = require('./pipeline/boardContinuity');
+const { residualRatio, scaffoldBlankIsGiven, isUnsolvedEquation } = require('./pipeline/boardContinuity');
 const { parseTileMat } = require('./workspace/tileMat');
 
 // Verbs that map to allowed `apply` operations. Match fuzzy: we only
@@ -97,12 +97,117 @@ function texMatchesStudentText(tex, studentText) {
     if (!norm || !sNorm) return false;
     if (sNorm.includes(norm)) return true;
 
-    // Fall back to per-side match on equations.
+    // Fall back to per-side match on equations. A side that is a bare number
+    // has to be STATED as a value, not merely have its digits in the text:
+    // "divide by 2" on 2x = 4 used to pass "x = 2" — the "x" from the problem
+    // the student typed a message ago, the "2" from the move they named — and
+    // that line is the answer.
     if (norm.includes('=')) {
         const parts = norm.split('=').map(p => p.trim()).filter(Boolean);
-        return parts.every(p => p.length >= 1 && sNorm.includes(p));
+        return parts.every(p => p.length >= 1
+            && (isBareNumber(p) ? statesNumber(p, studentText) : sNorm.includes(p)));
     }
     return false;
+}
+
+// A side that is nothing but a number ("7", "-2.5").
+function isBareNumber(side) {
+    return /^[-+]?\d+(?:\.\d+)?$/.test(side);
+}
+
+// Did the student state this number AS a value — "24", "it's 24", "= 24" —
+// and not merely write its digits inside something else ("divide by 2",
+// "12x", "2.5")? A substring test cannot tell those apart, and a bare number
+// is exactly what an answer looks like.
+function statesNumber(num, studentText) {
+    const n = String(num).replace(/^\+/, '');
+    const esc = n.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
+    const re = new RegExp(`(?:^|[^\\w.])${esc}(?![\\w.]|\\s*[a-z(])`, 'i');
+    return String(studentText || '').split(/\n+/).some((line) => {
+        const m = re.exec(line.replace(/[−–—]/g, '-'));
+        if (!m) return false;
+        // "divide by 2", "times 3", "subtract 7 from both sides": the number
+        // there is the move's operand, not a result.
+        const before = line.slice(0, m.index + m[0].length - n.length).toLowerCase();
+        return !/\b(?:by|times|of|add|adding|plus|subtract|subtracting|minus|multiply|multiplying|divide|dividing|the)\s*$/.test(before);
+    });
+}
+
+/**
+ * THE UNCHANGED SIDE COMES FROM THE BOARD.
+ *
+ * A student who has just combined 12 and −5 says "6x + 7". The line that goes
+ * on the board is "6x + 7 = 2x + 31", and its right side is not in their
+ * message — it is the side they did not touch, sitting on the line above. The
+ * per-side match in texMatchesStudentText only ever looked at the student's
+ * last two messages, so the board kept up while the problem statement was
+ * still inside that window and then stopped: the first step or two landed and
+ * every later one was dropped (owner, on a preview account, 2026-11-24: "work
+ * board stops updating after a couple of steps").
+ *
+ * So an equation line is the student's when EACH side is either something they
+ * wrote this turn or a side already on the card in focus, and AT LEAST ONE
+ * side is theirs. Nothing reaches the board that the student has not written
+ * or is not already looking at. A bare number counts as theirs only when they
+ * stated it as a value (statesNumber) — "x = 2" must not ride in on "divide
+ * by 2".
+ */
+function lineFromStudentAndBoard(tex, ctx) {
+    const norm = normalizeForMatch(tex);
+    if (!norm || !norm.includes('=')) return false;
+    const sides = norm.split('=').map(p => p.trim());
+    if (sides.length !== 2 || sides.some(p => !p)) return false;
+    const sNorm = normalizeForMatch(ctx.combinedText);
+    const onBoard = ctx.boardSides || new Set();
+    let fromStudent = 0;
+    for (const side of sides) {
+        const theirs = isBareNumber(side)
+            ? statesNumber(side, ctx.combinedText)
+            : (side.length >= 2 && !!sNorm && sNorm.includes(side));
+        if (theirs) { fromStudent++; continue; }
+        if (!onBoard.has(side)) return false;
+    }
+    return fromStudent >= 1;
+}
+
+// Did the student name a move in THIS message ("distribute the 3", "combine
+// like terms", "subtract 2x from both sides")?
+function namesAMove(text) {
+    const t = String(text || '').toLowerCase();
+    return !!t && OPERATION_KEYWORDS.some(kw => new RegExp(`\\b${kw.replace(/ /g, '\\s+')}`).test(t));
+}
+
+/**
+ * THE STUDENT CHOSE THE MOVE; THE TUTOR MAY WRITE WHERE IT LANDS.
+ *
+ * "Distribute the 3." "Combine like terms." "Subtract 2x from both sides."
+ * A student working at that level is doing the algebra — choosing the move is
+ * the skill — and a tutor at a whiteboard writes the line the move produces.
+ * The guard used to keep the label ("↳ distribute the 3") and drop the line,
+ * every turn, so a whole solve could pass with nothing on the board but the
+ * problem (owner: "or maybe doesn't understand simplification and
+ * distribution as a step").
+ *
+ * Narrow on purpose:
+ *   • the student named a move in THIS message;
+ *   • the line is the same equation as the last line on the card (their
+ *     residuals are proportional — exactly what a move does), and not that
+ *     line again;
+ *   • it is still an unsolved line. The ANSWER ("x = 6") never lands this
+ *     way: that the student must state;
+ *   • one landing per turn — one move, one line.
+ * Equations in one variable only; anything this cannot prove stays under the
+ * strict rule.
+ */
+function landsNamedMove(tex, ctx) {
+    if (!ctx.state || ctx.state.landed) return false;
+    if (!namesAMove(ctx.currentText)) return false;
+    const prev = ctx.state.lastLine;
+    if (!prev) return false;
+    if (normalizeForMatch(prev) === normalizeForMatch(tex)) return false;
+    if (!isUnsolvedEquation(tex)) return false;
+    if (ctx.pinnedAnswer && texMatchesEither(tex, ctx.pinnedAnswer)) return false;
+    return residualRatio(prev, tex) !== null;
 }
 
 /**
@@ -295,6 +400,11 @@ function enforcePedagogyRule({
     // mirror it onto the card; without this a student who cancelled their way
     // to "2x = 4" got no line for it until they also typed it.
     studentBoardLines = [],
+    // The equation lines already on the card in focus, oldest first: the
+    // problem, then each resolved line (boardLedger.current). What the student
+    // is looking at — the unchanged side of their next line comes from here,
+    // and a named move lands on the last of them.
+    boardLines = [],
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -332,6 +442,21 @@ function enforcePedagogyRule({
     // cards "5(x+2) - 3x = 26" and "x = 8", the answer above the first step).
     let activeProblemTex = pinnedProblemTex || focusProblemTex;
 
+    // The card's lines as this batch finds them, kept current as it lands more.
+    const boardSides = new Set();
+    const state = { lastLine: null, landed: false };
+    const noteLine = (tex) => {
+        if (typeof tex !== 'string' || !tex.trim()) return;
+        const norm = normalizeForMatch(tex);
+        if (!norm.includes('=')) return;
+        norm.split('=').map(p => p.trim()).filter(Boolean).forEach(p => boardSides.add(p));
+        state.lastLine = tex;
+    };
+    [activeProblemTex].concat(Array.isArray(boardLines) ? boardLines : []).forEach(noteLine);
+    // An apply whose wording the student did not use, waiting to see whether
+    // the line it labels is theirs (see below).
+    let heldApply = null;
+
     for (let i = 0; i < commands.length; i++) {
         const original = commands[i];
         // Scrub leaked JSON/garbage out of the math fields FIRST, so the clean
@@ -358,9 +483,31 @@ function enforcePedagogyRule({
             tutorReplyText,
             activeProblemTex,
             handLines,
+            boardSides,
+            state,
         });
 
+        // A LABEL FOLLOWS ITS LINE. "6x + 12 - 5", says the student, and the
+        // tutor's cards are apply "distribute the 3" + resolve of that line.
+        // The student never typed "distribute", so the label used to be
+        // dropped and the line arrived bare. But the label only names what the
+        // student just did: if the line it introduces is theirs, so is it.
+        if (!decision.allowed && decision.reason === 'apply_op_not_in_student_message'
+                && nextAction === 'resolve') {
+            heldApply = command;
+            runningLastAction = command.action;
+            continue;
+        }
+        if (heldApply) {
+            if (decision.allowed && command.action === 'resolve') allowed.push(heldApply);
+            else dropped.push({ command: heldApply, reason: 'apply_op_not_in_student_message' });
+            heldApply = null;
+        }
+
         if (decision.allowed) {
+            if (decision.reason === 'lands_named_move') state.landed = true;
+            if (command.action === 'pose') { boardSides.clear(); state.lastLine = null; }
+            if (command.action === 'pose' || command.action === 'resolve' || command.action === 'verify') noteLine(command.tex);
             // A tiles card leaves the guard as the mat it was read into, with
             // NO top-level tex: every later stage that walks the board's
             // equation lines (continuity, the ledger's step count, the pin)
@@ -388,6 +535,7 @@ function enforcePedagogyRule({
         }
         runningLastAction = command.action;
     }
+    if (heldApply) dropped.push({ command: heldApply, reason: 'apply_op_not_in_student_message' });
 
     return { allowed, dropped };
 }
@@ -445,6 +593,12 @@ function evaluate(command, ctx) {
         }
         if (texMatchesStudentText(command.tex, ctx.combinedText) || madeByHand(command.tex, ctx)) {
             return { allowed: true };
+        }
+        if (lineFromStudentAndBoard(command.tex, ctx)) {
+            return { allowed: true, reason: 'unchanged_side_from_board' };
+        }
+        if (landsNamedMove(command.tex, ctx)) {
+            return { allowed: true, reason: 'lands_named_move' };
         }
         return { allowed: false, reason: 'resolve_tex_not_in_student_message' };
     }

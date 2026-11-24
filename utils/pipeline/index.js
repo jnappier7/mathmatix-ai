@@ -1074,6 +1074,14 @@ async function runPipeline(message, ctx) {
     }
   }
 
+  // The equation lines already on the card in focus, oldest first. The guard
+  // needs them for two things a student does every solve: giving only the side
+  // that changed ("6x + 7" — the other side is on the line above), and naming
+  // a move whose landing line continues the last one.
+  const boardLinesInFocus = (ctx.conversation?.boardLedger?.current?.steps || [])
+    .filter(c => c && (c.action === 'resolve' || c.action === 'verify') && typeof c.tex === 'string' && c.tex.trim())
+    .map(c => c.tex);
+
   if (rawLlmBoardCommands.length > 0) {
     const guardResult = enforcePedagogyRule({
       commands: rawLlmBoardCommands,
@@ -1094,6 +1102,7 @@ async function runPipeline(message, ctx) {
       studentBoardLines: (ctx.conversation?.boardLedger?.current?.steps || [])
         .filter(c => c && c.action === 'tiles' && c.mat && c.mat.now && typeof c.mat.now.tex === 'string')
         .map(c => c.mat.now.tex),
+      boardLines: boardLinesInFocus,
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {
@@ -1180,6 +1189,10 @@ async function runPipeline(message, ctx) {
       recentUserMessages: recentUserMessagesForBoard,
       lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
       tutorReplyText: verified.text || null,
+      pinnedProblemTex: ctx.conversation?.boardProblem?.tex || null,
+      focusProblemTex: ctx.conversation?.boardLedger?.current?.problemTex || null,
+      pinnedAnswer: diagnosis.correctAnswer || null,
+      boardLines: boardLinesInFocus,
     });
     guardedSynth = synthGuard.allowed;
     if (synthGuard.dropped.length > 0) {

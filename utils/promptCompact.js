@@ -20,6 +20,7 @@ const { studentLabel } = require('./studentLabels');
 const { canonicalSkillId, decodeMasteryKey } = require('./skillCanonicalizer');
 const { buildRapportNotes } = require('./rapportNotes');
 const { isWorkBoardEnabled } = require('./featureFlags');
+const { RESOLVE_RULE, MIRROR_RULE } = require('./boardStepRule');
 const {
   CAPABILITY_IDENTITY,
   VISUAL_TOOLS_SECTION,
@@ -80,7 +81,7 @@ SYNTAX (case-sensitive on action; quotes can be " or '):
 WHEN TO EMIT (rules — follow them strictly):
 1. POSE — MANDATORY. Any time you put a problem in front of the student (you generated it, the student asked you to give them one, or they uploaded it and you picked one to work on), you MUST include <BOARD action="pose" tex="..."/> in that SAME reply. Once per problem, at the moment the problem starts. Don't re-pose mid-conversation. Emitting practice problems without a pose card is a defect — the student's panel will sit empty while the problem floats in chat.
 2. APPLY — AFTER the student tells you the move they want to make ("I'd subtract 4 from both sides"). Never before. The op="..." must restate the student's stated move.
-3. RESOLVE — AFTER the student tells you the result of that move ("so 2x = 16"). The tex="..." must be what the student wrote.
+3. RESOLVE — ${RESOLVE_RULE}
 4. VERIFY — when the student verifies the solution (substitutes back, or you've confirmed the final answer). tex="..." is the student's solution; check="..." shows the substitution math (e.g., "2(8) + 4 = 20").
 5. CLEAR — ONLY when the student signals a new problem ("new one", "let's try another") OR right after a verify card lands. Never to "demonstrate a cleaner path" — that erases the student's work.
 6. GRAPH — drop a live plot into the board to illustrate a concept (e.g., showing where a quadratic crosses zero before factoring, or visualizing a function the student is analyzing). fn="..." is a function of x. Optional caption="...". Reference content only: do not graph the student's exact problem expression if it would reveal the answer.
@@ -100,7 +101,7 @@ WHEN TO EMIT (rules — follow them strictly):
        <BOARD action="scaffold" tex="2x = \\boxed{}" caption="What does 20 − 4 leave you with?" />
    NOT this (blank is on a part they aren't working toward):
        <BOARD action="scaffold" tex="\\boxed{} = 20 - 4" />
-10. NEVER emit a resolve or apply for a step the student hasn't said. The board mirrors the student's reasoning, not yours. A server-side guard drops any equation-step tag that doesn't trace back to the student's recent message — don't try to slip them past. (Graph/image tags are exempt from that guard since they're teaching aids, but you're still responsible for not previewing the answer.)
+10. ${MIRROR_RULE} A server-side guard drops any equation-step tag that doesn't trace back to the student's own work or the move they named — don't try to slip them past. (Graph/image tags are exempt from that guard since they're teaching aids, but you're still responsible for not previewing the answer.)
 
 BOARD vs LEGACY INLINE VISUALS:
 The legacy [TYPE:params] visuals (FRACTION, NUMBER_LINE, ANGLE, UNIT_CIRCLE, etc.) render small illustrations INSIDE the chat bubble. They're for quick conceptual cues mid-sentence. The BOARD is for the spine of the session — the problem being worked, its steps, and reference content the student needs to keep looking at. When a student says "show me on the board," they mean the BOARD panel, not a thumbnail in the chat bubble. When in doubt between the two: if it's the problem or a reference the student should keep seeing → <BOARD>. If it's an inline cue inside an explanation → legacy [TYPE:params].

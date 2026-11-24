@@ -28,6 +28,7 @@
 'use strict';
 
 const { isWorkBoardEnabled } = require('./featureFlags');
+const { RESOLVE_RULE, MIRROR_RULE } = require('./boardStepRule');
 
 const { BOARD_ACTIONS, normalizeBoardCommand } = require('./boardResponseSchema');
 
@@ -42,8 +43,8 @@ const BOARD_TOOL = {
     name: BOARD_TOOL_NAME,
     description:
       'Render cards on the WorkBoard beside the chat. Call ONCE per turn with all cards for the turn, in order. ' +
-      'The board mirrors the STUDENT\'s reasoning: pose when a new problem starts, apply/resolve only AFTER the student states the move/result, verify when the answer is checked. ' +
-      'Never write a step the student has not said, and never pose the answer.',
+      'Pose when a new problem starts, apply/resolve only AFTER the student makes or names the move, verify when the answer is checked. ' +
+      MIRROR_RULE,
     parameters: {
       type: 'object',
       properties: {
@@ -160,7 +161,7 @@ The WorkBoard is driven by the ${BOARD_TOOL_NAME} tool now. Do NOT write <BOARD 
 The pedagogy is unchanged:
 - pose — at the moment a NEW problem is put in front of the student, once per problem. If you give them something to work on, the pose card is mandatory, every time.
 - apply — AFTER the student names a move; op restates THEIR move (e.g. "subtract 4 from both sides").
-- resolve — AFTER the student states a result; tex is what THEY wrote.
+- resolve — ${RESOLVE_RULE}
 - verify — when a final answer is checked; optionally include their substitution check.
 - clear — only on a new problem or right after a verify lands.
 - graph / image — reference aids (fn of x, or a safe image query) with an optional caption.
@@ -168,7 +169,7 @@ The pedagogy is unchanged:
 - scaffold — the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. Every scaffold MUST contain at least one \\boxed{} blank; never fill the blanks yourself. The blank marks EXACTLY what you are asking them to produce: never blank a known value while displaying the result (asking "what's 0.3 × 1000?" → "0.3 \\times 1000 = \\boxed{}", NOT "0.3 \\times \\boxed{} = 300"), and never write "?" as the unknown — the empty box IS the unknown.
 - example — ONE step of a derivation YOU are teaching, in order, one card per step — only on a teaching example that is NOT the student's graded problem.
 
-The board mirrors the STUDENT's reasoning: never emit an apply/resolve for a step they haven't said, and never pose the answer. If the student references the board ("show me on the board", "draw it"), you MUST call the tool with a relevant card. Small-talk and pure-feedback turns need no tool call at all.`;
+${MIRROR_RULE} If the student references the board ("show me on the board", "draw it"), you MUST call the tool with a relevant card. Small-talk and pure-feedback turns need no tool call at all.`;
 }
 
 module.exports = {
