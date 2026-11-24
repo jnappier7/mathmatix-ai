@@ -114,7 +114,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261124b';
+  var ASSET_V = '?v=20261124c';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -242,6 +242,115 @@
     update();
   }
 
+  // SWIPE THE BOARD AWAY (phones). Push the board up by its bar or its grab
+  // handle and it tucks into the bar, leaving the whole screen to the
+  // conversation; pull down and it comes back. The board follows the finger
+  // (its height is the drag) and on release it finishes whichever way
+  // swipeDecision says. The gesture lives on the bar and the handle only —
+  // never on the work itself, which scrolls, and whose tiles are dragged.
+  //   collapsed: is the board tucked away now?   dy: finger travel, down = +
+  //   full: the board's open height in px
+  function swipeDecision(collapsed, dy, full) {
+    var need = Math.min(48, Math.max(24, (full || 0) * 0.25));
+    if (collapsed) return dy > need ? 'open' : 'stay';
+    return dy < -need ? 'close' : 'stay';
+  }
+  function wireDockSwipe(slot, bar, grab, mount, setCollapsed) {
+    var phone = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+    var drag = null, busy = null;
+    function calm() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+    function onPhoneBoard() { return !!(phone && phone.matches && document.body.classList.contains('mm-board-up')); }
+    function clear() {
+      mount.style.transition = ''; mount.style.maxHeight = ''; mount.style.overflow = ''; mount.style.opacity = '';
+      slot.classList.remove('is-dragging');
+    }
+    // Glide the board's height to `to` (0 = tucked away), then settle its state.
+    function finish(to, full, done) {
+      if (busy) busy();
+      if (calm()) { clear(); done(); return; }
+      mount.style.transition = 'max-height 240ms cubic-bezier(.22, 1, .36, 1), opacity 200ms ease';
+      mount.style.maxHeight = to + 'px';
+      mount.style.opacity = to > 0 ? '1' : '0';
+      var ended = false, timer = null;
+      function end() {
+        if (ended) return; ended = true; busy = null;
+        clearTimeout(timer); mount.removeEventListener('transitionend', onEnd);
+        clear(); done();
+      }
+      function onEnd(e) { if (e.target === mount && e.propertyName === 'max-height') end(); }
+      mount.addEventListener('transitionend', onEnd);
+      timer = setTimeout(end, 320);
+      busy = end;
+    }
+    // Put the board under script control at its current height.
+    function take(collapsed) {
+      if (busy) busy();
+      slot.classList.add('is-dragging');
+      mount.style.transition = 'none';
+      mount.style.overflow = 'hidden';
+      mount.style.maxHeight = 'none';
+      var full = mount.offsetHeight;
+      mount.style.maxHeight = (collapsed ? 0 : full) + 'px';
+      mount.style.opacity = collapsed ? '0' : '1';
+      void mount.offsetHeight;   // commit the starting height before any glide
+      return full;
+    }
+    // The animated switch, for the Hide/Show button and a tap on the handle.
+    function slide(toCollapsed) {
+      var isCollapsed = slot.classList.contains('is-collapsed');
+      if (toCollapsed === isCollapsed) return;
+      if (!onPhoneBoard() || calm()) { setCollapsed(toCollapsed); return; }
+      var full = take(isCollapsed);
+      finish(toCollapsed ? 0 : full, full, function () { setCollapsed(toCollapsed); });
+    }
+    if (!window.PointerEvent) return slide;
+
+    function down(e) {
+      if (!onPhoneBoard()) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      // Buttons on the bar (Hide, text size) keep their taps.
+      if (e.currentTarget === bar && e.target.closest && e.target.closest('button')) return;
+      drag = { id: e.pointerId, y: e.clientY, x: e.clientX, collapsed: slot.classList.contains('is-collapsed'), full: 0, moved: false, dy: 0, el: e.currentTarget };
+    }
+    function move(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dy = e.clientY - drag.y, dx = e.clientX - drag.x;
+      if (!drag.moved) {
+        if (Math.abs(dy) < 8 || Math.abs(dy) < Math.abs(dx)) return;
+        drag.moved = true;
+        try { drag.el.setPointerCapture(drag.id); } catch (_) {}
+        drag.full = take(drag.collapsed);
+        slot.classList.add('is-held');
+      }
+      // The board's height IS the drag. Past either end it gives a little and
+      // no more, so the finger feels the limit instead of a dead stop.
+      var raw = (drag.collapsed ? 0 : drag.full) + dy;
+      var h = raw < 0 ? 0 : raw > drag.full ? drag.full + Math.min(14, (raw - drag.full) * 0.2) : raw;
+      mount.style.maxHeight = h + 'px';
+      mount.style.opacity = String(Math.min(1, 0.35 + 0.65 * (drag.full ? h / drag.full : 1)));
+      drag.dy = dy;
+      if (e.cancelable) e.preventDefault();
+    }
+    function up(e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var d = drag; drag = null;
+      if (!d.moved) return;
+      slot.classList.remove('is-held');
+      grab._draggedAt = Date.now();
+      var what = swipeDecision(d.collapsed, d.dy, d.full);
+      if (what === 'close') finish(0, d.full, function () { setCollapsed(true); });
+      else if (what === 'open') finish(d.full, d.full, function () { setCollapsed(false); });
+      else finish(d.collapsed ? 0 : d.full, d.full, function () {});
+    }
+    [bar, grab].forEach(function (el) {
+      el.addEventListener('pointerdown', down);
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+      el.addEventListener('pointercancel', up);
+    });
+    return slide;
+  }
+
   // Where the work docks: a slot inside the chat column, between the message
   // list and the composer (chat.html #cr-work-dock). Falls back to a floating
   // panel when the slot is absent (dev harnesses, other pages) so the
@@ -271,9 +380,15 @@
         toggle.setAttribute('aria-label', collapsed ? 'Show our work' : 'Hide our work');
       }
       paintToggle(false);
-      toggle.addEventListener('click', function () {
-        paintToggle(slot.classList.toggle('is-collapsed'));
-      });
+      function setCollapsed(on) {
+        slot.classList.toggle('is-collapsed', !!on);
+        paintToggle(!!on);
+      }
+      // On a phone the same change glides (wireDockSwipe hands back the
+      // animated version); everywhere else it is the plain switch.
+      var slide = null;
+      function flip() { (slide || setCollapsed)(!slot.classList.contains('is-collapsed')); }
+      toggle.addEventListener('click', flip);
       // On a phone the dock takes the tutor's place at the top of the screen
       // (see watchBoardUp), so the tutor's face rides on the bar of the board
       // they are writing on. CSS shows it only there; the src is filled in
@@ -291,6 +406,23 @@
       var mountIn = document.createElement('div');
       mountIn.id = 'lws-chat-mount';
       slot.appendChild(mountIn);
+
+      // The grab handle: on a phone the board hangs from the top of the
+      // screen, so its bottom edge is what you push up to get the whole
+      // conversation back and pull down to bring the work back. A tap toggles.
+      // CSS shows it on phones only.
+      var grab = document.createElement('button');
+      grab.type = 'button';
+      grab.className = 'lws-dock-grab';
+      grab.setAttribute('aria-label', 'Slide our work up or down');
+      grab.addEventListener('click', function () {
+        // A mouse drag ends in a click; a touch drag does not. Either way a
+        // drag is not a tap.
+        if (grab._draggedAt && Date.now() - grab._draggedAt < 350) return;
+        flip();
+      });
+      slot.appendChild(grab);
+      slide = wireDockSwipe(slot, bar, grab, mountIn, setCollapsed);
       return mountIn;
     }
 

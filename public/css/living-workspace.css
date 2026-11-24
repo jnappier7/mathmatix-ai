@@ -1584,6 +1584,7 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
    and gets more height only when it is actually on the card.
    ============================================================ */
 .lws-dock-face { display: none; }
+.lws-dock-grab { display: none; }
 
 @media (max-width: 768px) {
   /* The tutor steps aside: no cam, no pill. */
@@ -1634,8 +1635,8 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
   /* Steps: the whole problem and its last few lines, and still most of the
      screen for the conversation. */
   body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv {
-    max-height: min(38vh, 300px, calc(100vh - 440px));
-    max-height: min(38dvh, 300px, calc(100dvh - 440px));
+    max-height: min(38vh, 300px, calc(100vh - 458px));
+    max-height: min(38dvh, 300px, calc(100dvh - 458px));
     padding: 0;
     background-image: none;
     /* Capped, and it scrolls INSIDE itself: a long solve never grows past the
@@ -1663,12 +1664,13 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
   /* Tiles are something to put your hands on, so they get the room — and only
      they do. */
   body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-tm) {
-    max-height: min(58vh, 480px, calc(100vh - 386px));
-    max-height: min(58dvh, 480px, calc(100dvh - 386px));
+    max-height: min(58vh, 480px, calc(100vh - 404px));
+    max-height: min(58dvh, 480px, calc(100dvh - 404px));
   }
   /* …and for as long as they are out, the conversation keeps the tutor's last
-     line rather than its last three. (The 386 above is this 96 plus what the
-     column always holds: 58 top, 44 bar, 128 composer, 59 nav, 1 to spare.) */
+     line rather than its last three. (The 404 above is this 96 plus what the
+     column always holds: 58 top, 44 bar, 18 grab handle, 128 composer, 59 nav,
+     1 to spare.) */
   html.mm-work-inline body.mm-board-up:not(.cr-voice):has(.cr-work-dock .lws-tm) #chat-messages-container {
     min-height: 96px !important;
   }
@@ -1693,15 +1695,61 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
     min-height: 64px !important;
     padding-bottom: 6px !important;
   }
-  /* visible height − composer − (6 top + 46 bar + 64 conversation + its 10 of
-     padding + 4 to spare), and never more than ~two fifths of what is visible */
+  /* visible height − composer − (6 top + 46 bar + 18 grab handle + 64
+     conversation + its 10 of padding + 4 to spare), and never more than ~two fifths of what is visible */
   body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-dv,
   body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-tm) {
     max-height: max(72px, min(calc(var(--mm-vv-h, 100dvh) * 0.42),
-                              calc(var(--mm-vv-h, 100dvh) - var(--mm-composer-h, 128px) - 130px)));
+                              calc(var(--mm-vv-h, 100dvh) - var(--mm-composer-h, 128px) - 148px)));
   }
   /* The sticky problem head would be most of so short a window. */
   body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-card-head { position: static; }
   /* "3 steps" is not worth a line of math here. */
   body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-card-foot { display: none; }
+
+  /* ---- Swipe the board away (chat-workspace.js wireDockSwipe) ----
+     The bar and the grab handle are the board's handles: push up and the work
+     tucks into the bar, pull down and it comes back. touch-action:none hands
+     the vertical drag to the script instead of the page. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-bar { touch-action: none; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-grab {
+    display: block;
+    appearance: none; -webkit-appearance: none;
+    width: 100%; height: 18px; flex: 0 0 auto;
+    margin: 0; padding: 0; border: 0;
+    border-top: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10));
+    background: var(--mlt-surface, #FFFFFF);
+    cursor: grab; touch-action: none;
+    position: relative;
+  }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-grab { min-height: 0; min-width: 0; box-shadow: none; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock.is-collapsed .lws-dock-grab { border-top: 0; height: 14px; }
+  /* The pill answers the finger: wider and darker while it is held. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-grab::after { transition: width .16s ease, opacity .16s ease; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock.is-held .lws-dock-grab::after { width: 56px; opacity: .45; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock.is-held { box-shadow: 0 10px 30px rgba(60, 50, 120, 0.22); }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock { transition: box-shadow .18s ease; }
+
+  /* The board ARRIVES: it comes down from where the tutor was, and the
+     conversation's first line settles under it. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock { animation: lws-board-in .32s cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes lws-board-in {
+    from { opacity: 0; transform: translateY(-14px) scale(.985); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body.mm-board-up:not(.cr-voice) .cr-work-dock { animation: none; transition: none; }
+    body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-grab::after { transition: none; }
+  }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-grab::after {
+    content: ''; position: absolute; left: 50%; top: 50%;
+    width: 38px; height: 4px; border-radius: 4px;
+    transform: translate(-50%, -50%);
+    background: var(--mlt-ink, #232741); opacity: .22;
+  }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-grab:focus-visible { outline: 2px solid var(--cr-accent, #6c5ce7); outline-offset: -2px; }
+  /* While the finger has it, the board is on screen whatever its state says. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock.is-collapsed.is-dragging #lws-chat-mount { display: flex; }
+  /* Hiding goes UP here, so the chevrons point the way the board moves. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-toggle i { transform: rotate(180deg); }
 }
