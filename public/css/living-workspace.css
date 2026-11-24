@@ -1753,3 +1753,84 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
   /* Hiding goes UP here, so the chevrons point the way the board moves. */
   body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-toggle i { transform: rotate(180deg); }
 }
+
+/* ============================================================
+   DESKTOP: THE BOARD HANGS UNDER THE TUTOR.
+
+   While a problem is in focus on a wide screen, chat-workspace.js (placeDock)
+   moves the dock into the tutor's column and stamps body.mm-board-side: the
+   tutor's card shortens to a strip, the board hangs under it for the rest of
+   the column's height, and the conversation keeps the whole chat column.
+   Above the composer — where the dock used to be on every screen — three
+   steps left the conversation a single bubble at 1366x800.
+
+   With no work the class is gone and so is every rule here: the tutor's
+   column is exactly as it was. Below 1100px there is no room for the column
+   and the dock stays in the chat (the script never sets the class there; the
+   media query is the belt to its braces).
+
+   The dock is the frame here, as on a phone: one card, its own opaque ground.
+   ============================================================ */
+@media (min-width: 1100px) {
+  /* The tutor's column widens to hold a line of algebra. */
+  html.mm-work-inline body.mm-board-side .cr-stage {
+    /* Never narrower than the width the student dragged the column to. */
+    grid-template-columns: max(var(--cr-hero-w, 320px), clamp(400px, 34vw, 480px)) minmax(0, 1fr);
+  }
+  /* Only the tutor and the work, while there is work. */
+  body.mm-board-side .cr-hero-col > :not(.cr-tutor-hero):not(#cr-work-dock) { display: none !important; }
+  body.mm-board-side .cr-hero-col .cr-tutor-hero {
+    flex: 0 0 150px; height: 150px; min-height: 0; max-height: 150px; margin-bottom: 0;
+  }
+  body.mm-board-side .cr-tutor-hero > :not(.cr-tutor-portrait):not(video):not(.cr-live-badge):not(.cr-tutor-backdrop):not(.cr-tutor-glow) {
+    display: none !important;
+  }
+  body.mm-board-side .cr-tutor-hero .cr-tutor-portrait,
+  body.mm-board-side .cr-tutor-hero video { object-position: center 18%; }
+
+  body.mm-board-side .cr-hero-col > .cr-work-dock {
+    flex: 1 1 auto; min-height: 0;
+    border-radius: 18px;
+    border: 1px solid var(--cr-border, rgba(15, 26, 36, .12));
+    background: var(--cr-bg-panel, #FFFFFF);
+    box-shadow: var(--cr-shadow-md, 0 8px 30px rgba(15, 26, 36, 0.06));
+    overflow: hidden;
+    animation: lws-board-side-in .34s cubic-bezier(.22, 1, .36, 1) both;
+  }
+  @keyframes lws-board-side-in {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  body.mm-board-side .cr-work-dock .lws-dock-bar {
+    border-top: 0;
+    border-bottom: 1px solid var(--cr-border, rgba(15, 26, 36, .12));
+    padding: 8px 14px;
+  }
+  /* The column's height is the cap; past it the work scrolls inside itself. */
+  body.mm-board-side .cr-work-dock .lws-dv {
+    max-height: none; height: 100%;
+    padding: 0; background-image: none;
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+  body.mm-board-side .cr-work-dock .lws-dv-inner { max-width: none; margin: 0; }
+  /* One card, not a card inside a card (and no gap above the pinned problem
+     for a scrolled line to show through). */
+  body.mm-board-side .cr-work-dock .lws-card { border: 0; border-radius: 0; box-shadow: none; margin: 0; }
+  /* A ~450px card: the math a size down and the card's side padding given
+     back, so a two-step equation fits whole. First track = body padding 12 +
+     spine 26 + gap 10 (56 = 18 + 26 + 12 at full width; change one, change
+     the other). */
+  body.mm-board-side .cr-work-dock .lws-card { grid-template-columns: 48px auto auto minmax(0, 1fr); }
+  body.mm-board-side .cr-work-dock .lws-card-head { padding: 11px 12px 12px; }
+  body.mm-board-side .cr-work-dock .lws-card-body { padding: 6px 12px 8px; }
+  body.mm-board-side .cr-work-dock .lws-card-problem { font-size: calc(20px * var(--lws-dv-scale, 1)); }
+  body.mm-board-side .cr-work-dock .lws-step-tex { font-size: calc(18px * var(--lws-dv-scale, 1)); }
+  /* Hidden, the board is its bar and the tutor's strip is all the column holds. */
+  body.mm-board-side .cr-hero-col > .cr-work-dock.is-collapsed { flex: 0 0 auto; }
+  body.mm-board-side .cr-work-dock.is-collapsed .lws-dock-bar { border-bottom: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    body.mm-board-side .cr-hero-col > .cr-work-dock { animation: none; }
+  }
+}
+

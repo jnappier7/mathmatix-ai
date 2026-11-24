@@ -114,7 +114,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261124c';
+  var ASSET_V = '?v=20261124d';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -161,14 +161,56 @@
   // is pinned at the top of the screen, where the tutor was, and the
   // conversation scrolls beneath it; when the work is sealed the tutor comes
   // back. This only says WHEN (body.mm-board-up = the dock has work in it);
-  // the layout is CSS, phone widths only (living-workspace.css "the desk
-  // becomes the board"), so a desktop never moves.
+  // the phone layout is CSS, phone widths only (living-workspace.css "the desk
+  // becomes the board"). A wide screen has its own answer: placeDock, below.
   function boardIsUp(root) { return !!root && !root.classList.contains('is-empty'); }
+
+  // DESKTOP: THE BOARD HANGS UNDER THE TUTOR. On a wide screen the work used
+  // to sit above the composer, where three steps left the conversation one
+  // bubble (measured at 1366x800). Math is a narrow, tall column and the
+  // tutor's column is exactly that shape — so while a problem is in focus the
+  // dock MOVES into the tutor's column: the tutor's card shortens to a strip,
+  // the board hangs under it at the column's full height, and the
+  // conversation keeps the whole chat column. With no work the dock goes home
+  // (above the composer, where it is empty and takes no space) and the
+  // tutor's column is exactly as it was — courses, standings, the lot.
+  // This is the one layout CSS cannot do alone (the dock changes parent), so
+  // the script moves the node and stamps body.mm-board-side; everything else
+  // is living-workspace.css "the board hangs under the tutor". Narrower than
+  // SIDE_MQ there is no room for the column, and the dock stays in the chat.
+  var SIDE_MQ = '(min-width: 1100px)';
+  // Not in voice mode (its own stage), and not while the student has the
+  // tutor's column minimized (body.cr-hero-min, adjustable-panels.js): a board
+  // moved into a hidden column would be work nobody can see, so there it stays
+  // in the chat.
+  function wantsSide(up, wide, voice, tutorHidden) { return !!(up && wide && !voice && !tutorHidden); }
+  function placeDock(up) {
+    var slot = document.getElementById('cr-work-dock');
+    var col = document.querySelector('.cr-hero-col');
+    var hero = col && col.querySelector('.cr-tutor-hero');
+    var home = document.getElementById('input-container');
+    if (!slot || !col || !hero || !home || !home.parentNode) return false;
+    var mq = window.matchMedia ? window.matchMedia(SIDE_MQ) : null;
+    var body = document.body.classList;
+    var side = wantsSide(up, !!(mq && mq.matches), body.contains('cr-voice'), body.contains('cr-hero-min'));
+    var isSide = slot.parentNode === col;
+    if (side && !isSide) col.insertBefore(slot, hero.nextSibling);
+    else if (!side && isSide) home.parentNode.insertBefore(slot, home);
+    document.body.classList.toggle('mm-board-side', side);
+    return side !== isSide;
+  }
+
   function watchBoardUp(root) {
     if (!root || !document.getElementById('cr-work-dock')) return;
     var was = null;
+    function settleThread() {
+      var thread = document.getElementById('chat-messages-container');
+      if (thread) requestAnimationFrame(function () { thread.scrollTop = thread.scrollHeight; });
+    }
     function sync() {
       var up = boardIsUp(root);
+      // The conversation's width or height just changed: keep its newest line.
+      if (placeDock(up)) settleThread();
       if (up === was) return;
       was = up;
       document.body.classList.toggle('mm-board-up', up);
@@ -187,6 +229,15 @@
     sync();
     if (typeof MutationObserver === 'function') {
       new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
+    }
+    // A window dragged across the breakpoint moves the board with it.
+    var mq = window.matchMedia ? window.matchMedia(SIDE_MQ) : null;
+    if (mq && mq.addEventListener) mq.addEventListener('change', sync);
+    // …and so does minimizing or restoring the tutor, or entering voice mode.
+    // (sync only ever sets body classes to what they already are when nothing
+    // changed, which records no mutation — so this cannot loop.)
+    if (typeof MutationObserver === 'function') {
+      new MutationObserver(sync).observe(document.body, { attributes: true, attributeFilter: ['class'] });
     }
     watchKeyboard();
   }
