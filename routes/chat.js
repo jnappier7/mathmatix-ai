@@ -4191,6 +4191,9 @@ module.exports.isInProgressSession = isInProgressSession;
 // Exported so POST /api/student-moves can delegate a normalized tile move
 // through the SAME lock + pipeline (see docs/BOARD_STUDENT_MOVES_INTEGRATION.md).
 module.exports.runStudentTurn = runStudentTurn;
+// …and so the tile-mat report (POST /api/student-moves/tiles) can write the
+// board ledger without racing a turn that is rewriting it.
+module.exports.acquireUserLock = acquireUserLock;
 // Exported for unit testing the parent's language directive, which is otherwise
 // only observable by reading the model's reply.
 // Re-exported for the existing parent-chat prompt tests; the builder lives in

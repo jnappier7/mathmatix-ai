@@ -114,7 +114,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261123b';
+  var ASSET_V = '?v=20261124b';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -156,6 +156,92 @@
     document.body.appendChild(s);
   }
 
+  // PHONES: THE DESK BECOMES THE BOARD. A phone has one column and no room for
+  // both the tutor's card and the work, so while a problem is in focus the dock
+  // is pinned at the top of the screen, where the tutor was, and the
+  // conversation scrolls beneath it; when the work is sealed the tutor comes
+  // back. This only says WHEN (body.mm-board-up = the dock has work in it);
+  // the layout is CSS, phone widths only (living-workspace.css "the desk
+  // becomes the board"), so a desktop never moves.
+  function boardIsUp(root) { return !!root && !root.classList.contains('is-empty'); }
+  function watchBoardUp(root) {
+    if (!root || !document.getElementById('cr-work-dock')) return;
+    var was = null;
+    function sync() {
+      var up = boardIsUp(root);
+      if (up === was) return;
+      was = up;
+      document.body.classList.toggle('mm-board-up', up);
+      if (!up) return;
+      var face = document.querySelector('#cr-work-dock .lws-dock-face');
+      var src = ['mm-cam-pill-avatar', 'cr-tutor-portrait'].map(function (id) {
+        var el = document.getElementById(id);
+        return (el && el.getAttribute('src')) || '';
+      }).filter(Boolean)[0];
+      if (face && src) { face.src = src; face.hidden = false; }
+      // The newest message was at the bottom of the thread before the board
+      // took its share of the column; keep it there.
+      var thread = document.getElementById('chat-messages-container');
+      if (thread) requestAnimationFrame(function () { thread.scrollTop = thread.scrollHeight; });
+    }
+    sync();
+    if (typeof MutationObserver === 'function') {
+      new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ['class'] });
+    }
+    watchKeyboard();
+  }
+
+  // KEYBOARD UP. The chat column is a fixed box the size of the LAYOUT viewport,
+  // and on today's phones the keyboard does not resize that: it covers the
+  // bottom and the browser slides the visible part down to the composer — so
+  // whatever is pinned at the top slides off the screen. For the tutor's pill
+  // that never mattered. For the board it is the worst moment to lose it: the
+  // student is typing the next line of the very work that just left.
+  // So while the keyboard is up this publishes where the VISIBLE part is
+  // (--mm-vv-top / --mm-vv-h, from visualViewport) and stamps
+  // body.mm-board-kb; the CSS fits the column to it — board, a line of
+  // conversation, composer, all above the keyboard. The class is set whether
+  // or not the board is up (the CSS asks for both), so a board that arrives
+  // while the student is typing is placed correctly at once.
+  function keyboardIsUp(visibleH, tallestH) { return visibleH < tallestH - 140; }
+  function watchKeyboard() {
+    var vv = window.visualViewport;
+    if (!vv || watchKeyboard.on) return;
+    watchKeyboard.on = true;
+    // A pinch-zoom shrinks the visual viewport too; times the scale it is the
+    // same height as before, so only a keyboard reads as one.
+    function visible() { return vv.height * (vv.scale || 1); }
+    function across() { return vv.width * (vv.scale || 1); }
+    var tallest = visible(), width = across();
+    function update() {
+      // A rotation is a new screen: forget the old height.
+      if (Math.abs(across() - width) > 1) { width = across(); tallest = visible(); }
+      if (visible() > tallest) tallest = visible();
+      var up = keyboardIsUp(visible(), tallest);
+      var st = document.documentElement.style;
+      if (up) {
+        st.setProperty('--mm-vv-top', Math.max(0, Math.round(vv.offsetTop)) + 'px');
+        st.setProperty('--mm-vv-h', Math.round(vv.height) + 'px');
+      } else {
+        st.removeProperty('--mm-vv-top');
+        st.removeProperty('--mm-vv-h');
+      }
+      var was = document.body.classList.contains('mm-board-kb');
+      document.body.classList.toggle('mm-board-kb', up);
+      // The window just changed size under both scrollers: put each back on
+      // its newest line — the step being worked, the tutor's last message.
+      if (up !== was) requestAnimationFrame(function () {
+        ['#cr-work-dock .lws-dv', '#chat-messages-container'].forEach(function (sel) {
+          var el = document.querySelector(sel);
+          if (el) el.scrollTop = el.scrollHeight;
+        });
+      });
+    }
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    update();
+  }
+
   // Where the work docks: a slot inside the chat column, between the message
   // list and the composer (chat.html #cr-work-dock). Falls back to a floating
   // panel when the slot is absent (dev harnesses, other pages) so the
@@ -188,6 +274,16 @@
       toggle.addEventListener('click', function () {
         paintToggle(slot.classList.toggle('is-collapsed'));
       });
+      // On a phone the dock takes the tutor's place at the top of the screen
+      // (see watchBoardUp), so the tutor's face rides on the bar of the board
+      // they are writing on. CSS shows it only there; the src is filled in
+      // when the board goes up, because the tutor is chosen after this runs.
+      var face = document.createElement('img');
+      face.className = 'lws-dock-face';
+      face.alt = '';
+      face.setAttribute('aria-hidden', 'true');
+      face.hidden = true;
+      bar.appendChild(face);
       bar.appendChild(label);
       bar.appendChild(toggle);
       slot.appendChild(bar);
@@ -342,7 +438,9 @@
     if (window.LWS.NoteElement) r.geometry = window.LWS.NoteElement.makeRenderer();
     // Algebra tiles on the card: the server decides which tiles a line is
     // (utils/workspace/tileMat.js); the student drags, flips and cancels them.
-    if (window.LWS.TileMatElement) r.algebra_tiles = window.LWS.TileMatElement.makeRenderer();
+    if (window.LWS.TileMatElement) {
+      r.algebra_tiles = window.LWS.TileMatElement.makeRenderer({ onChange: queueTilesReport, onAsk: showTutorTheTiles });
+    }
     // Interactive concept models (§6.8) — bridges to the page's
     // ConceptModelRenderer engine (JSXGraph/tokens, linked representations).
     // §6.9: settled manipulations become exploration StudentMoves — verified
@@ -450,6 +548,56 @@
     if (!src) src = { uploadId: ref.uploadId, fileType: 'image', mimeType: null };
     try { dock.openSource(src, 'My worksheet', ref.region || null); }
     catch (e) { console.error('[LWS_CHAT] open linked source failed', e); }
+  }
+
+  // ── The tutor sees the tile mat ──────────────────────────────────────
+  // Each change on a mat is reported to the server as tile COUNTS plus the kind
+  // of move (never text); the server writes what the tutor reads from those
+  // (utils/workspace/tileMatState.js) and keeps it on the tiles card, which is
+  // also what brings the mat back after a reload. Reports are batched — a burst
+  // of drags is one request carrying the latest counts and the moves in order.
+  var tilesPending = {};     // start line → { sides, moves[] }
+  var tilesTimer = null;
+  var tilesInFlight = Promise.resolve();
+
+  function queueTilesReport(detail) {
+    if (!detail || !detail.start || !Array.isArray(detail.sides)) return;
+    var slot = tilesPending[detail.start] || (tilesPending[detail.start] = { sides: null, moves: [] });
+    slot.sides = detail.sides;
+    if (detail.move) slot.moves.push(detail.move);
+    if (tilesTimer) clearTimeout(tilesTimer);
+    tilesTimer = setTimeout(flushTilesReports, 700);
+  }
+
+  // Send everything queued. Resolves when the server has it (or has refused
+  // it) — never rejects: a mat that cannot report is still a working mat.
+  function flushTilesReports() {
+    if (tilesTimer) { clearTimeout(tilesTimer); tilesTimer = null; }
+    var batch = tilesPending;
+    tilesPending = {};
+    var doFetch = window.csrfFetch || window.fetch;
+    Object.keys(batch).forEach(function (start) {
+      var body = JSON.stringify({ start: start, sides: batch[start].sides, moves: batch[start].moves });
+      tilesInFlight = tilesInFlight.then(function () {
+        return doFetch('/api/student-moves/tiles', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' }, body: body,
+        });
+      }).catch(function () { /* the next change reports the whole mat again */ });
+    });
+    return tilesInFlight;
+  }
+
+  // "Show my tutor": make sure the server has the mat as it is NOW, then send
+  // an ordinary chat message — the tutor's reply comes down the normal turn,
+  // reading the mat from the board block like everything else on the board.
+  function showTutorTheTiles(detail) {
+    if (detail) { queueTilesReport({ start: detail.start, sides: detail.sides, move: null }); }
+    flushTilesReports().then(function () {
+      if (typeof window.mmSendChatMessage === 'function') {
+        window.mmSendChatMessage('Look at what I did with the tiles.');
+      }
+    });
   }
 
   // A settled concept-model manipulation (§6.9): one exploration StudentMove
@@ -613,6 +761,7 @@
           onSeal: onSeal,
         });
       }
+      try { watchBoardUp(dv && dv.el && dv.el.root); } catch (e) { console.error('[LWS_CHAT] board-up watch failed', e); }
       // The derivation's A−/A+ text-size control pins itself to its own
       // top-right corner. In a full-height rail that read as board chrome; over
       // a short dock whose card is left-aligned it reads as an orphan floating

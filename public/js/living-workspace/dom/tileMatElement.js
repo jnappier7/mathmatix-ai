@@ -25,7 +25,15 @@
    exactly what is on the mat now, and a status line says whether that
    is still the line it started as (same equation / same value) or not.
 
-   semantic: { mat: { tex, variable, sides:[{x2:[p,n],x:[p,n],unit:[p,n]}] }, caption? }
+   semantic: { mat: { tex, variable, sides:[{x2:[p,n],x:[p,n],unit:[p,n]}], now? }, caption? }
+
+   THE TUTOR SEES IT. After every change the mat tells its host what is on
+   it — tile COUNTS per side — and what kind of move that was (hooks.onChange;
+   chat-workspace.js posts it to /api/student-moves/tiles). The server writes
+   the tutor's description from those counts, so nothing typed here can reach
+   the prompt. The server's copy comes back on a reload as `mat.now`, and the
+   mat opens where the student left it, still measured against the line it
+   started from. "Show my tutor" (hooks.onAsk) asks for a reaction now.
 
    The model (pure, exported) is tested headless in
    tests/unit/workspace/tileMatElement.test.js. UMD-lite: require() in
@@ -253,8 +261,15 @@
 
   // ── The mat ──────────────────────────────────────────────────
 
+  /** A side as the counts the server keeps: { x2:[p,n], x:[p,n], unit:[p,n] }. */
+  function sideCounts(side) {
+    const c = counts(side);
+    return { x2: c[0], x: c[1], unit: c[2] };
+  }
+
   function makeRenderer(hooks) {
     const onChange = (hooks && typeof hooks.onChange === 'function') ? hooks.onChange : null;
+    const onAsk = (hooks && typeof hooks.onAsk === 'function') ? hooks.onAsk : null;
 
     return function tileMatFactory(element) {
       const doc = (typeof document !== 'undefined') ? document : null;
@@ -262,8 +277,12 @@
       const start = fromMat(mat);
       if (!doc || !start) return null;          // the card falls back to its plain label
 
-      let state = clone(start);
-      let touched = false;
+      // Where the student left it (the server's copy, back after a reload) —
+      // still judged against `start`, the line the tutor laid out.
+      const resumed = mat.now && fromMat({ variable: mat.variable, sides: mat.now.sides });
+      const resumable = !!(resumed && resumed.sides.length === start.sides.length);
+      let state = resumable ? resumed : clone(start);
+      let touched = resumable;
       const isEquation = start.sides.length === 2;
       const calm = !!(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -317,6 +336,15 @@
       const cancelBtn = el('button', 'lws-tm-btn', 'Cancel zero pairs'); cancelBtn.type = 'button';
       const resetBtn = el('button', 'lws-tm-btn', 'Start again'); resetBtn.type = 'button';
       tools.appendChild(cancelBtn); tools.appendChild(resetBtn);
+      // The tutor already sees every change; this asks it to SAY something now.
+      let askBtn = null;
+      if (onAsk) {
+        askBtn = el('button', 'lws-tm-btn lws-tm-ask', 'Show my tutor'); askBtn.type = 'button';
+        tools.appendChild(askBtn);
+        askBtn.addEventListener('click', function () {
+          try { onAsk(report(null)); } catch (_) { /* host's problem */ }
+        });
+      }
       const hint = el('div', 'lws-tm-hint', 'Drag a tile onto its opposite to cancel them. Tap a tile to flip it.');
 
       node.appendChild(matEl); node.appendChild(read); node.appendChild(tray);
@@ -327,9 +355,9 @@
         if (!pairs.length) return;
         let next = state;
         pairs.forEach(function (p) { next = zeroPair(next, p[0], p[1]) || next; });
-        vanish([].concat.apply([], pairs), function () { commit(next); });
+        vanish([].concat.apply([], pairs), function () { commit(next, { move: { t: 'zero_pairs' } }); });
       });
-      resetBtn.addEventListener('click', function () { touched = false; commit(clone(start), { reset: true }); });
+      resetBtn.addEventListener('click', function () { touched = false; commit(clone(start), { reset: true, move: { t: 'reset' } }); });
 
       // ── drawing ──
       let known = {};      // ids on the mat at the last paint — anything else pops in
@@ -369,6 +397,7 @@
             : (isEquation ? 'Not the equation you started with' : 'Not the expression you started with');
         cancelBtn.disabled = zeroPairs(state).length === 0;
         resetBtn.disabled = !touched;
+        if (askBtn) askBtn.disabled = !touched;
         hint.hidden = touched;
 
         if (focusId) {
@@ -377,12 +406,25 @@
         }
       }
 
+      // What the host (and through it the tutor) is told: counts and the kind
+      // of move — never free text.
+      function report(move) {
+        return {
+          start: mat.tex || readout(start),
+          now: readout(state),
+          same: sameAsStart(state, start),
+          sides: state.sides.map(sideCounts),
+          move: move || null,
+          elementId: element.id || null,
+        };
+      }
+
       function commit(next, opts) {
         if (!next) return;
         state = next;
         if (!(opts && opts.reset)) touched = true;
         paint(opts && opts.focusId);
-        const detail = { start: mat.tex || readout(start), now: readout(state), same: sameAsStart(state, start), elementId: element.id || null };
+        const detail = report(opts && opts.move);
         if (onChange) { try { onChange(detail); } catch (_) { /* host's problem */ } }
         try { node.dispatchEvent(new CustomEvent('lws:tiles-change', { bubbles: true, detail: detail })); } catch (_) { /* no CustomEvent */ }
       }
@@ -493,14 +535,15 @@
           setTimeout(function () { delete btn.dataset.dragged; }, 0);
           if (it.type === 'pair') {
             const next = zeroPair(state, src.id, it.other);
-            vanish([src.id, it.other], function () { commit(next); });
+            vanish([src.id, it.other], function () { commit(next, { move: { t: 'zero_pair' } }); });
           } else if (it.type === 'move') {
-            commit(move(state, src.id, it.side)) ;
+            commit(move(state, src.id, it.side), { move: { t: 'move' } });
           } else if (it.type === 'off') {
-            commit(remove(state, src.id));
+            commit(remove(state, src.id), { move: { t: 'remove' } });
           } else if (it.type === 'add') {
             const next = add(state, it.side, src.kind, src.sign);
-            if (next) commit(next); else refuse(btn);
+            // On an expression there is only one side: adding there IS adding to all of it.
+            if (next) commit(next, { move: { t: isEquation ? 'add_one' : 'add_both', k: src.kind, s: src.sign } }); else refuse(btn);
           }
         });
 
@@ -510,14 +553,14 @@
         // Tap / Enter / Space.
         btn.addEventListener('click', function () {
           if (btn.dataset.dragged) return;
-          if (src.id) { commit(flip(state, src.id), { focusId: src.id }); return; }
+          if (src.id) { commit(flip(state, src.id), { focusId: src.id, move: { t: 'flip' } }); return; }
           const next = addToAll(state, src.kind, src.sign);
-          if (next) commit(next); else refuse(btn);
+          if (next) commit(next, { move: { t: 'add_both', k: src.kind, s: src.sign } }); else refuse(btn);
         });
 
         if (src.id) {
           btn.addEventListener('keydown', function (e) {
-            if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); commit(remove(state, src.id)); }
+            if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); commit(remove(state, src.id), { move: { t: 'remove' } }); }
           });
         }
       }
@@ -535,7 +578,7 @@
     makeRenderer: makeRenderer,
     fromMat: fromMat, flip: flip, remove: remove, add: add, addToAll: addToAll, move: move,
     zeroPair: zeroPair, isZeroPair: isZeroPair, zeroPairs: zeroPairs,
-    net: net, counts: counts, sameAsStart: sameAsStart, readout: readout,
+    net: net, counts: counts, sideCounts: sideCounts, sameAsStart: sameAsStart, readout: readout,
     tileLabel: tileLabel, MAX_PER_SIDE: MAX_PER_SIDE,
   };
 });

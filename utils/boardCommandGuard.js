@@ -288,6 +288,13 @@ function enforcePedagogyRule({
     // after the answer must still be judged against the problem it restates.
     // Used only by the scaffold-blank and example checks.
     focusProblemTex = null,
+    // Lines the student has MADE on the board with their own hands — what
+    // their tile mat now shows (ledger tiles card → mat.now.tex, written by
+    // utils/workspace/tileMatState.js from tile counts). A line built on the
+    // mat is the student's line exactly as a typed one is, so the tutor may
+    // mirror it onto the card; without this a student who cancelled their way
+    // to "2x = 4" got no line for it until they also typed it.
+    studentBoardLines = [],
 } = {}) {
     const allowed = [];
     const dropped = [];
@@ -306,6 +313,12 @@ function enforcePedagogyRule({
         .slice(-1)
         .join(' ');
     const combinedText = `${currentText}\n${priorText}`.trim();
+    // Matched as WHOLE lines, never folded into the prose haystack: the prose
+    // matcher accepts an equation when each side appears somewhere in the text,
+    // and "x = 2" has both its sides inside a mat reading "2x = 4".
+    const handLines = new Set((Array.isArray(studentBoardLines) ? studentBoardLines : [])
+        .filter(t => typeof t === 'string' && t.trim())
+        .map(normalizeForMatch).filter(Boolean));
 
     // Track the running last-action across commands within this batch
     // so a `pose` followed by an immediate `apply` in the same response
@@ -344,6 +357,7 @@ function enforcePedagogyRule({
             pinnedAnswer,
             tutorReplyText,
             activeProblemTex,
+            handLines,
         });
 
         if (decision.allowed) {
@@ -376,6 +390,12 @@ function enforcePedagogyRule({
     }
 
     return { allowed, dropped };
+}
+
+// Is this exactly a line the student built on the board with their hands?
+function madeByHand(tex, ctx) {
+    const norm = normalizeForMatch(tex);
+    return !!(norm && ctx.handLines && ctx.handLines.has(norm));
 }
 
 function evaluate(command, ctx) {
@@ -423,7 +443,7 @@ function evaluate(command, ctx) {
             }
             return { allowed: true, reason: 'worked_example_step' };
         }
-        if (texMatchesStudentText(command.tex, ctx.combinedText)) {
+        if (texMatchesStudentText(command.tex, ctx.combinedText) || madeByHand(command.tex, ctx)) {
             return { allowed: true };
         }
         return { allowed: false, reason: 'resolve_tex_not_in_student_message' };
@@ -603,7 +623,7 @@ function evaluate(command, ctx) {
         const line = normalizeForMatch(command.tex);
         const onBoard = [ctx.activeProblemTex, ctx.pinnedProblemTex]
             .some(t => t && normalizeForMatch(t) === line);
-        if (onBoard || texMatchesStudentText(command.tex, ctx.combinedText)) {
+        if (onBoard || texMatchesStudentText(command.tex, ctx.combinedText) || madeByHand(command.tex, ctx)) {
             return { allowed: true, mat };
         }
         return { allowed: false, reason: 'tiles_line_not_on_board' };

@@ -1090,6 +1090,10 @@ async function runPipeline(message, ctx) {
       // Lets the scaffold guard tell a legit missing-factor card (result
       // stated in this very reply) from a backwards one that leaks it.
       tutorReplyText: verified.text || null,
+      // What the student's tile mat now shows is a line they made.
+      studentBoardLines: (ctx.conversation?.boardLedger?.current?.steps || [])
+        .filter(c => c && c.action === 'tiles' && c.mat && c.mat.now && typeof c.mat.now.tex === 'string')
+        .map(c => c.mat.now.tex),
     });
     llmBoardCommands = guardResult.allowed;
     if (guardResult.dropped.length > 0) {

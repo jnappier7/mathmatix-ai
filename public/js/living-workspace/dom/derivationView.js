@@ -1218,9 +1218,22 @@
     c.hidden = !t;
   };
 
+  // Newest line in view. One exception: a last block taller than the window
+  // (a tile mat in a phone's dock) is shown from its TOP — scrolled to the end,
+  // the student met the tray and the buttons with the tiles themselves off
+  // the top of the card.
   DerivationView.prototype._scrollToEnd = function () {
     var s = this.el.scroll;
-    try { s.scrollTop = s.scrollHeight; } catch (_) {}
+    try {
+      s.scrollTop = s.scrollHeight;
+      var last = this.el.lines && this.el.lines.lastElementChild;
+      if (!last || !s.clientHeight || last.offsetHeight <= s.clientHeight) return;
+      var head = this.el.problem;
+      var pinned = head && !head.hidden && typeof getComputedStyle === 'function'
+        && getComputedStyle(head).position === 'sticky' ? head.offsetHeight : 0;
+      var top = last.getBoundingClientRect().top - s.getBoundingClientRect().top + s.scrollTop - pinned;
+      if (top < s.scrollTop) s.scrollTop = Math.max(0, top);
+    } catch (_) {}
   };
 
   DerivationView.classify = classify;
