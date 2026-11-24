@@ -490,6 +490,19 @@ html[data-theme="dark"] .lws-root {
   .lws-tm, .lws-tm-tile { --tm-u: 19px; }
   .lws-tm-side { padding: 7px; gap: 4px; }
   .lws-tm-equals { font-size: 20px; }
+  /* A phone has no width to spend on the step gutter: the mat takes the whole
+     card. In the step grid it sat 56px in and ran off the right edge — half
+     the right side of the equation, the last tray tile and "Show my tutor"
+     were cut off with no way to reach them. */
+  /* (.lws-card-body > … to outrank the subgrid block further down.) */
+  .lws-card-body:has(.lws-tm) { padding-left: 8px; padding-right: 8px; }
+  .lws-card-body > .lws-step:has(.lws-tm) { display: block; padding: 4px 0 6px; }
+  .lws-card-body > .lws-step:has(.lws-tm) > .lws-step-spine { display: none; }
+  .lws-card-body > .lws-step:has(.lws-tm) > .lws-step-main { display: block; padding: 0; }
+  .lws-tm-tray-tiles { flex-wrap: wrap; gap: 6px; }
+  /* The mat's own readout says the line; the head scrolls away with the card
+     instead of holding a fifth of the mat's window. */
+  .cr-work-dock .lws-card:has(.lws-tm) .lws-card-head { position: static; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lws-tm-tile, .lws-tm-ghost { transition: none; animation: none !important; }
@@ -1547,4 +1560,148 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
   html.mm-work-inline .notebook-save-chip { display: none; }
   .cr-work-dock .lws-dv-inner,
   .lws-sealed .lws-dv-inner { max-width: none; }
+}
+
+/* ============================================================
+   PHONES: THE DESK BECOMES THE BOARD.
+
+   A phone has one column. With a problem in focus the dock used to sit above
+   the composer, so the work was at the bottom of the screen, the tutor's
+   "watching your work" pill held the top, and the conversation got the strip
+   between them. Now the work takes the tutor's place: pinned at the top, the
+   conversation scrolling beneath it, the composer where it always is. The
+   tutor's face rides on the board's bar. When the work is sealed the board
+   leaves and the tutor comes back.
+
+   WHEN is body.mm-board-up, set by chat-workspace.js (watchBoardUp) while the
+   dock has work in it. Phone widths only — the same 768px as
+   mobile-tutor-cam.css, whose fixed hero and thread padding this stands in
+   for (hence the !importants: that sheet uses them). Voice mode has its own
+   stage and is left alone.
+
+   Sized for STEPS, which is nearly every board: a problem and a few lines,
+   with room left for the conversation. The tile mat is the rare, tall case
+   and gets more height only when it is actually on the card.
+   ============================================================ */
+.lws-dock-face { display: none; }
+
+@media (max-width: 768px) {
+  /* The tutor steps aside: no cam, no pill. */
+  html.mm-work-inline body.cr-mode.mm-board-up:not(.cr-voice) .cr-tutor-hero { display: none !important; }
+  /* The header band ends where the board begins. */
+  html.mm-work-inline body.cr-mode.mm-board-up:not(.cr-voice) .cr-stage::before {
+    height: var(--mm-cam-top, 58px);
+  }
+  /* The thread no longer has a cam to clear — the board is above it in flow. */
+  html.mm-work-inline body.cr-mode.mm-board-up:not(.cr-voice) #chat-messages-container {
+    padding-top: 10px !important;
+  }
+
+  /* The board, first in the column, as a card of its own. */
+  html.mm-work-inline body.cr-mode.mm-board-up:not(.cr-voice) .cr-work-dock {
+    order: -1;
+    position: relative;
+    z-index: 4;
+    /* Rigid here, unlike the dock above the composer: a board that shrinks
+       whenever the conversation grows hides its own first lines. The
+       conversation's floor is kept by the height caps below instead — each
+       leaves it at least ~110px on any phone. */
+    flex: 0 0 auto;
+    margin: var(--mm-cam-top, 58px) 12px 0;
+    border-radius: 18px;
+    border: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10));
+    background: var(--mlt-surface, #FFFFFF);
+    box-shadow: var(--mlt-card-shadow, 0 6px 22px rgba(60, 50, 120, 0.13));
+    overflow: hidden;
+  }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-bar {
+    border-top: 0;
+    border-bottom: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10));
+    padding: 6px 8px 6px 7px;
+    background: var(--mlt-surface, #FFFFFF);
+    color: var(--mlt-ink, #232741);
+  }
+  /* Hidden, the board is one slim bar — the tutor's pill, with the work behind it. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock.is-collapsed .lws-dock-bar { border-bottom: 0; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dock-face:not([hidden]) {
+    display: block;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    object-fit: cover; object-position: center 12%;
+    background: #EEEDFE;
+    flex: 0 0 auto;
+  }
+  /* Steps: the whole problem and its last few lines, and still most of the
+     screen for the conversation. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv {
+    max-height: min(38vh, 300px, calc(100vh - 440px));
+    max-height: min(38dvh, 300px, calc(100dvh - 440px));
+    padding: 0;
+    background-image: none;
+    /* Capped, and it scrolls INSIDE itself: a long solve never grows past the
+       cap, and a swipe that reaches the board's end stops there instead of
+       dragging the conversation (or the page) along with it. */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* A phone card is ~360px wide, so the math is set a size down and the card
+     gives back its side padding: a two-step equation fits whole. (A line still
+     too wide scrolls inside its own side of the sign, as everywhere.) The
+     first track is the body's left padding + the spine + its gap — 10 + 26 + 8
+     here, 18 + 26 + 12 on a desktop; change one, change the other. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-card { grid-template-columns: 44px auto auto minmax(0, 1fr); }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-card-head { padding: 9px 10px 10px; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-card-body { padding: 4px 10px 6px; }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-card-problem { font-size: calc(19px * var(--lws-dv-scale, 1)); }
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-step-tex { font-size: calc(18px * var(--lws-dv-scale, 1)); }
+  /* One card, not a card inside a card: the dock is the frame now, so the
+     work card gives up its own border, shadow and the graph paper round it. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-card {
+    border: 0; border-radius: 0; box-shadow: none; margin: 0;
+  }
+  /* Tiles are something to put your hands on, so they get the room — and only
+     they do. */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-tm) {
+    max-height: min(58vh, 480px, calc(100vh - 386px));
+    max-height: min(58dvh, 480px, calc(100dvh - 386px));
+  }
+  /* …and for as long as they are out, the conversation keeps the tutor's last
+     line rather than its last three. (The 386 above is this 96 plus what the
+     column always holds: 58 top, 44 bar, 128 composer, 59 nav, 1 to spare.) */
+  html.mm-work-inline body.mm-board-up:not(.cr-voice):has(.cr-work-dock .lws-tm) #chat-messages-container {
+    min-height: 96px !important;
+  }
+
+  /* ---- Keyboard up (body.mm-board-kb, chat-workspace.js watchKeyboard) ----
+     The column is fitted to the part of the screen the keyboard leaves, so the
+     board stays above the student's typing instead of sliding off the top.
+     In that space (about 500px on a tall phone, 340 on a small one) the board
+     keeps its newest lines, the conversation keeps the tutor's last line, and
+     the composer sits on the keyboard. The nav is under the keyboard, so its
+     reservation is given back. */
+  html.mm-work-inline body.cr-mode.mm-board-up.mm-board-kb:not(.cr-voice) #chat-container {
+    top: var(--mm-vv-top, 0px) !important;
+    bottom: auto !important;
+    height: var(--mm-vv-h, 100dvh) !important;
+    margin-bottom: 0 !important;
+  }
+  html.mm-work-inline body.cr-mode.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock { margin-top: 6px; }
+  /* With this little room the thread's usual breathing space under the last
+     message is the difference between reading the tutor's question and not. */
+  html.mm-work-inline body.mm-board-up.mm-board-kb:not(.cr-voice) #chat-messages-container {
+    min-height: 64px !important;
+    padding-bottom: 6px !important;
+  }
+  /* visible height − composer − (6 top + 46 bar + 64 conversation + its 10 of
+     padding + 4 to spare), and never more than ~two fifths of what is visible */
+  body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-dv,
+  body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-tm) {
+    max-height: max(72px, min(calc(var(--mm-vv-h, 100dvh) * 0.42),
+                              calc(var(--mm-vv-h, 100dvh) - var(--mm-composer-h, 128px) - 130px)));
+  }
+  /* The sticky problem head would be most of so short a window. */
+  body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-card-head { position: static; }
+  /* "3 steps" is not worth a line of math here. */
+  body.mm-board-up.mm-board-kb:not(.cr-voice) .cr-work-dock .lws-card-foot { display: none; }
 }
