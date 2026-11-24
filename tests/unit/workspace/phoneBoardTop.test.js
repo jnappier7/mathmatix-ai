@@ -77,7 +77,7 @@ describe('capped, and it scrolls inside itself', () => {
     expect(dv).not.toBeNull();
     // Three terms: a share, an absolute, and what the column can spare. The
     // third is what keeps the composer on screen on a small phone.
-    expect(dv[0]).toMatch(/max-height:\s*min\(38dvh,\s*300px,\s*calc\(100dvh - 440px\)\)/);
+    expect(dv[0]).toMatch(/max-height:\s*min\(38dvh,\s*300px,\s*calc\(100dvh - 458px\)\)/);
     // vh first for engines without dvh.
     expect(dv[0]).toMatch(/max-height:\s*min\(38vh,/);
   });
@@ -90,7 +90,7 @@ describe('capped, and it scrolls inside itself', () => {
   test('tiles get more room ONLY when a tile mat is on the card', () => {
     const tiles = media.match(/\.cr-work-dock \.lws-dv:has\(\.lws-tm\)\s*\{[^}]*\}/);
     expect(tiles).not.toBeNull();
-    expect(tiles[0]).toMatch(/max-height:\s*min\(58dvh,\s*480px,\s*calc\(100dvh - 386px\)\)/);
+    expect(tiles[0]).toMatch(/max-height:\s*min\(58dvh,\s*480px,\s*calc\(100dvh - 404px\)\)/);
   });
 
   test('a block taller than the window is shown from its top, not its end', () => {
@@ -138,7 +138,66 @@ describe('keyboard up: the board stays above the typing', () => {
   });
 
   test('in that space the board is capped against the composer and the conversation keeps a line', () => {
-    expect(media).toMatch(/max-height:\s*max\(72px,\s*min\(calc\(var\(--mm-vv-h, 100dvh\) \* 0\.42\),\s*calc\(var\(--mm-vv-h, 100dvh\) - var\(--mm-composer-h, 128px\) - 130px\)\)\)/);
+    expect(media).toMatch(/max-height:\s*max\(72px,\s*min\(calc\(var\(--mm-vv-h, 100dvh\) \* 0\.42\),\s*calc\(var\(--mm-vv-h, 100dvh\) - var\(--mm-composer-h, 128px\) - 148px\)\)\)/);
     expect(media).toMatch(/mm-board-kb:not\(\.cr-voice\) #chat-messages-container\s*\{[^}]*min-height:\s*64px\s*!important/);
+  });
+});
+
+describe('swipe the board away to see the whole conversation', () => {
+  // The decision is a pure function in the page script; run the real one.
+  const src = js.slice(js.indexOf('function swipeDecision('), js.indexOf('function wireDockSwipe('));
+  // eslint-disable-next-line no-new-func
+  const swipeDecision = new Function(src + '; return swipeDecision;')();
+
+  test('a push up tucks an open board away; a pull down brings it back', () => {
+    expect(swipeDecision(false, -120, 200)).toBe('close');
+    expect(swipeDecision(true, 120, 200)).toBe('open');
+  });
+
+  test('a nudge, or a drag the wrong way, changes nothing', () => {
+    expect(swipeDecision(false, -15, 200)).toBe('stay');
+    expect(swipeDecision(true, 15, 200)).toBe('stay');
+    expect(swipeDecision(false, 120, 200)).toBe('stay');   // open, pulled further down
+    expect(swipeDecision(true, -120, 200)).toBe('stay');   // tucked away, pushed further up
+  });
+
+  test('the travel needed is a quarter of the board, between 24 and 48px', () => {
+    expect(swipeDecision(false, -47, 400)).toBe('stay');
+    expect(swipeDecision(false, -49, 400)).toBe('close');
+    expect(swipeDecision(false, -25, 60)).toBe('close');   // a short board still needs 24
+    expect(swipeDecision(false, -23, 60)).toBe('stay');
+  });
+
+  test('the gesture lives on the bar and the grab handle — never on the work, which scrolls', () => {
+    expect(js).toMatch(/\[bar, grab\]\.forEach\(function \(el\) \{\s*el\.addEventListener\('pointerdown', down\)/);
+    expect(js).not.toMatch(/mount\.addEventListener\('pointerdown'/);
+    // Buttons on the bar keep their taps.
+    expect(js).toMatch(/e\.currentTarget === bar && e\.target\.closest && e\.target\.closest\('button'\)/);
+    // Phones with the board up only.
+    expect(js).toMatch(/phone\.matches && document\.body\.classList\.contains\('mm-board-up'\)/);
+  });
+
+  test('the handle exists on phones only and takes the drag from the page', () => {
+    expect(css).toMatch(/\n\.lws-dock-grab \{ display: none; \}/);
+    const grab = media.match(/mm-board-up:not\(\.cr-voice\) \.cr-work-dock \.lws-dock-grab\s*\{[^}]*\}/);
+    expect(grab).not.toBeNull();
+    expect(grab[0]).toMatch(/display:\s*block/);
+    expect(grab[0]).toMatch(/touch-action:\s*none/);
+    expect(media).toMatch(/\.lws-dock-bar\s*\{\s*touch-action:\s*none/);
+    // Mid-drag a tucked-away board must be on screen to follow the finger.
+    expect(media).toMatch(/\.is-collapsed\.is-dragging #lws-chat-mount\s*\{\s*display:\s*flex/);
+  });
+
+  test('motion stands down for reduced motion — in the script and in the sheet', () => {
+    expect(js).toMatch(/if \(!onPhoneBoard\(\) \|\| calm\(\)\) \{ setCollapsed\(toCollapsed\); return; \}/);
+    expect(js).toMatch(/if \(calm\(\)\) \{ clear\(\); done\(\); return; \}/);
+    expect(media).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*body\.mm-board-up:not\(\.cr-voice\) \.cr-work-dock\s*\{\s*animation:\s*none/);
+  });
+
+  test('a glide always cleans up after itself (no inline height left on the board)', () => {
+    const fn = js.slice(js.indexOf('function wireDockSwipe('), js.indexOf('// Where the work docks'));
+    expect(fn).toMatch(/function clear\(\) \{\s*mount\.style\.transition = ''; mount\.style\.maxHeight = ''; mount\.style\.overflow = ''; mount\.style\.opacity = '';/);
+    // …even if transitionend never fires.
+    expect(fn).toMatch(/timer = setTimeout\(end, 320\)/);
   });
 });
