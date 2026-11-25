@@ -204,7 +204,7 @@ const fluency = {
         return {
           prompt: `Solve: ${a}/(${xb(p)}) = ${b}/(${xb(q)})`,
           value: String(x0),
-          explanation: `Cross-multiply: ${a}(${xb(q)}) = ${b}(${xb(p)}), so ${a}x ${sg(-a * q)} = ${b}x ${sg(-b * p)} and ${a - b}x = ${mn(a * q - b * p)}, x = ${mn(x0)}. It makes neither denominator zero, so it stands.`,
+          explanation: `Cross-multiply: ${a}(${xb(q)}) = ${b}(${xb(p)}), so ${a}x ${sg(-a * q)} = ${b}x ${sg(-b * p)} and ${a - b === 1 ? '' : a - b === -1 ? '−' : mn(a - b)}x = ${mn(a * q - b * p)}, x = ${mn(x0)}. It makes neither denominator zero, so it stands.`,
         };
       }
       const k = int(r, 2, 6), m = pick(r, [2, 3, 5, 6, 7, 10]);
@@ -227,7 +227,7 @@ const fluency = {
             `${head}³`,
             `${head}(${poly([a * a, -s * 2 * a * b, b * b])})`,
           ]),
-          explanation: `A ${s > 0 ? 'sum' : 'difference'} of cubes: (${a === 1 ? '' : a}x)³ ${s > 0 ? '+' : '−'} ${b}³ = ${head}(${poly([a * a, -s * a * b, b * b])}). The middle term of the trinomial takes the OPPOSITE sign and is not doubled.`,
+          explanation: `A ${s > 0 ? 'sum' : 'difference'} of cubes: ${a === 1 ? 'x³' : `(${a}x)³`} ${s > 0 ? '+' : '−'} ${b}³ = ${head}(${poly([a * a, -s * a * b, b * b])}). The middle term of the trinomial takes the OPPOSITE sign and is not doubled.`,
         };
       }
       if (idx === 1) {
@@ -718,6 +718,7 @@ const zeros = {
       const zs = zeroSet(r, [int(r, 1, 4), int(r, 1, 4), int(r, 1, 4)]);
       const q = int(r, 1, 9), a = pick(r, [1, -1, 2, -2]);
       const odd = zs.filter((z) => z[1] % 2 === 1).length;
+      if (odd === 3) again();
       return {
         prompt: `At how many of its x-intercepts does the graph of f(x) = ${factored(a, zs)}(x² + ${q}) cross the x-axis?`,
         value: String(odd),
@@ -944,7 +945,7 @@ const logarithmic = {
       }
       if (idx === 1) {
         const b = pick(r, [2, 3, 5, 'e']), n = int(r, 2, 12), m = int(r, 2, 6), s = pick(r, [1, -1]);
-        if (n === m) again();
+        if (n === m || n === b) again();
         return {
           prompt: `Evaluate: ${b}^(${L(b, n)}) ${s > 0 ? '+' : '−'} ${L(b, `${b}^${m}`)}`,
           value: String(n + s * m),
@@ -1149,7 +1150,7 @@ const solveExp = {
         const [rn, rd] = K.reduce(num, den);
         if (rd > 7 || Math.abs(rn) > 20) again();
         return {
-          prompt: `Solve: ${B1}^(${poly([p, q])}) = ${B2}^(${poly([1, s])})${rd === 1 ? '' : ' Enter a fraction in lowest terms.'}`,
+          prompt: `Solve: ${B1}^(${poly([p, q])}) = ${B2}^(${poly([1, s])})${rd === 1 ? '' : ' (Enter a fraction in lowest terms.)'}`,
           value: K.frac(num, den),
           explanation: `Use base ${pr}: ${B1} = ${pr}${m === 1 ? '' : sup(m)} and ${B2} = ${pr}${sup(n)}. Equal exponents: ${m}(${poly([p, q])}) = ${n}(${poly([1, s])}), so ${m * p}x ${sg(m * q)} = ${n}x ${sg(n * s)} and x = ${K.frac(num, den).replace('-', '−')}. Distribute the exponent over BOTH terms.`,
         };
@@ -1285,7 +1286,7 @@ const solveLog = {
         const [, rd] = K.reduce(num, den);
         if (rd > 9) again();
         return {
-          prompt: `Solve: ${L(b, poly([p, q]))} − ${L(b, `x − ${s}`)} = ${n}${rd === 1 ? '' : ' Enter a fraction in lowest terms.'}`,
+          prompt: `Solve: ${L(b, poly([p, q]))} − ${L(b, `x − ${s}`)} = ${n}${rd === 1 ? '' : ' (Enter a fraction in lowest terms.)'}`,
           value: K.frac(num, den),
           explanation: `Condense: ${L(b, `(${poly([p, q])})/(x − ${s})`)} = ${n}, so (${poly([p, q])})/(x − ${s}) = ${b}^${n} = ${B}. Then ${poly([p, q])} = ${B}x − ${B * s}, and x = ${K.frac(num, den)}. It is greater than ${s}, so both arguments are positive.`,
         };
@@ -1296,7 +1297,7 @@ const solveLog = {
         if (c === a || K.reduce(c, a)[1] > 9) again();
         const frac = c % a !== 0;
         return {
-          prompt: `Solve: ${L(b, 'x')} + ${L(b, a)} = ${L(b, c)}${frac ? ' Enter a fraction in lowest terms.' : ''}`,
+          prompt: `Solve: ${L(b, 'x')} + ${L(b, a)} = ${L(b, c)}${frac ? ' (Enter a fraction in lowest terms.)' : ''}`,
           value: K.frac(c, a),
           explanation: `Product rule on the left: ${L(b, `${a}x`)} = ${L(b, c)}, so ${a}x = ${c} and x = ${K.frac(c, a)}. Adding logs MULTIPLIES the arguments — it is not x + ${a} = ${c}.`,
         };
@@ -1327,7 +1328,7 @@ const solveLog = {
         return {
           prompt: `Solve: ln(x) + ln(x + ${k}) = ln(${c})`,
           ...mc(r, `x = ${v}`, [`x = −${u} or x = ${v}`, `x = −${u}`, `x = ${slip.replace('-', '−')}`]),
-          explanation: `Condense: ln(x(x + ${k})) = ln(${c}), so x² + ${k}x − ${c} = 0 = (x + ${u})(x − ${v}). x = −${u} makes ln(x) undefined, so only x = ${v} is a solution. (Adding the arguments, x + x + ${k} = ${c}, is the log-of-a-sum slip.)`,
+          explanation: `Condense: ln(x(x + ${k})) = ln(${c}), so ${poly([1, k, -c])} = 0 = (x + ${u})(x − ${v}). x = −${u} makes ln(x) undefined, so only x = ${v} is a solution. (Adding the arguments, x + x + ${k} = ${c}, is the log-of-a-sum slip.)`,
         };
       }
       if (idx === 2) {
@@ -1344,7 +1345,7 @@ const solveLog = {
       if (K.reduce(a, B - 1)[1] === 1 && int(r, 0, 1) === 1) again();
       const frac = K.reduce(a, B - 1)[1] !== 1;
       return {
-        prompt: `Solve: ${L(b, `x + ${a}`)} − ${L(b, 'x')} = ${n}${frac ? ' Enter a fraction in lowest terms.' : ''}`,
+        prompt: `Solve: ${L(b, `x + ${a}`)} − ${L(b, 'x')} = ${n}${frac ? ' (Enter a fraction in lowest terms.)' : ''}`,
         value: K.frac(a, B - 1),
         explanation: `Condense: ${L(b, `(x + ${a})/x`)} = ${n}, so (x + ${a})/x = ${b}^${n} = ${B}. Then x + ${a} = ${B}x, ${a} = ${B - 1}x, and x = ${K.frac(a, B - 1)}. It is positive, so both logs are defined.`,
       };

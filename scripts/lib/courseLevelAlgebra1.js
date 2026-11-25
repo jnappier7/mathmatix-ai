@@ -331,6 +331,7 @@ const algebraicProperties = {
             ...mc(r, `${k} · 100 ${op} ${k} · ${d}`, [`${k} · 100 ${op} ${d}`, `(${k} · 100) · (${k} · ${d})`, `${k} + 100 ${op} ${d}`]),
             explanation: `${n} = 100 ${op} ${d}, so ${k} · ${n} = ${k}(100 ${op} ${d}) = ${k} · 100 ${op} ${k} · ${d} = ${k * n}. The ${k} must multiply BOTH parts; ${k} · 100 ${op} ${d} multiplies only the 100.` };
         }
+        if (a === b) again();
         return { prompt: `Which expression is the result of applying ONLY the Commutative Property of Multiplication to ${a} · (x + ${b})?`,
           ...mc(r, `(x + ${b}) · ${a}`, [`${a} · (${b} + x)`, `${a}x + ${a * b}`, `(${a} · x) + ${b}`]),
           explanation: `The two FACTORS are ${a} and (x + ${b}); swapping them gives (x + ${b}) · ${a}. ${a} · (${b} + x) swaps addends (commutative property of addition), and ${a}x + ${a * b} is the Distributive Property.` };
@@ -363,7 +364,7 @@ const solvingInequalities = {
           const x1 = int(r, 2, 7), b = int(r, 1, 9), c = a * x1 - b, gt = int(r, 0, 1);
           const good = gt ? x1 + 1 : x1 - 1;
           return { prompt: `Which value of x is a solution of ${lin(a, -b)} ${gt ? '>' : '<'} ${c}?`,
-            ...mc(r, good, [x1, gt ? x1 - 2 : x1 + 2, gt ? x1 - 5 : x1 + 5]),
+            ...mc(r, neg(good), [x1, gt ? x1 - 2 : x1 + 2, gt ? x1 - 5 : x1 + 5].map(neg)),
             explanation: `Solving gives x ${gt ? '>' : '<'} ${x1}. ${good} is ${gt ? 'greater' : 'less'} than ${x1}, so it works: ${a}(${good}) − ${b} = ${a * good - b}. x = ${x1} gives exactly ${c}, which is not ${gt ? 'greater' : 'less'} than ${c}.` };
         }
         const b = int(r, 1, 9), c = -a * x0 + b;
@@ -1163,7 +1164,7 @@ const dataDisplays = {
     { difficulty: 4,
       gen: g((r, idx) => {
         if (idx === 0) {
-          const T = pick(r, [20, 25, 40, 50]), gy = int(r, 3, T - 3), by = T - gy;
+          const T = pick(r, [20, 25, 40, 50]), gy = int(r, T / 5, (4 * T) / 5), by = T - gy;
           const gn = int(r, 4, 30), bn = int(r, 4, 30);
           const v = (100 * gy) / T;
           if (!Number.isInteger(v) || gy === by || (100 * gy) % (gy + gn) === 0 || new Set([gy, by, gn, bn]).size < 4) again();
@@ -1264,11 +1265,12 @@ const exponentialBasics = {
         }
         if (idx === 2) {
           const A = int(r, 2, 9) * 100, kind = pick(r, [['doubles', '2'], ['triples', '3'], ['is cut in half', '(1/2)']]);
-          const thing = pick(r, ['A population of A bacteria', 'A video with A views has a view count that', 'A sample of A grams of a substance']);
-          const subject = thing.replace('A', A);
+          const subject = kind[1] === '(1/2)'
+            ? pick(r, [`The mass of a ${A}-gram sample of a substance`, `The amount of water in a tank that holds ${A} litres`])
+            : pick(r, [`A population of ${A} bacteria`, `The number of views of a video that has ${A} views`]);
           const wrongB = kind[1] === '(1/2)' ? '2' : `(1/${kind[1]})`;
-          return { prompt: `${subject}${/that$/.test(subject) ? '' : ''} ${kind[0]} every hour. Which function gives the amount y after x hours?`,
-            ...mc(r, `y = ${A} · ${kind[1]}^x`, [`y = ${A} · ${wrongB}^x`, `y = ${A} + ${kind[1] === '(1/2)' ? '(1/2)' : kind[1]}x`, `y = ${kind[1]} · ${A}^x`]),
+          return { prompt: `${subject} ${kind[0]} every hour. Which function gives the amount y after x hours?`,
+            ...mc(r, `y = ${A} · ${kind[1]}^x`, [`y = ${A} · ${wrongB}^x`, `y = ${A} + ${kind[1]}x`, `y = ${kind[1]} · ${A}^x`]),
             explanation: `Start at ${A} (the initial value) and multiply by ${kind[1]} once for every hour: y = ${A} · ${kind[1]}^x. Adding ${kind[1]} each hour would be linear, and the starting amount is never the base.` };
         }
         const b = pick(r, [2, 4]), x = b === 2 ? int(r, 2, 4) : 2, k = int(r, 1, 7);

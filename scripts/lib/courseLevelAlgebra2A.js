@@ -125,7 +125,7 @@ const TEMPLATES = [
           return {
             prompt: `What is the slope of the line ${std(A, B)} = ${n(C)}?`,
             value: K.frac(-A, B),
-            explanation: `Solve for y: ${Math.abs(B) === 1 ? '' : B}y = ${n(-A)}x ${sgn(C)}, so y = (${fr(-A, B)})x + ${fr(C, B)}. The slope is ${fr(-A, B)}. Reading the slope straight off as ${A} (or as ${fr(A, B)}, without the sign change) is the usual slip.`,
+            explanation: `Solve for y: ${n(B)}y = ${n(-A)}x ${sgn(C)}, so y = (${fr(-A, B)})x + ${fr(C, B)}. The slope is ${fr(-A, B)}. Reading the slope straight off as ${A} (or as ${fr(A, B)}, without the sign change) is the usual slip.`,
           };
         },
         (r) => {
@@ -178,6 +178,7 @@ const TEMPLATES = [
         (r) => {
           const m = pick(r, [-4, -3, -2, 2, 3, 4]), t = nonZero(r, -5, 5), x1 = nonZero(r, -6, 6);
           const y1 = m * t;
+          if (x1 === t) again();
           return {
             prompt: `What is the x-intercept of the line y ${sgn(-y1)} = ${n(m)}(x ${sgn(-x1)})? Give the x-value only.`,
             value: x1 - t,
@@ -302,7 +303,7 @@ const TEMPLATES = [
           return {
             prompt: `A chemist mixes a ${c1}% acid solution with a ${c2}% acid solution to make ${L} liters of a ${c}% acid solution. How many liters of the ${c1}% solution are needed?`,
             value: x,
-            explanation: `Let x and y be the liters of each: x + y = ${L} and ${c1 / 100}x + ${c2 / 100}y = ${c / 100}(${L}). Substituting y = ${L} − x gives ${(c1 - c2) / 100}x = ${Number(((c - c2) * L / 100).toFixed(2))}, so x = ${x} liters (and y = ${L - x}). Reporting the other solution's amount is the usual slip.`,
+            explanation: `Let x and y be the liters of each: x + y = ${L} and ${c1 / 100}x + ${c2 / 100}y = ${c / 100}(${L}). Substituting y = ${L} − x gives ${n((c1 - c2) / 100)}x = ${n(Number(((c - c2) * L / 100).toFixed(2)))}, so x = ${x} liters (and y = ${L - x}). Reporting the other solution's amount is the usual slip.`,
           };
         },
         (r) => {
@@ -335,11 +336,10 @@ const TEMPLATES = [
           const [i1, i2] = pick(r, [['burgers', 'orders of fries'], ['sandwiches', 'drinks'], ['notebooks', 'pens'], ['pizzas', 'salads']]);
           const x = int(r, 5, 12), y = int(r, 2, 6), a1 = int(r, 2, 5), b1 = int(r, 1, 5), a2 = int(r, 1, 5), b2 = int(r, 2, 6);
           if (a1 * b2 - a2 * b1 === 0 || x === y || (a1 === a2) || (b1 === b2)) again();
-          const one = i1.replace(/(es|s)$/, (s) => (i1 === 'sandwiches' ? '' : '')).replace(/sandwiche$/, 'sandwich');
           return {
-            prompt: `At a snack bar and school store, ${a1} ${i1} and ${b1} ${i2} cost $${a1 * x + b1 * y}, while ${a2} ${i1} and ${b2} ${i2} cost $${a2 * x + b2 * y}. Every item of one kind has the same whole-dollar price. What is the price, in dollars, of one of the ${i1}?`,
+            prompt: `At a school fundraiser, ${a1} ${i1} and ${b1} ${i2} cost $${a1 * x + b1 * y}, while ${a2} ${i1} and ${b2} ${i2} cost $${a2 * x + b2 * y}. Every item of one kind has the same whole-dollar price. What is the price, in dollars, of one of the ${i1}?`,
             value: x,
-            explanation: `Let x and y be the two prices: ${a1}x + ${b1}y = ${a1 * x + b1 * y} and ${a2}x + ${b2}y = ${a2 * x + b2 * y}. Eliminating y (multiply the first by ${b2} and the second by ${b1}, then subtract) gives ${a1 * b2 - a2 * b1}x = ${(a1 * b2 - a2 * b1) * x}, so x = ${x}. (The other item costs $${y}; one ${one || i1} is the question.)`,
+            explanation: `Let x and y be the two prices: ${a1}x + ${b1}y = ${a1 * x + b1 * y} and ${a2}x + ${b2}y = ${a2 * x + b2 * y}. Eliminating y (multiply the first by ${b2} and the second by ${b1}, then subtract) gives ${a1 * b2 - a2 * b1}x = ${(a1 * b2 - a2 * b1) * x}, so x = ${x}. (Each of the ${i2} costs $${y} — answer for the ${i1}.)`,
           };
         },
       ]) },
@@ -351,7 +351,7 @@ const TEMPLATES = [
           return {
             prompt: `An investor splits $${x + y} between two accounts. One pays ${r1}% simple interest per year and the other pays ${r2}% per year. After one year the two accounts have earned $${I} in interest altogether. How many dollars were invested at ${r1}%?`,
             value: x,
-            explanation: `Let x be the amount at ${r1}% and y at ${r2}%: x + y = ${x + y} and ${r1 / 100}x + ${r2 / 100}y = ${I}. Substituting y = ${x + y} − x gives ${(r1 - r2) / 100}x = ${Number((I - r2 * (x + y) / 100).toFixed(2))}, so x = ${x}. The other account holds $${y}.`,
+            explanation: `Let x be the amount at ${r1}% and y at ${r2}%: x + y = ${x + y} and ${r1 / 100}x + ${r2 / 100}y = ${I}. Substituting y = ${x + y} − x gives ${n((r1 - r2) / 100)}x = ${n(Number((I - r2 * (x + y) / 100).toFixed(2)))}, so x = ${x}. The other account holds $${y}.`,
           };
         },
         (r) => {
@@ -582,7 +582,7 @@ const TEMPLATES = [
           return {
             prompt: `${MAT}Which matrix is the inverse of ${M([[a, b], [c, d]])}?`,
             ...mc(r, M([[d, -b], [-c, a]]), [M([[d, b], [c, a]]), M([[a, -b], [-c, d]]), M([[-a, b], [c, -d]])]),
-            explanation: `The determinant is (${n(a)})(${n(d)}) − (${n(b)})(${n(c)}) = 1, so the inverse is (1/1) times [[d, −b], [−c, a]] = ${M([[d, -b], [-c, a]])}: swap the diagonal entries and negate the other two. Negating without swapping (or swapping without negating) is the usual slip.`,
+            explanation: `The determinant is (${n(a)})(${n(d)}) − (${n(b)})(${n(c)}) = 1, so the inverse is simply [[d, −b], [−c, a]] = ${M([[d, -b], [-c, a]])}: swap the diagonal entries and negate the other two. Negating without swapping (or swapping without negating) is the usual slip.`,
           };
         },
         (r) => {
@@ -687,7 +687,7 @@ const TEMPLATES = [
             return {
               prompt: `What is the value of the discriminant of ${P([1, b, c])} = 0?`,
               value: b * b - 4 * c,
-              explanation: `The discriminant is b² − 4ac with a = 1, b = ${n(b)}, c = ${c}: (${n(b)})² − 4(1)(${c}) = ${b * b} − ${4 * c} = ${n(b * b - 4 * c)}. Squaring a negative b gives a positive number — writing −${b * b} is the usual slip.`,
+              explanation: `The discriminant is b² − 4ac with a = 1, b = ${n(b)}, c = ${c}: (${n(b)})² − 4(1)(${c}) = ${b * b} − ${4 * c} = ${n(b * b - 4 * c)}. A square is never negative, so (${n(b)})² = ${b * b} — writing −${b * b} is the usual slip when b is negative.`,
             };
           },
           (r) => {
@@ -776,8 +776,7 @@ const TEMPLATES = [
             const good = two ? `k < ${m}` : `k > ${m}`;
             return {
               prompt: `For which values of k does the equation ${P([1, b, 0])} + k = 0 have ${two ? 'two distinct real solutions' : 'no real solutions'}?`,
-              ...mc(r, good, [`k < ${m}`, `k > ${m}`, `k < ${b * b}`, `k > ${b * b}`].filter((o) => o !== good && o !== (two ? `k > ${b * b}` : `k < ${b * b}`))
-                .concat(two ? `k > ${-m}` : `k < ${-m}`)),
+              ...mc(r, good, [`k < ${m}`, `k > ${m}`, `k < ${b * b}`, `k > ${b * b}`].filter((o) => o !== good)),
               explanation: `The discriminant is (${n(b)})² − 4(1)k = ${b * b} − 4k. ${two ? `Two distinct real solutions need ${b * b} − 4k > 0, so 4k < ${b * b} and k < ${m}` : `No real solutions needs ${b * b} − 4k < 0, so 4k > ${b * b} and k > ${m}`}. Forgetting to divide by 4, or turning the inequality the wrong way, are the usual slips.`,
             };
           },
@@ -792,6 +791,7 @@ const TEMPLATES = [
           },
           (r) => {
             const b = 2 * nonZero(r, -6, 6), c = nonZero(r, -9, 9);
+            if (c === b * b / 4) again();
             return {
               prompt: `For what value of k does the equation ${P([1, b, c])} = k have exactly one real solution?`,
               value: c - b * b / 4,
@@ -812,7 +812,8 @@ const TEMPLATES = [
       const vf = (a, h, k) => `${typeof a === 'string' ? a : aS(a)}${h === 0 ? 'x²' : `(x ${sgn(-h)})²`}${k === 0 ? '' : ` ${sgn(k)}`}`;
       const H = (h) => (h > 0 ? `right ${h}` : `left ${-h}`);
       const V = (k) => (k > 0 ? `up ${k}` : `down ${-k}`);
-      const shift = (h, k) => `Shifted ${H(h)} units and ${V(k)} units`;
+      const u = (v) => (Math.abs(v) === 1 ? 'unit' : 'units');
+      const shift = (h, k) => `Shifted ${H(h)} ${u(h)} and ${V(k)} ${u(k)}`;
       const BASE = 'the graph of f(x) = x²';
       return [
         { difficulty: 2, gen: forms([
@@ -828,7 +829,7 @@ const TEMPLATES = [
             const h = nonZero(r, -8, 8), k = nonZero(r, -8, 8);
             if (Math.abs(h) === Math.abs(k)) again();
             return {
-              prompt: `The graph of f(x) = x² is shifted ${H(h)} units and ${V(k)} units. Which function is the result?`,
+              prompt: `The graph of f(x) = x² is shifted ${H(h)} ${u(h)} and ${V(k)} ${u(k)}. Which function is the result?`,
               ...mc(r, `g(x) = ${vf(1, h, k)}`, [`g(x) = ${vf(1, -h, k)}`, `g(x) = ${vf(1, h, -k)}`, `g(x) = ${vf(1, k, h)}`]),
               explanation: `A shift ${H(h)} replaces x with (x ${sgn(-h)}); a shift ${V(k)} adds ${n(k)} outside: g(x) = ${vf(1, h, k)}. Writing (x ${sgn(h)}) for a shift ${H(h)} is the usual slip.`,
             };
@@ -859,7 +860,7 @@ const TEMPLATES = [
             const a = int(r, 2, 5), h = nonZero(r, -7, 7), k = nonZero(r, -7, 7), refl = int(r, 0, 1) === 1;
             const s = refl ? -a : a;
             return {
-              prompt: `The graph of f(x) = x² is ${refl ? 'reflected over the x-axis, ' : ''}stretched vertically by a factor of ${a}, then shifted ${H(h)} units and ${V(k)} units. Which function is the result?`,
+              prompt: `The graph of f(x) = x² is ${refl ? 'reflected over the x-axis, ' : ''}stretched vertically by a factor of ${a}, then shifted ${H(h)} ${u(h)} and ${V(k)} ${u(k)}. Which function is the result?`,
               ...mc(r, `g(x) = ${vf(s, h, k)}`, [`g(x) = ${vf(s, -h, k)}`, `g(x) = ${vf(-s, h, k)}`, `g(x) = ${vf(s, h, -k)}`]),
               explanation: `${refl ? `The reflection and the stretch give −${a}x²` : `The stretch gives ${a}x²`}; the shift ${H(h)} replaces x with (x ${sgn(-h)}) and the shift ${V(k)} adds ${n(k)}: g(x) = ${vf(s, h, k)}. The sign inside the parentheses is opposite to the direction of the shift.`,
             };
@@ -879,7 +880,7 @@ const TEMPLATES = [
             const a = int(r, 2, 4), h = nonZero(r, -5, 5), k = nonZero(r, -9, 9), p = int(r, -4, 6);
             if (p === h || p === 0) again();
             return {
-              prompt: `The graph of f(x) = x² is stretched vertically by a factor of ${a}, then shifted ${H(h)} units and ${V(k)} units to give the graph of g. What is g(${n(p)})?`,
+              prompt: `The graph of f(x) = x² is stretched vertically by a factor of ${a}, then shifted ${H(h)} ${u(h)} and ${V(k)} ${u(k)} to give the graph of g. What is g(${n(p)})?`,
               value: a * (p - h) ** 2 + k,
               explanation: `g(x) = ${vf(a, h, k)}. So g(${n(p)}) = ${a}(${n(p)} ${sgn(-h)})² ${sgn(k)} = ${a}(${n(p - h)})² ${sgn(k)} = ${a * (p - h) ** 2} ${sgn(k)} = ${n(a * (p - h) ** 2 + k)}. Using (x ${sgn(h)}) for the shift ${H(h)} is the usual slip.`,
             };
@@ -910,7 +911,7 @@ const TEMPLATES = [
             const a = int(r, 2, 4), h = nonZero(r, -5, 5), k = nonZero(r, -9, 9), refl = int(r, 0, 1) === 1;
             const s = refl ? -a : a;
             return {
-              prompt: `The graph of f(x) = x² is ${refl ? 'reflected over the x-axis, ' : ''}stretched vertically by a factor of ${a}, then shifted ${H(h)} units and ${V(k)} units to give the graph of g. What is the y-intercept of g? Give the y-value only.`,
+              prompt: `The graph of f(x) = x² is ${refl ? 'reflected over the x-axis, ' : ''}stretched vertically by a factor of ${a}, then shifted ${H(h)} ${u(h)} and ${V(k)} ${u(k)} to give the graph of g. What is the y-intercept of g? Give the y-value only.`,
               value: s * h * h + k,
               explanation: `g(x) = ${vf(s, h, k)}. The y-intercept is g(0) = ${n(s)}(${n(-h)})² ${sgn(k)} = ${n(s * h * h)} ${sgn(k)} = ${n(s * h * h + k)}. Answering ${n(k)} gives the vertex's y-value, not the y-intercept.`,
             };
@@ -927,7 +928,7 @@ const TEMPLATES = [
           (r) => {
             const a = pick(r, [-3, -2, 2, 3]), h = nonZero(r, -7, 7), k = nonZero(r, -8, 8), m = nonZero(r, -6, 6);
             return {
-              prompt: `The graph of g(x) = ${vf(a, h, k)} is reflected over the x-axis and then shifted ${V(m)} units. What is the vertex of the new graph?`,
+              prompt: `The graph of g(x) = ${vf(a, h, k)} is reflected over the x-axis and then shifted ${V(m)} ${u(m)}. What is the vertex of the new graph?`,
               ...mc(r, pt(h, -k + m), [pt(h, k + m), pt(-h, -k + m), pt(h, -k - m)]),
               explanation: `The vertex starts at ${pt(h, k)}. Reflecting over the x-axis changes the sign of y: ${pt(h, -k)}. Shifting ${V(m)} gives ${pt(h, -k + m)}. Changing the sign of x instead reflects over the y-axis, and shifting before reflecting gives ${pt(h, -k - m)}.`,
             };
@@ -1540,7 +1541,7 @@ const TEMPLATES = [
           (r) => {
             const a = int(r, 1, 3), b = nonZero(r, -9, 9), c = nonZero(r, -6, 6);
             const D = b * b - 4 * a * c, D2 = b * b + 4 * a * c;
-            if (D <= 1 || K.largestSquareFactor(D) !== 1 || D2 <= 1) again();
+            if (D <= 1 || K.largestSquareFactor(D) !== 1 || D2 <= 1 || K.largestSquareFactor(D2) !== 1) again();
             const f = (num, rad, den) => `x = (${n(num)} ± √${rad})/${den}`;
             return {
               prompt: `Solve using the quadratic formula: ${P([a, b, c])} = 0. Which are the solutions?`,
