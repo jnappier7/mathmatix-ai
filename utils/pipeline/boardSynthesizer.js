@@ -99,7 +99,8 @@ const APPLY_KEYWORD_PATTERNS = [
   /\b(divide|multiply)\s+by\s+\S+/i,
   // structural ops
   /\bcombine\s+like\s+terms\b/i,
-  /\bdistribute\b/i,
+  // keeps what is being distributed when the student says it: "distribute the 3"
+  /\bdistribut(?:e|ing)\b(?:\s+(?:the\s+)?-?\d+(?:\.\d+)?[a-z]?\b)?/i,
   /\bfactor\s+(?:out\s+)?\S+/i,
   /\bsimplify\b/i,
   /\bisolate\s+\S+/i,
@@ -885,8 +886,18 @@ function mergeWithLlmCommands(llmCommands, synthesized) {
   const llm = Array.isArray(llmCommands) ? llmCommands : [];
   const synth = Array.isArray(synthesized) ? synthesized : [];
 
+  // ONE MOVE, ONE LABEL. The synthesizer words a move by the keyword it
+  // matched ("distribute"); the model words the same move its own way
+  // ("distribute the 3"). Matching on the exact text let both through, and the
+  // card showed the step's label twice (owner on a preview account,
+  // 2026-11-25: "Distribute came up and distribute 3"). A student's message
+  // names one move, so when the model has already labelled it, the
+  // synthesizer's label is that same one.
+  const llmNamedTheMove = llm.some(l => l && l.action === 'apply');
+
   const added = [];
   for (const s of synth) {
+    if (s && s.action === 'apply' && llmNamedTheMove) continue;
     if (!llm.some(l => commandsOverlap(l, s))) {
       added.push(s);
     }
