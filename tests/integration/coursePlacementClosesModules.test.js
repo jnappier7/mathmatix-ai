@@ -420,6 +420,57 @@ describe('the check runs in stages, a whole module at a time', () => {
   });
 });
 
+describe('a typed box takes one answer (2026-11-25)', () => {
+  // The old bank holds worksheet questions whose stored answer is a list or a
+  // sentence. The grader accepts that exact string and nothing a student would
+  // type — so served typed, right work was marked wrong and the module stayed shut.
+  const typed = (prompt, value) => ({ prompt, answer: { type: 'exact', value } });
+
+  test('worksheet answers are not checkable; ordinary typed answers still are', () => {
+    const no = [
+      typed('A truck sells tacos for $3 and burritos for $7. (a) Write an expression. (b) Find the total for 12 tacos and 5 burritos.', '(a) 3t + 7b; (b) $71'),
+      typed('Maya evaluated 4 + 2 × 3² and got 54. Find her mistake.', 'Mistake: added before multiplying; correct value is 22'),
+      typed('State the slope and the y-intercept of y = −4x + 6.', 'slope = −4, y-intercept = 6'),
+      typed('The sum of three consecutive integers is 45. Write an equation, then solve.', 'n + (n + 1) + (n + 2) = 45; the integers are 14, 15, 16'),
+      typed('Add. a) (5x + 1) + (2x − 3) b) (x² + x) − (x² − 4)', '7x − 2, x + 4'),
+      typed('Is (2, 3) a solution? Explain.', 'Yes — 3(2) + 3 = 9 and 2 − 3 = −1'),
+    ];
+    for (const item of no) expect([item.prompt, service.isCheckable(item)]).toEqual([item.prompt, false]);
+    const yes = [
+      typed('Solve for x: x + 13 = 42', '29'),
+      typed('Find the slope between (4, 5) and (8, 8)', '3/4'),
+      typed('Solve: |x + 5| < −2', 'no solution'),
+      typed('Describe the horizontal shift from y = x² to (x − 7)².', 'right 7 units'),
+      typed('Write the equation of the line with slope 2 and y-intercept 3.', 'y = 2x + 3'),
+    ];
+    for (const item of yes) expect([item.prompt, service.isCheckable(item)]).toEqual([item.prompt, true]);
+  });
+
+  test('a skill whose whole pool is worksheet answers counts as untestable — the stage is never built around it', async () => {
+    const raw = G6.modules[0].skills[0];
+    const ids = checkSourcesFor('6th-grade-math', raw) || skillLookupCandidates(raw);
+    await Problem.updateMany({ skillId: { $in: ids } }, { $set: { isActive: false } });
+    await Problem.insertMany([0, 1, 2, 3, 4, 5].map((n) => ({
+      problemId: `worksheet-${n}`, skillId: ids[0], difficulty: 2,
+      prompt: `(a) Write an expression for ${n} more than x. (b) Evaluate it when x = 2.`,
+      answer: { type: 'exact', value: `(a) x + ${n}; (b) ${n + 2}` },
+    })));
+    service._resetCache();
+    try {
+      const { available } = await service.bankForCourse(G6);
+      expect(available[canonicalSkillId(raw)]).toBe(0);          // six rows in the database, none servable
+      expect(await service.preAssessmentAvailable('6th-grade-math')).toBe(false);
+      const enrolled = await post('/api/course-sessions/enroll', { courseId: '6th-grade-math' });
+      expect(enrolled.body.welcomeData.diagnostic.type).toBe('starting-point');
+      expect((await get(`/api/course-sessions/${enrolled.body.session._id}/preassessment`)).status).toBe(409);
+    } finally {
+      await Problem.deleteMany({ problemId: /^worksheet-/ });
+      await Problem.updateMany({ skillId: { $in: ids } }, { $set: { isActive: true } });
+      service._resetCache();
+    }
+  });
+});
+
 describe('a Starting Point reaches the course', () => {
   test('skills proved after enrolling close their modules in the active course', async () => {
     const enrolled = await post('/api/course-sessions/enroll', { courseId: 'algebra-1' });

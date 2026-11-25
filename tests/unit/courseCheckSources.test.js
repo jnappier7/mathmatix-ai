@@ -49,7 +49,10 @@ describe('the committed seed files are what the templates build', () => {
   test('the sources file names exactly the skills that have templates', () => {
     const expected = {};
     for (const b of banks) {
-      for (const t of b.TEMPLATES) (expected[b.COURSE_ID] = expected[b.COURSE_ID] || {})[t.courseSkill] = [t.skillId];
+      for (const t of b.TEMPLATES) {
+        const courseId = t.courseId || b.COURSE_ID;   // a file may serve two courses
+        (expected[courseId] = expected[courseId] || {})[t.courseSkill] = [t.skillId];
+      }
     }
     expect(readSeed('course-level-sources.generated.json')).toEqual(expected);
   });
@@ -107,7 +110,12 @@ describe('practice surfaces with no course in hand (review, practice packs, the 
     for (const [courseId, skills] of Object.entries(allCheckSources())) {
       for (const [raw, ids] of Object.entries(skills)) (byRaw[raw] = byRaw[raw] || []).push({ courseId, ids });
     }
+    // The one id two courses both teach with their own items: Pre-Calculus and
+    // Calculus BC each have algebraic limits. Both pools ARE that skill (BC's adds
+    // sin(kx)/(jx)), so the union a practice surface gets is still on the skill.
+    const SAME_SKILL_TWO_LEVELS = new Set(['limits-algebraic']);
     for (const [raw, uses] of Object.entries(byRaw)) {
+      if (SAME_SKILL_TWO_LEVELS.has(raw)) continue;
       expect({ raw, pools: new Set(uses.map((u) => u.ids.join(','))).size }).toEqual({ raw, pools: 1 });
     }
   });

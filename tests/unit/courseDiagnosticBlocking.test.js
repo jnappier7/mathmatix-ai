@@ -74,11 +74,20 @@ describe('only a verified baseline runner may block', () => {
     expect(diagnostic.cta).toBe('Start the check');
   });
 
-  test('a starting-point course is neither required nor blocking', async () => {
+  test('a course whose bank cannot build a check falls back to the Starting Point: neither required nor blocking', async () => {
+    const service = require('../../utils/coursePlacementService');
+    service.preAssessmentAvailable.mockResolvedValueOnce(false).mockResolvedValueOnce(false);
     const d = await buildCourseDiagnostic(user, 'algebra-2');
     expect(d).toMatchObject({ type: 'starting-point', required: false, blocking: false });
     expect((await isRequiredBaselinePending(user, 'algebra-2')).pending).toBe(false);
   });
+
+  // Pinned to the Starting Point until 2026-11-25; their own check since.
+  test.each(['algebra-1', 'algebra-2', 'precalculus', 'ap-calculus-ab', 'calculus-bc'])(
+    '%s opens with its own quick check, which never blocks', async (courseId) => {
+      const d = await buildCourseDiagnostic(user, courseId);
+      expect(d).toMatchObject({ type: 'course-preassessment', required: true, blocking: false });
+    });
 });
 
 describe('every other pathway course behaves like consumer-math', () => {

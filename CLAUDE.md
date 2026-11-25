@@ -499,8 +499,9 @@ npm run seed:all:dry   # preflight + plan, no writes
   must precede helmet; CSRF after session.
 - **Every student course opens with a placement, and placement CLOSES MODULES.** Which one is
   `utils/courseDiagnostic.js`: ACT/SAT prep → a full practice test (the only blocking ones);
-  Algebra 1/2, Pre-Calculus, both Calculus → the Starting Point; every other course → its own quick
-  check (`GET/POST /api/course-sessions/:id/preassessment`) — but only where the bank can build one
+  every other course → its own quick
+  check (Algebra 1/2, Pre-Calculus and both Calculus courses were pinned to the Starting Point
+  until 2026-11-25, when the bank could first test their skills at level) (`GET/POST /api/course-sessions/:id/preassessment`) — but only where the bank can build one
   (`coursePlacementService.preAssessmentAvailable`: every skill of the course's first module has
   items); otherwise the Starting Point, never a dead end. Parent guides are not placed. **The bank is keyed by BANK ids, courses by
   COURSE ids** — every lookup goes through `skillLookupCandidates` (`bankForCourse`); querying by the
@@ -553,6 +554,21 @@ npm run seed:all:dry   # preflight + plan, no writes
   that RE-SOLVES every item from its printed text. To fix another skill: add a template, rebuild,
   commit both seed files, re-seed. Pinned by `tests/unit/courseCheckSources.test.js` (seed files
   current, every override a real course skill) and the "tested from those alone" block of
+  `tests/integration/coursePlacementClosesModules.test.js`.
+- **A check serves only what one typed box can take, and counts only what it can serve
+  (2026-11-25).** The old bank holds ~130 worksheet questions whose stored answer is a list or a
+  sentence — "(a) 3t + 7b; (b) $71", "Mistake: added before multiplying; correct value is 22",
+  "slope = −4, y-intercept = 6". Served typed, the grader accepted that exact string and nothing a
+  student would write. `coursePlacementService.isMultiPart` keeps them out of `isCheckable`
+  (lettered parts, ";" or "—", more than one "=", three or more words). And `bankForCourse` now
+  counts items by running `isCheckable` over the pool instead of a database count "with headroom":
+  a pool that was ALL such items used to count as testable, the stage was built around it and
+  served nothing for that skill. `pickItems` reads the whole pool when its sample comes up short.
+  Removing those items emptied two live skills (6th grade `g6-word-problem-equations`, 7th grade
+  `g7-equation-word-problems`), which is why `scripts/lib/courseLevelWordEquations.js` exists — a
+  template file may carry `courseId` per template. Calculus BC shares AB's items through
+  `seeds/course-level-sources.manual.json`. Known and left: the grader does not accept "x = 3" for
+  a stored "3". Pinned by the "a typed box takes one answer" block of
   `tests/integration/coursePlacementClosesModules.test.js`.
 - **"I think I already know this!" and "Start over" (courses, 2026-11-21).** The lesson tracker
   lists the current unit's skills (`lesson-progress` → `progressUpdate.skills`, names from

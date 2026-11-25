@@ -38,6 +38,9 @@
   ],
   "g6-distance-coordinate-plane": [
    "g6-distance-coordinate-plane"
+  ],
+  "g6-word-problem-equations": [
+   "g6-word-problem-equations-check"
   ]
  },
  "7th-grade-math": {
@@ -79,6 +82,9 @@
   ],
   "g7-compare-data-sets": [
    "g7-compare-data-sets"
+  ],
+  "g7-equation-word-problems": [
+   "g7-equation-word-problems-check"
   ]
  },
  "grade-8-math": {
@@ -231,6 +237,223 @@
   ],
   "cm-unit-price-comparisons": [
    "cm-unit-price-comparisons"
+  ]
+ },
+ "algebra-1": {
+  "variable-expressions": [
+   "a1-variable-expressions"
+  ],
+  "algebraic-properties": [
+   "a1-algebraic-properties"
+  ],
+  "solving-inequalities": [
+   "a1-solving-inequalities"
+  ],
+  "graphing-linear-equations-slope-intercept": [
+   "a1-graphing-linear-equations-slope-intercept"
+  ],
+  "systems-of-equations-graphing": [
+   "a1-systems-of-equations-graphing"
+  ],
+  "exponent-rules-multiplication": [
+   "a1-exponent-rules-multiplication"
+  ],
+  "exponent-rules-division": [
+   "a1-exponent-rules-division"
+  ],
+  "quadratic-formula": [
+   "a1-quadratic-formula"
+  ],
+  "measures-of-central-tendency": [
+   "a1-measures-of-central-tendency"
+  ],
+  "data-displays": [
+   "a1-data-displays"
+  ],
+  "exponential-functions-basics": [
+   "a1-exponential-functions-basics"
+  ],
+  "comparing-linear-exponential": [
+   "a1-comparing-linear-exponential"
+  ]
+ },
+ "algebra-2": {
+  "graphing-lines-review": [
+   "a2-graphing-lines-review"
+  ],
+  "systems-modeling": [
+   "a2-systems-modeling"
+  ],
+  "matrix-operations": [
+   "a2-matrix-operations"
+  ],
+  "inverse-matrices": [
+   "a2-inverse-matrices"
+  ],
+  "quadratic-discriminant": [
+   "a2-quadratic-discriminant"
+  ],
+  "quadratic-transformations": [
+   "a2-quadratic-transformations"
+  ],
+  "polynomial-operations": [
+   "a2-polynomial-operations"
+  ],
+  "polynomial-division": [
+   "a2-polynomial-division"
+  ],
+  "advanced-factoring": [
+   "a2-advanced-factoring"
+  ],
+  "rational-equations": [
+   "a2-rational-equations"
+  ],
+  "solving-quadratics-all-methods": [
+   "a2-solving-quadratics-all-methods"
+  ],
+  "counting-principles": [
+   "a2-counting-principles"
+  ],
+  "permutations-combinations": [
+   "a2-permutations-combinations"
+  ],
+  "compound-interest-modeling": [
+   "a2-compound-interest-modeling"
+  ],
+  "logarithm-evaluation-conversion": [
+   "a2-logarithm-evaluation-conversion"
+  ],
+  "logarithm-properties": [
+   "a2-logarithm-properties"
+  ],
+  "exponential-logarithmic-equations": [
+   "a2-exponential-logarithmic-equations"
+  ],
+  "domain-analysis-logarithms": [
+   "a2-domain-analysis-logarithms"
+  ],
+  "rational-exponents": [
+   "a2-rational-exponents"
+  ],
+  "simplifying-radicals-variables": [
+   "a2-simplifying-radicals-variables"
+  ],
+  "radical-applications": [
+   "a2-radical-applications"
+  ],
+  "arithmetic-sequences-series": [
+   "a2-arithmetic-sequences-series"
+  ],
+  "geometric-sequences-series": [
+   "a2-geometric-sequences-series"
+  ],
+  "sigma-notation": [
+   "a2-sigma-notation"
+  ],
+  "infinite-geometric-series": [
+   "a2-infinite-geometric-series"
+  ],
+  "financial-applications": [
+   "a2-financial-applications"
+  ]
+ },
+ "precalculus": {
+  "algebraic-fluency-review": [
+   "pc-algebraic-fluency-review"
+  ],
+  "combining-functions": [
+   "pc-combining-functions"
+  ],
+  "domain-range-analysis": [
+   "pc-domain-range-analysis"
+  ],
+  "polynomial-end-behavior": [
+   "pc-polynomial-end-behavior"
+  ],
+  "polynomial-zeros-multiplicity": [
+   "pc-polynomial-zeros-multiplicity"
+  ],
+  "exponential-functions-properties": [
+   "pc-exponential-functions-properties"
+  ],
+  "logarithmic-functions-properties": [
+   "pc-logarithmic-functions-properties"
+  ],
+  "logarithm-rules-expansion": [
+   "pc-logarithm-rules-expansion"
+  ],
+  "solving-exponential-equations": [
+   "pc-solving-exponential-equations"
+  ],
+  "solving-logarithmic-equations": [
+   "pc-solving-logarithmic-equations"
+  ],
+  "radian-measure-arc-length": [
+   "pc-radian-measure-arc-length"
+  ],
+  "trig-function-graphs": [
+   "pc-trig-function-graphs"
+  ],
+  "sinusoidal-modeling": [
+   "pc-sinusoidal-modeling"
+  ],
+  "triangle-area-applications": [
+   "pc-triangle-area-applications"
+  ],
+  "parabola-analysis": [
+   "pc-parabola-analysis"
+  ],
+  "series-sigma-notation": [
+   "pc-series-sigma-notation"
+  ],
+  "limits-intuitive": [
+   "pc-limits-intuitive"
+  ],
+  "limits-algebraic": [
+   "pc-limits-algebraic"
+  ],
+  "limits-continuity-infinity": [
+   "pc-limits-continuity-infinity"
+  ]
+ },
+ "ap-calculus-ab": {
+  "limits-graphical-numerical": [
+   "calc-limits-graphical-numerical"
+  ],
+  "derivative-as-rate-of-change": [
+   "calc-derivative-as-rate-of-change"
+  ],
+  "riemann-sums-approximation": [
+   "calc-riemann-sums-approximation"
+  ],
+  "ftc-part-2": [
+   "calc-ftc-part-2"
+  ],
+  "definite-integral-as-accumulation": [
+   "calc-definite-integral-as-accumulation"
+  ],
+  "first-second-derivative-tests": [
+   "calc-first-second-derivative-tests"
+  ],
+  "curve-sketching-from-derivatives": [
+   "calc-curve-sketching-from-derivatives"
+  ],
+  "exponential-growth-decay-models": [
+   "calc-exponential-growth-decay-models"
+  ]
+ },
+ "calculus-bc": {
+  "series-geometric-p": [
+   "calcbc-series-geometric-p"
+  ],
+  "convergence-tests": [
+   "calcbc-convergence-tests"
+  ],
+  "definite-integral-properties": [
+   "calcbc-definite-integral-properties"
+  ],
+  "limits-algebraic": [
+   "calcbc-limits-algebraic"
   ]
  }
 }

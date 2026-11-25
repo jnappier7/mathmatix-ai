@@ -60,6 +60,22 @@ const TEST_BANK_SOURCE = /^(act-|sat-)/;
  * decides how much of a course a student sits, one mis-keyed item is one
  * module wrongly kept or wrongly closed.
  */
+/**
+ * A typed box takes ONE short answer. The old bank holds worksheet questions
+ * whose stored answer is a paragraph or a list — "(a) 3t + 7b; (b) $71",
+ * "Mistake: added before multiplying; correct value is 22", "slope = −4,
+ * y-intercept = 6". The grader accepts that exact string and nothing a student
+ * would type, so right work is marked wrong. Such an item is not for a check.
+ */
+function isMultiPart(item) {
+  const value = String((item.answer && item.answer.value) || '');
+  if (/(^|[\s;,])\(?[a-c]\)\s/i.test(value)) return true;          // lettered parts
+  if (/[;—]/.test(value)) return true;                              // two statements
+  if ((value.match(/=/g) || []).length > 1) return true;            // two things named
+  if ((value.match(/[A-Za-z]{3,}/g) || []).length >= 3) return true; // a sentence
+  return /(^|\s)\(?a\)\s[\s\S]*\s\(?b\)\s/.test(String(item.prompt || ''));
+}
+
 function isCheckable(item) {
   if (!item || !item.prompt) return false;
   if (item.svg || item.figure) return false;
@@ -70,6 +86,7 @@ function isCheckable(item) {
     }
     const value = item.answer && item.answer.value;
     if (value === undefined || value === null || String(value) === '') return false;
+    if (isMultiPart(item)) return false;
     const typed = asTyped(item);
     return gradeOne(typed, String(value)).correct && !gradeOne(typed, 'definitely not the answer').correct;
   } catch {
@@ -156,26 +173,30 @@ async function bankForCourse(pathway) {
     return { ...s, bankIds, count: 0, testBanks: false };
   });
 
+  // Count what the check can actually SERVE: an item has to pass isCheckable,
+  // and "grades cleanly" cannot be asked of the database. This used to be a
+  // database count with "headroom", so a pool that was all worksheet questions
+  // counted as testable, the stage was built around it, and it served nothing.
   const allIds = Array.from(new Set(skills.flatMap((s) => s.bankIds)));
-  const counts = allIds.length
-    ? await Problem.aggregate([
-      { $match: checkableMatch(allIds, { testBanks: true }) },
-      { $group: {
-        _id: { skill: '$skillId', test: { $regexMatch: { input: { $ifNull: ['$source', ''] }, regex: TEST_BANK_SOURCE.source } } },
-        n: { $sum: 1 },
-      } },
-    ])
-    : [];
   const tutoring = new Map();
   const testBank = new Map();
-  for (const c of counts) (c._id.test ? testBank : tutoring).set(c._id.skill, c.n);
+  if (allIds.length) {
+    const cursor = Problem.find(checkableMatch(allIds, { testBanks: true }))
+      .select('skillId prompt answer options correctOption answerType source svg figure')
+      .lean()
+      .cursor();
+    for await (const item of cursor) {
+      if (!isCheckable(item)) continue;
+      const into = TEST_BANK_SOURCE.test(item.source || '') ? testBank : tutoring;
+      into.set(item.skillId, (into.get(item.skillId) || 0) + 1);
+    }
+  }
 
   const available = {};
   const bankToCourse = new Map();
   for (const s of skills) {
     const own = s.bankIds.reduce((sum, id) => sum + (tutoring.get(id) || 0), 0);
     const exam = s.bankIds.reduce((sum, id) => sum + (testBank.get(id) || 0), 0);
-    // Headroom of 2x: a few sampled items may still fail isCheckable.
     s.testBanks = !s.atLevel && own < ITEMS_PER_SKILL * 2;
     s.count = s.testBanks ? own + exam : own;
     available[s.skillId] = s.count;
@@ -204,12 +225,26 @@ async function pickItems(bankSkill, count, exclude) {
   ]);
   const out = [];
   const seen = new Set();
-  for (const item of sampled) {
-    const key = String(item.prompt).toLowerCase().replace(/\s+/g, ' ').trim();
-    if (seen.has(key) || !isCheckable(item)) continue;
-    seen.add(key);
-    out.push(item);
-    if (out.length >= count) break;
+  const take = (items) => {
+    for (const item of items) {
+      if (out.length >= count) break;
+      const key = String(item.prompt).toLowerCase().replace(/\s+/g, ' ').trim();
+      if (seen.has(key) || !isCheckable(item)) continue;
+      seen.add(key);
+      out.push(item);
+    }
+  };
+  take(sampled);
+  if (out.length < count) {
+    // A pool that is mostly uncheckable: the sample missed what bankForCourse
+    // counted. Read the whole pool rather than serve a short stage.
+    const got = new Set(sampled.map((i) => String(i._id)));
+    const rest = (await Problem.find(match).lean()).filter((i) => !got.has(String(i._id)));
+    for (let i = rest.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [rest[i], rest[j]] = [rest[j], rest[i]];
+    }
+    take(rest);
   }
   return out;
 }

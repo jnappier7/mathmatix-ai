@@ -84,11 +84,12 @@ const COURSE_DIAGNOSTICS = {
     // so the bootcamp starts from a full timed baseline.
     required: true,
   },
-  'algebra-1': STARTING_POINT_CARD,
-  'algebra-2': STARTING_POINT_CARD,
-  'ap-calculus-ab': STARTING_POINT_CARD,
-  'calculus-bc': STARTING_POINT_CARD,
-  'precalculus': STARTING_POINT_CARD,
+  // Algebra 1/2, Pre-Calculus and both Calculus courses were pinned to the
+  // Starting Point here until 2026-11-25, when their bank could first test
+  // their skills at level (scripts/lib/courseLevel{Algebra*,Precalc*,Calculus*}.js).
+  // They now open with their own quick check like every other course, and fall
+  // back to the Starting Point by the same rule (preAssessmentAvailable) where
+  // those items have not been seeded.
 };
 
 /**
