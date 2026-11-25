@@ -93,6 +93,7 @@ const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
 const { gateNumberLineTags, containsNumberLineTag } = require('./numberLineGate');
 const { problemFromStudentText } = require('./statedProblem');
+const { tilesPromiseCard } = require('./tilesBackfill');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
@@ -1301,19 +1302,29 @@ async function runPipeline(message, ctx) {
   // Board ON only: with it off nothing draws the card, and a tiles step in the
   // ledger would only pad the step count the teacher's live view reads.
   if (isWorkBoardEnabled() && tilesTabBackfill && !verified.boardCommands.some(c => c.action === 'tiles')) {
-    const tilesTex = (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex
-      || ctx.conversation?.boardProblem?.tex || null;
+    // The guard is told the real pin, and the problem posed this turn only as
+    // one of this turn's verified pose commands (tilesBackfill.js). It used to
+    // be handed the tiles line itself as the pin, so it could never say no.
+    const turnPoseTex = (verified.boardCommands.find(c => c.action === 'pose' && c.tex) || {}).tex || null;
+    const pinTex = ctx.conversation?.boardProblem?.tex || null;
+    const tilesTex = turnPoseTex || pinTex;
     if (tilesTex) {
-      const tilesGuard = enforcePedagogyRule({
-        commands: [{ action: 'tiles', tex: tilesTex }],
+      const { card, reason } = tilesPromiseCard({
+        tilesTex,
+        turnPoseTex,
+        pinnedProblemTex: pinTex,
         userMessage: message,
         recentUserMessages: recentUserMessagesForBoard,
-        lastBoardActionInConversation: ctx.conversation?.lastBoardAction || null,
-        pinnedProblemTex: tilesTex,
+        lastBoardAction: ctx.conversation?.lastBoardAction || null,
+        studentBoardLines: (ctx.conversation?.boardLedger?.current?.steps || [])
+          .map(s => s && s.action === 'tiles' && s.mat && s.mat.now && s.mat.now.tex)
+          .filter(Boolean),
       });
-      if (tilesGuard.allowed.length > 0) {
-        verified.boardCommands = verified.boardCommands.concat(tilesGuard.allowed);
+      if (card) {
+        verified.boardCommands = verified.boardCommands.concat([card]);
         boardLogger.info('Tiles-promise backfill added tiles card', { tex: tilesTex });
+      } else {
+        boardLogger.info('Tiles-promise backfill: no card', { tex: tilesTex, reason });
       }
     }
   }
