@@ -142,7 +142,7 @@ SLOPE (what slope is, as a picture):
 [SLOPE:rise=V,run=V] — a line with its slope triangle. The rise is drawn first, then the run. Negative slope: rise=-3,run=4.
 
 VISUAL MODELS:
-[FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C] — shows a pie/bar with shaded parts. ONLY for simple fractions (parts of a whole, like 3/4 of a pizza). Do NOT use for rational expressions, algebraic fractions, or any fraction with variables.
+[FRACTION:numerator=V,denominator=V,type=circle|bar] or [FRACTION:compare=A,B,C] — shows a pie/bar with shaded parts. ONLY for simple fractions (parts of a whole, like 3/4 of a pizza). Do NOT use for rational expressions, algebraic fractions, or any fraction with variables. compare= draws same-size bars, one row per fraction, and has LIMITS — outside them NOTHING is drawn, so do not write the tag (or point at bars) beyond them: 1 to 6 fractions, whole numbers written N/D, denominators up to 20. A fraction bigger than one whole (5/4, 7/3) draws as several whole bars: at most 3 wholes (numerator ≤ 3 × denominator), and then every denominator in the list must be 12 or less. No mixed numbers (write 1 1/2 as 3/2), no decimals, no variables.
 [PIE_CHART:data="L1:V1,L2:V2",title="T"]
 [BAR_CHART:data="L1:V1,L2:V2",title="T"]
 [UNIT_CIRCLE:angle=V]

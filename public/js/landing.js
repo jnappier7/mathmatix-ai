@@ -809,9 +809,9 @@
   ];
 
   var TRIAL_VISUAL_SCRIPTS = [
-    '/js/visualTokenParser.js?v=20261123',
+    '/js/visualTokenParser.js?v=20261125',
     '/js/mathGraph.js?v=20261111',
-    '/js/inlineChatVisuals.js?v=20261123'
+    '/js/inlineChatVisuals.js?v=20261125'
   ];
   var trialVisualsReady = null;
 
@@ -873,7 +873,11 @@
   }
 
   function sanitizeTrialVisual(html) {
-    if (!window.DOMPurify) return html;
+    // Fail CLOSED. The picture's HTML is built from params the model wrote,
+    // and a visitor can steer those (label="…") by prompt injection. With no
+    // sanitizer on the page (blocked, failed to load) there is no picture: the
+    // slot is removed and the words stand alone. It used to return the HTML as-is.
+    if (!window.DOMPurify || typeof window.DOMPurify.sanitize !== 'function') return '';
     // Handlers are attached by initializeVisuals, so losing inline onclick
     // attributes here costs nothing.
     return window.DOMPurify.sanitize(html, { USE_PROFILES: { html: true, svg: true, svgFilters: true } });

@@ -1875,15 +1875,30 @@ class InlineChatVisuals {
         // nothing rather than a picture of part of what the tutor named.
         if (fractions.length === 0) return '';
 
-        const W = 240, H = 30;
-        const colours = ['#667eea', '#f59e0b', '#10b981', '#ef4444'];
+        // Every WHOLE is the same width in every row, or the bars cannot be
+        // compared by eye. A fraction over one whole gets as many whole bars
+        // as it needs (5/4: one full bar and a quarter of the next); a row
+        // that needs fewer leaves the rest of its line empty.
+        const wholesOf = (f) => Math.max(1, Math.ceil(f.num / f.denom));
+        const most = Math.max(...fractions.map(wholesOf));
+        const U = most === 1 ? 240 : 160, GAP = 10, H = 30;
+        const W = most * U + (most - 1) * GAP;
+        const colours = ['#667eea', '#f59e0b', '#10b981', '#ef4444', '#8b5cf6', '#0ea5e9'];
         const rows = fractions.map((f, idx) => {
-            const seg = W / f.denom;
+            const seg = U / f.denom;
+            const wholes = wholesOf(f);
             let rects = '';
-            for (let i = 0; i < f.denom; i++) {
-                rects += `<rect x="${(i * seg + 1).toFixed(2)}" y="1" width="${(seg - 2).toFixed(2)}" height="${H - 2}" rx="3" fill="${i < f.num ? colours[idx % colours.length] : '#e8e8e8'}" stroke="#333" stroke-width="1"/>`;
+            for (let w = 0; w < wholes; w++) {
+                const x0 = w * (U + GAP);
+                for (let i = 0; i < f.denom; i++) {
+                    const shaded = w * f.denom + i < f.num;
+                    rects += `<rect x="${(x0 + i * seg + 1).toFixed(2)}" y="1" width="${(seg - 2).toFixed(2)}" height="${H - 2}" rx="3" fill="${shaded ? colours[idx % colours.length] : '#e8e8e8'}" stroke="#333" stroke-width="1" data-whole="${w}"/>`;
+                }
             }
-            return `<div class="icv-fcmp-row"><div class="icv-fcmp-label" aria-hidden="true"><span class="icv-fcmp-n">${f.num}</span><span class="icv-fcmp-d">${f.denom}</span></div><svg viewBox="0 0 ${W} ${H}" class="icv-fcmp-bar" role="img" aria-label="${f.num} of ${f.denom} equal parts shaded">${rects}</svg></div>`;
+            const said = wholes === 1
+                ? `${f.num} of ${f.denom} equal parts shaded`
+                : `${f.num} parts shaded across ${wholes} whole bars, each cut into ${f.denom} equal parts`;
+            return `<div class="icv-fcmp-row"><div class="icv-fcmp-label" aria-hidden="true"><span class="icv-fcmp-n">${f.num}</span><span class="icv-fcmp-d">${f.denom}</span></div><svg viewBox="0 0 ${W} ${H}" class="icv-fcmp-bar" data-wholes="${wholes}"${most > 1 ? ' style="max-width: 480px;"' : ''} role="img" aria-label="${said}">${rects}</svg></div>`;
         }).join('');
 
         return `<div class="icv-container icv-fraction-compare" id="${id}"><div class="icv-fcmp-rows">${rows}</div><div class="icv-caption" style="font-size: 11px; color: #94a3b8; margin-top: 6px;">Each bar is one whole.</div></div>`;

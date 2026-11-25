@@ -34,6 +34,7 @@
  */
 
 const { parseCleanProblem, parsePolynomialTerms } = require('./mathSolver');
+const { residualRatio } = require('./pipeline/boardContinuity');
 const { contentHash, wasRecentlyShown } = require('./problemTracking');
 
 // Modes form an audit-first ladder, matching the structured-tutor-response
@@ -205,6 +206,52 @@ function visualIsTheTask(activeProblem) {
   return /\b(graph|plot|sketch|draw)\b/i.test(String(activeProblem.problemText || ''));
 }
 
+/** "x^2-5x+6" → "x^2-5x+6 = 0"; an equation is left as it is. */
+function asEquation(expr) {
+  const e = normalizeExpr(expr);
+  if (!e) return null;
+  return e.includes('=') ? e : `${e} = 0`;
+}
+
+/**
+ * Is the graphed function the problem's own, rearranged? "(x-2)(x-3)" for
+ * x^2-5x+6, "3x-15" for 3x + 7 = 22: same roots, same picture, no shared text.
+ * Decided numerically (the two residuals are a constant multiple of each other
+ * at every sample point), so it does not depend on what the solver can factor.
+ * False whenever either side is not a one-variable equation.
+ */
+function sameFunctionRearranged(problemExpr, fn) {
+  const a = asEquation(problemExpr);
+  const b = asEquation(fn);
+  if (!a || !b) return false;
+  try { return residualRatio(a, b) !== null; } catch (_) { return false; }
+}
+
+/**
+ * The problem is known only from what the student WROTE (pipeline/
+ * statedProblem.js — no pin, no graded answer). Compare the graph with each
+ * written form as a whole: the form itself, one side of it, or the same
+ * function rearranged. Never a substring — "x^2" is inside "x^2-5x+6", and the
+ * tutor's simpler example must still draw. A multi-curve graph (SYSTEM_GRAPH,
+ * "a;b") leaks when EVERY curve is one the student wrote: their system, or the
+ * two sides of their equation, whose crossing is the solution.
+ */
+function matchesStatedForm(fn, forms) {
+  const norms = forms.map(normalizeExpr).filter(Boolean);
+  const pieces = new Set();
+  for (const n of norms) {
+    pieces.add(n);
+    for (const side of n.split('=')) if (side) pieces.add(side);
+  }
+  const curves = String(fn).split(';').map(normalizeExpr).filter(Boolean);
+  if (!curves.length) return false;
+  if (curves.length > 1) {
+    return curves.every((c) => pieces.has(c) || c.split('=').every((side) => pieces.has(side)));
+  }
+  if (pieces.has(curves[0])) return true;
+  return norms.some((n) => sameFunctionRearranged(n, curves[0]));
+}
+
 // ---------------------------------------------------------------------------
 // SAFETY layer — deterministic leak detection (no LLM, no async)
 // ---------------------------------------------------------------------------
@@ -248,7 +295,13 @@ function assessLeak(command, activeProblem) {
     // active problem's function. Cheap, and catches the common case.
     const activeExpr = normalizeExpr(activeProblem.normalizedExpression || activeProblem.problemText);
     const fnNorm = normalizeExpr(command.fn);
-    if (activeExpr && fnNorm && activeExpr.includes(fnNorm)) {
+    if (Array.isArray(activeProblem.statedForms)) {
+      // The problem as the student wrote it this turn (no pin yet): whole-form
+      // matching, see matchesStatedForm.
+      if (fnNorm && matchesStatedForm(command.fn, activeProblem.statedForms)) {
+        return { leak: true, reasonCode: 'ACTIVE_PROBLEM_EXACT_LEAK', riskLevel: 'fatal' };
+      }
+    } else if (activeExpr && fnNorm && activeExpr.includes(fnNorm)) {
       return { leak: true, reasonCode: 'ACTIVE_PROBLEM_EXACT_LEAK', riskLevel: 'fatal' };
     }
 
@@ -257,6 +310,14 @@ function assessLeak(command, activeProblem) {
     const revealed = graphRevealedValues(command.fn);
     if (setsIntersect(revealed, solutionValues)) {
       return { leak: true, reasonCode: 'SOLUTION_SET_LEAK', riskLevel: 'fatal' };
+    }
+
+    // Rule C — the pinned problem's own function in another form, when there
+    // is no graded answer for Rule B to compare with (a student-posed problem
+    // never has one): "(x-2)(x-3)" for a pinned x^2 - 5x + 6 = 0.
+    if (!Array.isArray(activeProblem.statedForms) && activeExpr && fnNorm
+        && sameFunctionRearranged(activeExpr, fnNorm)) {
+      return { leak: true, reasonCode: 'ACTIVE_PROBLEM_EXACT_LEAK', riskLevel: 'fatal' };
     }
 
     return { leak: false, reasonCode: 'NO_LEAK', riskLevel: 'none' };

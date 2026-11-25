@@ -117,7 +117,8 @@ describe('the page', () => {
 
   test('index.html serves the new script and stylesheet', () => {
     const html = read('public/index.html');
-    expect(html).toMatch(/landing\.js\?v=8/);
+    // Bumped whenever landing.js changes; never back below the version that draws pictures.
+    expect(Number((html.match(/landing\.js\?v=(\d+)/) || [])[1])).toBeGreaterThanOrEqual(9);
     expect(html).toMatch(/landing-page\.css\?v=10/);
   });
 });
@@ -132,11 +133,12 @@ describe('the fraction comparison is every fraction the tutor named, as bars', (
   });
 
   test('what a bar cannot show draws nothing, never part of the list', () => {
-    expect(fractionList('compare=5/3,1/2')).toEqual([]);          // more than one whole
+    // (More than one whole and a fifth fraction drew nothing until 2026-11-25;
+    // the limits now live in tests/unit/fractionComparisonBars.test.js.)
     expect(fractionList('compare=2/3,x/4')).toEqual([]);          // not a number
     expect(fractionList('compare=1/2,1/0')).toEqual([]);
     expect(fractionList('compare=1/2,1/25')).toEqual([]);         // 25 slivers
-    expect(fractionList('compare=1/2,1/3,1/4,1/5,1/6')).toEqual([]);
+    expect(fractionList('compare=1/2,1/3,1/4,1/5,1/6,1/7,1/8')).toEqual([]);
     expect(fractionList('numerator=3,denominator=4')).toEqual([]);
     expect(fractionList('')).toEqual([]);
   });
