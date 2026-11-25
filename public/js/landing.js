@@ -809,9 +809,9 @@
   ];
 
   var TRIAL_VISUAL_SCRIPTS = [
-    '/js/visualTokenParser.js?v=20261123',
+    '/js/visualTokenParser.js?v=20261125',
     '/js/mathGraph.js?v=20261111',
-    '/js/inlineChatVisuals.js?v=20261123'
+    '/js/inlineChatVisuals.js?v=20261125'
   ];
   var trialVisualsReady = null;
 

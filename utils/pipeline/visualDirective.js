@@ -134,7 +134,10 @@ const VISUAL_TOPICS = [
     // nightly eval never saw drawn (0-1 of 5 on "which is bigger, 2/3 or 3/4?" every night from
     // 2026-08 to 2026-11): the model was told to reach for a tag it had to go and look up, and
     // explained common denominators in words instead.
-    tool: '[FRACTION:compare=2/3,3/4] — same-size bars side by side, with the fractions in play (comparing, or adding unlike parts), or [FRACTION:numerator=V,denominator=V,type=bar] for one fraction',
+    // The limits are the renderer's (public/js/visualTokenParser.js FRACTION_LIMITS): outside them
+    // the tag draws nothing and the sentence about the bars stands alone. Pinned to that object
+    // by tests/unit/fractionComparisonBars.test.js.
+    tool: '[FRACTION:compare=2/3,3/4] — same-size bars side by side, with the fractions in play (comparing, or adding unlike parts; up to 6 fractions as N/D, denominators up to 20; a fraction over one whole like 5/4 draws as whole bars — at most 3 wholes, and then denominators up to 12; anything else draws NOTHING, so explain in words instead), or [FRACTION:numerator=V,denominator=V,type=bar] for one fraction',
   },
   // The three number-line pictures are different pictures. They used to share one entry that
   // pointed at [DIAGRAM:number_line], a static figure — so signed-number arithmetic never got

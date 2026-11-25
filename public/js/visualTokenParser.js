@@ -96,28 +96,42 @@
    * different numbers of pieces" over a single solid bar). This reads the list
    * straight from the raw params, quoted or bracketed or bare.
    *
-   * Only what a bar model can show is returned: whole-number parts, a
-   * denominator of 1–20, at most one whole (numerator ≤ denominator), at most
-   * four bars. If ANY entry is something else the answer is [] — a picture of
-   * some of the fractions the tutor named is a wrong picture.
+   * Only what a bar model can show is returned (FRACTION_LIMITS, below):
+   * whole-number parts, at most six fractions, a denominator of 1–20. A
+   * fraction bigger than one whole is drawn as several whole bars (5/4 = one
+   * full bar and a quarter of the next), up to three wholes — and then every
+   * denominator in the list must be 12 or less, because each whole bar is a
+   * third as wide. If ANY entry is something else the answer is [] — a picture
+   * of some of the fractions the tutor named is a wrong picture.
+   *
+   * Until 2026-11-25 anything over one whole, and a fifth fraction, drew
+   * nothing — in the signed-in chat too, where the tutor's "notice the bars…"
+   * then stood over no bars. The limits are also stated to the tutor
+   * (utils/visualCapabilities.js, pipeline/visualDirective.js): change them
+   * there when they change here.
    *
    * @returns {Array<{num:number, denom:number}>}
    */
+  const FRACTION_LIMITS = { count: 6, denom: 20, wholes: 3, improperDenom: 12 };
+
   function fractionList(paramStr) {
     const m = String(paramStr || '').match(/\bcompare\s*=\s*["'\[]?\s*([\d\s/,]+?)\s*["'\]]?\s*(?:,\s*[A-Za-z_]\w*\s*=|$)/);
     if (!m) return [];
     const items = m[1].split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-    if (items.length === 0 || items.length > 4) return [];
+    if (items.length === 0 || items.length > FRACTION_LIMITS.count) return [];
     const out = [];
+    let improper = false;
     for (let i = 0; i < items.length; i++) {
       const f = items[i].match(/^(\d{1,3})\s*\/\s*(\d{1,3})$/);
       if (!f) return [];
       const num = Number(f[1]); const denom = Number(f[2]);
-      if (denom < 1 || denom > 20 || num > denom) return [];
+      if (denom < 1 || denom > FRACTION_LIMITS.denom || num > FRACTION_LIMITS.wholes * denom) return [];
+      if (num > denom) improper = true;
       out.push({ num: num, denom: denom });
     }
+    if (improper && out.some(function (f) { return f.denom > FRACTION_LIMITS.improperDenom; })) return [];
     return out;
   }
 
-  return { PARAM: PARAM, tokenRegex: tokenRegex, quoteBareValues: quoteBareValues, fractionList: fractionList };
+  return { PARAM: PARAM, tokenRegex: tokenRegex, quoteBareValues: quoteBareValues, fractionList: fractionList, FRACTION_LIMITS: FRACTION_LIMITS };
 }));
