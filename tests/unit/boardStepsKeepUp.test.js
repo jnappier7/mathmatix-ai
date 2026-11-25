@@ -181,6 +181,44 @@ describe('what the board still refuses', () => {
   });
 });
 
+describe('one move, one label', () => {
+  const { mergeWithLlmCommands, _detectAppliedOperation } = require('../../utils/pipeline/boardSynthesizer');
+
+  test('the model\'s label and the synthesizer\'s label for the same move do not both land', () => {
+    // Owner, 2026-11-25: "Distribute came up and distribute 3." The model said
+    // "distribute the 3"; the synthesizer, matching the keyword, said
+    // "distribute"; the merge compared exact text and kept both.
+    const merged = mergeWithLlmCommands(
+      [{ action: 'apply', op: 'distribute the 3' }, { action: 'resolve', tex: '6x + 12 - 5 = 2x + 31' }],
+      [{ action: 'apply', op: 'distribute' }],
+    );
+    expect(merged.all.filter((c) => c.action === 'apply').map((c) => c.op)).toEqual(['distribute the 3']);
+  });
+
+  test('…however differently the two word it', () => {
+    const merged = mergeWithLlmCommands(
+      [{ action: 'apply', op: 'divide both sides by 4' }],
+      [{ action: 'apply', op: 'divide by 4' }],
+    );
+    expect(merged.all.filter((c) => c.action === 'apply')).toHaveLength(1);
+  });
+
+  test('with no label from the model, the synthesizer\'s still lands — and the rest of its cards are untouched', () => {
+    const merged = mergeWithLlmCommands(
+      [{ action: 'resolve', tex: '2x = 4' }],
+      [{ action: 'apply', op: 'subtract 3 from both sides' }, { action: 'resolve', tex: '2x = 4' }, { action: 'verify', tex: 'x = 2' }],
+    );
+    expect(merged.all.map((c) => c.action)).toEqual(['apply', 'resolve', 'verify']);
+  });
+
+  test('the synthesizer keeps WHAT is being distributed when the student says it', () => {
+    expect(_detectAppliedOperation('distribute the 3')).toBe('distribute the 3');
+    expect(_detectAppliedOperation('i would distribute 3 first')).toBe('distribute 3');
+    expect(_detectAppliedOperation('distribute')).toBe('distribute');
+    expect(_detectAppliedOperation('distribute first')).toBe('distribute');
+  });
+});
+
 describe('the prompts say what the guard enforces — one wording, every board mode', () => {
   test('the rule names both cases and the one thing that never lands', () => {
     expect(RESOLVE_RULE).toMatch(/only the side that changed/);
