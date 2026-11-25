@@ -843,26 +843,40 @@ class CourseManager {
     // (utils/coursePacing.js → paceWeeks / estMinutes on each catalog entry).
     // The old label was moduleCount × 45 minutes: "~16h" for a year of
     // Algebra 1. A course paced over weeks says so; a short guide (everything
-    // in week 1) gives its authored hours; a course that declares neither —
-    // SAT prep, whose length is the student's own practice tests — says
-    // nothing rather than guess.
+    // in week 1) gives its authored hours.
+    //
+    // FULL YEAR is 27 weeks or more of authored lessons — three quarters of a
+    // 36-week school year; the rest of a real year is review and testing. The
+    // line used to sit at 30, which called Algebra 1 (31 weeks) a full-year
+    // course and Geometry (28) "about 28 weeks": two courses a school schedules
+    // identically, described differently.
+    //
+    // A course that declares no weeks is test prep — SAT prep, whose length is
+    // however many practice tests the student takes. Its card used to show
+    // nothing in that slot; it now says what the course is built around rather
+    // than guess a number.
     static timeLabel(course) {
         const weeks = Number(course && course.paceWeeks) || 0;
         const minutes = Number(course && course.estMinutes) || 0;
-        if (weeks >= 30) return 'Full-year course \u00B7 self-paced';
+        if (weeks >= 27) return 'Full-year course \u00B7 self-paced';
         if (weeks >= 2) return `About ${weeks} weeks at school pace \u00B7 self-paced`;
         if (weeks === 1 && minutes > 0) {
             if (minutes < 60) return `About ${Math.round(minutes / 5) * 5} minutes`;
             const hours = Math.round(minutes / 30) / 2;
             return `About ${hours} hour${hours === 1 ? '' : 's'}`;
         }
+        if (weeks === 0 && CourseManager.isTestPrep(course)) return 'Built around your practice tests \u00B7 self-paced';
         return '';
+    }
+
+    static isTestPrep(course) {
+        return !!course && (['act-prep', 'sat-prep'].includes(course.courseId) || course.difficulty === 'Test Prep');
     }
 
     // Which courses can be taken again from the beginning. Test prep cannot: it
     // is a loop of practice tests, and "starting over" there is taking a new one.
     static canRestart(course) {
-        return !!course && !['act-prep', 'sat-prep'].includes(course.courseId) && course.difficulty !== 'Test Prep';
+        return !!course && !CourseManager.isTestPrep(course);
     }
 
     renderCatalog(catalog, recommended) {

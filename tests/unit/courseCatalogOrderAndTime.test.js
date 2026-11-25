@@ -66,6 +66,20 @@ describe('timeLabel', () => {
     expect(CourseManager.timeLabel({ paceWeeks: 36, estMinutes: 800 })).toBe('Full-year course · self-paced');
     expect(CourseManager.timeLabel({ paceWeeks: 31 })).toMatch(/^Full-year course/);
   });
+  test('Geometry (28 weeks of lessons) is a full-year course like Algebra 1 (31)', () => {
+    // The line sat at 30, so two courses a school schedules identically read
+    // "Full-year course" and "About 28 weeks at school pace".
+    expect(CourseManager.timeLabel({ paceWeeks: 28 })).toBe(CourseManager.timeLabel({ paceWeeks: 31 }));
+    expect(CourseManager.timeLabel({ paceWeeks: 27 })).toMatch(/^Full-year course/);
+    expect(CourseManager.timeLabel({ paceWeeks: 26 })).toBe('About 26 weeks at school pace · self-paced');
+  });
+  test('test prep with no weeks says what it is built around, not a number', () => {
+    const sat = { courseId: 'sat-prep', paceWeeks: 0, estMinutes: 145 };
+    expect(CourseManager.timeLabel(sat)).toBe('Built around your practice tests · self-paced');
+    expect(CourseManager.timeLabel({ difficulty: 'Test Prep', paceWeeks: 0 })).toMatch(/practice tests/);
+    // ACT prep declares its weeks, so it keeps them.
+    expect(CourseManager.timeLabel({ courseId: 'act-prep', paceWeeks: 10 })).toBe('About 10 weeks at school pace · self-paced');
+  });
   test('a shorter course gives its weeks', () => {
     expect(CourseManager.timeLabel({ paceWeeks: 10, estMinutes: 410 })).toBe('About 10 weeks at school pace · self-paced');
   });
@@ -73,6 +87,14 @@ describe('timeLabel', () => {
     expect(CourseManager.timeLabel({ paceWeeks: 1, estMinutes: 100 })).toBe('About 1.5 hours');
     expect(CourseManager.timeLabel({ paceWeeks: 1, estMinutes: 60 })).toBe('About 1 hour');
     expect(CourseManager.timeLabel({ paceWeeks: 1, estMinutes: 42 })).toBe('About 40 minutes');
+  });
+  test('every student course in the catalog has something in the time slot', () => {
+    const dir = path.join(__dirname, '../../public/resources');
+    for (const f of fs.readdirSync(dir).filter((n) => n.endsWith('-pathway.json'))) {
+      const p = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+      const label = CourseManager.timeLabel({ ...coursePacing(p), courseId: p.courseId });
+      expect({ course: p.courseId, blank: label === '' }).toEqual({ course: p.courseId, blank: false });
+    }
   });
   test('a course that declares no pacing gets no label, not a guess', () => {
     expect(CourseManager.timeLabel({ paceWeeks: 0, estMinutes: 145, moduleCount: 5 })).toBe('');
