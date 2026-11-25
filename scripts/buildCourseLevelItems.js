@@ -38,7 +38,11 @@ const MAX_ATTEMPTS = 60;
 
 // One file per course: scripts/lib/courseLevel<Name>.js exporting
 // { COURSE_ID, GB, TEMPLATES: [{ courseSkill, skillId, tiers: [{ difficulty, gen }] }] }.
-const BANK_NAMES = ['Grade6', 'Grade7', 'Grade8', 'GeometryA', 'GeometryB', 'EarlyMath', 'ConsumerMath'];
+// A template may name its own `courseId` / `gradeBand` (a file that serves two courses).
+const BANK_NAMES = [
+  'Grade6', 'Grade7', 'Grade8', 'GeometryA', 'GeometryB', 'EarlyMath', 'ConsumerMath',
+  'WordEquations', 'Algebra1', 'Algebra2A', 'Algebra2B', 'PrecalcA', 'PrecalcB', 'CalculusAB', 'CalculusBC',
+];
 
 const SEEDS = path.join(__dirname, '..', 'seeds');
 const OUT_ITEMS = path.join(SEEDS, 'course-level-items.generated.json');
@@ -144,8 +148,10 @@ function main() {
     for (const t of bank.TEMPLATES) {
       if (!t.courseSkill || !t.skillId) throw new Error(`${name}: a template needs courseSkill and skillId`);
       all.push(...expand(t, bank.GB));
-      const forCourse = (sources[bank.COURSE_ID] = sources[bank.COURSE_ID] || {});
-      if (forCourse[t.courseSkill]) throw new Error(`${bank.COURSE_ID}: ${t.courseSkill} has two templates`);
+      const courseId = t.courseId || bank.COURSE_ID;
+      if (!courseId) throw new Error(`${name}: ${t.courseSkill} names no course`);
+      const forCourse = (sources[courseId] = sources[courseId] || {});
+      if (forCourse[t.courseSkill]) throw new Error(`${courseId}: ${t.courseSkill} has two templates`);
       forCourse[t.courseSkill] = [t.skillId];
     }
   }
