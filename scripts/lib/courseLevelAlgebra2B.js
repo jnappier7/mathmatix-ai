@@ -740,7 +740,7 @@ const expLogEquations = {
           if (p === q || b ** p > 130 || b ** q > 130) again();
           const c = K.nonZero(r, -4, 4);
           const d = K.nonZero(r, -4, 4);
-          if (q * d - p * c === 0) again();
+          if (c === d || q * d - p * c === 0) again();
           return {
             prompt: `Solve for x: ${b ** p}^(x ${K.signed(c)}) = ${b ** q}^(x ${K.signed(d)}).`,
             value: K.frac(q * d - p * c, p - q),
@@ -1783,6 +1783,7 @@ const sigma = {
         },
         (r) => {
           const a = int(r, 2, 5), b = int(r, 2, 3), n = b === 2 ? int(r, 6, 9) : int(r, 4, 6);
+          if (a === b) again();
           const S = sumOver(1, n, (k) => a * b ** (k - 1));
           return {
             prompt: `Evaluate the sum Σ ${a}·${b}^(k − 1), ${runs(1, n)}.`,
