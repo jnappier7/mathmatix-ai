@@ -1,6 +1,33 @@
 {
  "_about": "Course skills whose check must draw on a specific existing pool. See utils/courseCheckSources.js. Written by hand; the generated sibling is written by scripts/buildCourseLevelItems.js.",
  "grade-8-math": {
-  "write-linear-equations": ["writing-linear-equations-slope-intercept"]
+  "write-linear-equations": [
+   "writing-linear-equations-slope-intercept"
+  ]
+ },
+ "calculus-bc": {
+  "limits-graphical-numerical": [
+   "calc-limits-graphical-numerical"
+  ],
+  "derivative-interpretation": [
+   "calc-derivative-as-rate-of-change"
+  ],
+  "riemann-sums": [
+   "calc-riemann-sums-approximation"
+  ],
+  "ftc-part2": [
+   "calc-ftc-part-2"
+  ],
+  "curve-sketching": [
+   "calc-curve-sketching-from-derivatives"
+  ],
+  "exponential-models": [
+   "calc-exponential-growth-decay-models"
+  ]
+ },
+ "ap-calculus-ab": {
+  "limits-algebraic-techniques": [
+   "calcbc-limits-algebraic"
+  ]
  }
 }

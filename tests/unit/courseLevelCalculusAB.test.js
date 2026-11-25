@@ -49,7 +49,6 @@ function evalExpr(text, vars = {}) {
   s = s.replace(/(\d|\))\s*(?=Math|\(|[a-z])/g, '$1*').replace(/([a-z])(?=\()/g, (mm, ch, i, all) => (/[a-zA-Z.]/.test(all[i - 1] || '') ? ch : `${ch}*`));
   s = s.replace(/^-/, '-1*').replace(/\(-\(/g, '(-1*(');
   const names = Object.keys(vars);
-  // eslint-disable-next-line no-new-func
   const v = Function(...names, `"use strict"; return (${s});`)(...names.map((k) => vars[k]));
   if (typeof v !== 'number' || Number.isNaN(v)) throw new Error(`cannot evaluate ${text}`);
   return v;
@@ -363,7 +362,7 @@ const RESOLVE = {
     if ((mm = p.match(/f′\(x\) ([<>]) 0 for x < (\S+), f′\(x\) ([<>]) 0 for x > \S+, and f″\(x\) ([<>]) 0 for all x/))) {
       if (mm[1] === mm[3]) throw new Error('no turn');
       const shape = mm[1] === '>' ? `It rises to a peak at x = ${mm[2]} and then falls` : `It falls to a valley at x = ${mm[2]} and then rises`;
-      return only(options, (o) => o.startsWith(shape) && o.includes(`(concave ${mm[4]} === '>' ? '' : ''}`.length ? `(concave ${mm[4] === '>' ? 'up' : 'down'})` : ''));
+      return only(options, (o) => o.startsWith(shape) && o.includes(`(concave ${mm[4] === '>' ? 'up' : 'down'})`));
     }
     if ((mm = p.match(/straight line with (positive|negative) slope that crosses the x-axis at x = (\S+)\./))) {
       // f′ is a line: negative then positive (a minimum) when it slopes up; its slope is f″.
