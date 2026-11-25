@@ -616,6 +616,23 @@ npm run seed:all:dry   # preflight + plan, no writes
   as …". A failed read falls back to the single-pass vision grader; `CHECK_WORK_PIPELINE=legacy` forces
   it. The step checker is one-sided by design (anything it can't prove is `unknown`, never `broken`) —
   keep it that way. Pinned by `tests/unit/checkWorkGrader.test.js`.
+- **Which step lines reach the Work Board is `boardCommandGuard.js`, and its rule is three cases
+  (2026-11-24).** A `resolve` is kept when (1) the student wrote the line; (2) the student wrote the
+  side that changed and the other side is ALREADY ON THE CARD (`lineFromStudentAndBoard` — "6x + 7"
+  becomes "6x + 7 = 2x + 31"); or (3) the student NAMED a move this turn and the line is where it
+  lands (`landsNamedMove`: same equation as the card's last line by `residualRatio`, still unsolved,
+  one landing per turn). The ANSWER never lands by (3) — the student states it. Before this the
+  guard matched each side only against the student's last two messages, so the board kept up while
+  the problem statement was in that window and then stopped (owner: "stops updating after a couple
+  of steps"), and a named move got its label but never its line ("doesn't understand simplification
+  and distribution as a step"). A bare-number side must be STATED as a value (`statesNumber`):
+  "divide by 2" on 2x = 4 used to pass "x = 2". The pipeline passes the card's lines as
+  `boardLines` (both guard calls in `pipeline/index.js`); without them the guard is as strict as it
+  was. The model is told the same rule from ONE wording, `utils/boardStepRule.js`, used by all four
+  board prompts (inline tags, structured output, the tool, the Board-LLM translator) — change the
+  guard and that file together. Dropped cards are a log line (`Pedagogy guard dropped board
+  command`), never an error: read those when the board looks stuck. Pinned by
+  `tests/unit/boardStepsKeepUp.test.js`, which replays whole solves.
 - **One problem, one card — the board's tail lives in `pipeline/boardSettle.js`.** A `pose` of
   different tex SEALS the card in focus, and a `verify` closes it and drops the pin — so on
   2026-10-05 a model `verify` of `2x + 10 = 26` (not an answer) closed the card, and every

@@ -32,6 +32,7 @@ const {
   boardCommandsFromToolCalls,
 } = require('../boardTools');
 const log = require('../logger');
+const { RESOLVE_RULE } = require('../boardStepRule');
 
 const boardLlmLogger = log.child({ service: 'board-llm' });
 
@@ -97,7 +98,7 @@ const BOARD_TRANSLATOR_SYSTEM = [
   'Card shapes (fill only the fields an action needs; leave the rest null):',
   '- pose:     { action:"pose", tex:"2x+4=20" }                    the problem being worked',
   '- apply:    { action:"apply", op:"subtract 4 from both sides" } an operation the student named',
-  '- resolve:  { action:"resolve", tex:"2x=16" }                   an intermediate result the student stated',
+  '- resolve:  { action:"resolve", tex:"2x=16" }                   ' + RESOLVE_RULE,
   '- verify:   { action:"verify", tex:"x=8", check:"2(8)+4=20" }   a confirmed solution',
   '- scaffold: { action:"scaffold", tex:"x + \\\\boxed{} = 8" }       a hint; MUST contain an empty \\\\boxed{} blank.',
   '            The blank is the value being asked for — never blank a known value while showing the result',
