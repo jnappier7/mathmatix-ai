@@ -114,7 +114,7 @@ function yOf(eq, x) {
 const holds = (eq, x, y) => { const [L, R] = eq.split(' = '); return close(ev(L, { x, y }), ev(R, { x, y })); };
 const lineOf = (eq) => ({ b: yOf(eq, 0), m: yOf(eq, 1) - yOf(eq, 0) });
 const point = (o) => { const m = o.match(/^\((−?\d+), (−?\d+)\)$/); if (!m) throw new Error(`not a point: ${o}`); return [N(m[1]), N(m[2])]; };
-const describe = (m, b) => `A line that ${m > 0 ? 'rises' : 'falls'} from left to right and crosses the y-axis at ${neg(Math.round(b))}`;
+const describeLine = (m, b) => `A line that ${m > 0 ? 'rises' : 'falls'} from left to right and crosses the y-axis at ${neg(Math.round(b))}`;
 
 // An inequality as a test on a value.
 const CMP = { '<': (a, b) => a < b - 1e-9, '>': (a, b) => a > b + 1e-9, '≤': (a, b) => a <= b + 1e-9, '≥': (a, b) => a >= b - 1e-9 };
@@ -282,7 +282,7 @@ const RESOLVE = {
     [/^What is the slope of the line (.+)\?$/, (m) => only(o, (opt) => close(ev(opt), lineOf(m[1]).m), 'slope')],
     [/^The line (.+) crosses the y-axis at (?:the point )?\(0, k\)\. What is k\?$/, (m) => whole(yOf(m[1], 0))],
     [/^Which point lies on the line (.+)\?$/, (m) => only(o, (opt) => holds(m[1], ...point(opt)), 'on the line')],
-    [/^Which describes the graph of (.+)\?$/, (m) => { const l = lineOf(m[1]); return describe(l.m, l.b); }],
+    [/^Which describes the graph of (.+)\?$/, (m) => { const l = lineOf(m[1]); return describeLine(l.m, l.b); }],
     [/^What is the x-intercept of the line y = (.+)\? Give/, (m) => { const f = (x) => ev(m[1], { x }); return whole(-f(0) / (f(1) - f(0))); }],
     [/y-intercept (−?\d+) and slope (−?)(\d+)\/(\d+)\. Start at the y-intercept and use the slope once, moving to the right/, (m) => {
       const rise = (m[2] ? -1 : 1) * Number(m[3]);
