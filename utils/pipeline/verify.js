@@ -1700,6 +1700,10 @@ function normalizeLatex(text) {
     'SLOPE', 'PERCENT_BAR', 'PLACE_VALUE', 'RIGHT_TRIANGLE',
     'INEQUALITY', 'ALGEBRA_TILES', 'MULTI_REP',
     'DERIVATIVE_GRAPH', 'RATIONAL_GRAPH', 'VELOCITY_GRAPH',
+    // Missing until 2026-11-25: [SYSTEM_GRAPH:eqs="y=2x+1;y=-x+4"] came out as
+    // \[SYSTEM_GRAPH:…\] — display math to the client, and unreadable to the
+    // graph gate (its fn kept a trailing backslash, so nothing matched).
+    'SYSTEM_GRAPH', 'GRAPH_3D', 'REGULAR_POLYGON', 'CIRCLE_DIAGRAM', 'COUNTERS',
   ];
   // Params can nest one level of brackets (points=[-3,3], jumps=[(0,3,"+3")]).
   // A bare [^\]]+ stops at the first inner "]", protecting only a truncated

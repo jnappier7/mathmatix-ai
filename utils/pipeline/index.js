@@ -92,6 +92,7 @@ const { getBoardLlmMode, proposeBoardCommands } = require('./boardLlm');
 const { applyVisualGate } = require('../visualGate');
 const { gateInlineGraphTags, containsInlineGraphTag } = require('./inlineGraphGate');
 const { gateNumberLineTags, containsNumberLineTag } = require('./numberLineGate');
+const { problemFromStudentText } = require('./statedProblem');
 const { buildDecisionDoc, persistVisualDecisions } = require('../visualDecisionLog');
 const { auditTurn } = require('../turnTypeAudit');
 const structuredMetrics = require('../structuredTutorMetrics');
@@ -1353,19 +1354,40 @@ async function runPipeline(message, ctx) {
   // Read the mode once. `off` is a complete, zero-cost bypass (true kill
   // switch): the whole stage is skipped, no evaluation, no writes.
   const visualGateMode = process.env.VISUAL_GATE_MODE || 'live_control';
+
+  // What both visual gates below judge a graph against. The pin and a graded
+  // answer come first, exactly as before. With NEITHER — the turn a problem is
+  // first stated (the pin is written after these gates run), or a problem the
+  // board never pins ("find the roots of x^2-5x+6") — the problem is read from
+  // what the student wrote (statedProblem.js). Before that fallback the status
+  // was 'unknown' and a graph of the student's own function passed untouched.
+  const visualActiveProblem = () => {
+    const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
+    const known = {
+      problemText: pinnedTex,
+      normalizedExpression: pinnedTex,
+      correctAnswer: diagnosis.correctAnswer || null,
+      problemType: diagnosis.problemType || null,
+      status: diagnosis.isCorrect === true
+        ? 'solved'
+        : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
+    };
+    if (known.status !== 'unknown') return known;
+    const stated = problemFromStudentText([message, ...(ctx.conversation?.messages || [])
+      .filter((m) => m && m.role === 'user').slice(-3).map((m) => m.content).reverse()]);
+    if (!stated) return known;
+    return {
+      ...known,
+      problemText: stated.problemText,
+      normalizedExpression: stated.problemText,
+      statedForms: stated.forms,
+      status: 'unsolved',
+    };
+  };
   if (visualGateMode !== 'off'
       && verified.boardCommands.some(c => c.action === 'graph' || c.action === 'image')) {
     try {
-      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
-      const activeProblem = {
-        problemText: pinnedTex,
-        normalizedExpression: pinnedTex,
-        correctAnswer: diagnosis.correctAnswer || null,
-        problemType: diagnosis.problemType || null,
-        status: diagnosis.isCorrect === true
-          ? 'solved'
-          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
-      };
+      const activeProblem = visualActiveProblem();
       const learningState = {
         concept: ctx.activeSkill?.name || null,
         misconception: diagnosis.misconception?.name || null,
@@ -1443,16 +1465,7 @@ async function runPipeline(message, ctx) {
   // a gate error leaves the text untouched and never breaks the response.
   if (visualGateMode !== 'off' && containsInlineGraphTag(verified.text)) {
     try {
-      const pinnedTex = ctx.conversation?.boardProblem?.tex || null;
-      const activeProblem = {
-        problemText: pinnedTex,
-        normalizedExpression: pinnedTex,
-        correctAnswer: diagnosis.correctAnswer || null,
-        problemType: diagnosis.problemType || null,
-        status: diagnosis.isCorrect === true
-          ? 'solved'
-          : ((pinnedTex || diagnosis.correctAnswer) ? 'unsolved' : 'unknown'),
-      };
+      const activeProblem = visualActiveProblem();
       const learningState = {
         concept: ctx.activeSkill?.name || null,
         misconception: diagnosis.misconception?.name || null,
