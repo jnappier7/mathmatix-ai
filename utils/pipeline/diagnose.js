@@ -17,7 +17,7 @@ const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require(
 const { hasMathematicalContent } = require('./verificationState');
 const { verifyDerivation, isTrueArithmeticFact } = require('../derivationVerifier');
 const { isFinalForm } = require('./solveCredit');
-const { asksForKey, stampIsMention } = require('./poseStamp');
+const { asksForKey, stampIsMention, solvesLikePin } = require('./poseStamp');
 const { llmVerifyMethod, articulatesMethod, statesPinnedMath } = require('./llmVerifier');
 const { parseFractionOrDecimal } = require('../answerComparison');
 const { stripThousandsSeparators } = require('../mathUnicodeNormalizer');
@@ -1052,7 +1052,7 @@ async function diagnose(observation, context = {}) {
     && ['solver', 'derivation', 'root_set'].includes(verificationSource)) {
     const pin = context.pinnedProblemTex || null;
     const posedOutright = latestTurn && problemInfo.content === latestTurn.content
-      && (!pin || statesPinnedMath(latestTurn.content, pin));
+      && (!pin || statesPinnedMath(latestTurn.content, pin) || solvesLikePin(latestTurn.content, pin));
     const claimsThePin = pin && problemInfo.content === pin && claimsRootsOf(rawText, pin);
     if (!posedOutright && !claimsThePin) {
       try {

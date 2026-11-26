@@ -13,7 +13,7 @@ jest.mock('../../utils/logger', () => ({
 const { observe, extractAnswer, detectParroting } = require('../../utils/pipeline/observe');
 const { diagnose } = require('../../utils/pipeline/diagnose');
 const { decide } = require('../../utils/pipeline/decide');
-const { solverStampFor, stampIsMention } = require('../../utils/pipeline/poseStamp');
+const { solverStampFor, stampIsMention, solvesLikePin } = require('../../utils/pipeline/poseStamp');
 const { verifyDerivation } = require('../../utils/derivationVerifier');
 const { isRecheckRequest, findRecheckTarget } = require('../../utils/pipeline/recheck');
 const { boardProblemStatement, statesPinnedMath } = require('../../utils/pipeline/llmVerifier');
@@ -155,6 +155,18 @@ describe('a rejection against a reached-for target yields to the verifier', () =
     const d = await diagnose(obs('4', posed), { recentAssistantMessages: posed, recentUserMessages: [], llmVerificationPromise: affirm });
     expect(d.isCorrect).toBe(false);
     expect(d.verificationSource).toBe('solver');
+  });
+
+  test('a pose pinned in a different spelling is still the problem as posed', async () => {
+    const pose = "Try this one: What's \\(2\\frac{1}{3} + 1\\frac{1}{2}\\)?";
+    const pin = '2 1/3 + 1 1/2';
+    expect(solvesLikePin(pose, pin)).toBe(true);
+    const posed = [{ content: pose, problemInfo: { type: 'fraction_arithmetic', correctAnswer: '3 5/6' } }];
+    const d = await diagnose(obs('3 2/6', posed), {
+      recentAssistantMessages: posed, recentUserMessages: [], pinnedProblemTex: pin,
+      llmVerificationPromise: Promise.resolve({ isCorrect: true, confidence: 1, modelAnswer: '3 5/6' }),
+    });
+    expect(d.isCorrect).toBe(false);
   });
 
   test('a sub-question key under a different board problem does', async () => {

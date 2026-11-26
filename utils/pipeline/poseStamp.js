@@ -142,4 +142,23 @@ function stampIsMention(text, stampedAnswer) {
   }
 }
 
-module.exports = { solverStampFor, asksForKey, stampIsMention, mathSpans };
+/**
+ * Does this text pose the same problem the board holds — judged by the solve,
+ * not the spelling? "\(2\frac{1}{3} + 1\frac{1}{2}\)" is pinned as
+ * "2 1/3 + 1 1/2"; compared as text they differ, and a pose was taken for a
+ * sub-question (verdict eval, 2026-11-25: the board cross-check then let a
+ * model overrule the solver on the exact problem, and 3 2/6 was accepted).
+ */
+function solvesLikePin(text, pinTex) {
+  if (!text || !pinTex) return false;
+  try {
+    const a = parseCleanProblem(String(text));
+    const b = parseCleanProblem(String(pinTex));
+    return !!(a.hasMath && b.hasMath && a.solution?.success && b.solution?.success
+      && flat(a.solution.answer) === flat(b.solution.answer));
+  } catch (_) {
+    return false;
+  }
+}
+
+module.exports = { solverStampFor, asksForKey, stampIsMention, solvesLikePin, mathSpans };

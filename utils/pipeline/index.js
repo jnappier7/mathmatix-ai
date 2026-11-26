@@ -24,6 +24,7 @@ const { generate, assemblePrompt } = require('./generate');
 const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
 const activeProblemState = require('./activeProblem');
+const { solvesLikePin } = require('./poseStamp');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { judgeReply, PROD_JUDGES } = require('../replyJudges');
 const judgeMetrics = require('../judgeMetrics');
@@ -366,7 +367,8 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
       // The board problem as posed, when the chosen turn does not state it: the
       // givens a sub-question refers to, and the second target checked below.
       const pinTex = ctx.conversation?.boardProblem?.tex || null;
-      const boardStatement = !pinnedProblem && pinTex && !statesPinnedMath(problemText, pinTex)
+      const boardStatement = !pinnedProblem && pinTex
+        && !statesPinnedMath(problemText, pinTex) && !solvesLikePin(problemText, pinTex)
         ? boardProblemStatement(pinTex, ctx.conversation?.messages || [])
         : null;
       llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate, {
