@@ -10,7 +10,7 @@
  */
 
 const fs = require('fs');
-const { buildSheetHTML, WORK, MAX_PAGES } = require('../../utils/practiceSheet');
+const { buildSheetHTML, forPaper, openAnswer, WORK, MAX_PAGES } = require('../../utils/practiceSheet');
 
 const problem = (i, extra = {}) => ({ prompt: `Solve $${i}x = ${i * 2}$`, answer: `ANSWER-${i}`, ...extra });
 const sheet = (over = {}) => buildSheetHTML({
@@ -88,10 +88,10 @@ describe('practice sheet — the owner\'s format', () => {
     expect(withKey).toContain('ANSWER-4');
   });
 
-  test('multiple-choice options print with their letters', () => {
-    const html = sheet({ groups: [{ label: '', problems: [problem(1, { options: [{ label: 'A', text: '2' }, { label: 'B', text: '3' }] })] }] });
-    expect(pool(html)).toContain('<span class="p-letter">A.</span><span>2</span>');
-    expect(pool(html)).toContain('<span class="p-letter">B.</span><span>3</span>');
+  test('no multiple choice on a practice page: choices handed to the sheet are not printed', () => {
+    const html = sheet({ groups: [{ label: '', problems: [problem(1, { options: [{ label: 'A', text: 'CHOICE-TEXT' }] })] }] });
+    expect(html).not.toContain('CHOICE-TEXT');
+    expect(html).not.toContain('p-option');
   });
 
   test('a title from the query string cannot write markup into the page', () => {
@@ -105,6 +105,48 @@ describe('practice sheet — the owner\'s format', () => {
     expect(html).toContain(".ak-item[data-num=\"' + num + '\"]");
     expect(html).toContain("querySelectorAll('.sheet .p-num')");
     expect(html).toContain("querySelectorAll('.ak-item .ak-num')");
+  });
+});
+
+describe('no multiple choice on paper (owner, 2026-11-26)', () => {
+  const mc = (prompt, over = {}) => ({
+    answerType: 'multiple-choice', prompt,
+    options: [{ label: 'A', text: '7' }, { label: 'B', text: '12' }, { label: 'C', text: '19' }, { label: 'D', text: '24' }],
+    correctOption: 'B', answer: { value: 'B' }, ...over,
+  });
+  const written = { answerType: 'numeric', prompt: 'Solve 3x = 12', answer: { value: '4' } };
+
+  test('a multiple-choice item asked open is keyed by the choice\'s text, never its letter', () => {
+    expect(openAnswer(mc('What is 5 + 7?'))).toBe('12');
+    expect(openAnswer(mc('What is 5 + 7?', { correctOption: undefined, answer: { value: '19' } }))).toBe('19');
+    expect(openAnswer(written)).toBe('4');
+  });
+
+  test('a question that points at its choices is not asked at all', () => {
+    for (const prompt of [
+      'Which of the following is equal to 12?',
+      'Select the expression equivalent to 3(x + 4).',
+      'Choose the best estimate.',
+      'Which graph shows y = 2x?',
+      'True or false: 12 is prime.',
+    ]) expect(openAnswer(mc(prompt))).toBeNull();
+  });
+
+  test('an item whose key cannot be resolved is left off rather than printed with a guess', () => {
+    expect(openAnswer(mc('What is 5 + 7?', { correctOption: undefined, answer: { value: '' } }))).toBeNull();
+  });
+
+  test('forPaper keeps what can be asked open, written-answer items first', () => {
+    const a = mc('What is 5 + 7?');
+    const b = mc('Which of the following is 12?');
+    expect(forPaper([a, b, written])).toEqual([written, a]);
+  });
+
+  test('every selector in the route goes through forPaper, and the preview shows no choices', () => {
+    const src = fs.readFileSync(require.resolve('../../routes/practicePack.js'), 'utf8');
+    expect(src.match(/forPaper\(/g).length).toBeGreaterThanOrEqual(4);
+    expect(src).not.toContain('normalizeOptions');
+    expect(src).toContain("answer: openAnswer(p) ?? '—'");
   });
 });
 

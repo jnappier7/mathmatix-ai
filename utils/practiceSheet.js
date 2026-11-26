@@ -7,6 +7,13 @@
  * COLUMNS read across (1 left, 2 right) with a rule down the middle and open
  * work space under each one. No grid paper, no answer blanks, no badges.
  *
+ * NO MULTIPLE CHOICE on a practice page (owner, same day): a sheet is where
+ * the work is shown, and four choices turn it into a guess. Most of the bank
+ * is multiple choice, so such an item is printed as an OPEN question — its
+ * prompt without the choices, its key the keyed choice's text — and only
+ * when the prompt can be answered without them (`forPaper`). "Which of the
+ * following…" is not asked at all.
+ *
  * The sheet is AT MOST TWO PAGES. That cannot be decided on the server —
  * a problem's height is only known once KaTeX has typeset it — so the page
  * lays itself out (`layoutScript`, run in headless Chrome before printing):
@@ -27,6 +34,38 @@
 const WORK = { max: 190, comfy: 110, floor: 56, step: 6 };
 const MAX_PAGES = 2;
 
+const { normalizeOptions, keyLabelOf } = require('./mcOptions');
+
+// A prompt that points at its choices cannot be asked without them.
+const NEEDS_CHOICES = /\bwhich\b|\bfollowing\b|\bselect\b|\bchoose\b|\ball that apply\b|\bchoices?\b|\boptions?\b|\btrue or false\b|\bbelow\b/i;
+
+const isMultipleChoice = p => !!p && p.answerType === 'multiple-choice';
+
+/**
+ * What the answer key prints for a problem asked as an open question, or
+ * null when it cannot be asked that way. For a multiple-choice item that is
+ * the TEXT of the keyed choice — never its letter, which means nothing on a
+ * page with no choices.
+ */
+function openAnswer(p) {
+  const value = p && p.answer && typeof p.answer === 'object' ? p.answer.value : p && p.answer;
+  if (!isMultipleChoice(p)) return value === undefined || value === null || value === '' ? null : value;
+  if (NEEDS_CHOICES.test(String(p.prompt || '').replace(/<[^>]*>/g, ' '))) return null;
+  const label = keyLabelOf(p);
+  const keyed = label && normalizeOptions(p.options).find(o => o.label === label);
+  return keyed && String(keyed.text).trim() ? keyed.text : null;
+}
+
+/**
+ * The problems of a list that can go on paper, written-answer items first
+ * and multiple-choice items that stand without their choices after them.
+ * Order within each kind is kept (the caller has already shuffled).
+ */
+function forPaper(problems) {
+  const usable = (problems || []).filter(p => openAnswer(p) !== null);
+  return usable.filter(p => !isMultipleChoice(p)).concat(usable.filter(isMultipleChoice));
+}
+
 function esc(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -35,14 +74,9 @@ function esc(s) {
 function cellHTML(p) {
   if (!p) return '<div class="cell empty"></div>';
   const svg = p.svg ? `<div class="p-svg">${p.svg}</div>` : '';
-  const options = Array.isArray(p.options) && p.options.length
-    ? `<div class="p-options">${p.options.map(o =>
-        `<div class="p-option"><span class="p-letter">${o.label}.</span><span>${o.text}</span></div>`
-      ).join('')}</div>`
-    : '';
   return `<div class="cell">
       <div class="p-head"><span class="p-num">${p.num}.</span><div class="p-prompt">${p.prompt}</div></div>
-      ${svg}${options}
+      ${svg}
     </div>`;
 }
 
@@ -52,7 +86,7 @@ function cellHTML(p) {
  * @param {string} [sheet.heading]     the big line (defaults to the title)
  * @param {string} [sheet.studentName] printed on the NAME line; blank = a line to write on
  * @param {string} [sheet.date]
- * @param {Array<{label:string, problems:Array}>} sheet.groups  problems: { prompt, svg, options:[{label,text}], answer }
+ * @param {Array<{label:string, problems:Array}>} sheet.groups  problems: { prompt, svg, answer }
  * @param {boolean} [sheet.showAnswerKey]
  * @param {string|null} [sheet.qrDataURI]
  */
@@ -149,9 +183,6 @@ function buildSheetHTML(sheet) {
     .katex { font-size: 1.1em; }
     .p-svg { margin: 6px 0 2px 27px; }
     .p-svg svg, .p-svg img { max-width: 100%; max-height: 130px; width: auto; height: auto; }
-    .p-options { margin: 6px 0 0 27px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px 12px; }
-    .p-option { display: flex; gap: 5px; align-items: baseline; min-width: 0; overflow-wrap: anywhere; }
-    .p-letter { font-weight: 700; flex: none; }
 
     .foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; font-size: 10.5px; padding-top: 8px; }
     .foot .up { display: flex; align-items: center; gap: 7px; text-align: right; }
@@ -352,4 +383,4 @@ function layoutScript(cfg) {
 }
 /* eslint-enable no-undef */
 
-module.exports = { buildSheetHTML, WORK, MAX_PAGES };
+module.exports = { buildSheetHTML, forPaper, openAnswer, WORK, MAX_PAGES };

@@ -25,8 +25,7 @@ const { atLevelIdsFor } = require('../utils/courseCheckSources');
 const { normalizedMasteryScore } = require('../utils/masteryScore');
 
 const { anyRole, userHasRole } = require('../utils/roleQuery');
-const { normalizeOptions } = require('../utils/mcOptions');
-const { buildSheetHTML } = require('../utils/practiceSheet');
+const { buildSheetHTML, forPaper, openAnswer } = require('../utils/practiceSheet');
 // Puppeteer for HTML → PDF rendering
 let puppeteer;
 try {
@@ -51,6 +50,9 @@ try {
 const MAX_PROBLEMS = 20;
 const DEFAULT_PROBLEM_COUNT = 16;
 const DEFAULT_TITLE = 'Practice Pack';
+// Most of the bank is multiple choice and a practice page prints none, so a
+// query reads well past what it needs and keeps what can be asked open.
+const PAPER_OVERSAMPLE = 12;
 
 // Launch options for headless PDF rendering. Uses chrome-headless-shell
 // (bundled by Puppeteer via .puppeteerrc.cjs) instead of the system chromium
@@ -299,17 +301,19 @@ async function selectProblemsForPack(user, options = {}) {
         $gte: Math.max(1, targetDifficulty - 1),
         $lte: Math.min(5, targetDifficulty + 1)
       }
-    }).limit(needed * 3);
+    }).limit(needed * PAPER_OVERSAMPLE);
 
-    if (skillProblems.length === 0) {
+    if (forPaper(skillProblems).length < needed) {
       skillProblems = await Problem.find({
         skillId: { $in: sidCandidates },
         isActive: true,
         problemId: { $nin: excludeIds }
-      }).limit(needed * 3);
+      }).limit(needed * PAPER_OVERSAMPLE);
     }
 
-    const shuffled = skillProblems.sort(() => Math.random() - 0.5);
+    // Written-answer items first; multiple choice only where the question
+    // stands without its choices (a practice page prints none).
+    const shuffled = forPaper(skillProblems.sort(() => Math.random() - 0.5));
     const selected = shuffled.slice(0, needed);
 
     for (const p of selected) {
@@ -351,10 +355,10 @@ async function selectFallbackProblems({ count, gradeBand, targetDifficulty }) {
   queries.push({ isActive: true });
 
   for (const filter of queries) {
-    const docs = await Problem.find(filter).limit(count * 4);
+    const docs = forPaper(await Problem.find(filter).limit(count * PAPER_OVERSAMPLE));
     if (docs.length > 0) {
       const shuffled = docs.sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, count);
+      return forPaper(shuffled).slice(0, count);
     }
   }
   return [];
@@ -439,11 +443,9 @@ async function generateWorksheetHTML(user, problems, options = {}) {
     problems: probs.map(p => ({
       prompt: p.prompt,
       svg: p.svg || '',
-      // Labels come from normalizeOptions, which assigns them by position for
-      // every stored shape — a shuffled bank's own letters print out of order
-      // (C, A, B, D). { label, text } only: never the bank's isCorrect.
-      options: p.answerType === 'multiple-choice' ? normalizeOptions(p.options) : [],
-      answer: p.answer?.value ?? p.answer ?? '—',
+      // No choices on a practice page: a multiple-choice item is asked open,
+      // and its key is the keyed choice's text (utils/practiceSheet.js).
+      answer: openAnswer(p) ?? '—',
     })),
   }));
 
@@ -514,9 +516,8 @@ router.get('/preview', isAuthenticated, async (req, res) => {
         skillId: p.skillId,
         difficulty: p.difficulty,
         answerType: p.answerType,
-        // { label, text } only — the legacy banks carry `isCorrect` on every
-        // option, which would ship the answer key with the worksheet.
-        options: normalizeOptions(p.options),
+        // A practice page prints no choices, so the preview shows none either.
+        options: [],
         svg: p.svg || null,
       }))
     });
