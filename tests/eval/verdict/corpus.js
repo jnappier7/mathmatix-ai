@@ -220,6 +220,14 @@ const SESSIONS = [
   { id: 'sess-numerators', topic: 'session', pin: '\\frac{3}{4}+\\frac{2}{3}',
     turns: FRACTION_OPENING,
     correct: ['9 and 8', '9/12 and 8/12'], wrong: ['9 and 6', '3 and 2'] },
+  // Retest, 2026-11-26: the tutor built its next question on the wrong
+  // numerators ("add 9 and 6"), so "15/12" answered that question exactly and
+  // was confirmed as the answer to the problem. No verdict is the right
+  // outcome for it; a confirmation is the failure.
+  { id: 'sess-built-on-miss', topic: 'session', pin: '\\frac{3}{4}+\\frac{2}{3}',
+    turns: [...FRACTION_OPENING, U('9 and 6'),
+      { ...T('You found the common denominator, \\(12\\). Now check the last step: what do you get when you add the numerators \\(9\\) and \\(6\\), while keeping the denominator \\(12\\)?'), problemResult: 'incorrect' }],
+    correct: ['17/12'], wrong: ['15/12', '\\(\\frac{15}{12}\\)'] },
   // The follow-up sub-question names \(\frac{3}{4}\) in passing; persist keyed
   // the whole turn as "evaluate 3/4 = 0.75".
   { id: 'sess-multiplier', topic: 'session', pin: '\\frac{3}{4}+\\frac{2}{3}',

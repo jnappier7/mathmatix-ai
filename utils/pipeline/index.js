@@ -26,6 +26,7 @@ const { verify } = require('./verify');
 const activeProblemState = require('./activeProblem');
 const { solvesLikePin } = require('./poseStamp');
 const openQuestionRecord = require('./openQuestion');
+const { questionBuildsOnAnswer } = require('./builtOnMiss');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { judgeReply, PROD_JUDGES } = require('../replyJudges');
 const judgeMetrics = require('../judgeMetrics');
@@ -424,6 +425,11 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
       // affirms it. AFFIRM-ONLY: this call can lift a rejection or fill a
       // silence; it never rejects and never overrides an affirmation. Tier 1
       // only, and skipped when the chosen turn already states the pin.
+      if (!boardStatement && pinTex) {
+        // The problem graded IS the board problem (the pose itself, or a
+        // stated "x = …" for it), so a correct verdict is about the board.
+        llmVerificationPromise = llmVerificationPromise.then(v => (v && v.isCorrect === true ? { ...v, answersBoardProblem: true } : v));
+      }
       if (boardStatement) {
         const boardStart = Date.now();
         const boardPromise = llmVerifyAnswer(boardStatement, verificationCandidate, { fullStudentMessage: message })
@@ -442,6 +448,18 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
           .catch(() => null);
         const againstQuestion = llmVerificationPromise;
         llmVerificationPromise = Promise.all([againstQuestion, boardPromise]).then(([asked, board]) => {
+          // Right for the question AND for the board problem: the answer
+          // finishes the problem, which is what lets the board close its card.
+          if (asked.isCorrect === true && board && board.isCorrect === true) {
+            return { ...asked, answersBoardProblem: true };
+          }
+          // Right for the question, and NOT the board problem's answer. For a
+          // sub-step that is the normal case ("what is 1/3 of 24?" → 8). It is
+          // also what a wrong final answer looks like when the tutor's own
+          // question was built on the student's mistake — see builtOnMiss below.
+          if (asked.isCorrect === true && board && board.isCorrect === false) {
+            return { ...asked, boardRejects: true };
+          }
           if (asked.isCorrect !== true && board && board.isCorrect === true) {
             console.log(`[Pipeline] LLMVerify: answers the board problem (confidence: ${board.confidence.toFixed(2)}, modelAnswer: ${board.modelAnswer}) — ${asked.isCorrect === false ? 'lifting the rejection against the latest question' : 'affirmed'}`);
             return { ...board, tier: VERIFIER_MODEL, escalated: false, escalationResolved: false, answersBoardProblem: true };
@@ -485,6 +503,48 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
     llmVerificationPromise,
     conceptualVerificationPromise,
   });
+
+  // Did the verifier's affirmation cover the problem on the board? The board
+  // closes a card on that (boardSynthesizer, verify path d), never on a
+  // correct sub-step.
+  if (diagnosis.isCorrect === true && diagnosis.verificationSource === 'llm' && llmVerificationPromise) {
+    try {
+      const v = await llmVerificationPromise;
+      if (v && v.answersBoardProblem === true) diagnosis.answersBoardProblem = true;
+      // ── A right answer to a question built on a wrong one ──
+      // Live, 2026-11-26, on 3/4 + 2/3: the student gave the numerators as
+      // "9 and 6" (2/3 is 8/12). That was graded incorrect — and the tutor's
+      // reply went on to ask "what do you get when you add 9 and 6?". "15/12"
+      // IS the answer to that question, so it was stamped correct, the tutor
+      // said "That's correct: 15/12" and moved to a new problem, with XP and a
+      // "Comeback!" on top. The right answer is 17/12.
+      //
+      // Marked by: the student's previous answer was graded incorrect; this
+      // answer is right only for the tutor's follow-up; the verifier, checking
+      // it against the board problem itself, rejected it; and that follow-up
+      // was built on the wrong values. This never calls the answer WRONG. It
+      // withholds the confirmation: no verdict, and the tutor is told why and
+      // sent back to the earlier values (decide, builtOnMiss).
+      const lastTutor = recentAssistantMessages[recentAssistantMessages.length - 1];
+      const previousAnswer = [...recentUserMessages].reverse().map(m => m.content).find(c => c && c !== message) || null;
+      if (v && v.boardRejects === true && lastTutor && lastTutor.problemResult === 'incorrect'
+          // …and the tutor's question took the wrong values as given. Without
+          // this, a student who simply fixes a missed sub-step would lose the
+          // confirmation they earned (builtOnMiss.js).
+          && await questionBuildsOnAnswer(lastTutor.content, previousAnswer)) {
+        console.log(`[Pipeline] "${verificationCandidate}" answers the tutor's follow-up but not the board problem, and the previous answer was never corrected — confirmation withheld`);
+        Object.assign(diagnosis, {
+          type: 'unverifiable',
+          isCorrect: null,
+          correctAnswer: null,
+          evidence: null,
+          verificationSource: null,
+          demonstratedReasoning: false,
+          builtOnMiss: { previousAnswer: String(previousAnswer).slice(0, 200) },
+        });
+      }
+    } catch (_) { /* no signal */ }
+  }
 
   // ── The tutor's licence to make a correctness claim ──
   // Attached to the diagnosis so every downstream stage reads one value rather
@@ -1775,6 +1835,7 @@ async function runPipeline(message, ctx) {
       const settled = settleBoardTurn({
         commands: verified.boardCommands,
         message,
+        tutorText: verified.text || null,
         pinTex: pinTexBefore,
         lastBoardAction: ctx.conversation.lastBoardAction || null,
         ledger: ctx.conversation.boardLedger || null,

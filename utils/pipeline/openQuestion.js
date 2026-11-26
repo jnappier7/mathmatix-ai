@@ -89,6 +89,8 @@ const DECLARE_SYSTEM =
   'otherwise the problem the student brought or was set earlier in the conversation. Work it out whenever that problem is stated, ' +
   'whatever the tutor is asking about right now — a sub-step, a parallel example, a check. ONLY the answer, as a short string. ' +
   'It is ALWAYS about the student\'s own problem, never about a parallel example the tutor brought in. ' +
+  'Work it from the ORIGINAL problem\'s own numbers, never from values the student supplied along the way or that the tutor repeated back: those may be wrong ' +
+  '(asked to "add the numerators 9 and 6" for 3/4 + 2/3, `answer` is 15/12 because that is what was asked, and finalAnswer is still 17/12). ' +
   'null only when no such problem is stated or it cannot be worked out. For a "final" ask it equals `answer`.';
 
 /**
