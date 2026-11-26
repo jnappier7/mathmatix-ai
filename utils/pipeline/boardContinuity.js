@@ -135,6 +135,110 @@ function demoteNonAnswerVerifies(commands) {
   return { commands: out, demoted };
 }
 
+// ── The answer line ─────────────────────────────────────────────────────────
+// "x = 6" / "6 = x": a bare variable against a number. Returns the number, or
+// null for anything else (a line of work, a two-variable relation, prose).
+function answerValue(tex) {
+  const eq = oneVarEquation(tex);
+  if (!eq) return null;
+  const sides = eq.line.text.split('=').map(s => s.trim());
+  if (sides.length !== 2) return null;
+  const bare = sides.findIndex(s => /^[a-z]$/i.test(s));
+  if (bare === -1) return null;
+  if (/[a-z]/i.test(sides[1 - bare].replace(/\\[a-z]+/gi, ''))) return null;   // the other side is a number
+  const r0 = residualAt(eq, 0);
+  const r1 = residualAt(eq, 1);
+  if (r0 === null || r1 === null || Math.abs(r1 - r0) < 1e-12) return null;
+  const root = -r0 / (r1 - r0);
+  return Number.isFinite(root) ? root : null;
+}
+
+// One root only. A quadratic is not finished by one of its roots.
+function isLinearEquation(eq) {
+  const pts = [-2, -1, 0, 1, 2.5].map(x => residualAt(eq, x));
+  if (pts.some(y => y === null)) return false;
+  const slope = pts[1] - pts[0];
+  if (Math.abs(slope) < 1e-12) return false;
+  return close(pts[2] - pts[1], slope) && close(pts[3] - pts[2], slope) && close((pts[4] - pts[3]) / 1.5, slope);
+}
+
+/**
+ * Is `answerTex` ("x = 6") THE answer to `problemTex`? True only for a
+ * one-root (linear) problem in the same variable that the value satisfies.
+ * Decided by the math, never by wording or by who wrote the line.
+ */
+function answersProblem(answerTex, problemTex) {
+  const value = answerValue(answerTex);
+  if (value === null) return false;
+  const a = oneVarEquation(answerTex);
+  const p = oneVarEquation(problemTex);
+  if (!a || !p || a.v !== p.v || !isLinearEquation(p)) return false;
+  if (answerValue(problemTex) !== null) return false;          // "x = 6" is not a problem
+  const y = residualAt(p, value);
+  return y !== null && Math.abs(y) <= 1e-6 * Math.max(1, Math.abs(value));
+}
+
+/**
+ * THE ANSWER CLOSES THE CARD, WHATEVER IT WAS CALLED. A card counts as solved
+ * only if it holds a `verify` (the client's "Solved" / "Not finished yet", the
+ * ledger's `solved`, the pin dropping). The model often sends the student's
+ * correct last line as a plain `resolve` — and once the guard let stated
+ * answers through as lines, every such problem was sealed "Not finished yet"
+ * with its answer sitting on it (owner's preview session, 2026-11-25). The
+ * mirror of demoteNonAnswerVerifies: a resolve that IS the answer to the
+ * problem in focus becomes the verify it is. Wrong answers do not satisfy the
+ * problem and stay lines.
+ */
+function promoteAnswerResolves(commands, problemTex) {
+  const list = Array.isArray(commands) ? commands : [];
+  let focus = problemTex || null;
+  const out = [];
+  const promoted = [];
+  for (const c of list) {
+    if (c && c.action === 'pose' && c.tex) focus = c.tex;
+    if (!c || c.action !== 'resolve' || !focus || !answersProblem(c.tex, focus)) { out.push(c); continue; }
+    promoted.push(c);
+    const dup = list.some(o => o && o.action === 'verify' && normLine(o.tex) === normLine(c.tex));
+    if (!dup) out.push(Object.assign({}, c, { action: 'verify' }));
+  }
+  return { commands: out, promoted };
+}
+
+/**
+ * THE ANSWER IS NEVER THE NEXT PROBLEM. After a verify the pin is gone, so the
+ * synthesizer's empty-board branch poses the next single equation anyone
+ * writes — and the next thing anyone writes is the tutor confirming "x = 6".
+ * The card then showed the ANSWER under the word PROBLEM (same session).
+ * foldRestatedPoses does not catch it: once a card is solved it folds only an
+ * identical residual, and x = 6 is 4x = 24 scaled.
+ *
+ * A pose that is the answer to the problem in focus (the open card, the pin,
+ * or the problem just completed) is dropped with the `clear` paired in front
+ * of it. It is NOT turned into a verify: a pose skips the pedagogy guard, so
+ * that would let an answer the tutor said — and the student did not — onto
+ * the card. The student's own answer arrives as a resolve/verify, through
+ * the guard, and promoteAnswerResolves closes the card from there.
+ */
+function dropAnswerPoses(commands, { ledger = null, pinTex = null } = {}) {
+  const list = Array.isArray(commands) ? commands : [];
+  if (!list.some(c => c && c.action === 'pose')) return { commands: list, dropped: [] };
+  const cur = ledger && ledger.current && ledger.current.problemTex ? ledger.current : null;
+  const done = ledger && Array.isArray(ledger.completed) && ledger.completed.length
+    ? ledger.completed[ledger.completed.length - 1] : null;
+  const problems = [cur && cur.problemTex, pinTex, done && done.problemTex].filter(Boolean);
+
+  const kept = [];
+  const dropped = [];
+  for (const c of list) {
+    const hit = c && c.action === 'pose' && c.tex && problems.find(pb => answersProblem(c.tex, pb));
+    if (!hit) { kept.push(c); continue; }
+    dropped.push(c);
+    const prev = kept[kept.length - 1];
+    if (prev && prev.action === 'clear') dropped.push(kept.pop());
+  }
+  return { commands: kept, dropped };
+}
+
 // The problem in focus is ledger.current: it survives a verify (the pin does
 // not), which is exactly when a restart used to open a second card.
 function isRestatement(tex, focus) {
@@ -218,6 +322,9 @@ module.exports = {
   residualRatio,
   isUnsolvedEquation,
   demoteNonAnswerVerifies,
+  promoteAnswerResolves,
+  dropAnswerPoses,
+  answersProblem,
   foldRestatedPoses,
   scaffoldBlankIsGiven,
   _isRestatement: isRestatement,

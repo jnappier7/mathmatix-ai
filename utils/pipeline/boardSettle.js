@@ -9,7 +9,9 @@
  *
  * Order matters:
  *   1. a verify that is not an answer becomes the resolve it is — before the
- *      cycle bookkeeping, or it closes the card and drops the pin;
+ *      cycle bookkeeping, or it closes the card and drops the pin; and the
+ *      reverse: a line that IS the answer becomes the verify it is, and an
+ *      answer posed as a new problem is dropped;
  *   2. a pose of the student's own scratch arithmetic is dropped;
  *   3. a pose restating the problem in focus folds back into its card;
  *   4. a genuinely new pose gets the `clear` the model forgot;
@@ -19,7 +21,7 @@
 'use strict';
 
 const { dropScratchFragmentPoses, synthesizeAutoClear } = require('./boardSynthesizer');
-const { demoteNonAnswerVerifies, foldRestatedPoses } = require('./boardContinuity');
+const { demoteNonAnswerVerifies, promoteAnswerResolves, dropAnswerPoses, foldRestatedPoses } = require('./boardContinuity');
 const { applyTurnToLedger } = require('./boardLedger');
 const { hasStartOverIntent } = require('../boardCommandGuard');
 
@@ -41,11 +43,21 @@ function settleBoardTurn({
   now = new Date(), assistanceFor = null, sourceRef = null,
 } = {}) {
   let cmds = Array.isArray(commands) ? commands.slice() : [];
-  const events = { demoted: [], scratchDropped: [], folded: [], autoCleared: false };
+  const events = { demoted: [], promoted: [], answerPoses: [], scratchDropped: [], folded: [], autoCleared: false };
 
   const demote = demoteNonAnswerVerifies(cmds);
   cmds = demote.commands;
   events.demoted = demote.demoted;
+
+  // 1b. …and its mirror: the answer to the problem in focus closes the card
+  // even when it arrived as a plain line, and is never posed as a problem.
+  const focusTex = (ledger && ledger.current && ledger.current.problemTex) || pinTex || null;
+  const answerPose = dropAnswerPoses(cmds, { ledger, pinTex });
+  cmds = answerPose.commands;
+  events.answerPoses = answerPose.dropped;
+  const promote = promoteAnswerResolves(cmds, focusTex);
+  cmds = promote.commands;
+  events.promoted = promote.promoted;
 
   if (cmds.some(c => c && c.action === 'pose')) {
     const scratch = dropScratchFragmentPoses(cmds, message);

@@ -7,6 +7,17 @@ const { isAuthenticated } = require('../middleware/auth');
 const User = require('../models/user');
 
 // Daily quest templates
+//
+// THE COUNTS ARE SIZED FOR A CHAT TUTOR (2026-11-26). A problem here is a
+// conversation — pose, a hint, a step, an answer, a check — a few minutes
+// each, and a free account has 30 AI-minutes a month. The old top tiers
+// (20 correct in a day, 15 in a row, 8 first-try) were drill numbers: at
+// level 15+ every student was dealt quests that could not be finished in a
+// sitting (owner: "some are impossible to attain"). The ceiling now is what a
+// focused 20-30 minute session can do; levelling up asks for a little more,
+// never a different kind of day. MAX_CHAT_PROBLEMS_A_DAY is the pin
+// (tests/unit/questsCompletable.test.js).
+const MAX_CHAT_PROBLEMS_A_DAY = 8;
 const QUEST_TEMPLATES = {
   problemSolver: {
     id: 'problemSolver',
@@ -14,7 +25,7 @@ const QUEST_TEMPLATES = {
     description: 'Solve {count} problems correctly',
     icon: '🎯',
     target: 'problemsCorrect',
-    countOptions: [5, 10, 15, 20],
+    countOptions: [3, 4, 6, 8],
     xpReward: 50
   },
 
@@ -24,7 +35,7 @@ const QUEST_TEMPLATES = {
     description: 'Practice {count} different skills',
     icon: '📚',
     target: 'skillsPracticed',
-    countOptions: [2, 3, 4],
+    countOptions: [2, 2, 3],
     xpReward: 75
   },
 
@@ -57,7 +68,7 @@ const QUEST_TEMPLATES = {
     description: 'Get {count} problems right on your first try',
     icon: '🎯',
     target: 'firstTryCorrect',
-    countOptions: [3, 5, 8],
+    countOptions: [2, 3, 4],
     xpReward: 75
   },
 
@@ -80,7 +91,7 @@ const QUEST_TEMPLATES = {
     description: 'Get {count} problems correct in a row',
     icon: '💯',
     target: 'consecutiveCorrect',
-    countOptions: [5, 10, 15],
+    countOptions: [3, 4, 5],
     xpReward: 100
   },
 
@@ -551,4 +562,5 @@ router.__helpers = { calculateStreak, shouldRefreshQuests };
 module.exports = router;
 // For tests: which quests get dealt, and what they ask.
 module.exports.QUEST_TEMPLATES = QUEST_TEMPLATES;
+module.exports.MAX_CHAT_PROBLEMS_A_DAY = MAX_CHAT_PROBLEMS_A_DAY;
 module.exports.generateDailyQuests = generateDailyQuests;

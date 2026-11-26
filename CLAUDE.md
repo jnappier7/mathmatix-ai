@@ -688,7 +688,13 @@ npm run seed:all:dry   # preflight + plan, no writes
   whose equation is a line of the problem in focus (`pipeline/boardContinuity.js`: proportional
   residual while open; identical residual or a line on the card once solved) back into that card,
   re-pinning it. The guard also drops a scaffold blank whose only value is a given, and `example`
-  cards deriving the problem posed that turn. Change any of it through the replay:
+  cards deriving the problem posed that turn. And the mirror (2026-11-26): a `resolve` that IS the
+  answer to the problem in focus becomes the `verify` it is (`promoteAnswerResolves` — a card is
+  "Solved" only with a verify, so correct answers sent as plain lines were sealed "Not finished
+  yet"), and a pose of that answer is dropped, never shown as the next PROBLEM (`dropAnswerPoses`;
+  not converted to a verify, because a pose skips the guard). Both ask `answersProblem`: the value
+  satisfies a ONE-ROOT problem in the same variable — one root of a quadratic closes nothing.
+  Pinned by `tests/unit/boardAnswerClosesCard.test.js`. Change any of it through the replay:
   `tests/helpers/fiveCardSolve.fixture.json` → `inlineWorkDock.test.js` "one problem stays one card".
 - **Conversations >100 msgs are summarized** before hitting the LLM — mind token budgets.
 - **IEP is split** (collection + cached copy on user) — update both / sync on read.
