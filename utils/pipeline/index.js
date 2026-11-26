@@ -25,6 +25,7 @@ const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
 const activeProblemState = require('./activeProblem');
 const { solvesLikePin } = require('./poseStamp');
+const openQuestionRecord = require('./openQuestion');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { judgeReply, PROD_JUDGES } = require('../replyJudges');
 const judgeMetrics = require('../judgeMetrics');
@@ -451,6 +452,22 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
     }
   }
 
+  // ── Open question, in shadow ──
+  // The tutor's last turn may carry a record of what it asked, keyed when it
+  // was asked (openQuestion.js). Grade this reply against that record alone,
+  // beside the graders below, and compare afterwards. It decides nothing here:
+  // not awaited, not read by diagnose, never the verdict the student gets.
+  let openQuestionShadowPromise = null;
+  const openQuestion = recheckDepth === 0 && openQuestionRecord.enabled()
+    ? openQuestionRecord.latestOpenQuestion(ctx.conversation?.messages)
+    : null;
+  if (openQuestionRecord.isGradeable(openQuestion) && (verificationCandidate || hasMathematicalContent(message))) {
+    openQuestionShadowPromise = openQuestionRecord.gradeOpenQuestion(openQuestion, message, {
+      candidate: observation.answer?.value || null,
+      firstName: ctx.user?.firstName || null,
+    });
+  }
+
   // ── Stage 2: DIAGNOSE ──
   const pinnedAtTurnStart = ctx.conversation?.boardProblem?.tex || null;
   const diagnosis = await diagnose(observation, {
@@ -483,9 +500,22 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
     hasMathematicalContent(message) && !isPlainAsk(message, observation, verificationCandidate)
   );
 
+  if (openQuestionShadowPromise) {
+    openQuestionShadowPromise = openQuestionShadowPromise.then((shadow) => {
+      const live = openQuestionRecord.label(diagnosis.isCorrect);
+      const mine = openQuestionRecord.label(shadow.isCorrect);
+      if (live !== mine) {
+        console.log(`[OpenQuestion] shadow ${mine} vs live ${live} (${diagnosis.verificationSource || 'no source'}) on a ${openQuestion.kind} question, via ${shadow.via}`);
+      }
+      verifyMetrics.recordOpenQuestionShadow({ live, shadow: mine, kind: openQuestion.kind, via: shadow.via, matched: shadow.matched });
+      return shadow;
+    }).catch(() => null);
+  }
+
   return {
     observation, recentUserMessages, recentAssistantMessages,
     verificationCandidate, llmVerificationPromise, pinnedAtTurnStart, diagnosis,
+    openQuestion, openQuestionShadowPromise,
   };
 }
 
@@ -2320,6 +2350,15 @@ async function runPipeline(message, ctx) {
     } catch (err) {
       console.error('[Pipeline] Post-persist conversation save error:', err.message);
     }
+  }
+
+  // ── Open question: read what this reply asked, for the next turn ──
+  // After the save, and deliberately not awaited — see stampLatestTurn.
+  if (!ctx.skipPersist) {
+    openQuestionRecord.stampLatestTurn(ctx.conversation, {
+      firstName: ctx.user?.firstName || null,
+      onStamp: verifyMetrics.recordOpenQuestionStamp,
+    });
   }
 
   const pipelineTime = Date.now() - startTime;

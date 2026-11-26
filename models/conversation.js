@@ -39,6 +39,20 @@ const messageSchema = new Schema({
         // keys the deterministic solver produced.
         source: { type: String },
     },
+    // What this tutor turn ASKED, read once when it was written
+    // (utils/pipeline/openQuestion.js). Graded in shadow beside the live
+    // graders; it decides nothing a student sees. Written a moment after the
+    // turn saves, so a fast reply may find it absent.
+    openQuestion: {
+        type: {
+            kind: { type: String },        // final | substep | parallel | set | method | conceptual | none
+            question: { type: String },    // the ask, restated with its givens
+            answer: { type: String },      // its key; absent when the ask has no single answer
+            finalAnswer: { type: String }, // the whole problem's final answer, for a student who jumps ahead
+            model: { type: String },
+        },
+        default: undefined,
+    },
     // Show My Work integration: when a student submits work for grading,
     // a 'user' message is appended with workCheckId pointing to the GradingResult.
     // The frontend renders these messages as rich work-check cards rather than

@@ -74,6 +74,8 @@ module.exports = {
     // math a turn only mentions, the pin under a tutor question, prose-wrapped
     // derivations, and the verifier's veto over a reached-for rejection.
     '<rootDir>/tests/unit/sessionWrongTarget.test.js',
+    // The open-question record: graded in shadow, never the verdict.
+    '<rootDir>/tests/unit/openQuestion.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
     '<rootDir>/tests/unit/parseCleanProblem.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',

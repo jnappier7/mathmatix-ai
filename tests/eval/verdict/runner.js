@@ -36,6 +36,50 @@ const { observeAndDiagnose } = require('../../../utils/pipeline/index');
 const { synthesizeBoardCommands } = require('../../../utils/pipeline/boardSynthesizer');
 const { solverStampFor } = require('../../../utils/pipeline/poseStamp');
 const { buildCases, buildSessionCases } = require('./corpus');
+const { declareOpenQuestion } = require('../../../utils/pipeline/openQuestion');
+const { boardProblemStatement } = require('../../../utils/pipeline/llmVerifier');
+
+// ── The open-question record, graded in shadow ──
+// With `shadow` on, the last tutor turn is read exactly as production reads it
+// after a reply is saved, and observeAndDiagnose grades the student's message
+// against that record beside the live graders. Each row then carries both
+// verdicts, so the scoreboard compares them case for case. Read once per
+// (conversation, pin) and reused across that problem's answers — the record
+// belongs to the tutor's turn, not to the reply.
+const declared = new Map();
+function recordFor(messages, pin) {
+  const turn = messages[messages.length - 1];
+  const key = JSON.stringify([pin, messages.map(m => m.content)]);
+  if (!declared.has(key)) {
+    const before = messages.slice(0, -1);
+    declared.set(key, declareOpenQuestion({
+      reply: turn.content,
+      boardProblem: boardProblemStatement(pin, before),
+      history: before.map(m => ({ role: m.role, content: m.content })),
+    }));
+  }
+  return declared.get(key);
+}
+
+async function withRecord(messages, pin, shadow) {
+  if (!shadow || !messages.length || messages[messages.length - 1].role !== 'assistant') return messages;
+  const record = await recordFor(messages, pin);
+  if (!record) return messages;
+  return [...messages.slice(0, -1), { ...messages[messages.length - 1], openQuestion: record }];
+}
+
+async function shadowOf(run, expected) {
+  if (!run || !run.openQuestionShadowPromise) return { shadow: null, shadowKind: run && run.openQuestion ? run.openQuestion.kind : null };
+  const s = await run.openQuestionShadowPromise;
+  const isCorrect = s ? s.isCorrect : null;
+  return {
+    shadow: classify(expected, isCorrect),
+    shadowVia: s ? s.via : null,
+    shadowKind: run.openQuestion ? run.openQuestion.kind : null,
+    shadowKey: run.openQuestion ? run.openQuestion.answer : null,
+    shadowFinal: run.openQuestion ? run.openQuestion.finalAnswer : null,
+  };
+}
 
 function pinFor(pose) {
   const cmds = synthesizeBoardCommands({
@@ -66,7 +110,7 @@ function followUpFor(c) {
   return FOLLOW_UPS[h % FOLLOW_UPS.length];
 }
 
-async function runCase(c, context) {
+async function runCase(c, context, { shadow = false } = {}) {
   const pin = context === 'pinned' ? pinFor(c.problem.pose) : null;
   const messages = [{ role: 'user', content: 'can I get a practice problem' }];
   for (const turn of c.problem.before || []) messages.push({ role: 'assistant', content: turn }, { role: 'user', content: 'ok' });
@@ -80,7 +124,9 @@ async function runCase(c, context) {
     message = followUpFor(c);
   }
   const conversation = {
-    messages,
+    // A follow-up re-grades an earlier submission, so the record that matters
+    // sits mid-conversation; the shadow is measured on first replies only.
+    messages: context === 'followup' ? messages : await withRecord(messages, pin, shadow),
     boardProblem: pin ? { tex: pin } : null,
     lastBoardAction: pin ? 'pose' : null,
     lastProblemState: null,
@@ -88,14 +134,17 @@ async function runCase(c, context) {
   const ctx = { conversation, user: { _id: 'verdict-eval', firstName: 'Eval' }, activeSkill: null };
 
   let diagnosis;
+  let run = null;
   let failure = null;
   try {
-    ({ diagnosis } = await observeAndDiagnose(message, ctx));
+    run = await observeAndDiagnose(message, ctx);
+    ({ diagnosis } = run);
   } catch (e) {
     failure = e.message;
   }
   const isCorrect = diagnosis ? diagnosis.isCorrect : null;
   return {
+    ...(shadow && context !== 'followup' ? await shadowOf(run, c.expected) : {}),
     id: c.problem.id,
     topic: c.problem.topic,
     context,
@@ -123,25 +172,28 @@ function stamped(turn) {
   return { ...turn, problemInfo: { type, correctAnswer, ...(source ? { source } : {}) } };
 }
 
-async function runSessionCase(c, context) {
+async function runSessionCase(c, context, { shadow = false } = {}) {
   const s = c.session;
   const pin = context === 'session' ? s.pin : null;
   const conversation = {
-    messages: s.turns.map(stamped),
+    messages: await withRecord(s.turns.map(stamped), pin, shadow),
     boardProblem: pin ? { tex: pin } : null,
     lastBoardAction: pin ? 'pose' : null,
     lastProblemState: null,
   };
   const ctx = { conversation, user: { _id: 'verdict-eval', firstName: 'Eval' }, activeSkill: null };
   let diagnosis;
+  let run = null;
   let failure = null;
   try {
-    ({ diagnosis } = await observeAndDiagnose(c.answer, ctx));
+    run = await observeAndDiagnose(c.answer, ctx);
+    ({ diagnosis } = run);
   } catch (e) {
     failure = e.message;
   }
   const isCorrect = diagnosis ? diagnosis.isCorrect : null;
   return {
+    ...(shadow ? await shadowOf(run, c.expected) : {}),
     id: s.id,
     topic: s.topic,
     context,
@@ -158,7 +210,7 @@ async function runSessionCase(c, context) {
 
 const SESSION_CONTEXTS = ['session', 'session-unpinned'];
 
-async function runAll({ concurrency = 1, contexts = ['pinned', 'unpinned', 'followup', ...SESSION_CONTEXTS], filter = null, quiet = true } = {}) {
+async function runAll({ concurrency = 1, contexts = ['pinned', 'unpinned', 'followup', ...SESSION_CONTEXTS], filter = null, quiet = true, shadow = false } = {}) {
   const jobs = [];
   for (const c of buildCases()) {
     if (filter && !filter(c)) continue;
@@ -176,8 +228,8 @@ async function runAll({ concurrency = 1, contexts = ['pinned', 'unpinned', 'foll
     while (next < jobs.length) {
       const i = next++;
       results[i] = jobs[i][0].session
-        ? await runSessionCase(jobs[i][0], jobs[i][1])
-        : await runCase(jobs[i][0], jobs[i][1]);
+        ? await runSessionCase(jobs[i][0], jobs[i][1], { shadow })
+        : await runCase(jobs[i][0], jobs[i][1], { shadow });
     }
   }
   // Muted once around the whole run: swapping per case under concurrency let a

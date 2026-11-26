@@ -244,6 +244,20 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
    problem, a student-brought problem lives only in their own message and (c)/(d) have nothing to check
    against. Pinned by `tests/unit/sessionWrongTarget.test.js` and the `SESSIONS` replays in
    `tests/eval/verdict/corpus.js` — a grading bug that took several turns to happen goes there first.
+   **The open-question record (SHADOW — decides nothing yet).** Those four rules still re-derive the
+   question from text on the student's turn. `pipeline/openQuestion.js` answers it once, when the tutor
+   asks: after a reply is saved (`stampLatestTurn`, not awaited), the verifier model reads the turn
+   beside the board problem and the last few turns and writes `messages[].openQuestion` =
+   `{kind, question (restated with its givens), answer, finalAnswer (the whole problem's, so jumping
+   ahead counts as finishing)}`. The next student message is graded against that record alone
+   (`gradeOpenQuestion`: an exact match affirms with no model call; anything else goes to one judge that
+   reads the whole reply; a rejection needs the asked question's own key). The result is only
+   **compared** with the live verdict — `aggregate().openQuestion` on
+   `GET /api/admin/structured-tutor-metrics` (`liveRejectsShadowAffirms` is the cell to read) and
+   `npm run eval:verdict -- --shadow`. Kill switch: `OPEN_QUESTION=off`. Cost: one tier-1 verifier
+   call per tutor turn plus at most one per graded reply. Promoting it to the verdict, and deleting the
+   heuristics it replaces, is a separate decision that waits on the production numbers. Pinned by
+   `tests/unit/openQuestion.test.js`.
 3. **decide** — pick an instructional action (scaffold, direct-instruction, worked-example,
    prerequisite-bridge, guided/independent practice, verify, redirect, …) using BKT state, lesson phase, mood.
 4. **generate** — build the system prompt + history, call the LLM (streamed via SSE), emit board/visual commands.

@@ -59,6 +59,9 @@ function row(label, s) {
     concurrency: offline ? 1 : Number(opt('--concurrency') || 6),
     filter: topic ? (c) => c.problem.topic === topic : null,
     quiet: !flag('--verbose'),
+    // --shadow: also read each tutor turn into an open-question record and
+    // grade against it, beside the live graders (live mode only).
+    shadow: !offline && flag('--shadow'),
   });
   const s = summarize(results);
 
@@ -78,6 +81,27 @@ function row(label, s) {
       console.log(`  ${what.padEnd(13)} ${f.id.padEnd(9)} ${f.context.padEnd(8)} pin=${JSON.stringify(f.pin)} src=${f.source}  ${JSON.stringify(f.answer)}`);
     }
   }
+  // The open-question record, on the rows it was measured on (first replies;
+  // a follow-up re-grades an earlier submission). 'no record' = the reader
+  // found nothing to key, or the reply carried nothing to grade.
+  const shadowRows = results.filter(r => 'shadow' in r);
+  if (shadowRows.length) {
+    const asRows = (pick) => shadowRows.map(r => ({ ...r, outcome: pick(r) }));
+    const live = summarize(asRows(r => r.outcome));
+    const rec = summarize(asRows(r => r.shadow || 'abstain'));
+    console.log(`\nOpen-question record, in shadow — same ${shadowRows.length} rows, graded both ways\n`);
+    console.log(head);
+    for (const k of Object.keys(live.byContext)) {
+      console.log(row(`${k} live`, live.byContext[k]));
+      console.log(row(`${k} record`, rec.byContext[k]));
+    }
+    const wrong = shadowRows.filter(r => /^FALSE/.test(r.shadow || ''));
+    if (wrong.length) {
+      console.log(`\n${wrong.length} wrong verdict(s) from the record:`);
+      for (const r of wrong) console.log(`  ${r.shadow.padEnd(13)} ${r.id.padEnd(9)} ${r.context.padEnd(8)} ${r.shadowKind} key=${JSON.stringify(r.shadowKey)} final=${JSON.stringify(r.shadowFinal)}  ${JSON.stringify(r.answer)}`);
+    }
+  }
+
   const out = opt('--json');
   if (out) {
     require('fs').writeFileSync(out, JSON.stringify({ mode: offline ? 'offline' : 'live', at: new Date().toISOString(), summary: s, results }, null, 2));
