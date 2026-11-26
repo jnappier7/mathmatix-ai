@@ -666,6 +666,22 @@ npm run seed:all:dry   # preflight + plan, no writes
   guard and that file together. Dropped cards are a log line (`Pedagogy guard dropped board
   command`), never an error: read those when the board looks stuck. Pinned by
   `tests/unit/boardStepsKeepUp.test.js`, which replays whole solves.
+- **A board picture is ours, or it is ABOUT the query, or it is not shown (2026-11-26).** An `image`
+  card is a web image search (`routes/imageSearch.js` → `utils/safeImageSearch.js`), and "from an
+  educational site" is not "about the query": a unit-circle lesson got a cosmology plot of the
+  expanding universe (owner's phone; the same plot was caught 2026-09-07 and the card still fell
+  back to the first result). Now `getStaticConceptImage` answers "unit circle" with our own drawing
+  (`public/images/concepts/unit-circle.svg`, built by `scripts/buildUnitCircleSvg.js` — every label
+  computed, checked point by point in the test), and any searched result must share a content word
+  with the query in its TITLE (`relevantResults` on the server, `imageElement.pickResult` on the
+  card) or the card says "No image found" in words. A drawing of ours (`source: 'Mathmatix'`) gets
+  the card's width and the phone board's taller cap (`.is-diagram`). The next built-in picture is a
+  file in `public/images/concepts/` plus a key in that map. Same turn, second bug: the fallback
+  pose that QUOTES the tutor (`boardSynthesizer.sentenceToTex`) stripped every backslash, so
+  `\(\theta\)` printed as "( theta )" — it now emits `\text{words} math \text{words}`, which
+  `derivationView.renderTextAndMath` typesets (words wrap, everything between the groups is math),
+  and leading praise ("Nice!") is not quoted as part of the problem. Pinned by
+  `tests/unit/boardWrongPicture.test.js`; checked by eye in headless Chromium at 390×844 and 1366×800.
 - **One problem, one card — the board's tail lives in `pipeline/boardSettle.js`.** A `pose` of
   different tex SEALS the card in focus, and a `verify` closes it and drops the pin — so on
   2026-10-05 a model `verify` of `2x + 10 = 26` (not an answer) closed the card, and every

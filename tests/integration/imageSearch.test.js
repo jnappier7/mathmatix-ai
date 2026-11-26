@@ -5,7 +5,8 @@ jest.mock('../../utils/safeImageSearch', () => ({
   searchEducationalImages: jest.fn(),
   sanitizeQuery: jest.fn(),
   getStaticConceptImage: jest.fn(),
-  isValidCategory: jest.fn().mockReturnValue(true)
+  isValidCategory: jest.fn().mockReturnValue(true),
+  relevantResults: jest.requireActual('../../utils/safeImageSearch').relevantResults
 }));
 
 jest.mock('express-rate-limit', () => () => (req, res, next) => next());
@@ -73,7 +74,7 @@ describe('GET /api/images/search', () => {
   test('falls through to external search when no static match', async () => {
     safeSearch.getStaticConceptImage.mockReturnValue(null);
     safeSearch.searchEducationalImages.mockResolvedValue({
-      results: [{ url: 'https://khanacademy.org/x.png', title: 'x' }],
+      results: [{ url: 'https://khanacademy.org/x.png', title: 'A quirky triangle' }],
       query: 'math triangle'
     });
 
@@ -81,6 +82,17 @@ describe('GET /api/images/search', () => {
     expect(r.status).toBe(200);
     expect(r.body.source).toBe('google_cse');
     expect(r.body.results).toHaveLength(1);
+  });
+
+  test('a result that is not about the query is not returned (a wrong picture is worse than none)', async () => {
+    safeSearch.getStaticConceptImage.mockReturnValue(null);
+    safeSearch.searchEducationalImages.mockResolvedValue({
+      results: [{ url: 'https://upload.wikimedia.org/u.png', title: 'Friedmann universes Omega M 0.3' }],
+      query: 'math sine wave'
+    });
+    const r = await supertest(makeApp()).get('/api/images/search?q=sine%20wave%20graph');
+    expect(r.status).toBe(200);
+    expect(r.body.results).toEqual([]);
   });
 
   test('handles search errors with 200 + empty results (no internal leak)', async () => {

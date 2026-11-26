@@ -610,7 +610,9 @@ function extractProblemSentence(text) {
 
   // Include up to two preceding setup sentences (the parameters) so
   // the pose card shows the full problem, not just the bare ask.
-  const start = Math.max(0, qIdx - 2);
+  // Praise is not a parameter ("Nice!", "Great job!").
+  let start = Math.max(0, qIdx - 2);
+  while (start < qIdx && /!\s*$/.test(sentences[start])) start++;
   const chunk = sentences.slice(start, qIdx + 1).join(' ').trim();
   if (chunk.length < 12 || chunk.length > 320) return null;
   return chunk;
@@ -619,12 +621,36 @@ function extractProblemSentence(text) {
 // KaTeX \text{...} treats most prose as literal, but a handful of
 // characters need neutralizing to avoid throwing.
 function sentenceToTex(sentence) {
-  const safe = sentence
+  const words = (t) => t
     .replace(/\\/g, ' ')
     .replace(/[${}#%&_^]/g, ' ')
-    .replace(/\s{2,}/g, ' ')
-    .trim();
-  return `\\text{${safe}}`;
+    .replace(/\s{2,}/g, ' ');
+  // The tutor's sentence carries its math in \( … \) or $ … $. Stripping the
+  // backslashes from all of it printed "\(\theta\)" at the student as
+  // "( theta )" (owner's phone, 2026-11-26). Words go in \text{…}; the math
+  // between them stays math, and the card typesets it.
+  // "$5 and $7" is money, not math: a $…$ run with a bare word in it is words.
+  const isMath = (part) => !/[A-Za-z]{3,}/.test(part.replace(/\\[a-zA-Z]+/g, ' '));
+  const raw = String(sentence).split(/(\\\([\s\S]*?\\\)|\$[^$\n]+\$)/);
+  const parts = [];
+  raw.forEach((part, i) => {
+    const math = i % 2 === 1 && (part[0] !== '$' || isMath(part));
+    if (math === (parts.length % 2 === 1)) parts.push(part);
+    else if (parts.length) parts[parts.length - 1] += part;
+    else parts.push(part);
+  });
+  if (parts.length === 1) return `\\text{${words(sentence).trim()}}`;
+  const out = [];
+  parts.forEach((part, i) => {
+    if (i % 2 === 1) {
+      const math = part.replace(/^\\\(|\\\)$/g, '').replace(/^\$|\$$/g, '').replace(/\\text\s*\{([^{}]*)\}/g, '$1').trim();
+      if (math) out.push(math);
+    } else {
+      const w = words(part);
+      if (w.trim()) out.push(`\\text{${w}}`);
+    }
+  });
+  return out.join(' ').trim();
 }
 
 function detectGeometryProblem(tutorText) {
@@ -1029,7 +1055,11 @@ function extractPosableSentence(text) {
   const qIdx = sentences.findIndex(s => /\?\s*$/.test(s) && !OFFER_QUESTION.test(s));
   let chunk;
   if (qIdx !== -1) {
-    chunk = sentences.slice(Math.max(0, qIdx - 2), qIdx + 1).join(' ').trim();
+    // The setup sentences are the problem's givens. Praise is not ("Nice!",
+    // "Great job!") — it was being quoted on the card as part of the problem.
+    const setup = sentences.slice(Math.max(0, qIdx - 2), qIdx);
+    while (setup.length && /!\s*$/.test(setup[0])) setup.shift();
+    chunk = setup.concat(sentences[qIdx]).join(' ').trim();
   } else {
     const numIdx = sentences.findIndex(s => /\d/.test(s));
     if (numIdx === -1) return null;

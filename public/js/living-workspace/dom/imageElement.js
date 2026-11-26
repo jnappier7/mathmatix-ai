@@ -36,7 +36,7 @@
   // Words in a picture query that name the PICTURE rather than the math —
   // "graph", "diagram", "showing" — plus function words. Never evidence that
   // a result is about the right thing.
-  const QUERY_STOP = /^(the|a|an|of|for|and|or|in|on|to|with|graph|graphs|diagram|diagrams|picture|pictures|image|images|showing|example|examples|labell?ed)$/;
+  const QUERY_STOP = /^(the|a|an|of|for|and|or|in|on|to|with|graph|graphs|diagram|diagrams|picture|pictures|image|images|showing|example|examples|labell?ed|math|maths|mathematics|educational|chart)$/;
   function contentStems(query) {
     return String(query || '').toLowerCase().split(/[^a-z0-9]+/)
       .filter((w) => w.length >= 4 && !QUERY_STOP.test(w))
@@ -45,27 +45,26 @@
       .map((w) => new RegExp('\\b' + w.slice(0, 6)));
   }
 
-  // Prefer a result whose TITLE is about the query; fall back to the first
-  // result that carries an image at all. The search is already site-restricted
-  // and safe, but "relevant to an educational site" is not "relevant to the
-  // query": production 2026-09-07 captioned a cosmology plot of the expanding
-  // universe as "a great tool for understanding trigonometric functions" — the
-  // first image the site whitelist returned for that query. A title check can
-  // only move a better result up; with no title match it returns what it
-  // always did.
+  // Only a result whose TITLE is about the query is shown. The search is
+  // site-restricted and safe, but "from an educational site" is not "about
+  // the query": production 2026-09-07 captioned a cosmology plot of the
+  // expanding universe as a trig aid, and until 2026-11-26 this function
+  // still fell back to the first result when no title matched — which put the
+  // same plot on a unit-circle lesson. A wrong picture is worse than none:
+  // with no match the card says so in words. Our own drawings (source
+  // "Mathmatix") were chosen by the server for this query and always show.
   function pickResult(results, query) {
     if (!Array.isArray(results)) return null;
     const withImage = results.filter((r) => r && (r.thumbnail || r.url));
     if (!withImage.length) return null;
+    const own = withImage.find((r) => r.source === 'Mathmatix');
+    if (own) return own;
     const stems = contentStems(query);
-    if (stems.length) {
-      const hit = withImage.find((r) => {
-        const title = String(r.title || '').toLowerCase();
-        return stems.some((re) => re.test(title));
-      });
-      if (hit) return hit;
-    }
-    return withImage[0];
+    if (!stems.length) return withImage[0];
+    return withImage.find((r) => {
+      const title = String(r.title || '').toLowerCase().replace(/[_-]+/g, ' ');
+      return stems.some((re) => re.test(title));
+    }) || null;
   }
 
   function defaultSearch(query) {
@@ -127,7 +126,8 @@
       function showImage(result) {
         body.textContent = '';
         const img = doc.createElement('img');
-        img.className = 'lws-image-img';
+        // Our own drawings are full of small labels: give them the card's width.
+        img.className = 'lws-image-img' + (result.source === 'Mathmatix' ? ' is-diagram' : '');
         img.alt = sem().caption || result.title || sem().query || 'illustration';
         img.loading = 'lazy'; img.decoding = 'async';
         let triedUrl = false;

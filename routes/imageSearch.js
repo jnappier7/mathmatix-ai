@@ -11,6 +11,7 @@ const {
   searchEducationalImages,
   sanitizeQuery,
   getStaticConceptImage,
+  relevantResults,
   isValidCategory,
   isProxyableImageUrl
 } = require('../utils/safeImageSearch');
@@ -96,10 +97,15 @@ router.get('/search', imageSearchLimiter, async (req, res) => {
       });
     }
 
+    // A result that is not about the query is not shown — see relevantResults.
+    const results = relevantResults(searchResult.results, query);
+    if (!results.length && (searchResult.results || []).length) {
+      console.warn(`[ImageSearch] No result was about "${query.trim()}" — showing none`);
+    }
     return res.json({
-      results: searchResult.results,
+      results,
       query: searchResult.query,
-      source: 'google_cse'
+      source: searchResult.source || 'google_cse'
     });
 
   } catch (error) {

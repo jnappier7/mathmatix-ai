@@ -502,7 +502,8 @@ html[data-theme="dark"] .lws-root {
   .lws-tm-tray-tiles { flex-wrap: wrap; gap: 6px; }
   /* The mat's own readout says the line; the head scrolls away with the card
      instead of holding a fifth of the mat's window. */
-  .cr-work-dock .lws-card:has(.lws-tm) .lws-card-head { position: static; }
+  .cr-work-dock .lws-card:has(.lws-tm) .lws-card-head,
+  .cr-work-dock .lws-card:has(.lws-image-img.is-diagram) .lws-card-head { position: static; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lws-tm-tile, .lws-tm-ghost { transition: none; animation: none !important; }
@@ -835,6 +836,10 @@ html[data-theme="dark"] .lws-root {
 }
 .lws-image-body { padding: 8px; display: flex; align-items: center; justify-content: center; min-height: 60px; }
 .lws-image-img { max-width: 100%; max-height: 200px; border-radius: 6px; display: block; }
+/* A drawing of ours (the unit circle) is all small labels: the card's full
+   width, no height cap, and its own white ground in either theme. */
+.lws-image-card:has(.is-diagram) { width: 100%; max-width: 480px; }
+.lws-image-img.is-diagram { width: 100%; max-width: 460px; max-height: none; height: auto; margin: 0 auto; background: #fff; }
 .lws-image-fallback {
   display: flex; gap: 8px; align-items: center; padding: 6px;
   color: var(--lws-card-ink); font-size: 14px; opacity: 0.9;
@@ -1662,7 +1667,9 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
     border: 0; border-radius: 0; box-shadow: none; margin: 0;
   }
   /* Tiles are something to put your hands on, so they get the room — and only
-     they do. */
+     they and a drawing of ours do (the unit circle is all small labels; in
+     300px a student saw half of it at a time). */
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-image-img.is-diagram),
   body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-tm) {
     max-height: min(58vh, 480px, calc(100vh - 404px));
     max-height: min(58dvh, 480px, calc(100dvh - 404px));
@@ -1671,6 +1678,7 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
      line rather than its last three. (The 404 above is this 96 plus what the
      column always holds: 58 top, 44 bar, 18 grab handle, 128 composer, 59 nav,
      1 to spare.) */
+  html.mm-work-inline body.mm-board-up:not(.cr-voice):has(.cr-work-dock .lws-image-img.is-diagram) #chat-messages-container,
   html.mm-work-inline body.mm-board-up:not(.cr-voice):has(.cr-work-dock .lws-tm) #chat-messages-container {
     min-height: 96px !important;
   }
