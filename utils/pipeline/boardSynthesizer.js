@@ -471,8 +471,23 @@ function numericFragmentBesideEquation(tex, studentText) {
 // message; in both cases the text judged must read as a problem statement, not
 // worked scratch, and a numeric fragment next to an algebra equation is never
 // promoted. Returns { tex, problem, correctAnswer } or null.
-function detectStudentStatedProblem(studentMessage) {
-  if (!studentMessage || typeof studentMessage !== 'string') return null;
+// The math field wraps each piece a student types in its own delimiters, so
+// "solve x^2 - 5x - 14 = 0" arrives as "solve \\(x^{2}\\) - 5x - 14 = 0": one
+// span, then bare text. Read span by span, the problem was "- 5x - 14 = 0" —
+// posed over the tutor's own correct pose of the quadratic, sealing that one
+// "Not finished yet" and pinning the fragment for the grader (live, 2026-11-25
+// and again 2026-11-26). Inline delimiters carry no meaning in a student's
+// message; the math is the whole line.
+function unwrapMathField(text) {
+  return String(text)
+    .replace(/\\[()]/g, '')
+    .replace(/\^\{(-?\w+)\}/g, '^$1')
+    .replace(/[ \t]{2,}/g, ' ');
+}
+
+function detectStudentStatedProblem(rawMessage) {
+  if (!rawMessage || typeof rawMessage !== 'string') return null;
+  const studentMessage = unwrapMathField(rawMessage);
   const clause = extractStatedProblemClause(studentMessage);
   const candidates = clause ? [clause, studentMessage] : [studentMessage];
   for (const statement of candidates) {
@@ -865,6 +880,16 @@ function synthesizeBoardCommands({
     // reads cleanly.
     const problemTex = String(pinnedProblem).replace(/[\s.]+$/, '');
     cards.push({ action: 'verify', tex: `${problemTex} = ${bareAnswerToTex(bareFinal)}` });
+  } else if (!finalSol && !bareFinal && pinnedProblem && diagnosis?.isCorrect === true
+             && diagnosis.answersBoardProblem === true && observation?.answer?.value
+             && pinnedEquationAnswer(pinnedProblem) == null) {
+    // (d) an EXPRESSION answer — a derivative, a simplified form — that the
+    //     verifier checked against the board problem itself. (a) and (b) only
+    //     know "x = …" and bare numbers, so a confirmed derivative never
+    //     closed its card and was sealed "Not finished yet" when the student
+    //     moved on (live, 2026-11-26). Gated on answersBoardProblem: a correct
+    //     verdict on a sub-question must not seal the problem.
+    cards.push({ action: 'verify', tex: String(observation.answer.value) });
   } else {
     const subCheck = detectSubstitutionCheck(studentMessage);
     if (subCheck && tutorAffirms(tutorResponse)) {
