@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="96 70 408 470" width="408" height="470" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Parts of a circle: center, radius, diameter, chord, arc and tangent">
+<rect x="96" y="70" width="408" height="470" fill="#ffffff"/>
+<circle data-part="circle" cx="300" cy="270" r="170" fill="none" stroke="#1f2937" stroke-width="2.5"/>
+<path data-part="arc" d="M 459.7 211.9 A 170 170 0 0 0 329.5 102.6" fill="none" stroke="#6d28d9" stroke-width="6" stroke-linecap="round"/>
+<line data-part="diameter" x1="130" y1="270" x2="470" y2="270" stroke="#0f766e" stroke-width="3"/>
+<line data-part="radius" x1="300" y1="270" x2="202.5" y2="130.7" stroke="#b45309" stroke-width="3"/>
+<line data-part="chord" x1="160.7" y1="367.5" x2="430.2" y2="379.3" stroke="#be185d" stroke-width="3"/>
+<line data-part="tangent" x1="150" y1="440" x2="450" y2="440" stroke="#1d4ed8" stroke-width="3"/>
+<circle cx="300" cy="440" r="4" fill="#1d4ed8"/>
+<circle data-part="center" cx="300" cy="270" r="5" fill="#1f2937"/>
+<text x="306" y="294" font-size="17" font-weight="700" fill="#1f2937" text-anchor="start">center</text>
+<text x="395" y="260" font-size="17" font-weight="700" fill="#0f766e" text-anchor="middle">diameter</text>
+<text x="239.2" y="194.4" font-size="17" font-weight="700" fill="#b45309" text-anchor="end">radius</text>
+<text x="299.5" y="363.4" font-size="17" font-weight="700" fill="#be185d" text-anchor="middle">chord</text>
+<text x="418.3" y="129" font-size="17" font-weight="700" fill="#6d28d9" text-anchor="start">arc</text>
+<text x="450" y="464" font-size="17" font-weight="700" fill="#1d4ed8" text-anchor="end">tangent</text>
+<text x="300" y="502" font-size="14.5" fill="#5b6475" text-anchor="middle">A diameter is two radii.</text>
+<text x="300" y="522" font-size="14.5" fill="#5b6475" text-anchor="middle">The distance all the way around is the circumference.</text>
+</svg>

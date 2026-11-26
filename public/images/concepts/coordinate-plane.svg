@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="24 24 552 580" width="552" height="580" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="The coordinate plane: x-axis, y-axis, origin, the four quadrants and the point (3, 2)">
+<rect x="24" y="24" width="552" height="580" fill="#ffffff"/>
+<line x1="60" y1="60" x2="60" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="540" x2="540" y2="540" stroke="#e5e7eb"/>
+<line x1="100" y1="60" x2="100" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="500" x2="540" y2="500" stroke="#e5e7eb"/>
+<line x1="140" y1="60" x2="140" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="460" x2="540" y2="460" stroke="#e5e7eb"/>
+<line x1="180" y1="60" x2="180" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="420" x2="540" y2="420" stroke="#e5e7eb"/>
+<line x1="220" y1="60" x2="220" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="380" x2="540" y2="380" stroke="#e5e7eb"/>
+<line x1="260" y1="60" x2="260" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="340" x2="540" y2="340" stroke="#e5e7eb"/>
+<line x1="300" y1="60" x2="300" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="300" x2="540" y2="300" stroke="#e5e7eb"/>
+<line x1="340" y1="60" x2="340" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="260" x2="540" y2="260" stroke="#e5e7eb"/>
+<line x1="380" y1="60" x2="380" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="220" x2="540" y2="220" stroke="#e5e7eb"/>
+<line x1="420" y1="60" x2="420" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="180" x2="540" y2="180" stroke="#e5e7eb"/>
+<line x1="460" y1="60" x2="460" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="140" x2="540" y2="140" stroke="#e5e7eb"/>
+<line x1="500" y1="60" x2="500" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="100" x2="540" y2="100" stroke="#e5e7eb"/>
+<line x1="540" y1="60" x2="540" y2="540" stroke="#e5e7eb"/>
+<line x1="60" y1="60" x2="540" y2="60" stroke="#e5e7eb"/>
+<line x1="46" y1="300" x2="554" y2="300" stroke="#1f2937" stroke-width="2.5"/>
+<line x1="300" y1="554" x2="300" y2="46" stroke="#1f2937" stroke-width="2.5"/>
+<path d="M 554 300 l -9 -5 v 10 z M 46 300 l 9 -5 v 10 z M 300 46 l -5 9 h 10 z M 300 554 l -5 -9 h 10 z" fill="#1f2937"/>
+<text data-tick="x" x="60" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">−6</text>
+<text data-tick="y" x="292" y="544" font-size="12.5" fill="#5b6475" text-anchor="end">−6</text>
+<text data-tick="x" x="100" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">−5</text>
+<text data-tick="y" x="292" y="504" font-size="12.5" fill="#5b6475" text-anchor="end">−5</text>
+<text data-tick="x" x="140" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">−4</text>
+<text data-tick="y" x="292" y="464" font-size="12.5" fill="#5b6475" text-anchor="end">−4</text>
+<text data-tick="x" x="180" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">−3</text>
+<text data-tick="y" x="292" y="424" font-size="12.5" fill="#5b6475" text-anchor="end">−3</text>
+<text data-tick="x" x="220" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">−2</text>
+<text data-tick="y" x="292" y="384" font-size="12.5" fill="#5b6475" text-anchor="end">−2</text>
+<text data-tick="x" x="260" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">−1</text>
+<text data-tick="y" x="292" y="344" font-size="12.5" fill="#5b6475" text-anchor="end">−1</text>
+<text data-tick="x" x="340" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">1</text>
+<text data-tick="y" x="292" y="264" font-size="12.5" fill="#5b6475" text-anchor="end">1</text>
+<text data-tick="x" x="380" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">2</text>
+<text data-tick="y" x="292" y="224" font-size="12.5" fill="#5b6475" text-anchor="end">2</text>
+<text data-tick="x" x="420" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">3</text>
+<text data-tick="y" x="292" y="184" font-size="12.5" fill="#5b6475" text-anchor="end">3</text>
+<text data-tick="x" x="460" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">4</text>
+<text data-tick="y" x="292" y="144" font-size="12.5" fill="#5b6475" text-anchor="end">4</text>
+<text data-tick="x" x="500" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">5</text>
+<text data-tick="y" x="292" y="104" font-size="12.5" fill="#5b6475" text-anchor="end">5</text>
+<text data-tick="x" x="540" y="317" font-size="12.5" fill="#5b6475" text-anchor="middle">6</text>
+<text data-tick="y" x="292" y="64" font-size="12.5" fill="#5b6475" text-anchor="end">6</text>
+<text x="552" y="290" font-size="15" font-weight="700" fill="#1f2937" text-anchor="end">x-axis</text>
+<text x="310" y="58" font-size="15" font-weight="700" fill="#1f2937">y-axis</text>
+<text x="307" y="317" font-size="12.5" fill="#5b6475">0</text>
+<line x1="244" y1="346" x2="295" y2="305" stroke="#5b6475" stroke-width="1.2"/>
+<text x="240" y="352" font-size="14" fill="#5b6475" text-anchor="end">origin (0, 0)</text>
+<circle data-origin="1" cx="300" cy="300" r="4" fill="#1f2937"/>
+<g data-quadrant="I" data-sx="1" data-sy="1"><text x="476" y="116" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle">Quadrant I</text><text x="476" y="136" font-size="14.5" fill="#6d28d9" text-anchor="middle">(+, +)</text></g>
+<g data-quadrant="II" data-sx="-1" data-sy="1"><text x="124" y="116" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle">Quadrant II</text><text x="124" y="136" font-size="14.5" fill="#6d28d9" text-anchor="middle">(−, +)</text></g>
+<g data-quadrant="III" data-sx="-1" data-sy="-1"><text x="124" y="484" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle">Quadrant III</text><text x="124" y="504" font-size="14.5" fill="#6d28d9" text-anchor="middle">(−, −)</text></g>
+<g data-quadrant="IV" data-sx="1" data-sy="-1"><text x="476" y="484" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle">Quadrant IV</text><text x="476" y="504" font-size="14.5" fill="#6d28d9" text-anchor="middle">(+, −)</text></g>
+<path d="M 420 300 V 220 H 300" fill="none" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>
+<circle data-point="3,2" cx="420" cy="220" r="5.5" fill="#b45309"/>
+<text x="429" y="211" font-size="16" font-weight="700" fill="#b45309">(3, 2)</text>
+<text x="300" y="592" font-size="14.5" fill="#5b6475" text-anchor="middle">A point is (x, y): across first, then up or down.</text>
+</svg>

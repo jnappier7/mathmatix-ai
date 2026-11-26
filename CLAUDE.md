@@ -684,13 +684,17 @@ npm run seed:all:dry   # preflight + plan, no writes
   card is a web image search (`routes/imageSearch.js` → `utils/safeImageSearch.js`), and "from an
   educational site" is not "about the query": a unit-circle lesson got a cosmology plot of the
   expanding universe (owner's phone; the same plot was caught 2026-09-07 and the card still fell
-  back to the first result). Now `getStaticConceptImage` answers "unit circle" with our own drawing
-  (`public/images/concepts/unit-circle.svg`, built by `scripts/buildUnitCircleSvg.js` — every label
-  computed, checked point by point in the test), and any searched result must share a content word
+  back to the first result). Now `getStaticConceptImage` answers with our own drawing for the four reference pictures a tutor
+  asks for most — the unit circle, types of angles, parts of a circle, the coordinate plane
+  (`public/images/concepts/*.svg`, all built by `scripts/buildConceptSvgs.js` — every position
+  computed, each file read back and checked in the test; `OUR_DRAWINGS` matches only a query plainly
+  asking for that picture, so "exterior angle of a triangle" or "graph y = 2x on the coordinate
+  plane" still go to search), and any searched result must share a content word
   with the query in its TITLE (`relevantResults` on the server, `imageElement.pickResult` on the
   card) or the card says "No image found" in words. A drawing of ours (`source: 'Mathmatix'`) gets
   the card's width and the phone board's taller cap (`.is-diagram`). The next built-in picture is a
-  file in `public/images/concepts/` plus a key in that map. Same turn, second bug: the fallback
+  builder in that script, an `OUR_DRAWINGS` entry (with a `not` for what it must not answer) and a
+  check in the test. Same turn, second bug: the fallback
   pose that QUOTES the tutor (`boardSynthesizer.sentenceToTex`) stripped every backslash, so
   `\(\theta\)` printed as "( theta )" — it now emits `\text{words} math \text{words}`, which
   `derivationView.renderTextAndMath` typesets (words wrap, everything between the groups is math),

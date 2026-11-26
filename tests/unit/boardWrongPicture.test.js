@@ -63,6 +63,85 @@ describe('the picture', () => {
   });
 });
 
+describe('the other drawings of ours', () => {
+  const read = (f) => fs.readFileSync(path.join(__dirname, '../../public/images/concepts', f), 'utf8');
+  const num = (el, a) => +el.match(new RegExp(`\\b${a}="(-?[\\d.]+)"`))[1];
+  const tag = (svg, attr) => svg.match(new RegExp(`<[a-z]+ ${attr}[^>]*>`))[0];
+
+  test('the files on disk are what the script builds', () => {
+    const { OUT } = require('../../scripts/buildConceptSvgs');
+    for (const [name, build] of Object.entries(OUT)) expect(read(name)).toBe(build());
+  });
+
+  test('each answers only a query that is asking for that picture', () => {
+    const url = (q) => (getStaticConceptImage(q) || {}).url || null;
+    expect(url('acute right obtuse angles labeled')).toBe('/images/concepts/angle-types.svg');
+    expect(url('types of angles')).toBe('/images/concepts/angle-types.svg');
+    expect(url('parts of a circle labeled')).toBe('/images/concepts/circle-parts.svg');
+    expect(url('circle radius diameter chord')).toBe('/images/concepts/circle-parts.svg');
+    expect(url('coordinate plane quadrants labeled')).toBe('/images/concepts/coordinate-plane.svg');
+    for (const q of ['exterior angle of a triangle', 'right triangle angles', 'angles formed by parallel lines and a transversal',
+      'area of a circle', 'circle equation', 'inscribed angle circle chord arc', 'angle', 'circle', 'triangle',
+      'graph of line y=2x on coordinate plane', 'coordinate plane reflection', 'plotting points coordinate plane', 'slope on the coordinate plane']) {
+      expect(url(q)).toBeNull();
+    }
+  });
+
+  test('types of angles: every angle is drawn at the measure it prints, under the right name', () => {
+    const svg = read('angle-types.svg');
+    const groups = svg.split('<g data-angle=').slice(1);
+    expect(groups).toHaveLength(4);
+    const kind = (d) => (d < 90 ? 'Acute' : d === 90 ? 'Right' : d < 180 ? 'Obtuse' : 'Straight');
+    for (const g of groups) {
+      const name = g.match(/^"(\w+)"/)[1];
+      const printed = +g.match(/>(\d+)°<\/text>/)[1];
+      const ray = (r) => { const l = tag(g, `data-ray="${r}"`); return [num(l, 'x2') - num(l, 'x1'), num(l, 'y1') - num(l, 'y2')]; };
+      const [bx, by] = ray('base'), [ax, ay] = ray('arm');
+      const drawn = Math.acos((bx * ax + by * ay) / (Math.hypot(bx, by) * Math.hypot(ax, ay))) * 180 / Math.PI;
+      expect(Math.abs(drawn - printed)).toBeLessThan(0.5);
+      expect(kind(printed)).toBe(name);
+    }
+  });
+
+  test('parts of a circle: each part is the thing its label says', () => {
+    const svg = read('circle-parts.svg');
+    const c = tag(svg, 'data-part="circle"');
+    const cx = num(c, 'cx'), cy = num(c, 'cy'), R = num(c, 'r');
+    const seg = (part) => { const l = tag(svg, `data-part="${part}"`); return [[num(l, 'x1'), num(l, 'y1')], [num(l, 'x2'), num(l, 'y2')]]; };
+    const fromCenter = ([x, y]) => Math.hypot(x - cx, y - cy);
+    const lineToCenter = ([[x1, y1], [x2, y2]]) => Math.abs((y2 - y1) * cx - (x2 - x1) * cy + x2 * y1 - y2 * x1) / Math.hypot(x2 - x1, y2 - y1);
+    const near = (a, b) => expect(Math.abs(a - b)).toBeLessThan(0.2);
+    const [r1, r2] = seg('radius'); near(fromCenter(r1), 0); near(fromCenter(r2), R);
+    const d = seg('diameter'); near(fromCenter(d[0]), R); near(fromCenter(d[1]), R); near(lineToCenter(d), 0);
+    const ch = seg('chord'); near(fromCenter(ch[0]), R); near(fromCenter(ch[1]), R); expect(lineToCenter(ch)).toBeGreaterThan(R / 4);
+    near(lineToCenter(seg('tangent')), R);
+    for (const word of ['center', 'radius', 'diameter', 'chord', 'arc', 'tangent']) expect(svg).toContain(`>${word}</text>`);
+  });
+
+  test('the coordinate plane: ticks, the point and the quadrants are where they say', () => {
+    const svg = read('coordinate-plane.svg');
+    const o = tag(svg, 'data-origin'); const ox = num(o, 'cx'), oy = num(o, 'cy');
+    const val = (t) => +t.replace('−', '-');
+    const xs = [...svg.matchAll(/<text data-tick="x" x="([\d.]+)"[^>]*>([^<]+)</g)].map((m) => [+m[1], val(m[2])]);
+    const ys = [...svg.matchAll(/<text data-tick="y" x="[\d.]+" y="([\d.]+)"[^>]*>([^<]+)</g)].map((m) => [+m[1], val(m[2])]);
+    expect(xs).toHaveLength(12); expect(ys).toHaveLength(12);
+    const unit = (xs.find(([, v]) => v === 1)[0] - ox);
+    xs.forEach(([x, v]) => expect((x - ox) / unit).toBeCloseTo(v, 5));
+    ys.forEach(([y, v]) => expect((oy - (y - 4)) / unit).toBeCloseTo(v, 5));
+    const p = tag(svg, 'data-point'); const [px, py] = p.match(/data-point="(-?\d+),(-?\d+)"/).slice(1).map(Number);
+    expect((num(p, 'cx') - ox) / unit).toBeCloseTo(px, 5);
+    expect((oy - num(p, 'cy')) / unit).toBeCloseTo(py, 5);
+    expect(svg).toContain(`>(${px}, ${py})</text>`);
+    const SIGNS = { I: [1, 1], II: [-1, 1], III: [-1, -1], IV: [1, -1] };
+    const quads = [...svg.matchAll(/<g data-quadrant="(\w+)"[^>]*><text x="([\d.]+)" y="([\d.]+)"[^>]*>[^<]+<\/text><text[^>]*>\((.), (.)\)</g)];
+    expect(quads).toHaveLength(4);
+    for (const [, q, x, y, sx, sy] of quads) {
+      expect([Math.sign(+x - ox), Math.sign(oy - +y)]).toEqual(SIGNS[q]);
+      expect([sx === '+' ? 1 : -1, sy === '+' ? 1 : -1]).toEqual(SIGNS[q]);
+    }
+  });
+});
+
 describe('the problem card', () => {
   const reply = String.raw`Nice! For angle \( \theta \), the point on the circle is \( (\cos \theta, \sin \theta) \). What are the coordinates at \( \theta=0 \)?`;
 

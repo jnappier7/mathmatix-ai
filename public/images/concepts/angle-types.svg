@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 500" width="600" height="500" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Types of angles: acute, right, obtuse and straight">
+<rect x="0" y="0" width="600" height="500" fill="#ffffff"/>
+<g data-angle="Acute" data-deg="50">
+<text x="150" y="34" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Acute</text>
+<text x="150" y="56" font-size="14.5" fill="#5b6475" text-anchor="middle">less than 90°</text>
+<line data-ray="base" x1="100" y1="170" x2="205" y2="170" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<line data-ray="arm" x1="100" y1="170" x2="167.5" y2="89.6" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<path d="M 134 170 A 34 34 0 0 0 121.9 144" fill="none" stroke="#6d28d9" stroke-width="2.5"/>
+<text x="150.8" y="151.3" font-size="15" font-weight="700" fill="#6d28d9" text-anchor="middle">50°</text>
+<circle cx="100" cy="170" r="4" fill="#1f2937"/>
+</g>
+<g data-angle="Right" data-deg="90">
+<text x="450" y="34" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Right</text>
+<text x="450" y="56" font-size="14.5" fill="#5b6475" text-anchor="middle">exactly 90°</text>
+<line data-ray="base" x1="400" y1="170" x2="505" y2="170" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<line data-ray="arm" x1="400" y1="170" x2="400" y2="65" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<path d="M 420 170 V 150 H 400" fill="none" stroke="#6d28d9" stroke-width="2.5"/>
+<text x="431.1" y="143.9" font-size="15" font-weight="700" fill="#6d28d9" text-anchor="middle">90°</text>
+<circle cx="400" cy="170" r="4" fill="#1f2937"/>
+</g>
+<g data-angle="Obtuse" data-deg="130">
+<text x="150" y="284" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Obtuse</text>
+<text x="150" y="306" font-size="14.5" fill="#5b6475" text-anchor="middle">between 90° and 180°</text>
+<line data-ray="base" x1="160" y1="420" x2="265" y2="420" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<line data-ray="arm" x1="160" y1="420" x2="92.5" y2="339.6" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<path d="M 194 420 A 34 34 0 0 0 138.1 394" fill="none" stroke="#6d28d9" stroke-width="2.5"/>
+<text x="183.7" y="374.2" font-size="15" font-weight="700" fill="#6d28d9" text-anchor="middle">130°</text>
+<circle cx="160" cy="420" r="4" fill="#1f2937"/>
+</g>
+<g data-angle="Straight" data-deg="180">
+<text x="450" y="284" font-size="20" font-weight="700" fill="#1f2937" text-anchor="middle">Straight</text>
+<text x="450" y="306" font-size="14.5" fill="#5b6475" text-anchor="middle">exactly 180°</text>
+<line data-ray="base" x1="460" y1="420" x2="565" y2="420" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<line data-ray="arm" x1="460" y1="420" x2="355" y2="420" stroke="#1f2937" stroke-width="3" stroke-linecap="round"/>
+<path d="M 494 420 A 34 34 0 0 0 426 420" fill="none" stroke="#6d28d9" stroke-width="2.5"/>
+<text x="460" y="369" font-size="15" font-weight="700" fill="#6d28d9" text-anchor="middle">180°</text>
+<circle cx="460" cy="420" r="4" fill="#1f2937"/>
+</g>
+<line x1="300" y1="14" x2="300" y2="486" stroke="#e5e7eb"/>
+<line x1="14" y1="250" x2="586" y2="250" stroke="#e5e7eb"/>
+</svg>
