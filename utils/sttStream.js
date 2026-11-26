@@ -11,6 +11,9 @@ const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
 // your Deepgram project, otherwise the API returns HTTP 400 on connect.
 const MODEL = process.env.DEEPGRAM_MODEL || 'nova-2';
 
+// 20 ms frames: ~3 s of audio held while a connection opens.
+const MAX_PENDING_FRAMES = 150;
+
 let _client = null;
 function client() {
     if (!_client) {
@@ -88,10 +91,27 @@ function createSession(opts = {}) {
     let closed = false;
     let billedSeconds = 0;
     let lastSpeechTs = null;
+    // Audio that arrives while the connection is still opening. It used to be
+    // dropped, which cost the first word of whatever the student was saying.
+    let pending = [];
+
+    function transmit(buf) {
+        try {
+            conn.send(buf);
+            // 16kHz s16 mono = 32 bytes/ms = approx
+            billedSeconds += buf.byteLength / (sampleRate * 2);
+        } catch (err) {
+            logger.warn('Deepgram send failed', { error: err.message });
+        }
+    }
 
     conn.on(LiveTranscriptionEvents.Open, () => {
         opened = true;
         logger.info('Deepgram open', { model: MODEL, language, sampleRate });
+        if (closed) return;
+        const queued = pending;
+        pending = [];
+        for (const buf of queued) transmit(buf);
     });
 
     conn.on(LiveTranscriptionEvents.Transcript, (data) => {
@@ -123,29 +143,29 @@ function createSession(opts = {}) {
     conn.on(LiveTranscriptionEvents.Error, (err) => {
         const detail = err?.message || err?.reason || err?.statusCode || String(err);
         logger.warn('Deepgram error', { error: detail, model: MODEL });
+        // An errored connection is finished: mark it so the owner can tell a
+        // dead session from one that is still opening (see isUsable).
+        closed = true;
+        pending = [];
         onError(err);
     });
 
     conn.on(LiveTranscriptionEvents.Close, () => {
         if (closed) return;
         closed = true;
+        pending = [];
         onClose();
     });
 
     function sendFrame(buf) {
         if (closed) return;
         if (!opened) {
-            // Buffer-frames-before-open is rare since open is fast,
-            // but if it happens just drop. The first speech segment is short.
+            // Still connecting: hold the audio (bounded) and send it on open.
+            if (pending.length >= MAX_PENDING_FRAMES) pending.shift();
+            pending.push(buf);
             return;
         }
-        try {
-            conn.send(buf);
-            // 16kHz s16 mono = 32 bytes/ms = approx
-            billedSeconds += buf.byteLength / (sampleRate * 2);
-        } catch (err) {
-            logger.warn('Deepgram send failed', { error: err.message });
-        }
+        transmit(buf);
     }
 
     function finish() {
@@ -156,6 +176,7 @@ function createSession(opts = {}) {
     function close() {
         if (closed) return;
         closed = true;
+        pending = [];
         try { conn.requestClose?.(); } catch (_) { /* sdk variants */ }
         try { conn.finish?.(); } catch (_) { /* sdk variants */ }
     }
@@ -165,6 +186,12 @@ function createSession(opts = {}) {
         finish,
         close,
         isOpen: () => opened && !closed,
+        // Open OR still opening. This — not isOpen — is the question to ask
+        // before creating a replacement: a session that is mid-handshake is
+        // not open yet, and replacing it on every audio frame opened ~50
+        // Deepgram connections a second until Deepgram answered 429 (prod,
+        // 2026-11-26: 150 opens in 3 s, then every voice session fell back).
+        isUsable: () => !closed,
         get billedSeconds() { return billedSeconds; },
     };
 }
