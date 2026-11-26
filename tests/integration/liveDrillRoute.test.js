@@ -644,7 +644,11 @@ describe('every game, played alone against the computer', () => {
     const game = G.getGame(code);
     for (let i = 0; i < 4; i++) {
       const cur = (await req.get(`/api/live-drill/play/${code}/play`).set(tok(made.body))).body;
-      await req.post(`/api/live-drill/play/${code}/answer`).set(tok(made.body)).send({ n: cur.n, k: i === 2 ? '0' : G.playAt(game, cur.n).answer });
+      // The third answer is wrong on purpose: one MORE than the key. (A
+      // literal '0' was the right answer whenever the fact was 0 × n — about
+      // 1 run in 22 — and the round was then filed as 4 right, not 3.)
+      const key = G.playAt(game, cur.n).answer;
+      await req.post(`/api/live-drill/play/${code}/answer`).set(tok(made.body)).send({ n: cur.n, k: i === 2 ? String(Number(key) + 1) : key });
     }
     G.endGame(game);
     await new Promise((r) => setImmediate(r));
