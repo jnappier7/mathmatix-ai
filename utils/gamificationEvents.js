@@ -187,11 +187,29 @@ function updateDailyQuests(user, eventType, data) {
   if (streakResult.streakFreezeUsed) result.streakFreezeUsed = true;
   if (streakResult.streakLost) result.streakLost = streakResult.streakLost;
 
-  // Check if quests need refresh (new day)
-  if (shouldRefreshDailyQuests(user.dailyQuests.lastRefreshDate)) {
-    // Don't generate quests here — let the GET endpoint handle that.
-    // Just skip updating stale quests (streak was already updated above).
-    return result;
+  // A NEW DAY — in the STUDENT's timezone, the same rule the quests endpoint
+  // uses. This used to ask the server's clock (UTC on Render) while the
+  // endpoint asked the student's, and then simply returned: for a student in
+  // New York the server's day turns over at 7 PM, the endpoint saw the same
+  // local day and never issued new quests, and this function saw a "stale"
+  // set and counted nothing — every evening, in homework hours, the quests
+  // stopped moving (owner, 2026-11-26: "the daily quests don't seem to
+  // count").
+  //
+  // And when it really is a new day, deal the day's quests HERE instead of
+  // waiting for the page to ask: otherwise the first problems of the day —
+  // a tab left open overnight, or a turn that lands before the sidebar's
+  // fetch — were answered against no quests at all.
+  if (shouldRefreshDailyQuests(user.dailyQuests.lastRefreshDate, user.timezone)) {
+    try {
+      const { generateDailyQuests } = require('../routes/dailyQuests');
+      user.dailyQuests.quests = generateDailyQuests(user);
+      user.dailyQuests.lastRefreshDate = new Date();
+      user.dailyQuests.todayProgress = {};
+    } catch (err) {
+      logger.warn('Could not deal the new day\'s quests in-process', { error: err.message });
+      return result;
+    }
   }
 
   if (!user.dailyQuests.quests || user.dailyQuests.quests.length === 0) {
@@ -492,11 +510,12 @@ function updateWeeklyChallenges(user, eventType, data) {
 
 // ── Helpers ──
 
-function shouldRefreshDailyQuests(lastRefreshDate) {
+// The student's local day, never the server's. Must agree with
+// routes/dailyQuests.js shouldRefreshQuests (pinned by a test).
+function shouldRefreshDailyQuests(lastRefreshDate, timezone) {
   if (!lastRefreshDate) return true;
-  const now = new Date();
-  const last = new Date(lastRefreshDate);
-  return now.toDateString() !== last.toDateString();
+  const tz = timezone || 'UTC';
+  return localDayKey(new Date(), tz) !== localDayKey(new Date(lastRefreshDate), tz);
 }
 
 function isCurrentWeek(date) {
