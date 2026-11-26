@@ -16,7 +16,7 @@
  * @module pipeline
  */
 
-const { isRecheckRequest, findRecheckTarget } = require('./recheck');
+const { isRecheckRequest, findRecheckTarget, restatedSubmission } = require('./recheck');
 const { observe, MESSAGE_TYPES } = require('./observe');
 const { diagnose, extractBareExpression } = require('./diagnose');
 const { decide, ACTIONS } = require('./decide');
@@ -198,6 +198,21 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
     }
   }
 
+  // ── "I said x = 7 or x = -2. Is my answer right or not?" ──
+  // The claim is restated in the message, so grade the message as that claim.
+  // Marked as a re-check so decide answers the question asked, first and
+  // plainly, and nothing counts it as a fresh attempt.
+  const restated = recheckDepth === 0 ? restatedSubmission(message) : null;
+  if (restated) {
+    const graded = await observeAndDiagnose(restated, ctx, { emitStatus, recheckDepth: 1 });
+    console.log(`[Pipeline] Verdict request restating its answer: ${graded.diagnosis.type} (${graded.diagnosis.verificationState})`);
+    graded.diagnosis.recheck = { of: restated.slice(0, 200) };
+    if (graded.diagnosis.verificationState === VERIFICATION_STATES.NOT_APPLICABLE) {
+      graded.diagnosis.verificationState = VERIFICATION_STATES.UNVERIFIED;
+    }
+    return { ...graded, observation: { ...graded.observation, isRecheck: true } };
+  }
+
   // ── Stage 1: OBSERVE ──
   const recentUserMessages = ctx.conversation.messages
     .filter(msg => msg.role === 'user')
@@ -215,8 +230,18 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
     .slice(-6)
     .map(msg => msg.problemResult);
 
+  // The student's messages since the tutor last confirmed a correct answer —
+  // what "still stuck" is counted over (observe.detectStreaks).
+  const allMessages = ctx.conversation.messages;
+  let lastSolveAt = -1;
+  for (let i = allMessages.length - 1; i >= 0; i--) {
+    if (allMessages[i].role === 'assistant' && allMessages[i].problemResult === 'correct') { lastSolveAt = i; break; }
+  }
+  const streakUserMessages = allMessages.slice(lastSolveAt + 1).filter(msg => msg.role === 'user').slice(-6);
+
   const observation = observe(message, {
     recentUserMessages,
+    streakUserMessages,
     recentAssistantMessages,
     recentProblemResults,
     hasRecentUpload: ctx.hasRecentUpload || false,

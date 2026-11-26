@@ -367,7 +367,43 @@ async function diagnoseTransformation(observation, context) {
   // each against the posed problem and pinpoint the first that breaks. A valid
   // chain is demonstrated reasoning by definition (decide affirms + advances,
   // never "how did you do it?"). correctAnswer stays null so nothing is revealed.
-  const chain = verifyDerivation(chainText(rawText), context.pinnedProblemTex);
+  let chain = verifyDerivation(chainText(rawText), context.pinnedProblemTex);
+  // ── "Mine": the work is for the student's own problem, not the pinned one ──
+  // When the tutor brings in a parallel example the board can end up holding
+  // IT. The student then carries the idea back — "oh so mine is
+  // (x-7)(x+2)=0, x = 7 or x = -2" — and that correct solve of their own
+  // problem was graded against the example and called wrong, with the tutor
+  // asserting "the roots you listed don't satisfy those factors" (live,
+  // 2026-11-26). When the turn points back and the work is a valid solve of a
+  // problem stated earlier in the conversation, it is correct for that
+  // problem. Only ever an upgrade: work that fits no known problem stays wrong.
+  let unanchored = false;
+  if (chain.verifiable) {
+    const recentTutor = context.recentAssistantMessages || [];
+    const lastTutorText = (recentTutor[recentTutor.length - 1] || {}).content || '';
+    const pointsBack = POINTS_TO_OWN.test(rawText) || REFERS_BACK.test(rawText) || REFERS_BACK.test(lastTutorText);
+    const wrongForPin = chain.answerCorrect === false && chain.targetSource === 'problem';
+    // With no board problem a chain can only be checked against itself, and a
+    // wrong factoring carried through consistently passes that check.
+    const selfConsistentOnly = chain.answerCorrect === true && chain.targetSource === 'internal';
+    if (pointsBack && (wrongForPin || selfConsistentOnly)) {
+      const own = chainForEarlierProblem(rawText, context);
+      if (own.chain) {
+        console.log(`[Diagnose] Work points back to an earlier problem (${own.chain.target}) and solves it`);
+        chain = own.chain;
+      } else if (selfConsistentOnly && own.known > 0) {
+        // It names a problem of the student's own, problems are on record, and
+        // it solves none of them. Agreeing with itself is not enough to call
+        // it right; not knowing which problem "mine" is, is not enough to
+        // call it wrong.
+        console.log('[Diagnose] Self-consistent work for "mine" solves no problem on record — no verdict');
+        unanchored = true;
+      }
+    }
+  }
+  if (unanchored) {
+    return { type: 'unverifiable', isCorrect: null, answer: chain.finalAnswer, correctAnswer: null, misconception: null, evidence: null, verificationSource: null, isTransformation: true };
+  }
   if (chain.verifiable) {
     // A chain that stops short of the answer ("2(x+3)=10 / 2x+6=10") still
     // "reaches" it in the solver's sense — every line solves to the target — but
@@ -604,6 +640,41 @@ async function diagnoseConceptual(observation, context) {
 
 const REFERS_BACK = /\b(?:original|first (?:one|problem|question)|my (?:own )?(?:problem|question)|the other (?:one|problem)|earlier (?:one|problem)|previous (?:one|problem)|back to|revisit)\b/i;
 
+const POINTS_TO_OWN = /\b(?:mine|my (?:one|equation|quadratic|expression|function|homework))\b/i;
+
+/**
+ * The student's shown work, verified against a problem stated earlier in the
+ * conversation by either side. `chain` is null when it solves none of them;
+ * `known` is how many such problems there were to try. The pinned problem is
+ * skipped: the caller has already tried it.
+ */
+function chainForEarlierProblem(rawText, context) {
+  let pinnedAnswer = null;
+  try {
+    const pinned = context.pinnedProblemTex ? parseCleanProblem(context.pinnedProblemTex) : null;
+    if (pinned && pinned.solution && pinned.solution.success) pinnedAnswer = String(pinned.solution.answer);
+  } catch (_) { /* no pin to skip */ }
+  const texts = [
+    ...(context.recentUserMessages || []),
+    ...(context.recentAssistantMessages || []),
+  ].map((m) => m && m.content).filter((c) => typeof c === 'string' && c.trim());
+  let known = 0;
+  for (let i = texts.length - 1; i >= 0; i--) {
+    // As typed in the math field: "\\(x^{2}\\)" is x^2.
+    const plain = stripLatexDelimiters(texts[i]).replace(/\^\{(-?\w+)\}/g, '^$1');
+    const statement = extractEquationAroundEquals(plain) || plain;
+    try {
+      const parsed = parseCleanProblem(statement);
+      if (!parsed.hasMath || !parsed.solution || !parsed.solution.success) continue;
+      if (pinnedAnswer != null && String(parsed.solution.answer) === pinnedAnswer) continue;
+      known += 1;
+      const chain = verifyDerivation(chainText(rawText), statement);
+      if (chain.verifiable && chain.targetSource === 'problem' && chain.valid && chain.answerCorrect) return { chain, known };
+    } catch (_) { /* not a problem statement */ }
+  }
+  return { chain: null, known };
+}
+
 /**
  * An earlier problem in the recent window that this answer is correct for,
  * other than the current target. Only stored problemInfo counts — never a
@@ -755,6 +826,16 @@ async function diagnose(observation, context = {}) {
 
     if (latestTurnAsksSomething && i < recentAI.length - 1) {
       console.log('[Diagnose] Newer tutor question supersedes the older posed problem — deferring');
+      break;
+    }
+
+    // A problem the tutor has since confirmed solved is finished, and its key
+    // with it. Walking back past the confirmation graded the student's NEXT
+    // message — a new word problem they were bringing — against the old key,
+    // stamped it incorrect, and two turns later awarded "Comeback! You fixed
+    // your mistake" for a mistake that never happened (live, 2026-11-26).
+    if (i < recentAI.length - 1 && recentAI.slice(i + 1).some((m) => m && m.problemResult === 'correct')) {
+      console.log('[Diagnose] The problem before the last confirmed solve is closed — not a grading target');
       break;
     }
 
