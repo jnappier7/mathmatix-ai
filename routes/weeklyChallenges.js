@@ -40,7 +40,8 @@ const WEEKLY_CHALLENGE_TEMPLATES = {
     icon: '🏃',
     difficulty: 'medium',
     targetType: 'problemsSolved',
-    countOptions: [50, 100, 150],
+    // A week of chat problems, not a week of drills: 5 sessions of ~3, ~5, ~7.
+    countOptions: [15, 25, 35],
     xpReward: 400,
     specialReward: 'Marathoner Badge'
   },
@@ -78,7 +79,7 @@ const WEEKLY_CHALLENGE_TEMPLATES = {
     icon: '💪',
     difficulty: 'medium',
     targetType: 'weeklyComebacks',
-    countOptions: [5, 8, 12],
+    countOptions: [3, 5, 6],
     xpReward: 400,
     specialReward: 'Comeback Kid Badge'
   },

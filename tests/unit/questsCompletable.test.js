@@ -160,3 +160,53 @@ describe('completions pay coins in chat, like the quest route does', () => {
         expect(user.dailyQuests.quests[0].progress).toBe(1);
     });
 });
+
+// Finishable in principle is not finishable in a sitting. Owner, 2026-11-26:
+// "some are impossible to attain. Like the answer 20 problems … in chat
+// format?" — the top tiers were drill numbers, dealt to every student from
+// level 15 up. A chat problem is a conversation of several turns.
+describe('daily quests are sized for a chat tutor, at every level', () => {
+    const { MAX_CHAT_PROBLEMS_A_DAY } = require('../../routes/dailyQuests');
+    const COUNTS_PROBLEMS = new Set(['problemsCorrect', 'firstTryCorrect', 'consecutiveCorrect', 'comebacks']);
+
+    test('the ceiling is a session, not a marathon', () => {
+        expect(MAX_CHAT_PROBLEMS_A_DAY).toBeLessThanOrEqual(8);
+    });
+
+    test.each([1, 5, 10, 15, 20, 40, 99])('level %i is never asked for more than the ceiling', (level) => {
+        for (let i = 0; i < 200; i++) {
+            generateDailyQuests({ level }).forEach((q) => {
+                if (!COUNTS_PROBLEMS.has(q.target)) return;
+                expect([q.templateId, q.targetCount <= MAX_CHAT_PROBLEMS_A_DAY]).toEqual([q.templateId, true]);
+            });
+        }
+    });
+
+    test('"in a row" and "first try" are harder than "correct", so they ask for fewer', () => {
+        const top = (id) => QUEST_TEMPLATES[id].countOptions[QUEST_TEMPLATES[id].countOptions.length - 1];
+        expect(top('perfectionist')).toBeLessThan(top('problemSolver'));
+        expect(top('firstTry')).toBeLessThan(top('problemSolver'));
+    });
+
+    test('a level-up never makes a quest easier', () => {
+        Object.values(QUEST_TEMPLATES).forEach((t) => {
+            for (let i = 1; i < t.countOptions.length; i++) {
+                expect([t.id, t.countOptions[i] >= t.countOptions[i - 1]]).toEqual([t.id, true]);
+            }
+        });
+    });
+
+    test('the weekly marathon is a week of chat sessions', () => {
+        const weekly = require('../../routes/weeklyChallenges');
+        const templates = weekly.CHALLENGE_TEMPLATES || weekly.WEEKLY_CHALLENGE_TEMPLATES || null;
+        const fs = require('fs');
+        const path = require('path');
+        const src = fs.readFileSync(path.join(__dirname, '../../routes/weeklyChallenges.js'), 'utf8');
+        const m = src.match(/id: 'marathoner'[\s\S]*?countOptions: \[([\d, ]+)\]/);
+        expect(m).not.toBeNull();
+        const top = Math.max(...m[1].split(',').map(Number));
+        // Five sessions at the daily ceiling, at most.
+        expect(top).toBeLessThanOrEqual(5 * MAX_CHAT_PROBLEMS_A_DAY);
+        expect(templates === null || typeof templates === 'object').toBe(true);
+    });
+});
