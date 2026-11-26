@@ -139,3 +139,40 @@ describe('an expression answer closes its card when it answers the board problem
     expect(turn({ isCorrect: false, verificationSource: 'llm', answersBoardProblem: true })).toEqual([]);
   });
 });
+
+// Owner, 2026-11-26: "No inline cards when the board is active and showing."
+// jest has no DOM here, so this pins the contract between the two files; the
+// behaviour itself was checked in the browser against the live page's DOM.
+describe('no inline cards while the board is showing', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const css = fs.readFileSync(path.join(__dirname, '../../../public/css/living-workspace.css'), 'utf8');
+  const js = fs.readFileSync(path.join(__dirname, '../../../public/js/living-workspace/chat-workspace.js'), 'utf8');
+  const html = fs.readFileSync(path.join(__dirname, '../../../public/chat.html'), 'utf8');
+
+  test('sealed cards are hidden while the board is showing — and only then', () => {
+    expect(css).toMatch(/body\.mm-board-showing #chat-messages-container \.lws-sealed \{ display: none; \}/);
+    // No unconditional hide: with the board hidden or idle the transcript is the record.
+    expect(css).not.toMatch(/^\.lws-sealed \{[^}]*display: none/m);
+  });
+
+  test('"showing" is work on the board AND not hidden, and both changes re-check it', () => {
+    expect(js).toMatch(/var on = body\.contains\('mm-board-up'\) && !!slot && !slot\.classList\.contains\('is-collapsed'\);/);
+    expect(js).toMatch(/body\.toggle\('mm-board-showing', on\)/);
+    // The board going up or idle…
+    expect(js).toMatch(/classList\.toggle\('mm-board-up', up\);\s*syncBoardShowing\(\);/);
+    // …and the dock being hidden or shown, by the button or the phone swipe.
+    expect(js).toMatch(/new MutationObserver\(syncBoardShowing\)\.observe\(slot/);
+  });
+
+  test('cards are still sealed, so hiding the board brings the record back', () => {
+    expect(js).toMatch(/function sealToTranscript\(entry\)/);
+    expect(js).toMatch(/placeSealed\(node, entry\.completedAt\)/);
+  });
+
+  test('the page asks for the same build of the script that the script asks of its modules', () => {
+    const inPage = html.match(/chat-workspace\.js\?v=([\w]+)/)[1];
+    const inScript = js.match(/var ASSET_V = '\?v=([\w]+)'/)[1];
+    expect(inPage).toBe(inScript);
+  });
+});
