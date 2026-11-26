@@ -196,6 +196,8 @@ function aggregate() {
     // a rate measured while tier 1 is self-grading means something different
     // from the same rate measured across two providers.
     crossProvider: crossProviderHealth(),
+    // The open-question record, graded in shadow beside everything above.
+    openQuestion: openQuestionSummary(),
   };
 }
 
@@ -285,6 +287,59 @@ function crossProviderHealth() {
   };
 }
 
+// ── Open-question shadow ────────────────────────────────────────────────────
+// The open-question record (pipeline/openQuestion.js) grades every turn beside
+// the live graders and decides nothing. These counters are the comparison it
+// is waiting on: how often the two agree, and — the two cells that matter —
+// how often each rejects what the other affirms. Counters, not a ring: the
+// question is a rate over all traffic since boot. Labels only, never text.
+const openQuestion = { stamped: 0, byKind: {}, graded: 0, pairs: {}, byVia: {}, boardMatches: 0 };
+
+/** A tutor turn was read; `kind` is null when the reader produced nothing. */
+function recordOpenQuestionStamp(kind) {
+  const k = kind || 'unreadable';
+  openQuestion.stamped += 1;
+  openQuestion.byKind[k] = (openQuestion.byKind[k] || 0) + 1;
+}
+
+/**
+ * One student turn graded both ways.
+ * @param {Object} args
+ * @param {'correct'|'incorrect'|'none'} args.live    the verdict the student got
+ * @param {'correct'|'incorrect'|'none'} args.shadow  the open-question verdict
+ * @param {string} [args.kind]  @param {string} [args.via]  @param {string|null} [args.matched]
+ */
+function recordOpenQuestionShadow({ live, shadow, kind = null, via = null, matched = null } = {}) {
+  const key = `live:${live}|shadow:${shadow}`;
+  openQuestion.graded += 1;
+  openQuestion.pairs[key] = (openQuestion.pairs[key] || 0) + 1;
+  if (via) openQuestion.byVia[via] = (openQuestion.byVia[via] || 0) + 1;
+  if (matched === 'board') openQuestion.boardMatches += 1;
+  logger.info('open_question_shadow', { live, shadow, kind, via, matched });
+}
+
+function openQuestionSummary() {
+  const p = (l, s) => openQuestion.pairs[`live:${l}|shadow:${s}`] || 0;
+  const agree = p('correct', 'correct') + p('incorrect', 'incorrect') + p('none', 'none');
+  return {
+    stamped: openQuestion.stamped,
+    byKind: { ...openQuestion.byKind },
+    graded: openQuestion.graded,
+    agreementRate: openQuestion.graded > 0 ? Number((agree / openQuestion.graded).toFixed(4)) : 0,
+    // The cells to read. A live rejection the shadow affirms is a candidate
+    // false reject in production today; the reverse is one the shadow would
+    // introduce. Neither is proof — both are where to look.
+    liveRejectsShadowAffirms: p('incorrect', 'correct'),
+    shadowRejectsLiveAffirms: p('correct', 'incorrect'),
+    // Turns the live graders left without a verdict that the record decides.
+    shadowDecidesLiveSilent: p('none', 'correct') + p('none', 'incorrect'),
+    liveDecidesShadowSilent: p('correct', 'none') + p('incorrect', 'none'),
+    boardMatches: openQuestion.boardMatches,
+    byVia: { ...openQuestion.byVia },
+    pairs: { ...openQuestion.pairs },
+  };
+}
+
 /** Test/maintenance hook — clears the ring. */
 function reset() {
   ring.fill(undefined);
@@ -296,10 +351,19 @@ function reset() {
   crossProvider.lastFallbackStatus = null;
   crossProvider.lastFallbackMessage = null;
   crossProvider.lastOkAt = null;
+  openQuestion.stamped = 0;
+  openQuestion.byKind = {};
+  openQuestion.graded = 0;
+  openQuestion.pairs = {};
+  openQuestion.byVia = {};
+  openQuestion.boardMatches = 0;
 }
 
 module.exports = {
   recordVerification,
+  recordOpenQuestionStamp,
+  recordOpenQuestionShadow,
+  openQuestionSummary,
   noteCrossProviderFallback,
   noteCrossProviderOk,
   crossProviderHealth,

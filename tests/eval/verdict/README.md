@@ -6,9 +6,12 @@ How often does grading call a right answer wrong, or a wrong answer right? This 
 npm run eval:verdict                       # LIVE: real verifiers (OPENAI + ANTHROPIC keys)
 npm run eval:verdict -- --offline          # deterministic graders only, no keys
 npm run eval:verdict -- --topic calculus --json out.json
+npm run eval:verdict -- --shadow           # also grade against the open-question record
 ```
 
 `verdictOffline.test.js` runs the offline tier inside `npm test`.
+
+`--shadow` reads each tutor turn into an open-question record (`utils/pipeline/openQuestion.js`), the way production does after a reply is saved, and grades the student's message against that record beside the live graders. The report gains a second scoreboard, live and record on the same rows. The record decides nothing in production yet; this comparison, and its production twin on `GET /api/admin/structured-tutor-metrics` under `openQuestion`, are what that decision waits on.
 
 ## What it runs
 
