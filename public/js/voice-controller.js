@@ -15,6 +15,136 @@
  * - Individual message playback still available
  */
 
+/**
+ * End-of-turn detector for the legacy (record → upload) voice path.
+ *
+ * Pure: it is fed one mic level (dBFS, time-domain RMS) per frame and answers
+ * with what just happened — 'speech' (the student has really started), 'pause',
+ * 'resume', or 'end' (send the turn). No timers, no DOM, so it is tested by
+ * replaying level traces (tests/unit/voiceEndpointer.test.js).
+ *
+ * Why it exists (owner's iPhone, 2026-11-26: voice mode sat on "Processing…"
+ * with the mic open, forever). The old detector armed a 2.5 s timer at the
+ * first quiet frame and CANCELLED it on any single loud frame, where "loud"
+ * meant 8 dB over the quietest thing heard so far. A phone's mic processing
+ * breaks both halves of that: noise suppression gates a quiet room down to
+ * near digital silence, so the learned floor is far below anything real, and
+ * automatic gain then turns the room back UP the moment the student stops
+ * talking. Room noise read as speech every few hundred ms, the timer never
+ * ran out, and the turn was never sent.
+ *
+ * Three rules replace it:
+ *   1. A frame is speech only if it clears the room floor AND is within reach
+ *      of how loud this student has actually been speaking (`peakWindowDb`).
+ *      Gained-up room noise clears the first and fails the second.
+ *   2. The floor climbs quickly through anything that is not speech, so it
+ *      follows the room instead of remembering its quietest instant.
+ *   3. A pause is cancelled only by `resumeMs` of sustained voice, never by
+ *      one frame — and a turn longer than `maxTurnMs` is sent regardless, so
+ *      no room can hold the mic open indefinitely.
+ */
+class VoiceEndpointer {
+    constructor(opts = {}) {
+        this.minSpeechMs = opts.minSpeechMs != null ? opts.minSpeechMs : 500;
+        this.silenceMs = opts.silenceMs != null ? opts.silenceMs : 2500;
+        this.maxTurnMs = opts.maxTurnMs != null ? opts.maxTurnMs : 45000;
+        this.resumeMs = opts.resumeMs != null ? opts.resumeMs : 150;
+        this.floorMarginDb = 9;     // speech must clear the room by this much
+        this.absMinDb = -58;        // nothing quieter is ever speech
+        this.peakWindowDb = 24;     // …and must be within this of the student's own level
+        this.alwaysSpeechDb = -34;  // the peak rule never demands more than this
+        this.reset();
+    }
+
+    reset() {
+        this.floorDb = null;
+        this.peakDb = -Infinity;
+        this.voicedMs = 0;
+        this.speaking = false;
+        this.paused = false;
+        this.pauseMs = 0;
+        this.resumeAcc = 0;
+        this.turnMs = 0;
+        this.ended = false;
+    }
+
+    gateDb() {
+        const peakRule = Math.min(this.peakDb - this.peakWindowDb, this.alwaysSpeechDb);
+        return Math.max(this.floorDb + this.floorMarginDb, this.absMinDb, peakRule);
+    }
+
+    /**
+     * @param {number} db    mic level for this frame, dBFS
+     * @param {number} dtMs  time since the previous frame
+     * @returns {null|'speech'|'pause'|'resume'|'end'}
+     */
+    push(db, dtMs) {
+        if (this.ended) return null;
+        if (!isFinite(db)) db = -100;
+        // A hidden tab throttles the caller to ~1 s ticks; cap so one late
+        // tick cannot stand in for a whole pause.
+        const dt = Math.max(1, Math.min(dtMs || 50, 1000));
+        const k = dt / 50;   // the rates below are per 50 ms frame
+
+        if (this.floorDb === null) this.floorDb = Math.min(db, -40);
+        const voiced = db > this.gateDb();
+
+        // Room floor: straight down to anything quieter; up quickly through
+        // non-speech (the room got louder), barely at all through speech.
+        const rate = db < this.floorDb ? 0.2 : (voiced ? 0.003 : 0.1);
+        this.floorDb += Math.min(1, rate * k) * (db - this.floorDb);
+        if (this.floorDb < -90) this.floorDb = -90;
+
+        // How loud this student speaks: smoothed up (one slammed door is not
+        // their voice) and forgotten very slowly — if it faded during a pause,
+        // the gate would sink back into the room noise it is there to exclude.
+        if (voiced) {
+            this.peakDb = this.peakDb === -Infinity
+                ? db
+                : (db > this.peakDb ? this.peakDb + 0.3 * (db - this.peakDb) : this.peakDb);
+        }
+        if (this.peakDb !== -Infinity) this.peakDb -= 0.5 * dt / 1000;
+
+        if (!this.speaking) {
+            // Voiced time ACCUMULATED, not time since the last onset: "um…
+            // nine… I think" is three short bursts and must add up to a turn.
+            // Gaps bleed it at the same rate, so a cough and a chair never do.
+            this.voicedMs = voiced ? this.voicedMs + dt : Math.max(0, this.voicedMs - dt);
+            if (this.voicedMs >= this.minSpeechMs) {
+                this.speaking = true;
+                this.turnMs = this.voicedMs;
+                this.paused = false;
+                this.pauseMs = 0;
+                this.resumeAcc = 0;
+                return 'speech';
+            }
+            return null;
+        }
+
+        this.turnMs += dt;
+        this.resumeAcc = voiced ? this.resumeAcc + dt : Math.max(0, this.resumeAcc - dt);
+
+        let event = null;
+        if (this.paused) {
+            if (this.resumeAcc >= this.resumeMs) {
+                this.paused = false;
+                this.pauseMs = 0;
+                event = 'resume';
+            } else {
+                this.pauseMs += dt;
+                if (this.pauseMs >= this.silenceMs) { this.ended = true; return 'end'; }
+            }
+        } else if (!voiced) {
+            this.paused = true;
+            this.pauseMs = dt;
+            this.resumeAcc = 0;
+            event = 'pause';
+        }
+        if (this.turnMs >= this.maxTurnMs) { this.ended = true; return 'end'; }
+        return event;
+    }
+}
+
 class VoiceController {
     constructor(whiteboard) {
         this.whiteboard = whiteboard;
@@ -853,7 +983,16 @@ class VoiceController {
 
             // Setup MediaRecorder with best supported MIME type
             const mimeType = this.getSupportedMimeType();
-            this.mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+            // 32 kbps is plenty for speech-to-text, and it keeps a long turn
+            // inside the server's 1 MB JSON body limit once base64-encoded
+            // (Safari's default AAC rate put ~45 s of talking over it).
+            const recorderOpts = { audioBitsPerSecond: 32000 };
+            if (mimeType) recorderOpts.mimeType = mimeType;
+            try {
+                this.mediaRecorder = new MediaRecorder(stream, recorderOpts);
+            } catch (_) {
+                this.mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+            }
 
             const audioChunks = [];
 
@@ -918,105 +1057,50 @@ class VoiceController {
     }
 
     setupVAD(stream) {
-        // Voice Activity Detection using Web Audio API
+        // End-of-turn detection. The decision is VoiceEndpointer's (top of this
+        // file); this method only measures the mic and acts on its verdict.
         const audioContext = this.audioContext;
         const source = audioContext.createMediaStreamSource(stream);
         const analyzer = audioContext.createAnalyser();
-
         analyzer.fftSize = 2048;
         source.connect(analyzer);
 
-        const bufferLength = analyzer.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        this._vadFloorDb = null;   // relearn the room every time the mic opens
-
-        // How far above the room's own noise floor a frame has to sit before we
-        // call it speech. The gate has to be RELATIVE: getByteFrequencyData is
-        // already dB-mapped (bin 0 ≈ -100dBFS, 255 ≈ -30dBFS), so the old fixed
-        // `20*log10(avg/255) > -50 dB` gate tripped at an average bin of 0.8 out
-        // of 255 — below the noise floor of any real room, and far below it with
-        // autoGainControl on. isSpeakingNow was therefore permanently true, the
-        // silence branch never ran even once, and hands-free could never commit
-        // a turn: the student had to tap the orb to advance every single time.
-        const VAD_SPEECH_MARGIN_DB = 8;
         const VAD_FRAME_MS = 50;
-
-        // Voiced time ACCUMULATED across this utterance, not time since the last
-        // onset. Students don't speak in one clean run — "um… nine… I think" is
-        // three short bursts, and timing each burst from its own onset meant
-        // every one of them measured shorter than minSpeechDuration and was
-        // written off as noise, so the utterance was never real enough to commit
-        // and the mic just stayed open until someone tapped. Gaps decay the
-        // accumulator at the same rate speech builds it, so stray blips still
-        // never add up to a turn.
-        let voicedMs = 0;
+        const endpointer = new VoiceEndpointer({
+            minSpeechMs: this.minSpeechDuration,
+            silenceMs: this.silenceThreshold,
+        });
+        this._endpointer = endpointer;
+        let lastAt = Date.now();
 
         const checkVolume = () => {
             if (!this.isListening) { this._stopVadLoop(); return; }  // mic closed — loop retires with it
 
-            analyzer.getByteFrequencyData(dataArray);
+            // iOS parks the context ("interrupted"/"suspended") on a phone
+            // call, Siri, or a trip to another app; the analyser then reads
+            // pure silence and nothing below can ever hear the student.
+            if (audioContext.state !== 'running' && typeof audioContext.resume === 'function') {
+                try { const p = audioContext.resume(); if (p && p.catch) p.catch(() => {}); } catch (_) { /* next frame retries */ }
+            }
 
-            // Calculate average volume
-            const average = dataArray.reduce((a, b) => a + b) / bufferLength;
-            const db = 20 * Math.log10((average || 0.0001) / 255);
+            const now = Date.now();
+            const event = endpointer.push(this._micLevelDb(analyzer), now - lastAt);
+            lastAt = now;
 
-            if (this._vadFloorDb === null) this._vadFloorDb = db;
-            const gate = Math.max(this._vadFloorDb + VAD_SPEECH_MARGIN_DB, this.config.vadThreshold);
-            const isSpeakingNow = db > gate;
-
-            // Chase the quietest thing we've heard: fast down, very slow up. Run
-            // on every frame, including while speaking — that's what makes the
-            // floor self-correcting when the mic opens on a student who is
-            // ALREADY talking (it seeds high, then the natural gaps between
-            // words pull it down within a second). Rising at 0.1%/frame, a long
-            // utterance can't drag the floor up over the student's own voice.
-            const rate = db < this._vadFloorDb ? 0.15 : 0.001;
-            this._vadFloorDb += rate * (db - this._vadFloorDb);
-
-            if (isSpeakingNow) {
-                // Voice: any speech cancels a pending auto-send. The student
-                // paused to think mid-sentence; they haven't finished a turn.
-                this._cancelSilenceCountdown();
-                voicedMs += VAD_FRAME_MS;
-                if (!this.isSpeaking && voicedMs >= this.minSpeechDuration) {
-                    this.isSpeaking = true;
-                    this.speechStartTime = Date.now() - voicedMs;
-                    console.log('🗣️ Voice detected');
-                    if (this.statusText) {
-                        this.statusText.textContent = 'Listening...';
-                    }
-                }
-            } else if (this.isSpeaking) {
-                if (!this.silenceTimeout) {
-                    // First silent frame after a real utterance: arm the
-                    // countdown ONCE. The old code cleared and re-armed it on
-                    // every frame while the silence continued (~60×/s), so the
-                    // 2.5s timer never got to elapse and the turn was never
-                    // committed without a tap.
-                    const spokenMs = voicedMs;
-                    this.silenceTimeout = setTimeout(() => {
-                        this.silenceTimeout = null;
-                        this.isSpeaking = false;
-                        this.speechStartTime = null;
-                        voicedMs = 0;
-                        console.log(`🤫 Silence detected after ${spokenMs}ms of speech - auto-sending`);
-
-                        // Auto-stop after silence (works in all modes now, not just hands-free)
-                        if (this.isListening) {
-                            this.stopListening();
-                        }
-                    }, this.silenceThreshold);
-
-                    // Show countdown in status
-                    if (this.statusText) {
-                        this.statusText.textContent = 'Processing...';
-                    }
-                }
-            } else {
-                // Quiet, and nothing worth committing yet — bleed the
-                // accumulator so a cough here and a chair there can never add
-                // up to an "utterance" and send an empty turn.
-                voicedMs = Math.max(0, voicedMs - VAD_FRAME_MS);
+            if (event === 'speech') {
+                this.isSpeaking = true;
+                this.speechStartTime = now - endpointer.turnMs;
+                console.log('🗣️ Voice detected');
+            } else if (event === 'end') {
+                const spokenMs = endpointer.turnMs;
+                this.isSpeaking = false;
+                this.speechStartTime = null;
+                console.log(`🤫 End of turn after ${spokenMs}ms - auto-sending`);
+                // Auto-stop (all modes, not just hands-free). stopListening
+                // moves the UI to "Thinking…" — the label only changes when
+                // the turn has really been sent, so it can never say one
+                // thing while the mic does another.
+                if (this.isListening) this.stopListening();
             }
         };
 
@@ -1027,15 +1111,41 @@ class VoiceController {
         // background interval is throttled (~1s) but never stops, which is
         // plenty for an end-of-utterance decision.
         this._stopVadLoop();
+        this._vadSource = source;
         this.vadInterval = setInterval(checkVolume, VAD_FRAME_MS);
         checkVolume();
         this.vadAnalyzer = analyzer;
+    }
+
+    // Mic level as time-domain RMS in dBFS. (The old detector averaged
+    // getByteFrequencyData — bins that are ALREADY decibels — and took a
+    // logarithm of that, which near silence swings 8 dB on a handful of bins.)
+    _micLevelDb(analyzer) {
+        const n = analyzer.fftSize;
+        let sumSq = 0;
+        if (typeof analyzer.getFloatTimeDomainData === 'function') {
+            if (!this._vadBuf || this._vadBuf.length !== n) this._vadBuf = new Float32Array(n);
+            analyzer.getFloatTimeDomainData(this._vadBuf);
+            for (let i = 0; i < n; i++) sumSq += this._vadBuf[i] * this._vadBuf[i];
+        } else {
+            if (!this._vadBytes || this._vadBytes.length !== n) this._vadBytes = new Uint8Array(n);
+            analyzer.getByteTimeDomainData(this._vadBytes);
+            for (let i = 0; i < n; i++) { const v = (this._vadBytes[i] - 128) / 128; sumSq += v * v; }
+        }
+        const rms = Math.sqrt(sumSq / n);
+        return rms > 0 ? 20 * Math.log10(rms) : -100;
     }
 
     _stopVadLoop() {
         if (this.vadInterval) {
             clearInterval(this.vadInterval);
             this.vadInterval = null;
+        }
+        // One MediaStreamSource per turn on a context that lives all session:
+        // left connected, they pile up for as long as the call lasts.
+        if (this._vadSource) {
+            try { this._vadSource.disconnect(); } catch (_) { /* already detached */ }
+            this._vadSource = null;
         }
     }
 
@@ -1073,87 +1183,79 @@ class VoiceController {
         this.updateUI('thinking');
 
         try {
-            // Convert blob to base64 for transmission
-            const reader = new FileReader();
-            reader.readAsDataURL(audioBlob);
+            // Nothing recorded (mic opened and closed in one breath): there is
+            // no turn to send, so go back to listening rather than error.
+            if (!audioBlob.size) {
+                this.updateUI('idle');
+                this._resumeListeningIfHandsFree();
+                return;
+            }
 
-            reader.onloadend = async () => {
-                const base64Audio = reader.result.split(',')[1];
-                console.log('🔄 [Voice] Audio converted to base64, length:', base64Audio.length);
+            // Blob → base64. Awaited INSIDE the try: this used to run in a
+            // FileReader callback, where a failed request threw past the
+            // catch below and left the orb on "Thinking…" for good.
+            const base64Audio = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(String(reader.result || '').split(',')[1] || '');
+                reader.onerror = () => reject(reader.error || new Error('Could not read the recording'));
+                reader.readAsDataURL(audioBlob);
+            });
 
-                // Send to backend for transcription and AI response
-                console.log('🌐 [Voice] Sending POST to /api/voice/process...');
+            // Use csrfFetch if available, otherwise use regular fetch
+            const fetchFn = window.csrfFetch || fetch;
+            if (!window.csrfFetch) {
+                console.warn('⚠️ [Voice] csrfFetch not available, using regular fetch');
+            }
 
-                // Use csrfFetch if available, otherwise use regular fetch
-                const fetchFn = window.csrfFetch || fetch;
-                if (!window.csrfFetch) {
-                    console.warn('⚠️ [Voice] csrfFetch not available, using regular fetch');
-                }
+            const response = await fetchFn('/api/voice/process', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    audio: base64Audio,
+                    mimeType: audioBlob.type || 'audio/webm',
+                    boardContext: this.getBoardContext()
+                })
+            });
 
-                const response = await fetchFn('/api/voice/process', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        audio: base64Audio,
-                        mimeType: audioBlob.type || 'audio/webm',
-                        boardContext: this.getBoardContext()
-                    })
-                });
+            console.log('📥 [Voice] Response received, status:', response.status);
 
-                console.log('📥 [Voice] Response received, status:', response.status);
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    // COMPLIANCE: Under-13 users blocked from third-party voice chat.
-                    if (response.status === 403 && errorData.useWebSpeech) {
-                        console.warn('🔇 [Voice] Under-13 user blocked from voice chat. Stopping.');
-                        this.updateUI('idle');
-                        this.stopListening();
-                        if (window.showToast) {
-                            window.showToast('Voice chat is not available for your account. Please use text chat instead.', 'info');
-                        }
-                        return;
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                // COMPLIANCE: Under-13 users blocked from third-party voice chat.
+                if (response.status === 403 && errorData.useWebSpeech) {
+                    console.warn('🔇 [Voice] Under-13 user blocked from voice chat. Stopping.');
+                    this.updateUI('idle');
+                    this.stopListening();
+                    if (window.showToast) {
+                        window.showToast('Voice chat is not available for your account. Please use text chat instead.', 'info');
                     }
-                    throw new Error(errorData.message || errorData.error || 'Server error');
+                    return;
                 }
+                throw new Error(errorData.message || errorData.error || 'Server error');
+            }
 
-                // Handle NDJSON streaming response
-                const contentType = response.headers.get('content-type') || '';
-                if (contentType.includes('application/x-ndjson')) {
-                    await this.processStreamedResponse(response);
-                } else {
-                    // Legacy JSON fallback
-                    const data = await response.json();
-                    await this.handleLegacyResponse(data);
-                }
-
-            };
+            // Handle NDJSON streaming response
+            const contentType = response.headers.get('content-type') || '';
+            if (contentType.includes('application/x-ndjson')) {
+                await this.processStreamedResponse(response);
+            } else {
+                // Legacy JSON fallback
+                const data = await response.json();
+                await this.handleLegacyResponse(data);
+            }
 
         } catch (error) {
             console.error('❌ [Voice] Failed to process audio:', error);
-            console.error('Error details:', {
-                message: error.message,
-                stack: error.stack,
-                name: error.name
-            });
-            this.updateUI('error');
+            this.isAISpeaking = false;
+            this.updateUI('error');   // settles to idle on its own after 3 s
 
-            // Show user-friendly error message
-            const errorMessage = error.message || 'Failed to process voice input';
+            // Say what went wrong, where the student is looking.
             if (this.statusText) {
-                this.statusText.textContent = errorMessage;
+                this.statusText.textContent = (error && error.message) || 'Failed to process voice input';
                 this.statusText.style.color = '#dc2626';
+                setTimeout(() => { if (this.statusText) this.statusText.style.color = ''; }, 3000);
             }
-
-            // Auto-hide error after 5 seconds
-            setTimeout(() => {
-                if (this.statusText) {
-                    this.statusText.textContent = 'Click to start voice chat';
-                    this.statusText.style.color = '';
-                }
-                this.updateUI('idle');
-            }, 5000);
         }
     }
 
@@ -1539,7 +1641,7 @@ class VoiceController {
 // AUTO-INITIALIZATION
 // ============================================
 
-document.addEventListener('DOMContentLoaded', () => {
+if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', () => {
     // Initialize voice controller immediately (whiteboard optional)
     window.voiceController = new VoiceController(null);
     console.log('✅ Voice Controller initialized (whiteboard integration will connect when available)');
@@ -1558,3 +1660,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 console.log('🎙️ Voice Controller module loaded');
+
+// Node (jest) reads the detector straight from this file.
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { VoiceEndpointer };
+}

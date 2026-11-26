@@ -15,6 +15,7 @@
   'use strict';
 
   var btn = null;
+  var pillBeforeVoice = false;   // was the phone's tutor card collapsed when the call began?
 
   function isOn() { return document.body.classList.contains('cr-voice'); }
 
@@ -88,6 +89,13 @@
   function enter() {
     if (isOn()) return;
     document.body.classList.add('cr-voice');
+    // On a phone the tutor's card collapses to a 46px pill once the student
+    // starts typing (chat-redesign.js latches body.mm-tutor-pill). Voice mode
+    // lays its state chip and captions INSIDE that card, so in the pill they
+    // landed on top of the tutor's face and name and the captions had nowhere
+    // to go. A call gets the full card back; exit() restores the pill.
+    pillBeforeVoice = document.body.classList.contains('mm-tutor-pill');
+    if (pillBeforeVoice) document.body.classList.remove('mm-tutor-pill');
     paintButton();
     paintComposerEntry();
 
@@ -125,6 +133,8 @@
   function exit() {
     if (!isOn()) return;
     document.body.classList.remove('cr-voice');
+    if (pillBeforeVoice) document.body.classList.add('mm-tutor-pill');
+    pillBeforeVoice = false;
     paintButton();
     paintComposerEntry();
 

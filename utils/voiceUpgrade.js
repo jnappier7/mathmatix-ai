@@ -80,6 +80,13 @@ function handleUpgrade({ request, socket, head, app, wss, streamPath }) {
     }
 
     if (!sttStream.isConfigured() || !ttsProvider.isConfigured()) {
+        // Logged because the browser cannot tell the student (or us) why a
+        // handshake failed — it just drops to the record-and-upload path.
+        logger.warn('voice ws upgrade: streaming not configured', {
+            stt: sttStream.isConfigured(),
+            tts: ttsProvider.isConfigured(),
+            path: streamPath,
+        });
         socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n');
         socket.destroy();
         return true;
