@@ -994,6 +994,10 @@ function registerHtmlRoutes(app) {
   app.get('/act-practice-test', actPracticePage);
   app.get('/act-practice-test.html', actPracticePage);
   app.get('/act', (req, res) => res.redirect(302, '/act-practice-test'));
+  // The visual library: every picture and interactive Mathmatix draws itself (utils/visualLibrary.js).
+  // The page is static; its list (/api/images/library) needs a signed-in user.
+  app.get(['/visual-library', '/visuals'], (req, res) => res.sendFile(path.join(publicDir, 'visual-library.html')));
+
   // Mathmatix Arcade: the one front door to every game (utils/liveDrill/arcade.js). Public.
   app.get(['/arcade', '/games', '/arcade.html'], (req, res) => res.sendFile(path.join(publicDir, 'arcade.html')));
   // Live Two-Minute Drill. /play is what goes on the board; the host screen is teachers only.

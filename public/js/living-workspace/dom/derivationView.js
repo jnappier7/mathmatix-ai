@@ -182,9 +182,53 @@
 
   // Render mixed prose + inline math: words become wrapping text nodes, math
   // fragments become KaTeX spans. Falls back to plain text if no math is found.
+  // A sentence written as \text{words} math \text{words}: the groups are the
+  // words and EVERYTHING between them is math, typeset whole. The token
+  // matcher below reads "\theta = 0" as a symbol and then the loose text
+  // "= 0", and "(\cos\theta, \sin\theta)" as four pieces.
+  var TEXT_GROUP = /\\text\s*\{([^{}]*)\}/g;
+  function renderTextAndMath(target, tex, katex) {
+    var doc = target.ownerDocument;
+    var last = 0; var m;
+    function math(run) {
+      var frag = run.trim();
+      if (!frag) return;
+      var span = doc.createElement('span');
+      if (katex && typeof katex.render === 'function') {
+        try { katex.render(frag, span, { throwOnError: false, displayMode: false }); }
+        catch (_) { span.textContent = detex(frag); }
+      } else { span.textContent = detex(frag); }
+      target.appendChild(span);
+    }
+    TEXT_GROUP.lastIndex = 0;
+    while ((m = TEXT_GROUP.exec(tex)) !== null) {
+      math(tex.slice(last, m.index));
+      target.appendChild(doc.createTextNode(m[1]));
+      last = m.index + m[0].length;
+    }
+    math(tex.slice(last));
+  }
+  // …but only when what sits between the groups IS math: no bare words, and
+  // braces that balance (a \frac{3 \text{ cups}}{…} is not such a sentence).
+  function isTextAndMath(tex) {
+    TEXT_GROUP.lastIndex = 0;
+    if (!TEXT_GROUP.test(tex)) return false;
+    var between = tex.replace(TEXT_GROUP, '\u0000').split('\u0000');
+    return between.every(function (run) {
+      var depth = 0;
+      for (var i = 0; i < run.length; i++) {
+        if (run[i] === '{') depth++;
+        else if (run[i] === '}' && --depth < 0) return false;
+      }
+      if (depth !== 0) return false;
+      return !/[A-Za-z]{4,}/.test(run.replace(/\\[a-zA-Z]+/g, ' '));
+    });
+  }
+
   function renderProseWithMath(target, tex, katex) {
     var doc = target.ownerDocument;
     target.textContent = '';
+    if (isTextAndMath(tex)) { renderTextAndMath(target, tex, katex); return; }
     var last = 0; var m; var found = false;
     INLINE_MATH.lastIndex = 0;
     while ((m = INLINE_MATH.exec(tex)) !== null) {

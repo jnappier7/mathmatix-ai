@@ -428,6 +428,11 @@ function staticImageOnDisk(url) {
  * @returns {{ url: string, title: string, source: string } | null}
  */
 function getStaticConceptImage(concept) {
+  // Our own drawings first — utils/visualLibrary.js (strict matching, every
+  // picture computed and tested). The map below is the older, looser list.
+  const ours = require('./visualLibrary').find(concept);
+  if (ours) return ours;
+
   const lower = (concept || '').toLowerCase();
 
   const staticImages = {
@@ -452,6 +457,34 @@ function getStaticConceptImage(concept) {
   }
 
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// A wrong picture is worse than none.
+//
+// The search is site-restricted and safe, but "from an educational site" is
+// not "about the query": a student asked for the unit circle and the board
+// showed a cosmology plot of the expanding universe (owner's phone,
+// 2026-11-26; the same plot was captioned as a trig aid on 2026-09-07). Both
+// times the first result was shown because nothing checked it. A result is
+// kept only when its TITLE shares a content word with the query; with none,
+// the caller gets an empty list and the card says so in words.
+// ---------------------------------------------------------------------------
+const QUERY_STOP = /^(the|a|an|of|for|and|or|in|on|to|with|math|maths|mathematics|educational|graph|graphs|diagram|diagrams|picture|pictures|image|images|showing|example|examples|labell?ed|chart)$/;
+function contentStems(query) {
+  return String(query || '').toLowerCase().split(/[^a-z0-9]+/)
+    .filter((w) => w.length >= 4 && !QUERY_STOP.test(w))
+    // A 6-letter stem at a word boundary: "trigonometric" finds "Trigonometry".
+    .map((w) => new RegExp('\\b' + w.slice(0, 6)));
+}
+function relevantResults(results, query) {
+  if (!Array.isArray(results)) return [];
+  const stems = contentStems(query);
+  if (!stems.length) return results;   // nothing to judge by ("pi", "e")
+  return results.filter((r) => {
+    const title = String((r && r.title) || '').toLowerCase().replace(/[_-]+/g, ' ');
+    return stems.some((re) => re.test(title));
+  });
 }
 
 // Hosts we'll proxy image BYTES from (see the /proxy route in routes/imageSearch.js).
@@ -485,6 +518,7 @@ module.exports = {
   sanitizeQuery,
   isValidCategory,
   getStaticConceptImage,
+  relevantResults,
   isProxyableImageUrl,
   ALLOWED_DOMAINS,
   VALID_CATEGORIES

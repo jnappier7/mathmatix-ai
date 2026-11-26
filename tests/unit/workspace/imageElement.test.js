@@ -36,16 +36,19 @@ describe('imageElement — pure helpers', () => {
     expect(ImageElement.pickResult(results, 'trigonometry graph')).toEqual(results[1]);
   });
 
-  it('pickResult falls back to the first image when no title matches', () => {
+  test('pickResult shows NOTHING when no title is about the query (a wrong picture is worse than none)', () => {
     const results = [
       { url: 'a.png', title: 'File:Untitled-1.png' },
-      { url: 'b.png', title: 'File:Untitled-2.png' },
+      { url: 'b.png', title: 'Expansion of the universe, Omega M = 0.3' },
     ];
-    expect(ImageElement.pickResult(results, 'unit circle')).toEqual(results[0]);
-    // Presentation and function words are not evidence: "graph of the" matches
-    // nothing on its own, so this is the plain first-image pick.
+    expect(ImageElement.pickResult(results, 'unit circle labeled')).toBeNull();
+    // Presentation and function words are not evidence: "graph of the" gives
+    // nothing to judge by, so this is the plain first-image pick.
     expect(ImageElement.pickResult(results, 'graph of the')).toEqual(results[0]);
-    // No query at all → exactly the old behaviour.
-    expect(ImageElement.pickResult(results)).toEqual(results[0]);
+  });
+
+  test('pickResult always shows a drawing of ours, whatever its title', () => {
+    const own = { url: '/images/concepts/unit-circle.svg', title: 'Reference', source: 'Mathmatix' };
+    expect(ImageElement.pickResult([{ url: 'a.png', title: 'Universe' }, own], 'unit circle')).toEqual(own);
   });
 });

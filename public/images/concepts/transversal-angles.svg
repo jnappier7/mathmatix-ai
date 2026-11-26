@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" width="720" height="380" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Angles made when a transversal crosses two parallel lines, numbered 1 to 8, with the pairs: corresponding, alternate interior, alternate exterior, same-side interior and vertical">
+<rect x="0" y="0" width="720" height="380" fill="#ffffff"/>
+<line data-parallel="upper" x1="40" y1="120" x2="380" y2="120" stroke="#1f2937" stroke-width="3"/>
+<path d="M 320 113 l 9 7 l -9 7" fill="none" stroke="#6d28d9" stroke-width="2.5"/>
+<line data-parallel="lower" x1="40" y1="250" x2="380" y2="250" stroke="#1f2937" stroke-width="3"/>
+<path d="M 320 243 l 9 7 l -9 7" fill="none" stroke="#6d28d9" stroke-width="2.5"/>
+<line data-transversal="1" x1="277.6" y1="40" x2="142.4" y2="330" stroke="#0f766e" stroke-width="3"/>
+<text x="289.6" y="50" font-size="13.5" fill="#0f766e" text-anchor="start">transversal</text>
+<text x="372" y="108" font-size="13.5" fill="#5b6475" text-anchor="end">parallel lines</text>
+<text x="222.4" y="102" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="1">1</text>
+<text x="282.4" y="102" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="2">2</text>
+<text x="198.2" y="150" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="3">3</text>
+<text x="258.2" y="150" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="4">4</text>
+<text x="161.8" y="232" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="5">5</text>
+<text x="221.8" y="232" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="6">6</text>
+<text x="137.6" y="280" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="7">7</text>
+<text x="197.6" y="280" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle" data-angle="8">8</text>
+<text x="410" y="62" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">Corresponding</text>
+<text x="410" y="82" font-size="14" fill="#6d28d9" text-anchor="start" data-pairs="Corresponding">1 &amp; 5 · 2 &amp; 6 · 3 &amp; 7 · 4 &amp; 8</text>
+<text x="704" y="62" font-size="13.5" font-weight="700" fill="#0f766e" text-anchor="end">equal</text>
+<text x="410" y="124" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">Alternate interior</text>
+<text x="410" y="144" font-size="14" fill="#6d28d9" text-anchor="start" data-pairs="Alternate interior">3 &amp; 6 · 4 &amp; 5</text>
+<text x="704" y="124" font-size="13.5" font-weight="700" fill="#0f766e" text-anchor="end">equal</text>
+<text x="410" y="186" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">Alternate exterior</text>
+<text x="410" y="206" font-size="14" fill="#6d28d9" text-anchor="start" data-pairs="Alternate exterior">1 &amp; 8 · 2 &amp; 7</text>
+<text x="704" y="186" font-size="13.5" font-weight="700" fill="#0f766e" text-anchor="end">equal</text>
+<text x="410" y="248" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">Same-side interior</text>
+<text x="410" y="268" font-size="14" fill="#6d28d9" text-anchor="start" data-pairs="Same-side interior">3 &amp; 5 · 4 &amp; 6</text>
+<text x="704" y="248" font-size="13.5" font-weight="700" fill="#b45309" text-anchor="end">add to 180°</text>
+<text x="410" y="310" font-size="16" font-weight="700" fill="#1f2937" text-anchor="start">Vertical</text>
+<text x="410" y="330" font-size="14" fill="#6d28d9" text-anchor="start" data-pairs="Vertical">1 &amp; 4 · 2 &amp; 3 · 5 &amp; 8 · 6 &amp; 7</text>
+<text x="704" y="310" font-size="13.5" font-weight="700" fill="#0f766e" text-anchor="end">equal</text>
+</svg>
