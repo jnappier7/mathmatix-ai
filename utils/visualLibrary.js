@@ -123,6 +123,13 @@ const ITEMS = [
     not: (q) => /[=\d]|\bintercept|\bformula|\bparallel|\bperpendicular|\b(positive|negative|zero|undefined)\b/.test(q),
   },
   {
+    id: 'graph-a-line', title: 'Graphing a line', topic: 'Graphs and functions', file: 'graph-a-line.svg', widget: 'graph-line',
+    blurb: 'Start at the y-intercept, then count the slope: up, across, mark, repeat.',
+    ask: 'graphing a line from slope-intercept form',
+    is: (q) => /\bslope[- ]intercept\b|\bgraph(ing)? (a |the )?(straight )?lines?\b|\bgraph(ing)? linear equations?\b|\by\s*=\s*mx\s*\+\s*b\b/.test(q),
+    not: (q) => /\d|=(?!\s*mx)|\bpoint[- ]slope\b|\bstandard form\b|\binequalit|\bsystems?\b|\bparallel|\bperpendicular/.test(q),
+  },
+  {
     id: 'parabola-parts', title: 'Parts of a parabola', topic: 'Graphs and functions', file: 'parabola-parts.svg',
     blurb: 'Vertex, axis of symmetry and the intercepts, on y = x² − 2x − 3.',
     ask: 'parts of a parabola',

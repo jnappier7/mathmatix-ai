@@ -885,6 +885,14 @@ html[data-theme="dark"] .lws-root {
 .lws-ix-handle:focus-visible circle:last-child { stroke: #111827; stroke-width: 3.5; }
 .lws-ix-readout { font-size: 15px; line-height: 1.45; font-weight: 600; text-align: center; padding: 8px 4px 2px; min-height: 2.9em; }
 .lws-ix-hint { font-size: 12.5px; color: #5b6475; text-align: center; padding-top: 2px; }
+.lws-ix-steps { padding-top: 8px; }
+.lws-ix-ctl .lws-ix-next { width: auto; height: auto; min-height: 40px; padding: 9px 16px; border-radius: 999px; background: #6d28d9; color: #fff; font: 600 14px/1 Inter, system-ui, sans-serif; }
+/* The y-intercept, once planted: smaller, so the counting point is the one to grab. */
+.lws-ix-handle.is-set circle:last-child { r: 6px; }
+/* The notch: a ring that opens where the handle clicked onto a grid line. */
+.lws-ix-notch { transform-box: fill-box; transform-origin: center; animation: lws-ix-notch 0.36s ease-out forwards; pointer-events: none; }
+@keyframes lws-ix-notch { from { transform: scale(0.8); opacity: 0.9; } to { transform: scale(2.4); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .lws-ix-notch { animation: none; opacity: 0; } }
 .lws-ix-frac { padding: 4px 0 8px; }
 .lws-ix-frac .lws-ix-readout { min-height: 0; padding: 4px; }
 .lws-ix-bar { display: block; width: 100%; height: auto; }

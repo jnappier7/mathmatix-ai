@@ -65,7 +65,7 @@ describe('the registry', () => {
 
   test('a query about the student\'s own problem gets no library picture', () => {
     for (const q of [
-      'slope of the line through (2, 5) and (4, 9)', 'slope formula', 'positive and negative slope', 'slope intercept form',
+      'slope of the line through (2, 5) and (4, 9)', 'slope formula', 'positive and negative slope', 'graph y = 2x + 1', 'graphing a line y=3x-2', 'point-slope form', 'graphing a system of lines',
       'pythagorean theorem 5 12 13', 'pythagorean theorem a = 6 b = 8', 'distance formula pythagorean',
       'equivalent fractions 2/4', 'fraction wall 3/8', 'number line -3 + 5', 'adding integers on a number line', 'inequality on a number line',
       'graph of y = x^2', 'parabola y = x^2 - 4x + 3 vertex labeled', 'parabola focus and directrix',
@@ -124,6 +124,22 @@ describe('the pictures are right', () => {
     const line = tags(svg, 'data-line')[0]; const m = (num(line, 'y2') - num(line, 'y1')) / (num(line, 'x2') - num(line, 'x1'));
     for (const p of [p1, p2]) expect(num(line, 'y1') + m * (p.px[0] - num(line, 'x1'))).toBeCloseTo(p.px[1], 1);
     expect(svg).toContain(`slope = rise ÷ run = ${rise}/${run}`);
+  });
+
+  test('graphing a line: the stairs start at the y-intercept, each is the slope printed, and every stop is on the line', () => {
+    const svg = read('graph-a-line.svg');
+    const [, rise, run, b] = svg.match(/>y = \((\d+)\/(\d+)\)x \+ (\d+) /).map(Number);
+    const stops = tags(svg, 'data-stop').map((el) => ({ at: el.match(/data-stop="(-?\d+),(-?\d+)"/).slice(1).map(Number), px: [num(el, 'cx'), num(el, 'cy')] }));
+    expect(stops).toHaveLength(3);
+    expect(stops[0].at).toEqual([0, b]);                                               // it starts ON the y-axis, at b
+    for (const sp of stops) expect(sp.at[1]).toBeCloseTo(b + rise / run * sp.at[0], 9); // every stop satisfies the equation
+    for (let k = 0; k < 2; k++) expect([stops[k + 1].at[0] - stops[k].at[0], stops[k + 1].at[1] - stops[k].at[1]]).toEqual([run, rise]);
+    const unit = (stops[1].px[0] - stops[0].px[0]) / run;
+    expect((stops[0].px[1] - stops[1].px[1]) / unit).toBeCloseTo(rise, 9);             // drawn to scale
+    const line = tags(svg, 'data-line')[0]; const m = (num(line, 'y2') - num(line, 'y1')) / (num(line, 'x2') - num(line, 'x1'));
+    for (const sp of stops) expect(num(line, 'y1') + m * (sp.px[0] - num(line, 'x1'))).toBeCloseTo(sp.px[1], 1);
+    expect((svg.match(new RegExp(`>up ${rise}<`, 'g')) || []).length).toBe(2);
+    expect((svg.match(new RegExp(`>right ${run}<`, 'g')) || []).length).toBe(2);
   });
 
   test('special right triangles: the sides are in the ratios printed on them', () => {
@@ -302,6 +318,37 @@ describe('the interactives compute what they show', () => {
       expect(r.text).not.toMatch(/\d\.\d/);
       if (r.slope) { const [n, m] = r.slope.replace('−', '-').split('/').map(Number); expect(n / (m || 1)).toBeCloseTo(b / a, 9); }
     }
+  });
+
+  test('graph a line: the equation printed is the line through the intercept and the counted point', () => {
+    const value = (s) => { const t = s.replace(/−/g, '-').replace(/[()]/g, ''); if (t.includes('/')) { const [n, d] = t.split('/').map(Number); return n / d; } return +t; };
+    for (let b = -6; b <= 6; b++) for (let rise = -6; rise <= 6; rise++) for (let run = -6; run <= 6; run++) {
+      const r = IX.lineRead(b, rise, run);
+      expect(r.text).not.toMatch(/\d\.\d|NaN|−0\b/);
+      if (!run) { expect(r.equation).toBeUndefined(); continue; }
+      expect(r.text).not.toMatch(/undefined/);               // vertical, or nothing counted yet: no y = mx + b
+      // read the equation back the way a student would, and test it at the two points they made
+      const eq = r.equation.replace(/^y = /, '');
+      const m = eq.match(/^(−?(?:\(\d+\/\d+\)|\d+)?)x(?: ([+−]) (\d+))?$/);
+      const slope = m ? (m[1] === '' ? 1 : m[1] === '−' ? -1 : value(m[1])) : 0;
+      const icpt = m ? (m[2] ? (m[2] === '+' ? 1 : -1) * +m[3] : 0) : value(eq);
+      expect(icpt).toBe(b);
+      expect(slope * run + icpt).toBeCloseTo(b + rise, 9);
+      expect(value(r.slope)).toBeCloseTo(rise / run, 9);
+    }
+    expect(IX.lineRead(1, 2, 3).equation).toBe('y = (2/3)x + 1');
+    expect(IX.lineRead(-2, 3, -1).equation).toBe('y = −3x − 2');
+    expect(IX.lineRead(0, -1, 1).equation).toBe('y = −x');
+    expect(IX.lineRead(3, 0, 4).equation).toBe('y = 3');
+    expect(IX.lineRead(0, 0, 2).equation).toBe('y = 0');
+    expect(IX.lineRead(2, 3, 0).text).toMatch(/undefined/);
+  });
+
+  test('a tick is one short buzz where the device can, and nothing breaks where it cannot', () => {
+    const calls = []; expect(IX.tick({ vibrate: (ms) => { calls.push(ms); return true; } })).toBe(true);
+    expect(calls).toHaveLength(1); expect(calls[0]).toBeLessThanOrEqual(15);
+    expect(IX.tick({})).toBe(false); expect(IX.tick(null)).toBe(false);          // iOS Safari: no vibration API
+    expect(IX.tick({ vibrate: () => { throw new Error('blocked'); } })).toBe(false);
   });
 
   test('coordinate plane: quadrant, axis and origin, and which way to go', () => {

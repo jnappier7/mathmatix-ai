@@ -3,7 +3,8 @@
 
    Each one is a picture a student can MOVE: drag the point round the unit
    circle, swing a ray to make an angle, slide two points to see rise and
-   run, place a point on the coordinate plane, cut and shade fraction bars.
+   run, graph a line from its y-intercept by counting the slope, place a point
+   on the coordinate plane, cut and shade fraction bars.
    utils/visualLibrary.js names them (`widget`) and the picture card offers
    one behind its "Explore it" button (imageElement.js); the browsable page
    (/visual-library) mounts them too.
@@ -106,6 +107,31 @@
   function fractionRead(n, d) {
     d = clamp(Math.round(d), 1, 12); n = clamp(Math.round(n), 0, d);
     return { n, d, text: `${n}/${d}`, words: `${n} of ${d} equal pieces shaded` };
+  }
+
+  // A line built the way it is graphed by hand: start at the y-intercept b,
+  // then count `rise` up (or down) and `run` across. Says what was counted and
+  // the line that makes — the student's own line, not a problem's answer.
+  function lineRead(b, rise, run) {
+    const start = `Start at ${signed(b)} on the y-axis`;
+    if (!rise && !run) return { b, rise, run, text: `${start}. Now drag away from the point to count the slope.` };
+    const up = !rise ? 'stay level' : `${rise > 0 ? 'up' : 'down'} ${Math.abs(rise)}`;
+    const over = !run ? 'no steps across' : `${run > 0 ? 'right' : 'left'} ${Math.abs(run)}`;
+    if (!run) return { b, rise, run, kind: 'undefined', text: `${start}, then ${up}, ${over}. Straight up and down: the slope is undefined, and this is not y = mx + b.` };
+    const g = gcd(rise, run), n = (rise / g) * Math.sign(run), m = Math.abs(run / g);
+    const slope = n === 0 ? '0' : m === 1 ? signed(n) : `${signed(n)}/${m}`;
+    const mx = n === 0 ? '' : m === 1 ? (Math.abs(n) === 1 ? (n < 0 ? MINUS : '') : signed(n)) + 'x' : `${n < 0 ? MINUS : ''}(${Math.abs(n)}/${m})x`;
+    const tail = b === 0 ? '' : mx ? ` ${b > 0 ? '+' : MINUS} ${Math.abs(b)}` : signed(b);
+    const equation = `y = ${mx || (b === 0 ? '0' : '')}${tail}`;
+    return { b, rise, run, slope, equation, text: `${start}, then ${up}, ${over}. Slope = ${signed(rise)} ÷ ${signed(run)} = ${slope}. Your line is ${equation}.` };
+  }
+
+  // "Feel the ticks": one short buzz per grid line crossed, on devices that
+  // can (Android browsers; iOS Safari has no vibration API — there the handle's
+  // notch and the running count are the tick). Never throws.
+  function tick(nav) {
+    try { if (nav && typeof nav.vibrate === 'function') { nav.vibrate(9); return true; } } catch (_) { /* blocked */ }
+    return false;
   }
 
   // ── drawing helpers ─────────────────────────────────────────────────────
@@ -322,13 +348,84 @@
     return { get: () => state.map((s) => ({ n: s.n, d: s.d })), set: (i, n, d) => { const r = fractionRead(n, d); state[i] = { n: r.n, d: r.d }; draw(); } };
   }
 
-  const WIDGETS = { 'unit-circle': unitCircle, angle, slope, 'coordinate-plane': coordinatePlane, fractions };
+  function graphLine(host) {
+    const { doc, wrap, svg, out } = frame(host, 'Graph a line', '');
+    const hint = wrap.querySelector('.lws-ix-hint');
+    const cx = 160, cy = 160, U = 22, N = 6; const X = (x) => cx + x * U, Y = (y) => cy - y * U;
+    grid(doc, svg, cx, cy, U, N);
+    const nav = (typeof navigator !== 'undefined') ? navigator : null;
+    const calm = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let b = 1, rise = 0, run = 0, step = 1;
+    const clipId = 'lws-ix-clip-' + Math.random().toString(36).slice(2);
+    const clip = el(doc, 'clipPath', { id: clipId }, svg);
+    el(doc, 'rect', { x: X(-N), y: Y(N), width: 2 * N * U, height: 2 * N * U }, clip);
+    const line = el(doc, 'line', { stroke: INK, 'stroke-width': 2.5, 'clip-path': `url(#${clipId})` }, svg);
+    const riseLeg = el(doc, 'line', { stroke: AMBER, 'stroke-width': 4 }, svg);
+    const runLeg = el(doc, 'line', { stroke: TEAL, 'stroke-width': 4 }, svg);
+    const counts = el(doc, 'g', null, svg);
+    // the notch: a ring that opens on the handle each time it clicks onto a grid line
+    function notch(x, y, color) {
+      if (calm) return;
+      const ring = el(doc, 'circle', { cx: x, cy: y, r: 9, fill: 'none', stroke: color, 'stroke-width': 3, class: 'lws-ix-notch' }, svg);
+      setTimeout(() => { if (ring.parentNode) ring.parentNode.removeChild(ring); }, 380);
+    }
+    function clicked(x, y, color) { tick(nav); notch(x, y, color); }
+
+    const hb = handle(doc, svg, ACCENT, 'The y-intercept',
+      ([, y]) => setB(clamp(Math.round((cy - y) / U), -N, N)),
+      (dx, dy) => setB(clamp(b + dy, -N, N)));
+    const hs = handle(doc, svg, AMBER, 'The counting point',
+      ([x, y]) => setStep(clamp(Math.round((cy - y) / U), -N, N) - b, clamp(Math.round((x - cx) / U), -N, N)),
+      (dx, dy) => setStep(clamp(b + rise + dy, -N, N) - b, clamp(run + dx, -N, N)));
+    function setB(v) {
+      if (v === b) return;
+      b = v; rise = clamp(b + rise, -N, N) - b;          // the counted steps ride along, kept on the grid
+      clicked(X(0), Y(b), ACCENT); draw();
+    }
+    function setStep(r, n) {
+      if (r === rise && n === run) return;
+      rise = r; run = n; clicked(X(run), Y(b + rise), AMBER); draw();
+    }
+
+    const bar = doc.createElement('div'); bar.className = 'lws-ix-ctl lws-ix-steps';
+    const btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'lws-ix-next';
+    btn.addEventListener('click', () => { step = step === 1 ? 2 : 1; draw(); (step === 2 ? hs : hb).node.focus(); });
+    bar.appendChild(btn); wrap.appendChild(bar);
+
+    function draw() {
+      while (counts.firstChild) counts.removeChild(counts.firstChild);
+      const r = lineRead(b, rise, run), two = step === 2;
+      hb.at(X(0), Y(b), `y-intercept ${signed(b)}`);
+      hs.node.setAttribute('visibility', two ? 'visible' : 'hidden');
+      hs.node.setAttribute('tabindex', two ? 0 : -1);
+      hb.node.setAttribute('class', 'lws-ix-handle' + (two ? ' is-set' : ''));
+      hs.at(X(run), Y(b + rise), `${rise} up, ${run} across`);
+      // the staircase: up (or down) first, then across — and a number on every step
+      riseLeg.setAttribute('x1', X(0)); riseLeg.setAttribute('y1', Y(b)); riseLeg.setAttribute('x2', X(0)); riseLeg.setAttribute('y2', Y(b + rise));
+      runLeg.setAttribute('x1', X(0)); runLeg.setAttribute('y1', Y(b + rise)); runLeg.setAttribute('x2', X(run)); runLeg.setAttribute('y2', Y(b + rise));
+      const side = run >= 0 ? -1 : 1, above = rise >= 0 ? 1 : -1;
+      for (let i = 1; i <= Math.abs(rise); i++) label(doc, counts, X(0) + (side < 0 ? -24 : 10), Y(b + Math.sign(rise) * (i - 0.5)) + 4, i, { fill: AMBER, 'font-weight': 700, 'font-size': 11, 'data-count': 'rise' });
+      for (let j = 1; j <= Math.abs(run); j++) label(doc, counts, X(Math.sign(run) * (j - 0.5)), Y(b + rise) - above * 7 + (above > 0 ? 0 : 8), j, { fill: TEAL, 'font-weight': 700, 'font-size': 11, 'data-count': 'run' });
+      if (two && (rise || run)) {
+        const k = (2 * N + 2) / Math.max(Math.abs(run), Math.abs(rise));
+        line.setAttribute('visibility', 'visible');
+        line.setAttribute('x1', X(-run * k)); line.setAttribute('y1', Y(b - rise * k)); line.setAttribute('x2', X(run * k)); line.setAttribute('y2', Y(b + rise * k));
+      } else line.setAttribute('visibility', 'hidden');
+      out.textContent = two ? r.text : `The line will cross the y-axis at ${signed(b)}. That is the y-intercept: b = ${signed(b)}.`;
+      hint.textContent = two ? 'Step 2: drag the orange point away from the start — count the steps up or down, then across.' : 'Step 1: slide the purple point up or down the y-axis to where the line should cross.';
+      btn.textContent = two ? 'Move the y-intercept' : 'Next: count the slope';
+    }
+    draw();
+    return { get: () => ({ b, rise, run, step }), setB, setStep, go: (n) => { step = n; draw(); } };
+  }
+
+  const WIDGETS = { 'unit-circle': unitCircle, angle, slope, 'graph-line': graphLine, 'coordinate-plane': coordinatePlane, fractions };
   const has = (id) => Object.prototype.hasOwnProperty.call(WIDGETS, id);
   function mount(id, host) { return has(id) && host ? WIDGETS[id](host) : null; }
 
   return {
     has, mount, ids: () => Object.keys(WIDGETS),
     // the math, for the tests
-    radLabel, unitCircleRead, snapAngle, angleKind, slopeRead, pointRead, fractionRead, SPECIAL,
+    radLabel, unitCircleRead, snapAngle, angleKind, slopeRead, lineRead, tick, pointRead, fractionRead, SPECIAL,
   };
 });

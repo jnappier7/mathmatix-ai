@@ -253,6 +253,33 @@ function slopePicture() {
   return o + '</svg>\n';
 }
 
+// ── Graphing a line from y = mx + b: start at b, then count the slope ──
+const GRAPHED = { b: 1, rise: 2, run: 3 }; // y = (2/3)x + 1
+function graphALine() {
+  const { b, rise, run } = GRAPHED; const cx = 300, cy = 300, U = 40, N = 6;
+  const X = (x) => cx + x * U, Y = (y) => cy - y * U, f = (x) => b + rise / run * x;
+  let o = open(24, 24, 552, 596, `Graphing the line y = (${rise}/${run})x + ${b}: start at the y-intercept ${b}, then count up ${rise} and right ${run} to the next point, and again`);
+  for (let i = -N; i <= N; i++) o += `<line x1="${X(i)}" y1="${Y(N)}" x2="${X(i)}" y2="${Y(-N)}" stroke="#e5e7eb"/>\n<line x1="${X(-N)}" y1="${Y(i)}" x2="${X(N)}" y2="${Y(i)}" stroke="#e5e7eb"/>\n`;
+  o += `<line x1="${X(-N) - 14}" y1="${cy}" x2="${X(N) + 14}" y2="${cy}" stroke="${INK}" stroke-width="2.5"/>\n<line x1="${cx}" y1="${Y(-N) + 14}" x2="${cx}" y2="${Y(N) - 14}" stroke="${INK}" stroke-width="2.5"/>\n`;
+  for (let i = -N; i <= N; i++) { if (!i) continue; o += txt(X(i), cy + 17, i < 0 ? '−' + -i : i, { size: 12.5, fill: SOFT }) + txt(cx - 8, Y(i) + 4, i < 0 ? '−' + -i : i, { size: 12.5, fill: SOFT, anchor: 'end' }); }
+  o += `<line data-line="1" x1="${n1(X(-N))}" y1="${n1(Y(f(-N)))}" x2="${n1(X(N))}" y2="${n1(Y(f(N)))}" stroke="${INK}" stroke-width="3"/>\n`;
+  // two stairs: up `rise`, right `run`, twice — every point they land on is on the line
+  const stops = [[0, b], [run, b + rise], [2 * run, b + 2 * rise]];
+  for (let k = 0; k < 2; k++) {
+    const [x0, y0] = stops[k], [x1, y1] = stops[k + 1];
+    o += `<line data-stair="rise" x1="${X(x0)}" y1="${Y(y0)}" x2="${X(x0)}" y2="${Y(y1)}" stroke="#b45309" stroke-width="4" stroke-dasharray="7 5"/>\n`;
+    o += `<line data-stair="run" x1="${X(x0)}" y1="${Y(y1)}" x2="${X(x1)}" y2="${Y(y1)}" stroke="#0f766e" stroke-width="4" stroke-dasharray="7 5"/>\n`;
+    o += txt(X(x0) - 9, (Y(y0) + Y(y1)) / 2 + 5, `up ${rise}`, { size: 14.5, bold: true, fill: '#b45309', anchor: 'end' });
+    o += txt((X(x0) + X(x1)) / 2, Y(y1) - 9, `right ${run}`, { size: 14.5, bold: true, fill: '#0f766e' });
+  }
+  stops.forEach(([x, y], i) => { o += `<circle data-stop="${x},${y}" cx="${X(x)}" cy="${Y(y)}" r="${i ? 6 : 8}" fill="${i ? INK : ACCENT}"/>\n`; });
+  o += txt(X(0) + 14, Y(b) + 24, `1. Start at the y-intercept: ${b}`, { size: 15, bold: true, fill: ACCENT, anchor: 'start' });
+  o += txt(X(-5.8), Y(5.3), `2. Count the slope:`, { size: 15, bold: true, anchor: 'start' }) + txt(X(-5.8), Y(5.3) + 20, `up ${rise}, right ${run}`, { size: 15, bold: true, anchor: 'start' });
+  o += txt(X(-5.8), Y(5.3) + 48, '3. Mark the point.', { size: 15, bold: true, anchor: 'start' }) + txt(X(-5.8), Y(5.3) + 68, 'Count again.', { size: 15, bold: true, anchor: 'start' });
+  o += txt(300, 600, `y = (${rise}/${run})x + ${b} · slope ${rise}/${run} · y-intercept ${b}`, { size: 17, bold: true });
+  return o + '</svg>\n';
+}
+
 // ── Special right triangles ──
 function specialRightTriangles() {
   const U = 120;
@@ -449,7 +476,7 @@ function parentFunctions() {
 
 const OUT = {
   'unit-circle.svg': unitCircle, 'angle-types.svg': angleTypes, 'circle-parts.svg': circleParts, 'coordinate-plane.svg': coordinatePlane,
-  'triangle-types.svg': triangleTypes, 'pythagorean-theorem.svg': pythagorean, 'slope.svg': slopePicture,
+  'triangle-types.svg': triangleTypes, 'pythagorean-theorem.svg': pythagorean, 'slope.svg': slopePicture, 'graph-a-line.svg': graphALine,
   'special-right-triangles.svg': specialRightTriangles, 'parabola-parts.svg': parabolaParts, 'fraction-wall.svg': fractionWall,
   'place-value.svg': placeValue, 'integer-number-line.svg': integerLine, 'transversal-angles.svg': transversalAngles,
   'area-formulas.svg': areaFormulas, 'parent-functions.svg': parentFunctions,
@@ -459,4 +486,4 @@ if (require.main === module) {
   fs.mkdirSync(dir, { recursive: true });
   for (const [name, build] of Object.entries(OUT)) fs.writeFileSync(path.join(dir, name), build());
 }
-module.exports = { OUT, ANGLES, TRIANGLES, PARABOLA, WALL, PLACES, PLACE_DIGITS, ANGLE_PAIRS, PARENTS };
+module.exports = { OUT, GRAPHED, ANGLES, TRIANGLES, PARABOLA, WALL, PLACES, PLACE_DIGITS, ANGLE_PAIRS, PARENTS };
