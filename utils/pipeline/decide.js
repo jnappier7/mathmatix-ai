@@ -779,8 +779,14 @@ function decideCore(observation, diagnosis, context) {
   // any give-up turn still decided exit_ramp (eval-harness finding,
   // 2026-07-29). Unverifiable attempts keep the streak behavior — with no
   // verdict, the parallel-problem ramp is still the right support.
+  //
+  // Shown work counts the same. A graded derivation arrives as general_math
+  // (no single answer to extract), so it missed this guard: a student who had
+  // asked for the answer a few turns back, then factored the quadratic and
+  // gave both roots, was routed to "work a PARALLEL problem" on the turn they
+  // solved their own (replay of the owner session, 2026-11-25).
   const gradedAttemptThisTurn =
-    msgType === MESSAGE_TYPES.ANSWER_ATTEMPT &&
+    (msgType === MESSAGE_TYPES.ANSWER_ATTEMPT || diagnosis?.isTransformation === true) &&
     (diagnosis?.isCorrect === true || diagnosis?.isCorrect === false);
 
   if (msgType === MESSAGE_TYPES.GIVE_UP || (streaks.giveUpCount >= 1 && !gradedAttemptThisTurn)) {

@@ -70,6 +70,10 @@ module.exports = {
     // Course audit 2026-10-18..23: correct worked answers, and verdict repair.
     '<rootDir>/tests/unit/auditCourseFalseNegatives.test.js',
     '<rootDir>/tests/unit/verdictRepair.test.js',
+    // 2026-11-25 owner session: graders aimed at the wrong question — keys for
+    // math a turn only mentions, the pin under a tutor question, prose-wrapped
+    // derivations, and the verifier's veto over a reached-for rejection.
+    '<rootDir>/tests/unit/sessionWrongTarget.test.js',
     '<rootDir>/tests/unit/mathSolver*.test.js',
     '<rootDir>/tests/unit/parseCleanProblem.test.js',
     '<rootDir>/tests/golden/goldenTranscripts.test.js',

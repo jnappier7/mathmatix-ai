@@ -98,6 +98,8 @@ test('the pipeline labels every math verification for verifyMetrics', () => {
   expect(src).toMatch(/problemSource: pinnedProblem \? 'pin' : 'context'/);
   expect(src).toMatch(/pinState: classifyPinState\(/);
   expect(src).toMatch(/finalClaim: !!statedSolution\(message\)/);
-  // Both record paths (resolved and rejected promise) carry the labels.
-  expect(src.match(/\.\.\.problemLabels,/g)).toHaveLength(2);
+  // Both record paths (resolved and rejected promise) carry the labels, and so
+  // does the board cross-check, under its own source so its outcomes stay apart.
+  expect(src.match(/\.\.\.problemLabels,/g)).toHaveLength(3);
+  expect(src).toMatch(/problemSource: 'board_crosscheck'/);
 });

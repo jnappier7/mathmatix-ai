@@ -17,7 +17,8 @@ const { analyzeError, findKnownMisconception, MISCONCEPTION_LIBRARY } = require(
 const { hasMathematicalContent } = require('./verificationState');
 const { verifyDerivation, isTrueArithmeticFact } = require('../derivationVerifier');
 const { isFinalForm } = require('./solveCredit');
-const { llmVerifyMethod, articulatesMethod } = require('./llmVerifier');
+const { asksForKey, stampIsMention } = require('./poseStamp');
+const { llmVerifyMethod, articulatesMethod, statesPinnedMath } = require('./llmVerifier');
 const { parseFractionOrDecimal } = require('../answerComparison');
 const { stripThousandsSeparators } = require('../mathUnicodeNormalizer');
 
@@ -91,6 +92,22 @@ function stripLatexDelimiters(text) {
  * "x = -7/3 or 1", "3 and 2". Used to gate the canonical-problem override
  * so single-value sub-step answers are never affected.
  */
+/**
+ * Does the student assign values to the pinned problem's own variable —
+ * "x = -7 or x = 2", "(x+7)(x-2)=0, x = -7 or 2"? That is a claim about the
+ * pin's solution, and the pin may reject it. A bare pair ("-6 and 1") is not.
+ */
+function claimsRootsOf(rawText, pinTex) {
+  const text = stripLatexDelimiters(rawText || '');
+  const assigned = new Set();
+  const rx = /(?:^|[^a-z0-9])([a-z])\s*=\s*[-+±]?\s*\d/gi;
+  let m;
+  while ((m = rx.exec(text)) !== null) assigned.add(m[1].toLowerCase());
+  if (assigned.size === 0) return false;
+  const pin = String(pinTex || '').replace(/\\[a-zA-Z]+/g, ' ');
+  return [...assigned].some((v) => new RegExp(`(?:^|[^a-z])${v}(?![a-z])`, 'i').test(pin));
+}
+
 function statesRootSet(text) {
   if (!text || typeof text !== 'string') return false;
   const t = text.toLowerCase();
@@ -741,8 +758,20 @@ async function diagnose(observation, context = {}) {
       break;
     }
 
+    // Math a turn only MENTIONS is not its key — a restated solution, a
+    // fraction inside a longer ask, a parallel example's equation ahead of a
+    // different question (poseStamp.asksForKey). Persist no longer stamps
+    // those; a stamp written before that rule is disowned here, and the
+    // re-parse below is held to the same rule. Owner session, 2026-11-25:
+    // "what is \(\frac{1}{3}\) of \(24\)?" keyed 0.3333 and rejected a
+    // correct 16.
+    const disowned = msg.problemInfo && msg.problemInfo.correctAnswer != null
+      && msg.problemInfo.source !== 'llm'
+      && stampIsMention(msg.content, msg.problemInfo.correctAnswer);
+    if (disowned) console.log(`[Diagnose] Stamp "${msg.problemInfo.correctAnswer}" keys math the turn only mentions — disowned`);
+
     // Fast path: read pre-computed metadata stored at persist time
-    if (msg.problemInfo && msg.problemInfo.correctAnswer != null) {
+    if (!disowned && msg.problemInfo && msg.problemInfo.correctAnswer != null) {
       problemInfo = {
         problemType: msg.problemInfo.type,
         correctAnswer: msg.problemInfo.correctAnswer,
@@ -766,7 +795,7 @@ async function diagnose(observation, context = {}) {
     // "Here's another for you: Solve 4x+3=27." so the fallback path
     // doesn't poison verification with a bogus correctAnswer.
     const result = parseCleanProblem(plainContent);
-    if (result.hasMath && result.solution?.success) {
+    if (result.hasMath && result.solution?.success && asksForKey(msg.content, result)) {
       problemInfo = {
         problemType: result.problem.type,
         correctAnswer: result.solution.answer,
@@ -794,7 +823,21 @@ async function diagnose(observation, context = {}) {
       const pinnedRoots = pinned?.solution?.success && Array.isArray(pinned.solution.roots)
         ? pinned.solution.roots
         : null;
-      if (pinnedRoots && pinnedRoots.length > 1) {
+      // The pin's root set may always CONFIRM. It may reject a pair only when
+      // the student is claiming the pin's solution. Under a tutor question,
+      // "two numbers joined by 'and'" is just as often the answer to THAT
+      // question — the factor pair the tutor asked for ("-7 and 2" for roots
+      // 7 and -2), or the pair for a parallel example ("-6 and 1", rejected
+      // against the homework problem's roots while the verifier affirmed it;
+      // owner session, 2026-11-25). Those fall through to the tiers that read
+      // the question.
+      const namesNoPinnedRoot = pinnedRoots && pinnedRoots.length > 1
+        && matchRootsInText(rawText, pinnedRoots, 0.01).length === 0;
+      const answersTutorQuestion = namesNoPinnedRoot && latestTurnAsksSomething
+        && !claimsRootsOf(rawText, context.pinnedProblemTex);
+      if (answersTutorQuestion) {
+        console.log('[Diagnose] Pair names no pinned root under a tutor question — the pin cannot reject it');
+      } else if (pinnedRoots && pinnedRoots.length > 1) {
         problemInfo = {
           problemType: pinned.problem.type,
           correctAnswer: pinned.solution.answer,
@@ -983,6 +1026,49 @@ async function diagnose(observation, context = {}) {
       isCorrect = true;
       correctAnswer = earlier.correctAnswer;
       verificationSource = 'earlier_problem';
+    }
+  }
+
+  // ── Step 2a.3: A rejection needs a target the student was answering ──
+  // A deterministic grader is exact about the problem it holds and knows
+  // nothing about whether the student was answering that problem. Every false
+  // rejection of 2026-11-25 was this: the grader was right about its problem
+  // and wrong about the question.
+  //
+  // Two targets need no second opinion, and get none — no wait, no model:
+  //   - the problem as posed: the key comes from the tutor's newest turn and
+  //     nothing else is on the board (or that turn IS what the board holds);
+  //   - the board problem, when the student claims its solution by name
+  //     ("x = …").
+  // Anything else was reached for — an older turn's key, the pin under an
+  // unrelated reply, a sub-question's key while a different problem sits on
+  // the board (the student who answers "16" to "what is 1/3 of 24?" has
+  // finished the problem, not failed the step). There the verifier, which
+  // reads the conversation and checks the board problem too, gets a veto: if
+  // it AFFIRMS the answer, the rejection is withdrawn. It can only lift a
+  // rejection — never create one, never touch an affirmation — and with no
+  // verifier verdict the rejection stands as before.
+  if (isCorrect === false && problemInfo && context.llmVerificationPromise
+    && ['solver', 'derivation', 'root_set'].includes(verificationSource)) {
+    const pin = context.pinnedProblemTex || null;
+    const posedOutright = latestTurn && problemInfo.content === latestTurn.content
+      && (!pin || statesPinnedMath(latestTurn.content, pin));
+    const claimsThePin = pin && problemInfo.content === pin && claimsRootsOf(rawText, pin);
+    if (!posedOutright && !claimsThePin) {
+      try {
+        const verdict = await context.llmVerificationPromise;
+        if (verdict && verdict.isCorrect === true) {
+          console.log(`[Diagnose] Dissent: ${verificationSource} rejected "${studentAnswer}" against ${problemInfo.correctAnswer}, a target the student may not have been answering; the verifier affirms (confidence: ${Number(verdict.confidence || 0).toFixed(2)}) — rejection withdrawn`);
+          isCorrect = true;
+          correctAnswer = verdict.modelAnswer || studentAnswer;
+          verificationSource = 'llm';
+          problemInfo = null;
+          multiRoot = null;
+          derivation = null;
+        }
+      } catch (err) {
+        console.error('[Diagnose] Dissent check failed:', err.message);
+      }
     }
   }
 

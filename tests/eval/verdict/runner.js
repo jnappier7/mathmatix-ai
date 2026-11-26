@@ -9,6 +9,12 @@
  *              synthesizer, so a mis-pin is measured, not assumed away);
  *   unpinned — the problem arrived where nothing pins it (the greeting's
  *              warm-up), so only the conversation carries it;
+ *   session  — a recorded multi-turn exchange (corpus SESSIONS): sub-questions,
+ *              a parallel example, a confirmation in passing. The pin is the
+ *              recorded one and every tutor turn carries the key persist
+ *              would have stamped on it;
+ *   session-unpinned — the same exchange with no board pin, so only the
+ *              stamps and the conversation carry the question;
  *   followup — the student already answered, the tutor replied without a
  *              verdict, and the student asks "are they correct?". Owner
  *              session 2026-11-03: that turn was graded by nothing, left the
@@ -28,7 +34,8 @@
 
 const { observeAndDiagnose } = require('../../../utils/pipeline/index');
 const { synthesizeBoardCommands } = require('../../../utils/pipeline/boardSynthesizer');
-const { buildCases } = require('./corpus');
+const { solverStampFor } = require('../../../utils/pipeline/poseStamp');
+const { buildCases, buildSessionCases } = require('./corpus');
 
 function pinFor(pose) {
   const cmds = synthesizeBoardCommands({
@@ -105,18 +112,72 @@ async function runCase(c, context) {
   };
 }
 
-async function runAll({ concurrency = 1, contexts = ['pinned', 'unpinned', 'followup'], filter = null, quiet = true } = {}) {
+// What persist leaves on a stored tutor turn. The schema keeps type,
+// correctAnswer and source — `roots` is dropped on save, so it is dropped here.
+function stamped(turn) {
+  if (turn.role !== 'assistant') return { ...turn };
+  let stamp = null;
+  try { stamp = solverStampFor(turn.content); } catch (_) { /* unstamped */ }
+  if (!stamp) return { ...turn };
+  const { type, correctAnswer, source } = stamp.info;
+  return { ...turn, problemInfo: { type, correctAnswer, ...(source ? { source } : {}) } };
+}
+
+async function runSessionCase(c, context) {
+  const s = c.session;
+  const pin = context === 'session' ? s.pin : null;
+  const conversation = {
+    messages: s.turns.map(stamped),
+    boardProblem: pin ? { tex: pin } : null,
+    lastBoardAction: pin ? 'pose' : null,
+    lastProblemState: null,
+  };
+  const ctx = { conversation, user: { _id: 'verdict-eval', firstName: 'Eval' }, activeSkill: null };
+  let diagnosis;
+  let failure = null;
+  try {
+    ({ diagnosis } = await observeAndDiagnose(c.answer, ctx));
+  } catch (e) {
+    failure = e.message;
+  }
+  const isCorrect = diagnosis ? diagnosis.isCorrect : null;
+  return {
+    id: s.id,
+    topic: s.topic,
+    context,
+    pin,
+    answer: c.answer,
+    expected: c.expected,
+    isCorrect,
+    source: diagnosis ? diagnosis.verificationSource || null : null,
+    verificationState: diagnosis ? diagnosis.verificationState || null : null,
+    outcome: failure ? 'error' : classify(c.expected, isCorrect, { context }),
+    error: failure,
+  };
+}
+
+const SESSION_CONTEXTS = ['session', 'session-unpinned'];
+
+async function runAll({ concurrency = 1, contexts = ['pinned', 'unpinned', 'followup', ...SESSION_CONTEXTS], filter = null, quiet = true } = {}) {
   const jobs = [];
   for (const c of buildCases()) {
     if (filter && !filter(c)) continue;
-    for (const context of contexts) jobs.push([c, context]);
+    for (const context of contexts) if (!SESSION_CONTEXTS.includes(context)) jobs.push([c, context]);
+  }
+  for (const c of buildSessionCases()) {
+    // A filter written for single-pose cases reads c.problem; give it the
+    // session under the same name so --topic / --id keep working.
+    if (filter && !filter({ ...c, problem: c.session })) continue;
+    for (const context of contexts) if (SESSION_CONTEXTS.includes(context)) jobs.push([c, context]);
   }
   const results = new Array(jobs.length);
   let next = 0;
   async function worker() {
     while (next < jobs.length) {
       const i = next++;
-      results[i] = await runCase(jobs[i][0], jobs[i][1]);
+      results[i] = jobs[i][0].session
+        ? await runSessionCase(jobs[i][0], jobs[i][1])
+        : await runCase(jobs[i][0], jobs[i][1]);
     }
   }
   // Muted once around the whole run: swapping per case under concurrency let a
@@ -155,4 +216,4 @@ function summarize(results) {
   };
 }
 
-module.exports = { runAll, runCase, summarize, classify, pinFor };
+module.exports = { runAll, runCase, runSessionCase, summarize, classify, pinFor };

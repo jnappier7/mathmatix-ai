@@ -653,6 +653,19 @@ function extractAnswer(message) {
     if (embedded) return embedded;
   }
 
+  // The method named, then the answer: "product rule: 2x sin(x) + x^2 cos(x)".
+  // Every pattern above is anchored on the math, so a two-word label in front
+  // left a complete, correct derivative with no answer to grade (owner
+  // session, 2026-11-25). Last resort only — whatever follows the label is
+  // read by the same patterns, or not at all.
+  {
+    const labelled = text.match(/^[a-z][a-z' -]{1,30}:\s*(\S[^\n]*)$/i);
+    if (labelled && !VERIFICATION_LEAD.test(text) && /\d/.test(labelled[1])) {
+      const inner = extractAnswer(labelled[1]);
+      if (inner) return { ...inner, raw };
+    }
+  }
+
   return null;
 }
 
@@ -845,6 +858,29 @@ function detectProblemContext(message) {
   return 'numeric';
 }
 
+// The message as bare math: delimiters, braces and spacing gone.
+const mathSkeleton = (text) => String(text || '')
+  .replace(/\\[()[\]]|\$/g, '')
+  .replace(/[{}\s]/g, '')
+  .replace(/−/g, '-').replace(/×/g, '*').replace(/÷/g, '/')
+  .toLowerCase();
+
+/**
+ * Does the student's message carry a mathematical expression the tutor has not
+ * written? Echoing is repeating the tutor's words; an expression of the
+ * student's own is work, whatever words sit around it.
+ *
+ * Owner session, 2026-11-25: "product rule: 2x sin(x) + x^2 cos(x)" — the
+ * correct derivative — shares "product", "rule" and "sin(x)" with the tutor's
+ * last few turns, was classed as parroting, and so was never graded at all.
+ */
+function carriesOwnMath(studentMessage, recentAssistantMessages) {
+  const runs = mathSkeleton(studentMessage).match(/[\w^().]+(?:[+\-*/=][\w^().]+)+/g) || [];
+  if (runs.length === 0) return false;
+  const tutor = (recentAssistantMessages || []).slice(-3).map((m) => mathSkeleton(m.content)).join(' ');
+  return runs.some((run) => /\d|[a-z]\(/.test(run) && !tutor.includes(run));
+}
+
 /**
  * Check if student is parroting (echoing back) the tutor's recent words.
  * Compares the student's message against recent assistant messages using
@@ -856,6 +892,7 @@ function detectProblemContext(message) {
 function detectParroting(studentMessage, recentAssistantMessages) {
   if (!recentAssistantMessages || recentAssistantMessages.length === 0) return false;
   if (studentMessage.length < 15) return false; // Too short to be meaningful parroting
+  if (carriesOwnMath(studentMessage, recentAssistantMessages)) return false;
 
   const studentLower = studentMessage.toLowerCase().replace(/[^\w\s]/g, '');
   const studentWords = studentLower.split(/\s+/).filter(w => w.length > 2);

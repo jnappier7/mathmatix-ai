@@ -21,6 +21,10 @@ npm run eval:verdict -- --topic calculus --json out.json
 | `pinned` | The tutor posed it in a normal turn. The pin is what the **real** board synthesizer reads from the pose, so a mis-pin is measured. |
 | `unpinned` | It arrived where nothing pins it, like a greeting warm-up. |
 | `followup` | The student answered, the tutor replied without a verdict, and the student asks "are they correct?" |
+| `session` | A recorded multi-turn exchange (`SESSIONS` in `corpus.js`): sub-questions, a parallel example, a confirmation in passing. The pin is the recorded one and every tutor turn carries the key persist would stamp on it. |
+| `session-unpinned` | The same exchange with no board pin. |
+
+A single-pose case has one question in play. A session is where the question moves while the pin stays put, which is where the 2026-11-25 false rejections came from: each grader was exact about the problem it held and aimed at something other than what the student was answering.
 
 ## Outcomes
 
@@ -34,4 +38,4 @@ npm run eval:verdict -- --topic calculus --json out.json
 
 ## Adding cases
 
-Found a grading bug live? Add the problem and the student's exact words to `corpus.js` before fixing it. The offline test fails on any new wrong verdict from the deterministic graders. `KNOWN` and `KNOWN_UNGUARDED_FOLLOWUPS` are ratchets: when a fix lands, remove its entry or lower the count.
+Found a grading bug live? Add the problem and the student's exact words to `corpus.js` before fixing it. If the bug needed more than one turn to happen, add it as a session: the turns up to the student's reply, the pin at that moment, and the replies keyed by hand. The offline test fails on any new wrong verdict from the deterministic graders. `KNOWN` and `KNOWN_UNGUARDED_FOLLOWUPS` are ratchets: when a fix lands, remove its entry or lower the count.

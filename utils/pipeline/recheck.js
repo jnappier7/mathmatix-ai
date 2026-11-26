@@ -26,6 +26,24 @@ const MORE_CHECKS = /\bare\s+(?:they|them|both|all\s+of\s+them|my\s+answers?|tho
 
 const MATH_SIGNAL = /\d|=/;
 
+// "…is my answer right or not?" closing a message that otherwise only DESCRIBES
+// earlier work. Owner session, 2026-11-25: "first term i differentiated x^2,
+// second term i differentiated sin. is my answer right or not?" — the "x^2"
+// tripped MATH_SIGNAL, nothing re-graded the derivative they were asking about,
+// and the tutor answered a direct question with another question.
+const ASKS_ABOUT_EARLIER_ANSWER = /\b(?:is|was)\s+(?:my\s+(?:answer|work|solution)|what\s+i\s+(?:said|got|put|wrote))\s+(?:right|correct|wrong)(?:\s+or\s+(?:not|wrong))?\s*\??\s*$/i;
+
+// The rest of such a message is a NEW answer — "x = 5. is my answer right?" —
+// when it states an equation, computes something, or is just a value. Then the
+// message is graded as itself, not as a re-check. A power alone ("x^2") is a
+// name for a term, not a computation.
+function carriesNewAnswer(rest) {
+  if (!/\d/.test(rest)) return false;
+  if (/[=<>≤≥]/.test(rest)) return true;
+  if (/[\w)]\s*[+\-*/×÷]\s*[\w(]/.test(rest)) return true;
+  return rest.trim().split(/\s+/).length <= 4;
+}
+
 /**
  * A request to check earlier answers, carrying no new math of its own.
  * @param {string} text
@@ -33,7 +51,10 @@ const MATH_SIGNAL = /\d|=/;
 function isRecheckRequest(text) {
   if (!text || typeof text !== 'string') return false;
   const t = text.trim();
-  if (!t || t.length > 120 || MATH_SIGNAL.test(t)) return false;
+  if (!t) return false;
+  const closing = t.length <= 240 ? t.match(ASKS_ABOUT_EARLIER_ANSWER) : null;
+  if (closing && closing.index > 0 && !carriesNewAnswer(t.slice(0, closing.index))) return true;
+  if (t.length > 120 || MATH_SIGNAL.test(t)) return false;
   return isCheckWorkIntent(t) || MORE_CHECKS.test(t);
 }
 
@@ -73,8 +94,12 @@ function lastIndexOf(messages, role) {
 // questions and I answered them" sat between the answers and the check in the
 // owner's session. Math has an "=", an operator beside a number, a numbered
 // line, or is short ("10", "i got 52", "is it 3/8?").
-function looksLikeSubmission(text) {
-  if (typeof text !== 'string' || !/\d/.test(text)) return false;
+function looksLikeSubmission(raw) {
+  if (typeof raw !== 'string' || !/\d/.test(raw)) return false;
+  // As typed in the math field: "\(x^{2}\)" is x^2. With the delimiters and
+  // braces in the way the operator test below missed a whole derivative, and
+  // the re-check reached past it to an older, wrong answer.
+  const text = raw.replace(/\\[()[\]]/g, '').replace(/[{}]/g, '');
   if (/[=<>≤≥]/.test(text)) return true;
   if (/\d\s*[+\-*/^×÷]\s*[\d(a-z]|[a-z)]\s*[+\-*/^×÷]\s*\d/i.test(text)) return true;
   if (/^\s*\d+[.)]\s*\S/m.test(text)) return true;
