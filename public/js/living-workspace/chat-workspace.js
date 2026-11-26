@@ -114,7 +114,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261126a';
+  var ASSET_V = '?v=20261126b';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -122,7 +122,7 @@
     'core/sourceList.js', 'dom/sourceDock.js', 'dom/notebookPanel.js', 'dom/modelElement.js',
     'dom/gridRenderer.js', 'dom/overlayManager.js', 'dom/equationElement.js',
     'dom/tileElement.js', 'dom/tileMatElement.js', 'dom/numberLineElement.js', 'dom/graphElement.js',
-    'dom/noteElement.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
+    'dom/noteElement.js', 'dom/interactives.js', 'dom/imageElement.js', 'dom/studentMoveClient.js',
     'dom/interactionController.js', 'dom/shell.js', 'dom/legacyBoardAdapter.js',
     'dom/derivationView.js', 'dom/voiceBoardTranslate.js',
   ];

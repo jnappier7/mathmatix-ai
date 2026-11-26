@@ -427,43 +427,13 @@ function staticImageOnDisk(url) {
  * @param {string} concept - Math concept
  * @returns {{ url: string, title: string, source: string } | null}
  */
-// Pictures we draw ourselves (scripts/buildConceptSvgs.js — every position
-// computed, each file checked in tests/unit/boardWrongPicture.test.js). Each
-// answers only a query that is plainly asking for THAT reference picture: a
-// loose key is how "exterior angle of a triangle" once matched 'angle'. `not`
-// keeps a picture off a query about something more specific than it shows.
-const OUR_DRAWINGS = [
-  {
-    url: '/images/concepts/unit-circle.svg', title: 'The unit circle',
-    is: (q) => /\bunit circle\b/.test(q),
-  },
-  {
-    url: '/images/concepts/angle-types.svg', title: 'Types of angles',
-    is: (q) => /\b(types?|kinds?) of angles?\b|\bangle types?\b/.test(q)
-      || (/\bangles?\b/.test(q) && (q.match(/\b(acute|right|obtuse|straight)\b/g) || []).length >= 2),
-    not: (q) => /\btriang|\bpolygon|\bparallel|\btransversal/.test(q),
-  },
-  {
-    url: '/images/concepts/circle-parts.svg', title: 'Parts of a circle',
-    is: (q) => /\bparts? of (a |the )?circle\b|\bcircle parts?\b/.test(q)
-      || (/\bcircles?\b/.test(q) && (q.match(/\b(radius|diameter|chord|tangent|arc|circumference)\b/g) || []).length >= 2),
-    not: (q) => /\bunit circle\b|\bequation|\bformula|\btheorem|\binscribed|\bsector|\barea\b/.test(q),
-  },
-  {
-    url: '/images/concepts/coordinate-plane.svg', title: 'The coordinate plane',
-    is: (q) => /\b(coordinate|cartesian) (plane|grid|system)\b|\bquadrants?\b/.test(q),
-    not: (q) => /[=\d]|\b(lines?|slope|parabola|functions?|plot\w*|graphing|transformations?|reflections?|rotations?|translations?|dilations?|distance|midpoint|inequalit\w*|systems? of)\b/.test(q),
-  },
-];
-
 function getStaticConceptImage(concept) {
-  const lower = (concept || '').toLowerCase();
+  // Our own drawings first — utils/visualLibrary.js (strict matching, every
+  // picture computed and tested). The map below is the older, looser list.
+  const ours = require('./visualLibrary').find(concept);
+  if (ours) return ours;
 
-  for (const d of OUR_DRAWINGS) {
-    if (d.is(lower) && !(d.not && d.not(lower)) && staticImageOnDisk(d.url)) {
-      return { url: d.url, title: d.title, source: 'Mathmatix' };
-    }
-  }
+  const lower = (concept || '').toLowerCase();
 
   const staticImages = {
     'pythagorean': { url: '/images/concepts/pythagorean-theorem.png', title: 'Pythagorean Theorem', source: 'Mathmatix' },

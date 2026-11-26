@@ -840,6 +840,61 @@ html[data-theme="dark"] .lws-root {
    width, no height cap, and its own white ground in either theme. */
 .lws-image-card:has(.is-diagram) { width: 100%; max-width: 480px; }
 .lws-image-img.is-diagram { width: 100%; max-width: 460px; max-height: none; height: auto; margin: 0 auto; background: #fff; }
+/* Every picture opens full size on a click (imageElement.enlargeable). */
+.lws-image-img.is-enlargeable { cursor: zoom-in; }
+.lws-image-img[hidden], .lws-image-stage[hidden] { display: none; }
+.lws-image-img.is-enlargeable:focus-visible { outline: 3px solid var(--lws-accent, #6d28d9); outline-offset: 2px; }
+.lws-image-body:has(.lws-image-actions) { flex-direction: column; gap: 8px; }
+.lws-image-stage { width: 100%; max-width: 460px; }
+.lws-image-actions { display: flex; justify-content: center; }
+.lws-image-explore {
+  font: 600 14px/1 Inter, system-ui, sans-serif; padding: 9px 16px; border-radius: 999px;
+  border: 1.5px solid #6d28d9; background: #6d28d9; color: #fff; cursor: pointer; min-height: 38px;
+}
+.lws-image-explore[aria-pressed="true"] { background: #fff; color: #6d28d9; }
+.lws-image-explore:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 2px; }
+
+/* The lightbox: one overlay for the page, above the dock, the nav and modals. */
+.lws-lightbox {
+  position: fixed; inset: 0; z-index: 2147483000; display: flex; align-items: center; justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
+  background: rgba(10, 12, 20, 0.86); cursor: zoom-out;
+}
+.lws-lightbox-fig { margin: 0; max-width: min(96vw, 1100px); max-height: 92vh; max-height: 92dvh; display: flex; flex-direction: column; cursor: default; }
+.lws-lightbox-fig img { display: block; max-width: 100%; max-height: 84vh; max-height: 84dvh; width: auto; height: auto; object-fit: contain; background: #fff; border-radius: 10px; }
+/* An SVG has no size of its own to speak of: let it fill what the screen allows. */
+.lws-lightbox-fig img[src$=".svg"] { width: min(96vw, 1100px, 118vh); }
+.lws-lightbox-pan { max-width: 100%; max-height: 84vh; max-height: 84dvh; overflow: hidden; border-radius: 10px; background: #fff; }
+.lws-lightbox-fig img { cursor: zoom-in; }
+.lws-lightbox-fig.is-zoomed .lws-lightbox-pan { overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.lws-lightbox-fig.is-zoomed img, .lws-lightbox-fig.is-zoomed img[src$=".svg"] { max-width: none; max-height: none; width: 240%; cursor: zoom-out; }
+@media (min-width: 900px) { .lws-lightbox-fig.is-zoomed img, .lws-lightbox-fig.is-zoomed img[src$=".svg"] { width: 170%; } }
+.lws-lightbox-fig figcaption { color: #fff; text-align: center; padding: 10px 8px 0; font: 15px/1.4 Inter, system-ui, sans-serif; }
+.lws-lightbox-close {
+  position: fixed; top: max(10px, env(safe-area-inset-top)); right: 12px; width: 44px; height: 44px; border-radius: 50%;
+  border: 0; background: #fff; color: #111827; font: 700 26px/1 system-ui, sans-serif; cursor: pointer;
+}
+.lws-lightbox-close:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 2px; }
+
+/* The interactives (dom/interactives.js): each paints its own white ground. */
+.lws-ix { background: #fff; color: #1f2937; border-radius: 10px; padding: 10px 10px 12px; font-family: Inter, system-ui, sans-serif; }
+.lws-ix-title { font-weight: 700; font-size: 15px; text-align: center; padding-bottom: 6px; }
+.lws-ix-stage { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; border-radius: 8px; }
+.lws-ix-handle { cursor: grab; outline: none; }
+.lws-ix-handle:active { cursor: grabbing; }
+.lws-ix-handle:focus-visible circle:last-child { stroke: #111827; stroke-width: 3.5; }
+.lws-ix-readout { font-size: 15px; line-height: 1.45; font-weight: 600; text-align: center; padding: 8px 4px 2px; min-height: 2.9em; }
+.lws-ix-hint { font-size: 12.5px; color: #5b6475; text-align: center; padding-top: 2px; }
+.lws-ix-frac { padding: 4px 0 8px; }
+.lws-ix-frac .lws-ix-readout { min-height: 0; padding: 4px; }
+.lws-ix-bar { display: block; width: 100%; height: auto; }
+.lws-ix-ctl { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13.5px; color: #5b6475; }
+.lws-ix-ctl button {
+  width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid #6d28d9; background: #fff; color: #6d28d9;
+  font: 700 20px/1 system-ui, sans-serif; cursor: pointer;
+}
+.lws-ix-ctl button:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 2px; }
+.lws-ix-ctl span + button { margin-right: 10px; }
 .lws-image-fallback {
   display: flex; gap: 8px; align-items: center; padding: 6px;
   color: var(--lws-card-ink); font-size: 14px; opacity: 0.9;
@@ -1670,6 +1725,7 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
      they and a drawing of ours do (the unit circle is all small labels; in
      300px a student saw half of it at a time). */
   body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-image-img.is-diagram),
+  body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-ix),
   body.mm-board-up:not(.cr-voice) .cr-work-dock .lws-dv:has(.lws-tm) {
     max-height: min(58vh, 480px, calc(100vh - 404px));
     max-height: min(58dvh, 480px, calc(100dvh - 404px));

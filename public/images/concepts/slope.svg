@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 96 420 400" width="420" height="400" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Slope: from (1,1) to (4,3) the line rises 2 and runs 3, so its slope is 2/3">
+<rect x="60" y="96" width="420" height="400" fill="#ffffff"/>
+<line x1="110" y1="400" x2="110" y2="140" stroke="#e5e7eb"/>
+<line x1="162" y1="400" x2="162" y2="140" stroke="#e5e7eb"/>
+<line x1="214" y1="400" x2="214" y2="140" stroke="#e5e7eb"/>
+<line x1="266" y1="400" x2="266" y2="140" stroke="#e5e7eb"/>
+<line x1="318" y1="400" x2="318" y2="140" stroke="#e5e7eb"/>
+<line x1="370" y1="400" x2="370" y2="140" stroke="#e5e7eb"/>
+<line x1="422" y1="400" x2="422" y2="140" stroke="#e5e7eb"/>
+<line x1="110" y1="400" x2="422" y2="400" stroke="#e5e7eb"/>
+<line x1="110" y1="348" x2="422" y2="348" stroke="#e5e7eb"/>
+<line x1="110" y1="296" x2="422" y2="296" stroke="#e5e7eb"/>
+<line x1="110" y1="244" x2="422" y2="244" stroke="#e5e7eb"/>
+<line x1="110" y1="192" x2="422" y2="192" stroke="#e5e7eb"/>
+<line x1="110" y1="140" x2="422" y2="140" stroke="#e5e7eb"/>
+<line x1="110" y1="400" x2="434" y2="400" stroke="#1f2937" stroke-width="2.5"/>
+<line x1="110" y1="400" x2="110" y2="128" stroke="#1f2937" stroke-width="2.5"/>
+<text x="162" y="418" font-size="12.5" fill="#5b6475" text-anchor="middle">1</text>
+<text x="214" y="418" font-size="12.5" fill="#5b6475" text-anchor="middle">2</text>
+<text x="266" y="418" font-size="12.5" fill="#5b6475" text-anchor="middle">3</text>
+<text x="318" y="418" font-size="12.5" fill="#5b6475" text-anchor="middle">4</text>
+<text x="370" y="418" font-size="12.5" fill="#5b6475" text-anchor="middle">5</text>
+<text x="422" y="418" font-size="12.5" fill="#5b6475" text-anchor="middle">6</text>
+<text x="101" y="352" font-size="12.5" fill="#5b6475" text-anchor="end">1</text>
+<text x="101" y="300" font-size="12.5" fill="#5b6475" text-anchor="end">2</text>
+<text x="101" y="248" font-size="12.5" fill="#5b6475" text-anchor="end">3</text>
+<text x="101" y="196" font-size="12.5" fill="#5b6475" text-anchor="end">4</text>
+<text x="101" y="144" font-size="12.5" fill="#5b6475" text-anchor="end">5</text>
+<text x="430" y="434" font-size="15" font-style="italic" fill="#5b6475" text-anchor="middle">x</text>
+<text x="84" y="138" font-size="15" font-style="italic" fill="#5b6475" text-anchor="middle">y</text>
+<line data-line="1" x1="110" y1="382.7" x2="422" y2="174.7" stroke="#1f2937" stroke-width="3"/>
+<line data-leg="run" x1="162" y1="348" x2="318" y2="348" stroke="#0f766e" stroke-width="4" stroke-dasharray="7 5"/>
+<line data-leg="rise" x1="318" y1="348" x2="318" y2="244" stroke="#b45309" stroke-width="4" stroke-dasharray="7 5"/>
+<circle data-pt="1,1" cx="162" cy="348" r="6" fill="#6d28d9"/>
+<circle data-pt="4,3" cx="318" cy="244" r="6" fill="#6d28d9"/>
+<text x="154" y="336" font-size="14.5" font-weight="700" fill="#6d28d9" text-anchor="end">(1, 1)</text>
+<text x="310" y="232" font-size="14.5" font-weight="700" fill="#6d28d9" text-anchor="end">(4, 3)</text>
+<text x="240" y="370" font-size="16" font-weight="700" fill="#0f766e" text-anchor="middle" data-run="3">run = 3</text>
+<text x="328" y="301" font-size="16" font-weight="700" fill="#b45309" text-anchor="start" data-rise="2">rise = 2</text>
+<text x="270" y="476" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">slope = rise ÷ run = 2/3</text>
+</svg>

@@ -115,6 +115,16 @@ router.get('/search', imageSearchLimiter, async (req, res) => {
 });
 
 /**
+ * GET /api/images/library
+ *
+ * Every picture and interactive Mathmatix draws itself (utils/visualLibrary.js),
+ * for the browsable page. No external call.
+ */
+router.get('/library', (req, res) => {
+  res.json({ items: require('../utils/visualLibrary').list() });
+});
+
+/**
  * GET /api/images/concept/:concept
  *
  * Get a static concept image (no external API call).

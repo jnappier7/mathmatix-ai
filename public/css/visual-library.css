@@ -1,0 +1,24 @@
+/* /visual-library — the browsable page of utils/visualLibrary.js. Light page,
+   its own colours (it does not follow the chat theme). */
+.vl-page { margin: 0; background: #f6f5fb; color: #1f2937; font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; }
+.vl-head { max-width: 1120px; margin: 0 auto; padding: 22px 16px 6px; }
+.vl-home { color: #6d28d9; font-weight: 600; text-decoration: none; font-size: 14px; }
+.vl-home:hover { text-decoration: underline; }
+.vl-head h1 { margin: 10px 0 6px; font-size: 30px; line-height: 1.15; }
+.vl-sub { margin: 0 0 14px; color: #4b5563; font-size: 15.5px; line-height: 1.5; max-width: 60ch; }
+.vl-search { display: block; max-width: 420px; }
+.vl-search span { display: block; font-size: 13px; font-weight: 600; color: #4b5563; padding-bottom: 4px; }
+.vl-search input { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; padding: 11px 14px; border-radius: 10px; border: 1.5px solid #c7c3dd; background: #fff; color: inherit; }
+.vl-search input:focus-visible { outline: 3px solid #c4b5fd; border-color: #6d28d9; }
+.vl-main { max-width: 1120px; margin: 0 auto; padding: 8px 16px 48px; }
+.vl-note { color: #4b5563; padding: 24px 0; }
+.vl-topic { margin: 26px 0 10px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #6d28d9; }
+.vl-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); align-items: start; }
+.vl-card { background: #fff; border: 1px solid #e3e0f0; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.vl-card h3 { margin: 2px 2px 0; font-size: 17px; }
+.vl-card p { margin: 0 2px; color: #4b5563; font-size: 14px; line-height: 1.45; }
+.vl-pic { display: block; width: 100%; height: auto; border-radius: 8px; background: #fff; border: 1px solid #eeecf6; cursor: zoom-in; }
+.vl-pic:focus-visible { outline: 3px solid #6d28d9; outline-offset: 2px; }
+.vl-card .lws-image-actions { justify-content: flex-start; padding: 2px; }
+.vl-tag { align-self: flex-start; font-size: 12px; font-weight: 700; color: #0f766e; background: #ccfbf1; border-radius: 999px; padding: 3px 9px; }
+.vl-pic[hidden], .vl-card [hidden] { display: none; }

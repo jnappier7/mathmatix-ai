@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 708 412" width="708" height="412" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="Area formulas: rectangle length times width, triangle half base times height, parallelogram base times height, trapezoid half the sum of the bases times height, circle pi r squared">
+<rect x="0" y="0" width="708" height="412" fill="#ffffff"/>
+<g data-shape="Rectangle" transform="translate(0 0)">
+<text x="118" y="28" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Rectangle</text>
+<polygon points="48,60 188,60 188,140 48,140" fill="#f5f3ff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+<text x="118" y="158" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="middle">l</text>
+<text x="38" y="105" font-size="15" font-weight="700" font-style="italic" fill="#b45309" text-anchor="end">w</text>
+<text x="118" y="190" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle" data-formula="1">A = l × w</text>
+</g>
+<g data-shape="Triangle" transform="translate(236 0)">
+<text x="118" y="28" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Triangle</text>
+<polygon points="40,145 196,145 140,55" fill="#f5f3ff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+<line x1="140" y1="55" x2="140" y2="145" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="M 140 135 L 150 135 L 150 145" fill="none" stroke="#6d28d9" stroke-width="2"/>
+<text x="118" y="163" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="middle">b</text>
+<text x="132" y="108" font-size="15" font-weight="700" font-style="italic" fill="#b45309" text-anchor="end">h</text>
+<text x="118" y="190" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle" data-formula="1">A = ½ × b × h</text>
+</g>
+<g data-shape="Parallelogram" transform="translate(472 0)">
+<text x="118" y="28" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Parallelogram</text>
+<polygon points="36,142 166,142 200,62 70,62" fill="#f5f3ff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+<line x1="70" y1="62" x2="70" y2="142" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="M 70 132 L 80 132 L 80 142" fill="none" stroke="#6d28d9" stroke-width="2"/>
+<text x="101" y="160" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="middle">b</text>
+<text x="80" y="108" font-size="15" font-weight="700" font-style="italic" fill="#b45309" text-anchor="start">h</text>
+<text x="118" y="190" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle" data-formula="1">A = b × h</text>
+</g>
+<g data-shape="Trapezoid" transform="translate(0 206)">
+<text x="118" y="28" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Trapezoid</text>
+<polygon points="34,142 202,142 162,62 82,62" fill="#f5f3ff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+<line x1="82" y1="62" x2="82" y2="142" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="M 82 132 L 92 132 L 92 142" fill="none" stroke="#6d28d9" stroke-width="2"/>
+<text x="122" y="54" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="middle">b₁</text>
+<text x="118" y="160" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="middle">b₂</text>
+<text x="92" y="108" font-size="15" font-weight="700" font-style="italic" fill="#b45309" text-anchor="start">h</text>
+<text x="118" y="190" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle" data-formula="1">A = ½ × (b₁ + b₂) × h</text>
+</g>
+<g data-shape="Circle" transform="translate(236 206)">
+<text x="118" y="28" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Circle</text>
+<circle cx="118" cy="102" r="48" fill="#f5f3ff" stroke="#1f2937" stroke-width="2.5"/>
+<line x1="118" y1="102" x2="166" y2="102" stroke="#b45309" stroke-width="2.5"/>
+<circle cx="118" cy="102" r="3.5" fill="#1f2937"/>
+<text x="142" y="96" font-size="15" font-weight="700" font-style="italic" fill="#b45309" text-anchor="middle">r</text>
+<text x="118" y="190" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle" data-formula="1">A = π × r²</text>
+</g>
+<g data-shape="Square" transform="translate(472 206)">
+<text x="118" y="28" font-size="18" font-weight="700" fill="#1f2937" text-anchor="middle">Square</text>
+<polygon points="73,57 163,57 163,147 73,147" fill="#f5f3ff" stroke="#1f2937" stroke-width="2.5" stroke-linejoin="round"/>
+<text x="118" y="165" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="middle">s</text>
+<text x="63" y="107" font-size="15" font-weight="700" font-style="italic" fill="#0f766e" text-anchor="end">s</text>
+<text x="118" y="190" font-size="19" font-weight="700" fill="#6d28d9" text-anchor="middle" data-formula="1">A = s × s</text>
+</g>
+<line x1="236" y1="12" x2="236" y2="400" stroke="#e5e7eb"/>
+<line x1="472" y1="12" x2="472" y2="400" stroke="#e5e7eb"/>
+<line x1="12" y1="206" x2="696" y2="206" stroke="#e5e7eb"/>
+</svg>

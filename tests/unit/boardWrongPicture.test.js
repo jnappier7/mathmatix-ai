@@ -80,7 +80,7 @@ describe('the other drawings of ours', () => {
     expect(url('parts of a circle labeled')).toBe('/images/concepts/circle-parts.svg');
     expect(url('circle radius diameter chord')).toBe('/images/concepts/circle-parts.svg');
     expect(url('coordinate plane quadrants labeled')).toBe('/images/concepts/coordinate-plane.svg');
-    for (const q of ['exterior angle of a triangle', 'right triangle angles', 'angles formed by parallel lines and a transversal',
+    for (const q of ['exterior angle of a triangle', 'right triangle angles',
       'area of a circle', 'circle equation', 'inscribed angle circle chord arc', 'angle', 'circle', 'triangle',
       'graph of line y=2x on coordinate plane', 'coordinate plane reflection', 'plotting points coordinate plane', 'slope on the coordinate plane']) {
       expect(url(q)).toBeNull();

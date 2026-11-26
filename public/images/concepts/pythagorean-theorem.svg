@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="130 8 400 470" width="400" height="470" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="The Pythagorean theorem: on a 3-4-5 right triangle the squares on the legs, 9 and 16, add up to the square on the hypotenuse, 25">
+<rect x="130" y="8" width="400" height="470" fill="#ffffff"/>
+<polygon data-square="a" data-unit="34" points="262,262 262,160 160,160 160,262" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+<text x="211" y="209" font-size="18" font-weight="700" fill="#b45309" text-anchor="middle">a² = 9</text>
+<text x="211" y="228" font-size="13" fill="#b45309" text-anchor="middle">3 × 3</text>
+<polygon data-square="b" data-unit="34" points="398,262 262,262 262,398 398,398" fill="#ccfbf1" stroke="#0f766e" stroke-width="2"/>
+<text x="330" y="328" font-size="18" font-weight="700" fill="#0f766e" text-anchor="middle">b² = 16</text>
+<text x="330" y="347" font-size="13" fill="#0f766e" text-anchor="middle">4 × 4</text>
+<polygon data-square="c" data-unit="34" points="262,160 398,262 500,126 364,24" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/>
+<text x="381" y="141" font-size="18" font-weight="700" fill="#6d28d9" text-anchor="middle">c² = 25</text>
+<text x="381" y="160" font-size="13" fill="#6d28d9" text-anchor="middle">5 × 5</text>
+<polygon data-triangle="1" points="262,262 398,262 262,160" fill="#ffffff" stroke="#1f2937" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 276 262 L 276 248 L 262 248" fill="none" stroke="#6d28d9" stroke-width="2"/>
+<text x="271" y="223" font-size="15" font-weight="700" font-style="italic" fill="#1f2937" text-anchor="start">a</text>
+<text x="324" y="254" font-size="15" font-weight="700" font-style="italic" fill="#1f2937" text-anchor="middle">b</text>
+<text x="320" y="229" font-size="15" font-weight="700" font-style="italic" fill="#1f2937" text-anchor="middle">c</text>
+<text x="330" y="438" font-size="21" font-weight="700" fill="#1f2937" text-anchor="middle">a² + b² = c²</text>
+<text x="330" y="462" font-size="17" fill="#5b6475" text-anchor="middle">9 + 16 = 25</text>
+</svg>

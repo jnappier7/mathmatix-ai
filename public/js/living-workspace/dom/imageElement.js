@@ -73,6 +73,54 @@
       .catch(function () { return null; });
   }
 
+  // ── click to enlarge ────────────────────────────────────────────────────
+  // One overlay for the page: the picture at full size on its own white
+  // ground, closed by the button, a click outside, or Escape. Focus goes to
+  // the close button and comes back to the picture afterwards.
+  function openLightbox(doc, info) {
+    const old = doc.getElementById('lws-lightbox'); if (old) old.remove();
+    const back = doc.activeElement;
+    const overlay = doc.createElement('div');
+    overlay.id = 'lws-lightbox'; overlay.className = 'lws-lightbox';
+    overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', info.alt || 'Picture');
+    const fig = doc.createElement('figure'); fig.className = 'lws-lightbox-fig';
+    const img = doc.createElement('img'); img.src = info.src; img.alt = info.alt || '';
+    const close = doc.createElement('button'); close.type = 'button'; close.className = 'lws-lightbox-close';
+    close.setAttribute('aria-label', 'Close'); close.textContent = '×';
+    // A wide picture on a tall phone is small even at full width: a tap on it
+    // zooms in (the frame scrolls), a second tap fits it again.
+    const pan = doc.createElement('div'); pan.className = 'lws-lightbox-pan';
+    pan.appendChild(img); fig.appendChild(pan);
+    img.title = 'Click to zoom';
+    img.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      const zoomed = fig.classList.toggle('is-zoomed');
+      if (zoomed) { pan.scrollLeft = (pan.scrollWidth - pan.clientWidth) / 2; pan.scrollTop = (pan.scrollHeight - pan.clientHeight) / 2; }
+    });
+    if (info.caption) { const cap = doc.createElement('figcaption'); cap.textContent = info.caption; fig.appendChild(cap); }
+    overlay.appendChild(fig); overlay.appendChild(close);
+    function shut() {
+      overlay.remove(); doc.removeEventListener('keydown', onKey, true);
+      if (back && typeof back.focus === 'function') { try { back.focus(); } catch (_) { /* gone */ } }
+    }
+    function onKey(ev) { if (ev.key === 'Escape') { ev.stopPropagation(); shut(); } }
+    overlay.addEventListener('click', function (ev) { if (ev.target === overlay || ev.target === close) shut(); });
+    doc.addEventListener('keydown', onKey, true);
+    doc.body.appendChild(overlay);
+    try { close.focus(); } catch (_) { /* not focusable yet */ }
+    return { close: shut, node: overlay };
+  }
+  // Make an <img> open the lightbox on click, Enter or Space.
+  function enlargeable(img, info) {
+    img.classList.add('is-enlargeable');
+    img.setAttribute('tabindex', '0'); img.setAttribute('role', 'button');
+    img.title = 'Click to enlarge';
+    const go = function () { openLightbox(img.ownerDocument, typeof info === 'function' ? info() : info); };
+    img.addEventListener('click', go);
+    img.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } });
+  }
+
   function makeRenderer(hooks) {
     const search = (hooks && typeof hooks.search === 'function') ? hooks.search : defaultSearch;
     const doc = typeof document !== 'undefined' ? document : null;
@@ -123,6 +171,9 @@
         body.appendChild(wrap);
       }
 
+      // The picture, and — for a library item that has one — the interactive
+      // behind an "Explore it" button. The picture is always what shows first:
+      // it needs nothing but an <img>.
       function showImage(result) {
         body.textContent = '';
         const img = doc.createElement('img');
@@ -137,7 +188,30 @@
           } else { fallback('Couldn’t load that picture.'); }
         };
         img.src = srcFor(result.thumbnail || result.url);
+        // Every picture opens full size (owner 2026-11-26: "all should be click
+        // to enlarge") — the full image, not the thumbnail the card shows.
+        enlargeable(img, function () { return { src: srcFor(result.url || result.thumbnail), alt: img.alt, caption: sem().caption || result.title || '' }; });
         body.appendChild(img);
+
+        const IX = (typeof self !== 'undefined' && self.LWS && self.LWS.Interactives) || null;
+        if (!result.widget || !IX || !IX.has(result.widget)) return;
+        const bar = doc.createElement('div'); bar.className = 'lws-image-actions';
+        const stage = doc.createElement('div'); stage.className = 'lws-image-stage'; stage.hidden = true;
+        const btn = doc.createElement('button'); btn.type = 'button'; btn.className = 'lws-image-explore';
+        let open = false;
+        function paint() {
+          btn.textContent = open ? 'Back to the picture' : 'Explore it';
+          btn.setAttribute('aria-pressed', open ? 'true' : 'false');
+          img.hidden = open; stage.hidden = !open;
+        }
+        btn.addEventListener('click', function () {
+          open = !open;
+          if (open && !stage.firstChild) IX.mount(result.widget, stage);
+          paint();
+        });
+        paint();
+        bar.appendChild(btn);
+        body.appendChild(stage); body.appendChild(bar);
       }
 
       function render() {
@@ -166,5 +240,5 @@
     };
   }
 
-  return { makeRenderer, srcFor, pickResult };
+  return { makeRenderer, srcFor, pickResult, openLightbox, enlargeable };
 });
