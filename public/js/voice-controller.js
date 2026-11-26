@@ -1007,10 +1007,12 @@ class VoiceController {
                 const recordedType = this.mediaRecorder.mimeType || 'audio/webm';
                 const audioBlob = new Blob(audioChunks, { type: recordedType });
                 console.log('📦 [Voice] Audio blob size:', audioBlob.size, 'bytes, type:', recordedType);
-                await this.sendAudioToBackend(audioBlob);
-
-                // Stop all tracks
+                // Release the mic BEFORE the reply plays. While a phone is
+                // still capturing, iOS keeps the audio session in "call" mode
+                // and plays everything through the earpiece at whisper volume
+                // — the tutor answers and the student hears nothing.
                 stream.getTracks().forEach(track => track.stop());
+                await this.sendAudioToBackend(audioBlob);
             };
 
             // Setup Voice Activity Detection
@@ -1267,47 +1269,99 @@ class VoiceController {
         this.updateUI('speaking');
         this.isAISpeaking = true;
 
-        try {
-            // Stop any currently playing audio (interruption)
-            if (this.currentAudio) {
-                console.log('🛑 [Voice] Interrupting current audio');
-                this.currentAudio.pause();
-                this.currentAudio.currentTime = 0;
-            }
+        // Stop any currently playing audio (interruption)
+        if (this.currentAudio) {
+            console.log('🛑 [Voice] Interrupting current audio');
+            try { this.currentAudio.pause(); } catch (_) { /* already stopped */ }
+            this.currentAudio = null;
+        }
 
-            const audio = new Audio(audioUrl);
-            // iOS requires playsInline so audio plays without fullscreen UI
-            audio.playsInline = true;
-            audio.setAttribute('playsinline', '');
-            audio.preload = 'auto';
-            this.currentAudio = audio;
-
-            audio.onended = () => {
-                console.log('✅ [Voice] Audio playback ended');
-                this.isAISpeaking = false;
-                this.currentAudio = null;
-                this.updateUI('idle');
-
-                // Auto-restart listening in hands-free mode
-                this._resumeListeningIfHandsFree();
-            };
-
-            audio.onerror = () => {
-                console.error('[Voice] Audio playback error');
-                this.isAISpeaking = false;
-                this.currentAudio = null;
-                this.updateUI('error');
-            };
-
-            await audio.play();
-            console.log('🔊 [Voice] Playing AI response');
-
-        } catch (error) {
-            console.error('[Voice] Failed to play audio:', error);
+        const onEnded = () => {
+            console.log('✅ [Voice] Audio playback ended');
+            this.isAISpeaking = false;
+            this.currentAudio = null;
+            this.updateUI('idle');
+            // Auto-restart listening in hands-free mode
+            this._resumeListeningIfHandsFree();
+        };
+        const onError = (error) => {
+            console.error('[Voice] Audio playback error', error || '');
             this.isAISpeaking = false;
             this.currentAudio = null;
             this.updateUI('error');
+            // The reply is on screen even if it could not be spoken; keep the
+            // call going rather than stranding the student on an error.
+            this._resumeListeningIfHandsFree(3200);
+        };
+
+        try {
+            // Through the AudioContext first. The reply arrives seconds after
+            // the tap that opened the mic, and a phone refuses to start an
+            // <audio> element that long after a gesture — the context was
+            // unlocked BY that tap and stays unlocked.
+            let handle = null;
+            try { handle = await this._playThroughContext(audioUrl, onEnded); }
+            catch (err) { console.warn('[Voice] context playback unavailable, using <audio>:', err && err.message); }
+            if (!handle) handle = await this._playThroughElement(audioUrl, onEnded, onError);
+            // An interruption (orb tap) may have landed while the audio loaded.
+            if (!this.isAISpeaking) { try { handle.pause(); } catch (_) { /* nothing playing */ } return; }
+            this.currentAudio = handle;
+            console.log('🔊 [Voice] Playing AI response');
+        } catch (error) {
+            onError(error);
         }
+    }
+
+    /**
+     * Play a reply through the already-unlocked AudioContext. Resolves with a
+     * handle shaped like the part of HTMLAudioElement that stopSpeaking uses
+     * (pause(), currentTime). Rejects if the context cannot be made to run.
+     */
+    async _playThroughContext(audioUrl, onEnded) {
+        const ctx = this.audioContext;
+        if (!ctx || typeof ctx.decodeAudioData !== 'function') throw new Error('no audio context');
+        if (ctx.state !== 'running') {
+            // Releasing the mic can leave an iOS context "interrupted".
+            await Promise.race([
+                Promise.resolve(ctx.resume()).catch(() => {}),
+                new Promise(resolve => setTimeout(resolve, 800)),
+            ]);
+            if (ctx.state !== 'running') throw new Error('audio context is ' + ctx.state);
+        }
+        const res = await fetch(audioUrl, { credentials: 'include' });
+        if (!res.ok) throw new Error('audio fetch ' + res.status);
+        const bytes = await res.arrayBuffer();
+        // Callback form: older Safari has no promise-returning decodeAudioData.
+        const buffer = await new Promise((resolve, reject) => {
+            const p = ctx.decodeAudioData(bytes, resolve, reject);
+            if (p && typeof p.then === 'function') p.then(resolve, reject);
+        });
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        let stopped = false;
+        source.onended = () => { if (!stopped) onEnded(); };
+        source.start();
+        return {
+            currentTime: 0,
+            pause() {
+                stopped = true;
+                try { source.stop(); } catch (_) { /* already ended */ }
+                try { source.disconnect(); } catch (_) { /* already detached */ }
+            },
+        };
+    }
+
+    async _playThroughElement(audioUrl, onEnded, onError) {
+        const audio = new Audio(audioUrl);
+        // iOS requires playsInline so audio plays without fullscreen UI
+        audio.playsInline = true;
+        audio.setAttribute('playsinline', '');
+        audio.preload = 'auto';
+        audio.onended = onEnded;
+        audio.onerror = () => onError(new Error('audio element error'));
+        await audio.play();
+        return audio;
     }
 
     /**
@@ -1457,9 +1511,15 @@ class VoiceController {
 
         if (this.currentAudio) {
             console.log('🛑 [Voice] Stopping AI speech (interrupted by user)');
-            this.currentAudio.pause();
-            this.currentAudio.currentTime = 0;
+            try {
+                this.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+            } catch (_) { /* already stopped */ }
             this.currentAudio = null;
+        }
+        // Also when the reply is still loading (no handle yet): clearing the
+        // flag is what tells playAIResponse not to start it.
+        if (this.isAISpeaking) {
             this.isAISpeaking = false;
             this.updateUI('idle');
         }

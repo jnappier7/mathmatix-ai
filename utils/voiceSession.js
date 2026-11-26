@@ -60,6 +60,12 @@ const METER_WARN_SECONDS = 120;
 // (immersive page) AND one board-actions session (chat orb) open at the
 // same time without colliding. Two of the same mode → newer one wins.
 const activeSessions = new Map();
+
+// Is this STT session open or still opening? (Falls back to isOpen for a
+// session object without isUsable.)
+function sttUsable(stt) {
+    return typeof stt.isUsable === 'function' ? stt.isUsable() : stt.isOpen();
+}
 // WebSocket close code for "another session for this user+mode took over".
 const CLOSE_SUPERSEDED = 4409;
 
@@ -270,10 +276,22 @@ class VoiceSession {
         this._bindClient();
     }
 
-    async init() {
-        // Multi-tab collision handling: if this user already has a session
-        // running in the SAME mode, shut it down. Different modes (e.g.
-        // chat orb + immersive page in two tabs) can coexist.
+    /**
+     * Take the floor: this session becomes THE voice session for this
+     * user+mode, and any other one is closed (different modes can coexist).
+     *
+     * Called when the student actually USES this connection — the first mic
+     * frame or typed turn — never on connect. Every chat page opens a socket
+     * when it loads, so superseding on connect meant an idle tab on one
+     * device took voice away from the device the student was talking into,
+     * and two open pages kicked each other off in a loop (prod, 2026-11-26:
+     * a Mac tab and a phone, ~25 sessions in a minute, each opening a
+     * Deepgram stream). An idle connection now costs nothing and displaces
+     * no one.
+     */
+    _activate() {
+        if (this._active || this.closed) return;
+        this._active = true;
         const registryKey = `${this.userId}:${this.mode}`;
         const existing = activeSessions.get(registryKey);
         if (existing && existing !== this && !existing.closed) {
@@ -283,6 +301,9 @@ class VoiceSession {
             try { existing.shutdown('superseded_by_new_session'); } catch (_) {}
         }
         activeSessions.set(registryKey, this);
+    }
+
+    async init() {
 
         // Does the AI-minute pool apply to this student? Resolved once per
         // session (it involves a school-license / linked-parent lookup) and then
@@ -322,7 +343,12 @@ class VoiceSession {
         }
 
         this._send({ type: 'session_ready', sampleRate: 22050, voiceId: this.voiceId });
-        this._openStt();
+        // No speech-to-text yet: it opens with the first mic frame (see
+        // _bindClient). Opening it here held a Deepgram stream for every chat
+        // page load, voice used or not.
+        if (!sttStream.isConfigured()) {
+            this._send({ type: 'fatal', message: 'Speech recognition not configured' });
+        }
     }
 
     // ─── WebSocket binding ───────────────────────────────────────────────
@@ -331,11 +357,13 @@ class VoiceSession {
         this.ws.on('message', (raw, isBinary) => {
             if (this.closed) return;
             if (isBinary) {
-                // Binary frames are PCM s16 16kHz mono mic audio.
-                // Lazy-reopen STT if we closed it for idle.
-                if (!this.stt || !this.stt.isOpen()) {
-                    this._openStt();
-                }
+                // Binary frames are PCM s16 16kHz mono mic audio: the student
+                // is using THIS connection.
+                this._activate();
+                // Open STT on first use, and reopen it after an idle close.
+                // _openStt leaves a session that is still connecting alone;
+                // the frame is held there and sent when it opens.
+                this._openStt();
                 if (this.stt) this.stt.sendFrame(raw);
                 return;
             }
@@ -363,6 +391,7 @@ class VoiceSession {
                 break;
             case 'text_input':
                 if (typeof msg.text === 'string' && msg.text.trim()) {
+                    this._activate();
                     this._startTurn(msg.text.trim(), { source: 'text' });
                 }
                 break;
@@ -392,7 +421,9 @@ class VoiceSession {
             this._send({ type: 'fatal', message: 'Speech recognition not configured' });
             return;
         }
-        if (this.stt && this.stt.isOpen()) return; // already open
+        // Already open, or still opening. Asking only "is it open?" here
+        // replaced a connecting session on every 20 ms mic frame.
+        if (this.stt && sttUsable(this.stt)) return;
         // Flush the prior (idle-closed) STT session's billed seconds before we
         // replace it — createSession() starts a fresh billedSeconds=0 closure,
         // so reading it only at shutdown would lose pre-reopen usage.

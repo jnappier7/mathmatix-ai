@@ -320,7 +320,15 @@ repetition), `masteryEngine.js` (4-pillar score + tiers), `irt.js`/`adaptiveScre
 ### Voice (WebSocket, attached in `server.js`)
 `sttStream.js` (Deepgram) → LLM → `ttsStream.js`/`ttsProvider.js` (Cartesia). `voiceSession.js`
 orchestrates one socket; modes: `math-steps`, `board-actions`, `orchestrated`. Idle Deepgram sessions
-close after 30s (cost) and lazily reopen.
+close after 30s (cost) and lazily reopen. **A voice socket does nothing until it is USED** (2026-11-26):
+every chat page opens one on load, so Deepgram opens with the first mic frame, and a session
+supersedes the user's other one only then (`_activate`) — never on connect, or an idle tab on one
+device takes voice from the device being talked into. Before replacing an STT session ask
+`isUsable()` (open OR still opening), not `isOpen()`: replacing a connecting session per 20 ms frame
+opened 150 Deepgram connections in 3 s and got every session a 429 → fallback. Pinned by
+`tests/unit/voiceSessionIdleAndStt.test.js`. The fallback (record → `/api/voice/process`) ends a
+turn with `VoiceEndpointer` in `voice-controller.js` (`tests/unit/voiceEndpointer.test.js`) and plays
+the reply through the AudioContext the opening tap unlocked, mic released first (phones).
 
 ### OCR
 `utils/ocr.js` (image) + `utils/pdfOcr.js` (PDF, poll w/ backoff). Uploads flow into `routes/chat.js`
