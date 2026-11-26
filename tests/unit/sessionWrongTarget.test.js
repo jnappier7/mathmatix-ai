@@ -248,3 +248,66 @@ describe('the board problem as it was posed', () => {
     expect(statesPinnedMath('what two numbers multiply to \\(-6\\)?', 'x^2-5x-14=0')).toBe(false);
   });
 });
+
+// ── Retest, 2026-11-26 ──────────────────────────────────────────────────────
+describe('retest of 2026-11-26', () => {
+  const { stripTemplateTokens } = require('../../utils/pipeline/templateTokens');
+  const { restatedSubmission } = require('../../utils/pipeline/recheck');
+
+  test('a leaked chat-template token is never content', () => {
+    expect(stripTemplateTokens('inside the parentheses? <|im_end|>')).toBe('inside the parentheses?');
+    expect(stripTemplateTokens('one<|im_end|>\n<|im_start|>assistant\ntwo')).toBe('one\ntwo');
+    expect(stripTemplateTokens('solve |x| < 3')).toBe('solve |x| < 3');
+    expect(stripTemplateTokens(null)).toBeNull();
+  });
+
+  test('a key stitched across two mentions of the same factors is no key', () => {
+    const text = 'I can see the move you made: \\((x-7)(x+2)\\) expands to \\(x^2-5x-14\\), so it actually matches the original quadratic. In \\((x-7)(x+2)=0\\), what value makes the first factor zero?';
+    expect(solverStampFor(text)).toBeNull();
+    // Operands in separate spans are still one problem.
+    expect(solverStampFor('When you add \\(141\\) and \\(94\\), what do you get?').info.correctAnswer).toBe('235');
+  });
+
+  test('a key from before the last confirmed solve is closed', async () => {
+    const tutor = [
+      { content: 'Try this one: Solve \\(3x - 7 = 11\\).', problemInfo: { type: 'general_linear', correctAnswer: '6' } },
+      { content: 'That’s correct. Nicely done.', problemResult: 'correct' },
+    ];
+    const posing = obs('ok new one: Sara has 24 stickers and gives 1/3 of them to her brother. how many does she have left?', tutor);
+    const d = await diagnose(posing, { recentAssistantMessages: tutor, recentUserMessages: [] });
+    expect(d.isCorrect).not.toBe(false);
+  });
+
+  test('work for "mine" is graded against the student\'s own problem when the board holds the parallel', async () => {
+    const tutor = [
+      { content: 'Let’s use a similar quadratic first: \\(x^2-3x-10=0\\). What two numbers multiply to \\(-10\\) and add to \\(-3\\)?' },
+      { content: 'Yes, \\(-5\\) and \\(2\\). In the original quadratic, what pair multiplies to \\(-14\\) and adds to \\(-5\\)?' },
+    ];
+    const ctx = {
+      recentAssistantMessages: tutor,
+      recentUserMessages: [{ content: 'next one: solve \\(x^{2}\\) - 5x - 14 = 0' }, { content: '-5 and 2' }],
+      pinnedProblemTex: 'x^2-3x-10=0',
+    };
+    const right = await diagnose(obs('oh so mine is (x-7)(x+2)=0, x = 7 or x = -2', tutor), ctx);
+    expect(right.isCorrect).toBe(true);
+    // Work that fits no problem in the conversation stays wrong.
+    const wrong = await diagnose(obs('oh so mine is (x+7)(x-2)=0, x = -7 or x = 2', tutor), ctx);
+    expect(wrong.isCorrect).toBe(false);
+  });
+
+  test('a verdict request that restates its answer is read as problem, then answer', () => {
+    expect(restatedSubmission('wait, back to my quadratic \\(x^{2}\\) - 5x - 14 = 0. i said x = 7 or x = -2. is my answer right or not?'))
+      .toBe('wait, back to my quadratic x^2 - 5x - 14 = 0\nx = 7 or x = -2');
+    expect(restatedSubmission('x = 5. is my answer right?')).toBe('x = 5');
+    // A description of earlier work is a re-check, not a restatement.
+    expect(restatedSubmission('first term i differentiated x^2, second term i differentiated sin. is my answer right or not?')).toBeNull();
+    expect(restatedSubmission('is my answer right?')).toBeNull();
+  });
+
+  test('a give-up from before the last solve no longer counts as being stuck', () => {
+    const since = observe('ok here is a new one', { recentUserMessages: [{ content: 'i give up, just tell me the answer' }], streakUserMessages: [], recentAssistantMessages: [] });
+    expect(since.streaks.giveUpCount).toBe(0);
+    const still = observe('ok here is a new one', { recentUserMessages: [{ content: 'i give up, just tell me the answer' }], recentAssistantMessages: [] });
+    expect(still.streaks.giveUpCount).toBe(1);
+  });
+});

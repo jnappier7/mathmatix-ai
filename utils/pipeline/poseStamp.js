@@ -35,6 +35,9 @@ function mathSpans(text) {
 const flat = (s) => String(s == null ? '' : s).replace(/\s+/g, '');
 const NUMBER = /^-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?$/;
 const BARE_VARIABLE = /^[a-z]$/i;
+// Solves that multiply or combine whatever expressions they find, and so can
+// be assembled from two mentions that were never one problem.
+const STITCHABLE_TYPES = new Set(['expand_polynomial', 'evaluation']);
 
 // "x = 17": a solution being stated, not an equation being posed. The solver
 // reads it as the linear equation it technically is and keys the turn to 17.
@@ -97,7 +100,16 @@ function asksForKey(text, parsed) {
   if (isStatedSolution(parsed)) return false;
   const spans = mathSpans(text);
   const src = sourceSpans(spans, parsed);
-  if (src.length === 0) return true;
+  if (src.length === 0) {
+    // No single span solves to the key. Usually that is fine — operands in
+    // separate spans ("add \\(141\\) and \\(94\\)"), a system's two equations,
+    // "the absolute value of \\(3 - 10\\)". But an expansion or evaluation
+    // assembled from several spans is a stitch: "\\((x-7)(x+2)\\) expands to
+    // … In \\((x-7)(x+2)=0\\), what value…" was keyed as the two mentions
+    // multiplied together (a quartic), and the student's next message was
+    // graded against it (live, 2026-11-26).
+    return spans.length < 2 || !STITCHABLE_TYPES.has(parsed.problem.type);
+  }
   if (parsed.problem.type === 'evaluation') {
     const own = flat(spans[src[0]].body);
     if (spans.some((s, i) => !src.includes(i) && flat(s.body) !== own)) return false;

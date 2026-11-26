@@ -11,6 +11,7 @@
  */
 
 const { detectAnswerKeyResponse, detectWorkedSolution, detectAnswerAnnouncement } = require('../worksheetGuard');
+const { stripTemplateTokens } = require('./templateTokens');
 const { checkReadingLevel, buildSimplificationPrompt } = require('../readability');
 const { enforceVisualTeaching } = require('../visualCommandEnforcer');
 const { parseVisualTeaching } = require('../visualTeachingParser');
@@ -402,7 +403,8 @@ function extractSystemTags(responseText) {
     boardPoint: null,
   };
 
-  let text = responseText;
+  // A leaked chat-template token ("<|im_end|>") is never content.
+  let text = stripTemplateTokens(responseText);
 
   // Core behavior XP
   const cbMatch = text.match(/<CORE_BEHAVIOR_XP:(\d+),([^>]+)>/);
