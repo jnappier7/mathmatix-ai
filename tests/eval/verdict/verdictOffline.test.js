@@ -26,6 +26,15 @@ const { runAll, summarize } = require('./runner');
 // Wrong verdicts the deterministic tier gives today — each a real bug, found by
 // this eval on 2026-11-03. Key: `${problemId}|${answer}`.
 const KNOWN = new Set([
+  // No board pin, and the chain opens on the student's own (wrong) factoring.
+  // With nothing to anchor it, verifyDerivation can only check the chain
+  // against itself — and it IS self-consistent, so it is affirmed. Before
+  // 2026-11-25 the same chain was rejected for the wrong reason (the two-root
+  // last line read as one value), which rejected the CORRECT factoring too.
+  // Pinned — which is how production holds a problem the student brought — the
+  // wrong factoring is rejected against the pin. Closing this needs the
+  // student's own problem as the anchor when the board has none.
+  'sess-prose-factored|oh so mine is (x+7)(x-2)=0, x = -7 or x = 2',
 ]);
 
 // Follow-up turns ("are they correct?") left with no verdict AND no restriction.
@@ -63,6 +72,15 @@ test('KNOWN only lists failures that still happen (remove an entry when its fix 
 
 test('unguarded follow-ups never grow (ratchet)', () => {
   expect(summary.byContext.followup.unguarded).toBeLessThanOrEqual(KNOWN_UNGUARDED_FOLLOWUPS);
+});
+
+// A session row is a turn where the question in play had moved. The graders may
+// abstain there (most of these need the verifier), but a deterministic verdict
+// must never be a rejection of a right answer.
+test('sessions: no deterministic grader rejects a right answer', () => {
+  const sessions = results.filter(r => r.context.startsWith('session'));
+  expect(sessions.length).toBeGreaterThan(50);
+  expect(sessions.filter(r => r.outcome === 'FALSE_REJECT').map(r => `${r.id} [${r.context}] ${JSON.stringify(r.answer)} via ${r.source}`)).toEqual([]);
 });
 
 test('the corpus actually exercised the graders', () => {

@@ -24,6 +24,7 @@ const { generate, assemblePrompt } = require('./generate');
 const { attachVerifiedTwin } = require('../twinGenerator');
 const { verify } = require('./verify');
 const activeProblemState = require('./activeProblem');
+const { solvesLikePin } = require('./poseStamp');
 const { detectParallelExampleIntroduction } = require('../worksheetGuard');
 const { judgeReply, PROD_JUDGES } = require('../replyJudges');
 const judgeMetrics = require('../judgeMetrics');
@@ -36,6 +37,9 @@ const {
   pinnedProblemForAnswer,
   statedSolution,
   classifyPinState,
+  boardProblemStatement,
+  statesPinnedMath,
+  llmVerifyAnswer,
   llmVerifyConceptual,
   isConceptualQuestion,
   isProseAnswer,
@@ -360,10 +364,18 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
         && typeof newestTurn?.content === 'string' && newestTurn.content.includes('?')
         ? newestTurn.content
         : null;
+      // The board problem as posed, when the chosen turn does not state it: the
+      // givens a sub-question refers to, and the second target checked below.
+      const pinTex = ctx.conversation?.boardProblem?.tex || null;
+      const boardStatement = !pinnedProblem && pinTex
+        && !statesPinnedMath(problemText, pinTex) && !solvesLikePin(problemText, pinTex)
+        ? boardProblemStatement(pinTex, ctx.conversation?.messages || [])
+        : null;
       llmVerificationPromise = verifyWithEscalation(problemText, verificationCandidate, {
         fullStudentMessage: message,
         earlierContext,
         latestQuestion,
+        boardProblem: boardStatement,
       })
         .then(verdict => {
           const tier = verdict.escalated ? `escalated→${verdict.tier}` : verdict.tier;
@@ -398,6 +410,44 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
           });
           return verdict;
         });
+
+      // ── The board problem gets a say before a rejection stands ──
+      // The call above grades against the tutor's newest question. A student
+      // does not always answer that question: with the tutor on a sub-step or
+      // a parallel example, they jump to the answer of the problem on the
+      // board. Owner session, 2026-11-25: asked for the factors of a parallel
+      // example, the student gave the complete, correct derivative of their
+      // own function — graded against the parallel, it comes back INCORRECT.
+      // Solving the problem you were given is never wrong, so the same answer
+      // is checked against the board problem as posed, and a match there
+      // affirms it. AFFIRM-ONLY: this call can lift a rejection or fill a
+      // silence; it never rejects and never overrides an affirmation. Tier 1
+      // only, and skipped when the chosen turn already states the pin.
+      if (boardStatement) {
+        const boardStart = Date.now();
+        const boardPromise = llmVerifyAnswer(boardStatement, verificationCandidate, { fullStudentMessage: message })
+          .then(verdict => {
+            verifyMetrics.recordVerification({
+              verdict,
+              tier: VERIFIER_MODEL,
+              mathType: mathTypeOf(pinTex),
+              skillId: verifySkillId,
+              latencyMs: Date.now() - boardStart,
+              ...problemLabels,
+              problemSource: 'board_crosscheck',
+            });
+            return verdict;
+          })
+          .catch(() => null);
+        const againstQuestion = llmVerificationPromise;
+        llmVerificationPromise = Promise.all([againstQuestion, boardPromise]).then(([asked, board]) => {
+          if (asked.isCorrect !== true && board && board.isCorrect === true) {
+            console.log(`[Pipeline] LLMVerify: answers the board problem (confidence: ${board.confidence.toFixed(2)}, modelAnswer: ${board.modelAnswer}) — ${asked.isCorrect === false ? 'lifting the rejection against the latest question' : 'affirmed'}`);
+            return { ...board, tier: VERIFIER_MODEL, escalated: false, escalationResolved: false, answersBoardProblem: true };
+          }
+          return asked;
+        });
+      }
     }
   }
 

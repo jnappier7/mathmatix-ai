@@ -18,7 +18,8 @@ const BRAND_CONFIG = require('../brand');
 const { sendSafetyConcernAlert } = require('../emailService');
 const { recordMisconception } = require('../misconceptionDetector');
 const { resolveSafetyConcern } = require('../contentFilter');
-const { parseCleanProblem, verifyAnswer } = require('../mathSolver');
+const { verifyAnswer } = require('../mathSolver');
+const { solverStampFor } = require('./poseStamp');
 const { solvePosedProblem, isWordProblemPose } = require('./llmVerifier');
 
 // A word-problem stamp is started as soon as the tutor message is pushed and
@@ -415,19 +416,18 @@ async function persist(params) {
     // catch-all. The bogus answer would otherwise poison the next
     // turn's diagnose stage and trigger an incorrect "answer wrong"
     // injection on a right answer.
-    const mathResult = parseCleanProblem(responseText);
-    if (mathResult.hasMath && mathResult.solution?.success) {
+    //
+    // solverStampFor also refuses math the turn only MENTIONS (a restated
+    // solution, a fraction inside a longer ask, a parallel example's equation
+    // ahead of a different question) — see poseStamp.asksForKey.
+    const stamp = solverStampFor(responseText);
+    if (stamp) {
+      const mathResult = stamp.parsed;
       const lastIdx = conversation.messages.length - 1;
-      const problemType = mathResult.problem.type;
-      const correctAnswer = String(mathResult.solution.answer);
+      const problemType = stamp.info.type;
+      const correctAnswer = stamp.info.correctAnswer;
 
-      conversation.messages[lastIdx].problemInfo = {
-        type: problemType,
-        correctAnswer,
-        ...(Array.isArray(mathResult.solution.roots) && mathResult.solution.roots.length > 1
-          ? { roots: mathResult.solution.roots }
-          : {}),
-      };
+      conversation.messages[lastIdx].problemInfo = stamp.info;
 
       // Record this AI-generated problem in the user's recent-problems history
       // so warmup/lesson prompts can avoid re-serving it within 7 days.

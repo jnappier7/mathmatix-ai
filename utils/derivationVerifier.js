@@ -16,7 +16,7 @@
 // false when it can't parse enough to judge, so callers fall back to the existing
 // single-answer path rather than inventing a verdict.
 
-const { parseCleanProblem, verifyAnswer } = require('./mathSolver');
+const { parseCleanProblem, verifyAnswer, extractEquationAroundEquals } = require('./mathSolver');
 const { stripThousandsSeparators } = require('./mathUnicodeNormalizer');
 const { trueArithmeticStatement } = require('./pipeline/symbolicVerifier');
 
@@ -84,7 +84,19 @@ function splitConnectedSteps(line) {
   if ((line.match(/=/g) || []).length < 2) return [line];
   const parts = line.split(STEP_CONNECTIVE).map((p) => p.trim()).filter(Boolean);
   if (parts.length < 2 || !parts.every((p) => /=/.test(p))) return [line];
-  return parts;
+  // "x = 7, x = -2" is one answer — a root set — not two steps. Rejoin a run of
+  // same-variable assignments so it is read whole.
+  const assigns = (p) => { const m = p.match(/^([a-z])\s*=\s*[-+]?\s*\d+(?:\.\d+)?(?:\s*\/\s*\d+)?$/i); return m ? m[1].toLowerCase() : null; };
+  const out = [];
+  for (const part of parts) {
+    const prev = out[out.length - 1];
+    if (prev !== undefined && assigns(part) && assigns(part) === assigns(prev.split(/\s*,\s*/).pop())) {
+      out[out.length - 1] = `${prev}, ${part}`;
+    } else {
+      out.push(part);
+    }
+  }
+  return out;
 }
 
 // Split shown work into candidate step lines. Handles one multi-line message or
@@ -100,7 +112,39 @@ function splitWorkLines(workText) {
 
 // Resolve a single line to its canonical answer via the deterministic solver.
 // null when the line isn't cleanly solvable (skip, don't fail).
+//
+// Two shapes the solver misreads on a line of typed work, both live on
+// 2026-11-25 ("oh so mine is (x-7)(x+2)=0, x = 7 or x = -2" — a correct
+// factoring and both roots, reported as broken at its first line):
+//   - a stated root set. "x = 7 or x = -2" solves as the linear equation
+//     x = -2, so a complete answer never matched its own two-root target;
+//   - prose ahead of the equation. "mine is (x-7)(x+2)=0" parsed as "expand
+//     (x-7)(x+2)", dropping the "= 0" that makes it an equation.
+const ROOT_VALUE = '[-+]?\\s*\\d+(?:\\.\\d+)?(?:\\s*/\\s*\\d+)?';
+const STATED_ROOTS = new RegExp(
+  `^[^=]*?(?:^|[^a-z0-9])([a-z])\\s*=\\s*(${ROOT_VALUE})\\s*(?:,|\\bor\\b|\\band\\b)\\s*(?:\\1\\s*=\\s*)?(${ROOT_VALUE})\\s*[.!]*$`,
+  'i',
+);
+function statedRootSet(line) {
+  const m = String(line).replace(/−/g, '-').match(STATED_ROOTS);
+  if (!m) return null;
+  const clean = (v) => v.replace(/\s+/g, '').replace(/^\+/, '');
+  return `${m[1]} = ${clean(m[2])} or ${m[1]} = ${clean(m[3])}`;
+}
+
 function resolveLine(line) {
+  const roots = statedRootSet(line);
+  if (roots) return roots;
+  // Prose ahead of an equation: solve the equation, not the sentence.
+  if (/^\s*[a-z]{2,}\s/i.test(line) && /=/.test(line)) {
+    const equation = extractEquationAroundEquals(line);
+    if (equation && equation.replace(/\s+/g, '') !== String(line).replace(/\s+/g, '')) {
+      const viaEquation = parseCleanProblem(equation);
+      if (viaEquation.hasMath && viaEquation.solution && viaEquation.solution.success === true) {
+        return String(viaEquation.solution.answer);
+      }
+    }
+  }
   const parsed = parseCleanProblem(line);
   if (!parsed.hasMath || !parsed.solution || parsed.solution.success !== true) return null;
   return String(parsed.solution.answer);

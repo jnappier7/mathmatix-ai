@@ -178,6 +178,103 @@ const P = [
     wrong: ["you don't have to flip it, the sign stays the same"] },
 ];
 
+// ── Sessions ──
+// A real tutoring exchange is not one pose and one answer: the tutor breaks a
+// problem into sub-questions, parks it for a parallel example, and confirms
+// earlier work in passing — so "the question in front of the student" keeps
+// moving while the board pin stays put. Every case above has ONE question in
+// play; these replay the turns where there were several.
+//
+// Owner session, 2026-11-25 (board on, four problems): four correct answers
+// were stamped incorrect and two were never graded, each by a grader that was
+// aimed at something other than the question the tutor had just asked.
+//
+// Shape: `turns` is the conversation up to the student's reply (tutor turns are
+// stamped the way persist stamps them, so a mis-stamp is measured, not assumed
+// away); `pin` is the board problem at that moment; `correct` / `wrong` are
+// replies to the LAST tutor turn, keyed by hand.
+const T = (content) => ({ role: 'assistant', content });
+const U = (content) => ({ role: 'user', content });
+
+const FRACTION_OPENING = [
+  U('can you help me with \\(\\frac{3}{4}\\) + \\(\\frac{2}{3}\\)'),
+  T("The denominators are different, so the smart first move is to rewrite both fractions with a shared denominator. What’s the least common denominator of \\(4\\) and \\(3\\)?"),
+  U('12'),
+  T('Right, \\(12\\) is the least common denominator. Now rewrite each fraction with denominator \\(12\\). What numerator does each one get?'),
+];
+const QUADRATIC_OPENING = [
+  U('i already solved it. next one: solve \\(x^{2}\\) - 5x - 14 = 0'),
+  T('What two numbers multiply to \\(-14\\) and add to \\(-5\\)? Try a pair, and we can work through it together.'),
+  U('idk how to start, can you just tell me the answer'),
+  T('I won’t give away the homework answer, but we can make the first move easier. For a parallel example, \\(x^2-5x-6=0\\): what two numbers multiply to \\(-6\\) and add to \\(-5\\)?'),
+];
+const DERIVATIVE_OPENING = [
+  U('now calc. find the derivative of f(x) = \\(x^{2}\\) sin(x)'),
+  T('A product rule is the fast route here. What do you get when you differentiate each factor separately, \\(x^2\\) and \\(\\sin(x)\\)?'),
+  U('2x cos(x)'),
+  T('You stayed with it through some tricky algebra earlier; this one is a different pattern, so let’s reset the lens. On a parallel example, \\(g(x)=x^2\\cos(x)\\), what are the two factors, and what is the derivative of each factor? Just name those pieces first.'),
+];
+
+const SESSIONS = [
+  // The tutor asked for both numerators; one of the two is wrong.
+  { id: 'sess-numerators', topic: 'session', pin: '\\frac{3}{4}+\\frac{2}{3}',
+    turns: FRACTION_OPENING,
+    correct: ['9 and 8', '9/12 and 8/12'], wrong: ['9 and 6', '3 and 2'] },
+  // The follow-up sub-question names \(\frac{3}{4}\) in passing; persist keyed
+  // the whole turn as "evaluate 3/4 = 0.75".
+  { id: 'sess-multiplier', topic: 'session', pin: '\\frac{3}{4}+\\frac{2}{3}',
+    turns: [...FRACTION_OPENING, U('9 and 6'),
+      T('The common denominator \\(12\\) is right. The first rewrite is where it slips: to change \\(\\frac{3}{4}\\) into an equivalent fraction, what do you multiply the numerator \\(3\\) by when you multiply the denominator \\(4\\) by \\(3\\)?')],
+    correct: ['you multiply by 3 so its 9. thats what i said', '3', 'by 3'], wrong: ['4', 'by 12'] },
+  // The tutor asks for the factor pair of the pinned quadratic. The pair is the
+  // NEGATED roots, so grading it by membership in the root set rejects it.
+  { id: 'sess-factor-pair', topic: 'session', pin: 'x^2-5x-14=0',
+    turns: QUADRATIC_OPENING.slice(0, 2),
+    correct: ['-7 and 2', '2 and -7'], wrong: ['-14 and 1'] },
+  // A parallel example: the pin is the homework problem (roots 7, -2), the
+  // question is the factor pair of a DIFFERENT quadratic. "-6 and 1" was graded
+  // against the pin's root set and rejected while the verifier affirmed it.
+  { id: 'sess-parallel-pair', topic: 'session', pin: 'x^2-5x-14=0',
+    turns: QUADRATIC_OPENING,
+    correct: ['-6 and 1', '1 and -6'], wrong: ['-3 and 2', '-2 and -3'] },
+  // The student carries the idea back to their own problem, in a sentence. The
+  // derivation checker read "mine is (x-7)(x+2)=0" as a broken step.
+  { id: 'sess-prose-factored', topic: 'session', pin: 'x^2-5x-14=0',
+    turns: [...QUADRATIC_OPENING, U('-6 and 1'),
+      T('Let’s check your pair against the clues: what do \\(-6\\) and \\(1\\) add up to, and what do they multiply to? Which clue from the problem might help you spot where to revise your work?')],
+    correct: ['oh so mine is (x-7)(x+2)=0, x = 7 or x = -2', 'so for mine x = 7 or x = -2'],
+    wrong: ['oh so mine is (x+7)(x-2)=0, x = -7 or x = 2'] },
+  // The tutor's check question quotes the student's own factorization; persist
+  // keyed the turn as "expand (x-7)(x+2)".
+  { id: 'sess-middle-term', topic: 'session', pin: 'x^2-5x-14=0',
+    turns: [...QUADRATIC_OPENING, U('oh so mine is (x-7)(x+2)=0, x = 7 or x = -2'),
+      T('I see the factorization you proposed. Before deciding on the roots, expand \\((x-7)(x+2)\\): what middle term do you get, and does it match \\(-5x\\)?')],
+    correct: ['-7x + 2x = -5x, yes it matches. so x = 7 or x = -2', '-5x, it matches'],
+    wrong: ['-9x, so it doesnt match'] },
+  // The whole derivative, offered while the tutor is asking about a parallel
+  // example. Read as the student echoing the tutor, so nothing graded it.
+  { id: 'sess-product-rule', topic: 'session', pin: 'f(x)=x^2\\sin(x)',
+    turns: DERIVATIVE_OPENING,
+    correct: ['product rule: 2x sin(x) + \\(x^{2}\\) cos(x)'],
+    wrong: ['product rule: 2x cos(x) + \\(x^{2}\\) sin(x)'] },
+  // A word problem whose first sub-question names \(\frac{1}{3}\); persist keyed
+  // the turn as "evaluate 1/3 = 0.3333" and the solver rejected the final answer.
+  { id: 'sess-stickers', topic: 'session', pin: '24 stickers; gives away \\frac{1}{3}; how many remain?',
+    turns: [
+      U('ok new one for my little sister: Sara has 24 stickers and gives \\(\\frac{1}{3}\\) of them to her brother. how many does she have left?'),
+      T('First find how many stickers Sara gives away: what is \\(\\frac{1}{3}\\) of \\(24\\)? Then we’ll subtract that from \\(24\\).'),
+    ],
+    correct: ['16', '8', '8 so she has 16 left'], wrong: ['12', '72'] },
+  // A confirmation that restates the answer is not a new problem keyed to it.
+  { id: 'sess-after-confirm', topic: 'session', pin: '3(x-4)=2x+5',
+    turns: [
+      U('solve 3(x-4) = 2x + 5'), T('Start by distributing the \\(3\\). What do you get on the left side?'),
+      U('3x - 12 = 2x + 5 so x = 17'),
+      T('Yes, \\(x=17\\) is correct. You handled the distribution carefully, including the negative term. Can you tell me the move that gets the \\(x\\)-terms together?'),
+    ],
+    correct: ['subtract 2x from both sides', 'you subtract 2x'], wrong: [] },
+];
+
 // Generated right-answer styles for a single value: the ways real students
 // wrote answers in the transcripts this project has mined.
 function styles(p) {
@@ -202,4 +299,14 @@ function buildCases() {
   return cases;
 }
 
-module.exports = { PROBLEMS: P, buildCases };
+/** Every session case: { session, answer, expected }. */
+function buildSessionCases() {
+  const cases = [];
+  for (const s of SESSIONS) {
+    for (const answer of s.correct || []) cases.push({ session: s, answer, expected: 'correct' });
+    for (const answer of s.wrong || []) cases.push({ session: s, answer, expected: 'incorrect' });
+  }
+  return cases;
+}
+
+module.exports = { PROBLEMS: P, SESSIONS, buildCases, buildSessionCases };

@@ -263,13 +263,17 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
     && options.earlierContext.trim() !== String(problemText).trim()
     ? options.earlierContext.trim().slice(-MAX_PROBLEM_CHARS)
     : null;
+  const board = typeof options.boardProblem === 'string' && options.boardProblem.trim()
+    && options.boardProblem.trim() !== String(problemText).trim()
+    ? options.boardProblem.trim().slice(0, MAX_PROBLEM_CHARS)
+    : null;
   const latestAsk = typeof options.latestQuestion === 'string' && options.latestQuestion.trim()
     && options.latestQuestion.trim() !== String(problemText).trim()
     ? options.latestQuestion.trim().slice(0, MAX_PROBLEM_CHARS)
     : null;
   // Every tutor word the verifier was handed — what a unit on the student's
   // answer is checked against (unitAbsentFromProblem).
-  const tutorText = [earlier, problem, latestAsk].filter(Boolean).join('\n');
+  const tutorText = [board, earlier, problem, latestAsk].filter(Boolean).join('\n');
   const unitMismatch = unitAbsentFromProblem(options.fullStudentMessage || answer, tutorText);
   const model = options.model || VERIFIER_MODEL;
   const threshold = options.confidenceThreshold != null
@@ -279,7 +283,7 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
   try {
     // ── Step 1: Independently compute the answer ──
     // Fresh context, no student, no persona. Plain math engine.
-    const step1Messages = buildStep1Messages({ problem, earlier, latestAsk });
+    const step1Messages = buildStep1Messages({ problem, earlier, latestAsk, board });
 
     const step1 = await verifierCall(model, step1Messages, {
       temperature: 0,
@@ -338,7 +342,7 @@ async function llmVerifyAnswer(problemText, studentAnswer, options = {}) {
  * turn) and solvePosedProblem (once, when the tutor poses a word problem).
  * One prompt, so the two never drift apart on what "the answer" means.
  */
-function buildStep1Messages({ problem, earlier = null, latestAsk = null }) {
+function buildStep1Messages({ problem, earlier = null, latestAsk = null, board = null }) {
   return [
       {
         role: 'system',
@@ -350,6 +354,8 @@ function buildStep1Messages({ problem, earlier = null, latestAsk = null }) {
           'e.g. "what\'s 0.15 × 2, and then where does the decimal land once you account for the 2000?"), ' +
           'return the answer to the LAST thing asked: that is the question the student is completing. ' +
           'Never anchor on an intermediate sub-step when a final result is also requested. ' +
+          'A step the tutor only ANNOUNCES for later ("what is 1/3 of 24? Then we\'ll subtract that from 24") has not been asked yet: answer the question actually put to the student (here, 8). ' +
+          'If "The problem the student is working on" is included, it supplies the givens the Problem refers to ("each fraction", "the radius") — use it to answer the Problem; do not answer it instead. ' +
           'If "The tutor\'s latest question" is included, the student is answering THAT: when it asks for a quantity or for the result of a step, return that value, using the Problem for the givens; ' +
           'when it asks only for a method ("what would you do first?") or is conversational ("ready for another?"), return the Problem\'s final answer instead. ' +
           'A method question that has a numeric outcome ("how would you calculate the rate?") still gets a VALUE — return the number that step produces, never a description. ' +
@@ -368,7 +374,14 @@ function buildStep1Messages({ problem, earlier = null, latestAsk = null }) {
         // that question wants a value ("what's the rate?") or merely a method
         // ("what would you do first?") is a judgment this engine makes far
         // better than a regex in pickProblemContext could.
-        content: (earlier ? `Earlier in the lesson (context only — do not answer this part):\n${earlier}\n\n` : '')
+        //
+        // The board problem, when the Problem is a sub-question that never
+        // restates it. "Now rewrite each fraction with denominator 12. What
+        // numerator does each one get?" — the fractions were in the STUDENT's
+        // message and on the board, in no tutor turn, so the engine guessed
+        // 1/4 and 1/3 and a correct "9 and 8" was rejected (2026-11-25).
+        content: (board ? `The problem the student is working on (givens only — do not answer this part):\n${board}\n\n` : '')
+          + (earlier ? `Earlier in the lesson (context only — do not answer this part):\n${earlier}\n\n` : '')
           + `Problem:\n${problem}`
           + (latestAsk ? `\n\nThe tutor's latest question to the student:\n${latestAsk}` : ''),
       },
@@ -917,6 +930,42 @@ function pinnedProblemForAnswer(pinnedTex, studentMessage) {
   return `Solve for ${variable}: ${pinnedTex}`;
 }
 
+// Math as bare characters — delimiters, braces, command backslashes and
+// spacing gone — so "\(x^{2}\) sin(x)" and "x^2\sin(x)" compare equal.
+const bareMath = (text) => String(text || '')
+  .replace(/\\[()[\]]|\$/g, '')
+  .replace(/\\(?=[a-zA-Z])/g, '')
+  .replace(/[{}\s]/g, '')
+  .toLowerCase();
+
+/** Does `text` state the pinned problem's math? */
+function statesPinnedMath(text, pinnedTex) {
+  const pin = bareMath(pinnedTex);
+  return pin.length > 0 && bareMath(text).includes(pin);
+}
+
+/**
+ * The board problem as it was POSED: the newest message, from either side,
+ * that states the pinned math — so the task comes with it. A pin keeps the
+ * expression and drops the verb: "find the derivative of f(x) = x^2 sin(x)"
+ * is pinned as "f(x)=x^2\sin(x)", which on its own asks for nothing. Falls
+ * back to the pin when no message states it (a pin that describes itself, as
+ * a summarised word problem does).
+ *
+ * @param {string|null} pinnedTex
+ * @param {Array<{role?: string, content?: string}>} messages oldest → newest
+ * @returns {string|null}
+ */
+function boardProblemStatement(pinnedTex, messages) {
+  if (!pinnedTex || typeof pinnedTex !== 'string') return null;
+  const list = Array.isArray(messages) ? messages : [];
+  for (let i = list.length - 1; i >= 0; i--) {
+    const content = list[i] && list[i].content;
+    if (typeof content === 'string' && statesPinnedMath(content, pinnedTex)) return content;
+  }
+  return pinnedTex;
+}
+
 /**
  * The single unknown of a pinned one-unknown EQUATION ("2(x - 3) = 10" → "x"),
  * else null (no pin, an expression, a chain, two unknowns, or prose).
@@ -1062,6 +1111,8 @@ module.exports = {
   pickProblemContext,
   pickPosedQuestion,
   pinnedProblemForAnswer,
+  boardProblemStatement,
+  statesPinnedMath,
   statedSolution,
   classifyPinState,
   VERIFIER_MODEL,

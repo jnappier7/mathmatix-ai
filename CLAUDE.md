@@ -228,6 +228,22 @@ stages in the same dir (`xpEngine`, `sessionMood`, `boardLlm`, `boardSynthesizer
    NO MATCH on prose, which is how correct ideas got rejected. Verdicts are asymmetric throughout: a
    rejection needs higher confidence than an affirmation, and anything undecided stays `unverifiable`,
    which never stamps a `problemResult`.
+   **Every grader is exact about the problem it holds; the bugs are in which problem that is.** A tutor
+   breaks a problem into sub-questions, parks it for a parallel example, restates an answer while
+   confirming it — so the question in front of the student moves while the pin stays put. Four rules
+   keep a grader from rejecting against the wrong one (owner session 2026-11-25, four correct answers
+   stamped incorrect): (a) persist stamps a key only for math the turn **asks for**
+   (`pipeline/poseStamp.js` `asksForKey` — "what is \(\frac{1}{3}\) of \(24\)?" used to be keyed
+   0.3333), and diagnose disowns an older stamp that fails it; (b) the pin's root set may confirm a
+   pair but rejects one only when the student claims the roots by name (`x = …`); (c) a deterministic
+   rejection whose target was *reached for* — an older turn's key, a sub-question's key under a
+   different board problem — yields when the verifier affirms (diagnose Step 2a.3; it can only lift a
+   rejection); (d) the verifier is also asked about the **board problem as posed**
+   (`boardProblemStatement`, affirm-only), because a student who jumps to the final answer under a
+   sub-question has solved the problem, not failed the step. All four lean on the pin: with no board
+   problem, a student-brought problem lives only in their own message and (c)/(d) have nothing to check
+   against. Pinned by `tests/unit/sessionWrongTarget.test.js` and the `SESSIONS` replays in
+   `tests/eval/verdict/corpus.js` — a grading bug that took several turns to happen goes there first.
 3. **decide** — pick an instructional action (scaffold, direct-instruction, worked-example,
    prerequisite-bridge, guided/independent practice, verify, redirect, …) using BKT state, lesson phase, mood.
 4. **generate** — build the system prompt + history, call the LLM (streamed via SSE), emit board/visual commands.
