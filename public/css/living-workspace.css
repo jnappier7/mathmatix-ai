@@ -1560,6 +1560,16 @@ html.mm-work-inline #input-container { flex-shrink: 0; }
   padding: 0;
 }
 .lws-sealed .lws-dv-inner { max-width: 760px; margin: 0; }
+
+/* ── No inline cards while the board is showing (owner, 2026-11-26) ────────
+   The board holds the work. With it on screen, a card in the transcript is the
+   same work twice — and it was where every stray card landed (an unfinished
+   problem, a parallel example, a fragment). The cards are still sealed, in
+   place and in order; they are simply not shown while the board is showing
+   (body.mm-board-showing = the dock has work in it and the student has not
+   hidden it; chat-workspace.js). Hide the board, or let it go idle, and the
+   transcript is the record again. */
+body.mm-board-showing #chat-messages-container .lws-sealed { display: none; }
 /* The summary row reads as a caption above the card here, not as an overlay
    bar inside one, so it loses the overlay's tinted panel treatment. */
 .lws-sealed .lws-dv-ov-sum {

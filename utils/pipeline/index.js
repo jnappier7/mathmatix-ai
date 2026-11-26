@@ -449,6 +449,11 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
       // affirms it. AFFIRM-ONLY: this call can lift a rejection or fill a
       // silence; it never rejects and never overrides an affirmation. Tier 1
       // only, and skipped when the chosen turn already states the pin.
+      if (!boardStatement && pinTex) {
+        // The problem graded IS the board problem (the pose itself, or a
+        // stated "x = …" for it), so a correct verdict is about the board.
+        llmVerificationPromise = llmVerificationPromise.then(v => (v && v.isCorrect === true ? { ...v, answersBoardProblem: true } : v));
+      }
       if (boardStatement) {
         const boardStart = Date.now();
         const boardPromise = llmVerifyAnswer(boardStatement, verificationCandidate, { fullStudentMessage: message })
@@ -467,6 +472,11 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
           .catch(() => null);
         const againstQuestion = llmVerificationPromise;
         llmVerificationPromise = Promise.all([againstQuestion, boardPromise]).then(([asked, board]) => {
+          // Right for the question AND for the board problem: the answer
+          // finishes the problem, which is what lets the board close its card.
+          if (asked.isCorrect === true && board && board.isCorrect === true) {
+            return { ...asked, answersBoardProblem: true };
+          }
           if (asked.isCorrect !== true && board && board.isCorrect === true) {
             console.log(`[Pipeline] LLMVerify: answers the board problem (confidence: ${board.confidence.toFixed(2)}, modelAnswer: ${board.modelAnswer}) — ${asked.isCorrect === false ? 'lifting the rejection against the latest question' : 'affirmed'}`);
             return { ...board, tier: VERIFIER_MODEL, escalated: false, escalationResolved: false, answersBoardProblem: true };
@@ -510,6 +520,16 @@ async function observeAndDiagnose(message, ctx, { emitStatus = () => {}, recheck
     llmVerificationPromise,
     conceptualVerificationPromise,
   });
+
+  // Did the verifier's affirmation cover the problem on the board? The board
+  // closes a card on that (boardSynthesizer, verify path d), never on a
+  // correct sub-step.
+  if (diagnosis.isCorrect === true && diagnosis.verificationSource === 'llm' && llmVerificationPromise) {
+    try {
+      const v = await llmVerificationPromise;
+      if (v && v.answersBoardProblem === true) diagnosis.answersBoardProblem = true;
+    } catch (_) { /* no signal */ }
+  }
 
   // ── The tutor's licence to make a correctness claim ──
   // Attached to the diagnosis so every downstream stage reads one value rather
@@ -1800,6 +1820,7 @@ async function runPipeline(message, ctx) {
       const settled = settleBoardTurn({
         commands: verified.boardCommands,
         message,
+        tutorText: verified.text || null,
         pinTex: pinTexBefore,
         lastBoardAction: ctx.conversation.lastBoardAction || null,
         ledger: ctx.conversation.boardLedger || null,
