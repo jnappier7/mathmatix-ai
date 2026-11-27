@@ -10,7 +10,7 @@ const { applyPronunciations } = require('./ttsPronunciation');
 
 const CARTESIA_API_KEY = process.env.CARTESIA_API_KEY;
 const CARTESIA_VERSION = '2025-04-16';
-const CARTESIA_MODEL = process.env.CARTESIA_MODEL || 'sonic-3.5';
+const CARTESIA_MODEL = process.env.CARTESIA_MODEL || 'sonic-3.6';
 const CARTESIA_WS_URL = `wss://api.cartesia.ai/tts/websocket?api_key=${encodeURIComponent(CARTESIA_API_KEY || '')}&cartesia_version=${CARTESIA_VERSION}`;
 
 // Output format: raw PCM s16 mono 22050Hz.
