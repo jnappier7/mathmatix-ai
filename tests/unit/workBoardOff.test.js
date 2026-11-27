@@ -130,15 +130,26 @@ describe('the client honours the same switch', () => {
     expect(html.indexOf('/api/features.js')).toBeLessThan(html.indexOf('workBoard: false'));
   });
 
-  test('the dock and derivation view mount only with the board on', () => {
+  // Owner 2026-11-27: "Board should always show during live voice mode." The
+  // view is mounted with the board off too and kept in step with the
+  // conversation; what the switch decides is whether any of it SHOWS outside
+  // a call. tests/unit/workspace/voiceBoardAlways.test.js pins the voice half.
+  test('the switch is still read from the server flag', () => {
     expect(cw).toMatch(/window\.MM_FEATURES\.workBoard === true/);
-    expect(cw).toMatch(/if \(BOARD\) \{[\s\S]*?mount = buildDock\(\);[\s\S]*?new window\.LWS\.DerivationView/);
   });
 
-  test('board calls are no-ops with the board off', () => {
-    for (const fn of ['applyBoardCommands', 'applyVoiceBoard', 'hydrate']) {
-      expect(cw).toMatch(new RegExp(`api\\.${fn} = function \\([^)]*\\) \\{\\s*if \\(!BOARD\\) return;`));
-    }
+  test('with the board off and no call, nothing of the board is on screen', () => {
+    // One question decides it…
+    expect(cw).toMatch(/function isLive\(board, voice\) \{ return !!\(board \|\| voice\); \}/);
+    const sync = cw.slice(cw.indexOf('function watchBoardUp('), cw.indexOf('function keyboardIsUp('));
+    // …the dock is hidden, and the layout classes never fire for hidden work…
+    expect(sync).toMatch(/slot\.classList\.toggle\('is-off', !live\)/);
+    expect(sync).toMatch(/var up = live && boardIsUp\(root\)/);
+    expect(read('public/css/living-workspace.css')).toMatch(/\.cr-work-dock\.is-off \{ display: none !important; \}/);
+    // …and a finished problem does not surface as a card in the transcript.
+    const seal = cw.slice(cw.indexOf('function onSeal('), cw.indexOf('function makeRenderers('));
+    expect(seal).toMatch(/if \(!boardLive\(\)\) return;\s*sealToTranscript\(entry\)/);
+    expect(cw).toMatch(/if \(boardLive\(\)\) held\.forEach\(sealToTranscript\)/);
   });
 
   test('the Notebook and Source Dock still mount (isOn stays true, so no legacy-board fallback)', () => {

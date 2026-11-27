@@ -50,8 +50,11 @@ describe('when the board goes to the tutor\'s side', () => {
 
   test('the dock moves next to the tutor, and goes HOME above the composer', () => {
     const fn = js.slice(js.indexOf('function placeDock('), js.indexOf('function watchBoardUp('));
-    expect(fn).toMatch(/if \(side && !isSide\) col\.insertBefore\(slot, hero\.nextSibling\)/);
-    expect(fn).toMatch(/else if \(!side && isSide\) home\.parentNode\.insertBefore\(slot, home\)/);
+    expect(fn).toMatch(/else if \(side\) col\.insertBefore\(slot, hero\.nextSibling\)/);
+    expect(fn).toMatch(/else home\.parentNode\.insertBefore\(slot, home\)/);
+    // It only moves when where it IS differs from where it belongs.
+    expect(fn).toMatch(/var to = stage \? document\.body : \(side \? col : home\.parentNode\)/);
+    expect(fn).toMatch(/if \(was !== to\) \{/);
     expect(fn).toMatch(/classList\.toggle\('mm-board-side', side\)/);
     // Home is where chat.html puts it: between the transcript and the composer.
     expect(html.indexOf('id="cr-work-dock"')).toBeGreaterThan(html.indexOf('id="chat-messages-container"'));

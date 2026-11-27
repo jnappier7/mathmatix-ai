@@ -107,6 +107,59 @@ html.mm-work-inline body.cr-voice .cr-work-dock .lws-dv {
   max-height: min(68vh, 720px);
 }
 
+/* ---- Voice: the board is ALWAYS there ----
+   A call has no message to put the math in, so the board shows for the whole
+   call, with the Work Board switched off too (chat-workspace.js boardLive)
+   and before there is any work on it: the empty board is where the student
+   looks while the tutor talks. Outside a call an empty dock still collapses
+   to nothing. */
+html.mm-work-inline body.cr-voice .cr-work-dock .lws-dv-root.is-empty {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 220px;
+}
+html.mm-work-inline body.cr-voice .cr-work-dock:has(.lws-dv-root.is-empty) .lws-dock-bar { display: flex; }
+/* Nothing to hide yet. */
+html.mm-work-inline body.cr-voice .cr-work-dock:has(.lws-dv-root.is-empty) .lws-dock-toggle { display: none; }
+
+/* ---- Voice on a phone: the board is the stage ----
+   The chat column is hidden in a phone call (mobile-tutor-cam.css), so
+   chat-workspace.js placeDock moves the dock out to <body>
+   (body.mm-board-stage) and this pins it between the tutor's card and the
+   mic. Same box the legacy workspace used to take here. */
+@media (max-width: 768px) {
+  body.cr-mode.cr-voice.mm-board-stage > .cr-work-dock {
+    position: fixed;
+    top: calc(var(--mm-cam-top) + var(--mm-cam-h) + 10px);
+    left: 12px;
+    right: 12px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 122px);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    border: 1px solid var(--mlt-line, rgba(35, 39, 65, 0.10));
+    background: var(--mlt-surface, #FFFFFF);
+    box-shadow: var(--mlt-card-shadow, 0 6px 22px rgba(60, 50, 120, 0.13));
+    overflow: hidden;
+    animation: none;
+  }
+  /* The whole box is the board: the work scrolls inside it. */
+  html.mm-work-inline body.cr-voice.mm-board-stage > .cr-work-dock .lws-dv,
+  html.mm-work-inline body.cr-voice.mm-board-stage > .cr-work-dock .lws-dv:has(.lws-tm) {
+    max-height: none;
+    overscroll-behavior: contain;
+  }
+  html.mm-work-inline body.cr-voice.mm-board-stage > .cr-work-dock .lws-dv-root.is-empty { min-height: 0; flex: 1 1 auto; }
+  body.cr-voice.mm-board-stage > .cr-work-dock .lws-dock-bar { border-top: 0; }
+  /* There is nothing behind the board to get back to, so nothing to hide it
+     for; a board left collapsed in chat opens for the call. */
+  body.cr-voice.mm-board-stage > .cr-work-dock .lws-dock-toggle,
+  body.cr-voice.mm-board-stage > .cr-work-dock .lws-dock-grab { display: none; }
+  body.cr-voice.mm-board-stage > .cr-work-dock.is-collapsed #lws-chat-mount { display: flex; }
+}
+
 /* ---- Voice presence: the tutor hero reads as "live" ----
    The pulse is carried by the voice-synced glow behind the portrait
    (.cr-tutor-glow, defined in chat-redesign.css). In voice mode we just

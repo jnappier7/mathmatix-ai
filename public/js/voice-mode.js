@@ -19,6 +19,23 @@
 
   function isOn() { return document.body.classList.contains('cr-voice'); }
 
+  // The pill can also be latched DURING a call: chat-redesign.js collapses the
+  // card the first time a student message lands in the thread, and in a call
+  // that is the first thing they say. enter() only handled a pill that was
+  // already there, so a call started from a fresh page lost the card one turn
+  // in (the state chip on top of the pill — the owner's screenshot). While the
+  // call is on the class is taken straight back off, and exit() restores it.
+  function holdCardOpen() {
+    if (!isOn() || !document.body.classList.contains('mm-tutor-pill')) return;
+    pillBeforeVoice = true;
+    document.body.classList.remove('mm-tutor-pill');
+  }
+  if (typeof MutationObserver === 'function') {
+    try {
+      new MutationObserver(holdCardOpen).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    } catch (_) { /* observer unsupported — the pill may return mid-call */ }
+  }
+
   // Read the active tutor's display name from the live element that
   // chat-redesign.js's applyTutor() writes into. Falls back to a
   // generic label when the page hasn't bound a tutor yet (e.g. very
