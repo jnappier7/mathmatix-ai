@@ -171,6 +171,37 @@ function sameValue(studentValue, key) {
   return null;
 }
 
+// The values a text assigns to a variable in its LAST such statement:
+// "…(x+7)(x-2)=0, x = -7 or x = 2" → { variable: 'x', values: [-7, 2] }.
+const NUM = '[-+−]?\\s*\\d+(?:\\.\\d+)?(?:\\s*/\\s*\\d+)?';
+const ASSIGNMENT = new RegExp(`(?:^|[^a-z0-9)])([a-z])\\s*=\\s*(${NUM}(?:\\s*(?:,|\\bor\\b|\\band\\b)\\s*(?:[a-z]\\s*=\\s*)?${NUM})*)`, 'gi');
+function assignedValues(text) {
+  let last = null;
+  let m;
+  ASSIGNMENT.lastIndex = 0;
+  while ((m = ASSIGNMENT.exec(String(text || ''))) !== null) last = m;
+  if (!last) return null;
+  const values = (last[2].match(new RegExp(NUM, 'g')) || []).map((v) => {
+    const t = v.replace(/\s+/g, '').replace('−', '-');
+    const f = t.split('/');
+    return f.length === 2 ? Number(f[0]) / Number(f[1]) : Number(t);
+  }).filter((n) => Number.isFinite(n)).sort((a, b) => a - b);
+  return values.length ? { variable: last[1].toLowerCase(), values } : null;
+}
+
+// A judge's "correct" is checked where it can be checked exactly. The judge
+// twice accepted "x = -7 or x = 2" against the key "x = 7 or x = -2" (verdict
+// eval, 2026-11-25 and -26): the same digits, the signs swapped. When the
+// reply and the key both assign values to the same variable, the sets must
+// match or the affirmation is withdrawn.
+function contradictsKey(studentMessage, key) {
+  const said = assignedValues(studentMessage);
+  const expected = assignedValues(key);
+  if (!said || !expected || said.variable !== expected.variable) return false;
+  if (said.values.length !== expected.values.length) return said.values.length > expected.values.length;
+  return said.values.some((v, i) => Math.abs(v - expected.values[i]) > 1e-9);
+}
+
 const JUDGE_SYSTEM =
   'You grade one student reply against one question from a math tutor. Respond with JSON ONLY: ' +
   '{"verdict": "correct|incorrect|unclear", "matched": "answer|board|none", "confidence": <0.0-1.0>, "rationale": "<brief>"}.\n' +
@@ -230,7 +261,13 @@ async function gradeOpenQuestion(oq, studentMessage, options = {}) {
     if (!parsed) return { ...none, via: 'judge', error: 'parse_failed' };
     const confidence = typeof parsed.confidence === 'number' ? Math.max(0, Math.min(1, parsed.confidence)) : 0;
     if (parsed.verdict === 'correct' && confidence >= CONFIDENCE_THRESHOLD) {
-      return { isCorrect: true, matched: parsed.matched === 'board' ? 'board' : 'answer', via: 'judge', confidence };
+      const matched = parsed.matched === 'board' ? 'board' : 'answer';
+      const key = matched === 'board' ? (oq.finalAnswer || oq.answer) : (oq.answer || oq.finalAnswer);
+      if (contradictsKey(studentMessage, key)) {
+        console.log('[OpenQuestion] judge affirmed values that differ from the key — affirmation withdrawn');
+        return { ...none, via: 'judge', confidence, error: 'contradicts_key' };
+      }
+      return { isCorrect: true, matched, via: 'judge', confidence };
     }
     // Asymmetric, as everywhere: a rejection needs more than an affirmation.
     // And needs the key to the question that was ASKED. With only the whole
@@ -278,7 +315,13 @@ async function stampLatestTurn(conversation, { firstName = null, onStamp = null 
     if (!Model || typeof Model.updateOne !== 'function') return null;
     const messages = Array.isArray(conversation.messages) ? conversation.messages : [];
     const turn = messages[messages.length - 1];
-    if (!turn || turn.role !== 'assistant' || !turn._id || typeof turn.content !== 'string') return null;
+    if (!turn || turn.role !== 'assistant' || typeof turn.content !== 'string' || !turn.content.trim()) return null;
+    // Messages carry no _id of their own, so the turn is addressed by its
+    // place in the array and guarded by its text: if the array has shifted
+    // (summarised, trimmed) the guard fails and nothing is written. The first
+    // version of this keyed on messages._id, found none, and returned here —
+    // every turn, silently, so production stamped nothing at all.
+    const at = messages.length - 1;
 
     const before = messages.slice(0, -1);
     const record = await declareWithTimeout({
@@ -287,12 +330,20 @@ async function stampLatestTurn(conversation, { firstName = null, onStamp = null 
       history: before.map((m) => ({ role: m.role, content: m.content })),
       firstName,
     });
-    if (typeof onStamp === 'function') onStamp(record ? record.kind : null);
-    if (!record) return null;
-    await Model.updateOne(
-      { _id: conversation._id, 'messages._id': turn._id },
-      { $set: { 'messages.$.openQuestion': record } },
+    if (!record) {
+      if (typeof onStamp === 'function') onStamp(null);
+      return null;
+    }
+    const written = await Model.updateOne(
+      { _id: conversation._id, [`messages.${at}.role`]: 'assistant', [`messages.${at}.content`]: turn.content },
+      { $set: { [`messages.${at}.openQuestion`]: record } },
     );
+    if (written && written.matchedCount === 0) {
+      console.log('[OpenQuestion] the turn moved before its record could be written — skipped');
+      if (typeof onStamp === 'function') onStamp('unwritten');
+      return null;
+    }
+    if (typeof onStamp === 'function') onStamp(record.kind);
     return record;
   } catch (err) {
     console.error('[OpenQuestion] stamp failed (non-fatal):', err.message);
@@ -310,6 +361,7 @@ module.exports = {
   stampLatestTurn,
   latestOpenQuestion,
   isGradeable,
+  contradictsKey,
   enabled,
   label,
   KINDS,

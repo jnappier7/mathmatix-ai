@@ -1223,7 +1223,11 @@ function observe(message, context = {}) {
   const contextSignals = detectContextSignals(text);
 
   // Detect streaks from recent history
-  const streaks = detectStreaks(context.recentUserMessages || []);
+  // Stuck-ness ends when the student gets one right. Counted over the last six
+  // messages regardless, an "idk, just tell me" from two solved problems ago
+  // still read as a live give-up streak, and an ungraded turn after it was
+  // routed to "work a PARALLEL problem" (replay of the 2026-11-26 session).
+  const streaks = detectStreaks(context.streakUserMessages || context.recentUserMessages || []);
 
   // Count recent wrong/correct answers over PROBLEM OUTCOMES, not raw
   // messages. Probing turns ("walk me through how you got that") produce

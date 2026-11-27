@@ -11,6 +11,7 @@
  */
 
 const { callLLM, callLLMStream, callLLMStructured } = require('../llmGateway');
+const { stripTemplateTokens } = require('./templateTokens');
 const { ACTIONS } = require('./decide');
 const { STATIC_RULES, RULE_1_SOCRATIC, RULE_1_TEACHING } = require('../promptCompact');
 const { buildSlimRules } = require('./promptSlim');
@@ -705,7 +706,7 @@ async function generate(assembled, options = {}) {
     if (options.stream && options.res) {
       try {
         const safe = stripBoardTagsForStream(text);
-        options.res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safe) })}\n\n`);
+        options.res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(safe)) })}\n\n`);
       } catch (e) { /* client disconnected */ }
     }
     return { text, toolCalls: [], resolvedTools: null };
@@ -914,7 +915,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
         const filtered = afterXp ? visualTabFilter.push(afterXp) : '';
         const safe = (filtered && piiRehydrator) ? piiRehydrator.push(filtered) : filtered;
         if (safe) {
-          res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safe) })}\n\n`);
+          res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(safe)) })}\n\n`);
         }
       }
 
@@ -937,7 +938,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
         ? (piiRehydrator.push(filteredTail) + piiRehydrator.flush())
         : filteredTail;
       if (tail && !clientDisconnected) {
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(tail) })}\n\n`);
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(tail)) })}\n\n`);
       }
     }
 
@@ -986,7 +987,7 @@ async function generateStreaming(model, messages, llmOptions, res) {
 
       if (narration && !clientDisconnected) {
         const safeNarration = rehydrateText(stripBoardTagsForStream(narration), llmOptions);
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safeNarration) })}\n\n`);
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(safeNarration)) })}\n\n`);
       }
 
       return {
@@ -1014,9 +1015,9 @@ async function generateStreaming(model, messages, llmOptions, res) {
     const safeText = stripBoardTagsForStream(text);
     if (fullResponse.length > 0) {
       // Partial content was already sent — tell client to replace it
-      res.write(`data: ${JSON.stringify({ type: 'replacement', content: replaceDashes(safeText) })}\n\n`);
+      res.write(`data: ${JSON.stringify({ type: 'replacement', content: stripTemplateTokens(replaceDashes(safeText)) })}\n\n`);
     } else {
-      res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safeText) })}\n\n`);
+      res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(safeText)) })}\n\n`);
     }
     return { text, toolCalls: [], resolvedTools: null };
   }
@@ -1077,7 +1078,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
           const filtered = afterXp ? visualTabFilter.push(afterXp) : '';
           const safe = (filtered && piiRehydrator) ? piiRehydrator.push(filtered) : filtered;
           if (safe) {
-            res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safe) })}\n\n`);
+            res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(safe)) })}\n\n`);
           }
         }
       }
@@ -1095,7 +1096,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
         ? (piiRehydrator.push(filteredTail) + piiRehydrator.flush())
         : filteredTail;
       if (tail && !clientDisconnected) {
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(tail) })}\n\n`);
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(tail)) })}\n\n`);
       }
     }
 
@@ -1144,9 +1145,9 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
       const safeText = stripBoardTagsForStream(text);
       if (!clientDisconnected) {
         if (extractedChatSoFar.length > 0) {
-          res.write(`data: ${JSON.stringify({ type: 'replacement', content: replaceDashes(safeText) })}\n\n`);
+          res.write(`data: ${JSON.stringify({ type: 'replacement', content: stripTemplateTokens(replaceDashes(safeText)) })}\n\n`);
         } else {
-          res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(safeText) })}\n\n`);
+          res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(safeText)) })}\n\n`);
         }
       }
       return { text, toolCalls: [], resolvedTools: null };
@@ -1154,7 +1155,7 @@ async function generateStreamingStructured(model, messages, llmOptions, res) {
       console.error('[Generate] Structured-stream fallback also failed:', fallbackErr.message);
       const text = "I'm having trouble generating a response right now. Could you please rephrase?";
       if (!clientDisconnected) {
-        res.write(`data: ${JSON.stringify({ type: 'chunk', content: replaceDashes(text) })}\n\n`);
+        res.write(`data: ${JSON.stringify({ type: 'chunk', content: stripTemplateTokens(replaceDashes(text)) })}\n\n`);
       }
       return { text, toolCalls: [], resolvedTools: null };
     }

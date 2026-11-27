@@ -109,6 +109,19 @@ describe('gradeOpenQuestion', () => {
     expect((await oq.gradeOpenQuestion(method, 'x^2 and cos x', {})).isCorrect).toBeNull();
   });
 
+  test('a judge\'s "correct" is withdrawn when the reply assigns different values than the key', async () => {
+    mockCall.mockResolvedValue(reply({ verdict: 'correct', matched: 'board', confidence: 0.95 }));
+    const parallel = { kind: 'parallel', question: 'What do -6 and 1 add to?', answer: '-5', finalAnswer: 'x = 7 or x = -2' };
+    const flipped = await oq.gradeOpenQuestion(parallel, 'oh so mine is (x+7)(x-2)=0, x = -7 or x = 2', {});
+    expect(flipped.isCorrect).toBeNull();
+    const right = await oq.gradeOpenQuestion(parallel, 'oh so mine is (x-7)(x+2)=0, x = -2 or x = 7', {});
+    expect(right.isCorrect).toBe(true);
+    expect(oq.contradictsKey('x = 7', 'x = 7 or x = -2')).toBe(false);   // partial is not a contradiction
+    expect(oq.contradictsKey('x = 1/2', 'x = 0.5')).toBe(false);
+    expect(oq.contradictsKey('y = 3', 'x = 7')).toBe(false);             // different unknowns: not comparable
+    expect(oq.contradictsKey('so 16', '16')).toBe(false);
+  });
+
   test('nothing on record, nothing graded', async () => {
     expect(oq.isGradeable({ kind: 'none', answer: null, finalAnswer: null })).toBe(false);
     expect((await oq.gradeOpenQuestion({ kind: 'conceptual', answer: null, finalAnswer: null }, 'because it cancels')).isCorrect).toBeNull();
@@ -126,45 +139,94 @@ describe('gradeOpenQuestion', () => {
   });
 });
 
-describe('stampLatestTurn', () => {
-  const conversationWith = (messages, updateOne) => {
-    function Model() {}
-    Model.updateOne = updateOne;
-    const c = new Model();
-    Object.assign(c, { _id: 'c1', messages, boardProblem: { tex: '3x - 7 = 11' } });
+// Against the REAL Conversation model and a real (in-memory) database. The
+// first version of stampLatestTurn was tested with a hand-made model whose
+// messages had `_id`s; real messages have none, the function returned early on
+// every turn, and production stamped nothing (found 2026-11-26 by reading a
+// live conversation back). A fake model cannot catch that; this can.
+describe('stampLatestTurn, against the real model', () => {
+  const mongoose = require('mongoose');
+  const { MongoMemoryServer } = require('mongodb-memory-server');
+  let mem;
+  let Conversation;
+
+  beforeAll(async () => {
+    mem = await MongoMemoryServer.create();
+    await mongoose.connect(mem.getUri());
+    Conversation = require('../../models/conversation');
+  }, 60000);
+  afterAll(async () => {
+    await mongoose.disconnect();
+    await mem.stop();
+  });
+
+  // A conversation as persist leaves it: the tutor's reply pushed, then saved.
+  const saved = async (messages) => {
+    const c = new Conversation({ userId: new mongoose.Types.ObjectId(), messages: [] });
+    for (const m of messages) c.messages.push(m);
+    c.boardProblem = { tex: '3x - 7 = 11', posedAt: new Date() };
+    await c.save();
     return c;
   };
+  const stored = async (c) => (await mongoose.connection.db.collection('conversations').findOne({ _id: c._id })).messages;
+  const FINAL = { kind: 'final', question: 'Solve 3x - 7 = 11.', answer: 'x = 6', finalAnswer: 'x = 6' };
 
-  test('writes the record onto the turn that was just saved, by id', async () => {
-    mockCall.mockResolvedValue(reply({ kind: 'final', question: 'Solve 3x - 7 = 11.', answer: 'x = 6', finalAnswer: 'x = 6' }));
-    const updateOne = jest.fn().mockResolvedValue({ matchedCount: 1 });
+  test('the record lands on the tutor turn that was just saved, and loads back', async () => {
+    mockCall.mockResolvedValue(reply(FINAL));
     const onStamp = jest.fn();
-    const conversation = conversationWith([
-      { _id: 'm1', role: 'user', content: 'solve 3x - 7 = 11' },
-      { _id: 'm2', role: 'assistant', content: 'What do you get for \\(x\\)?' },
-    ], updateOne);
-    const record = await oq.stampLatestTurn(conversation, { onStamp });
-    expect(record.answer).toBe('x = 6');
-    expect(updateOne).toHaveBeenCalledWith(
-      { _id: 'c1', 'messages._id': 'm2' },
-      { $set: { 'messages.$.openQuestion': expect.objectContaining({ kind: 'final', answer: 'x = 6' }) } },
-    );
+    const c = await saved([{ role: 'user', content: 'solve 3x - 7 = 11' }, { role: 'assistant', content: 'What do you get for \\(x\\)?' }]);
+    const record = await oq.stampLatestTurn(c, { onStamp });
+    expect(record).toMatchObject({ kind: 'final', answer: 'x = 6' });
     expect(onStamp).toHaveBeenCalledWith('final');
+
+    const messages = await stored(c);
+    expect(messages[1].openQuestion).toMatchObject({ kind: 'final', question: 'Solve 3x - 7 = 11.', answer: 'x = 6', finalAnswer: 'x = 6' });
+    expect(messages[0].openQuestion).toBeUndefined();
+    // …and the next turn, which loads the conversation fresh, finds it.
+    const next = await Conversation.findById(c._id);
+    expect(oq.latestOpenQuestion(next.messages)).toMatchObject({ kind: 'final', answer: 'x = 6' });
+    expect(oq.isGradeable(oq.latestOpenQuestion(next.messages))).toBe(true);
   });
 
-  test('a plain object, an unsaved turn, or a student turn last: nothing is read or written', async () => {
-    const updateOne = jest.fn();
-    expect(await oq.stampLatestTurn({ _id: 'c1', messages: [{ _id: 'm', role: 'assistant', content: 'What is 2 + 2?' }] })).toBeNull();
-    expect(await oq.stampLatestTurn(conversationWith([{ role: 'assistant', content: 'What is 2 + 2?' }], updateOne))).toBeNull();
-    expect(await oq.stampLatestTurn(conversationWith([{ _id: 'm', role: 'user', content: '4' }], updateOne))).toBeNull();
+  test('a later save of the same in-memory document does not erase it', async () => {
+    mockCall.mockResolvedValue(reply(FINAL));
+    const c = await saved([{ role: 'user', content: 'solve 3x - 7 = 11' }, { role: 'assistant', content: 'What do you get?' }]);
+    await oq.stampLatestTurn(c);
+    c.activeMinutes = 3;
+    await c.save();
+    expect((await stored(c))[1].openQuestion).toMatchObject({ answer: 'x = 6' });
+  });
+
+  test('if the turn is no longer where it was, nothing is written', async () => {
+    mockCall.mockResolvedValue(reply(FINAL));
+    const onStamp = jest.fn();
+    const c = await saved([{ role: 'user', content: 'solve 3x - 7 = 11' }, { role: 'assistant', content: 'What do you get?' }]);
+    await mongoose.connection.db.collection('conversations').updateOne({ _id: c._id }, { $set: { 'messages.1.content': 'A summary replaced this turn.' } });
+    expect(await oq.stampLatestTurn(c, { onStamp })).toBeNull();
+    expect(onStamp).toHaveBeenCalledWith('unwritten');
+    expect((await stored(c))[1].openQuestion).toBeUndefined();
+  });
+
+  test('a student turn last, or an unreadable reply: no write', async () => {
+    const onStamp = jest.fn();
+    const c = await saved([{ role: 'assistant', content: 'What do you get?' }, { role: 'user', content: '6' }]);
+    expect(await oq.stampLatestTurn(c, { onStamp })).toBeNull();
     expect(mockCall).not.toHaveBeenCalled();
-    expect(updateOne).not.toHaveBeenCalled();
+
+    mockCall.mockResolvedValue({ choices: [{ message: { content: 'not json' } }] });
+    const d = await saved([{ role: 'user', content: 'hi' }, { role: 'assistant', content: 'What do you get?' }]);
+    expect(await oq.stampLatestTurn(d, { onStamp })).toBeNull();
+    expect(onStamp).toHaveBeenCalledWith(null);
+    expect((await stored(d))[1].openQuestion).toBeUndefined();
   });
 
-  test('a failed write is swallowed', async () => {
-    mockCall.mockResolvedValue(reply({ kind: 'final', question: 'q', answer: '4', finalAnswer: '4' }));
-    const conversation = conversationWith([{ _id: 'm', role: 'assistant', content: 'What is 2 + 2?' }], jest.fn().mockRejectedValue(new Error('db down')));
-    await expect(oq.stampLatestTurn(conversation)).resolves.toBeNull();
+  test('a plain object is left alone, and a failed write is swallowed', async () => {
+    expect(await oq.stampLatestTurn({ _id: 'c1', messages: [{ role: 'assistant', content: 'What is 2 + 2?' }] })).toBeNull();
+    mockCall.mockResolvedValue(reply(FINAL));
+    function Model() {}
+    Model.updateOne = jest.fn().mockRejectedValue(new Error('db down'));
+    const c = Object.assign(new Model(), { _id: 'c1', messages: [{ role: 'assistant', content: 'What is 2 + 2?' }] });
+    await expect(oq.stampLatestTurn(c)).resolves.toBeNull();
   });
 });
 

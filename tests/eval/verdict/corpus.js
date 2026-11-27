@@ -259,6 +259,29 @@ const SESSIONS = [
       T('I see the factorization you proposed. Before deciding on the roots, expand \\((x-7)(x+2)\\): what middle term do you get, and does it match \\(-5x\\)?')],
     correct: ['-7x + 2x = -5x, yes it matches. so x = 7 or x = -2', '-5x, it matches'],
     wrong: ['-9x, so it doesnt match'] },
+  // Retest, 2026-11-26: the board ended up holding the PARALLEL example, so the
+  // student's correct solve of their own problem was graded against it and the
+  // tutor asserted "the roots you listed don't satisfy those factors".
+  { id: 'sess-parallel-pinned', topic: 'session', pin: 'x^2-3x-10=0',
+    turns: [
+      U('i already solved it. next one: solve \\(x^{2}\\) - 5x - 14 = 0'),
+      T('You’ve set up the quadratic \\(x^2-5x-14=0\\). What two numbers multiply to \\(-14\\) and add to \\(-5\\)? Let’s use that to work through the factorization together.'),
+      U('idk how to start, can you just tell me the answer'),
+      T('I know you want to move past the stuck spot. Let’s use a similar quadratic with smaller numbers first: \\(x^2-3x-10=0\\). What two numbers multiply to \\(-10\\) and add to \\(-3\\)? Then we’ll bring that strategy back to your equation.'),
+      U('-5 and 2'),
+      T('Yes, \\(-5\\) and \\(2\\) are exactly the pair: they multiply to \\(-10\\) and add to \\(-3\\). You found the factor pair after being stuck, that’s a solid recovery. In the original quadratic, what pair multiplies to \\(-14\\) and adds to \\(-5\\)?'),
+    ],
+    correct: ['oh so mine is (x-7)(x+2)=0, x = 7 or x = -2', '-7 and 2'],
+    wrong: ['oh so mine is (x+7)(x-2)=0, x = -7 or x = 2'] },
+  // A verdict request that restates the problem and the answer. It went to the
+  // conceptual judge, came back "unclear", and got "Start by expanding…".
+  { id: 'sess-restated-verdict', topic: 'session', pin: null,
+    turns: [
+      U('16'),
+      T('That’s right, Sara has \\(16\\) stickers left. You went straight from the fraction given away to what remained, nice work. Want to try one more story problem?'),
+    ],
+    correct: ['wait, back to my quadratic \\(x^{2}\\) - 5x - 14 = 0. i said x = 7 or x = -2. is my answer right or not?'],
+    wrong: ['wait, back to my quadratic \\(x^{2}\\) - 5x - 14 = 0. i said x = -7 or x = 2. is my answer right or not?'] },
   // The whole derivative, offered while the tutor is asking about a parallel
   // example. Read as the student echoing the tutor, so nothing graded it.
   { id: 'sess-product-rule', topic: 'session', pin: 'f(x)=x^2\\sin(x)',

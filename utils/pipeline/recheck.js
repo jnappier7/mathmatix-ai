@@ -59,6 +59,37 @@ function isRecheckRequest(text) {
 }
 
 /**
+ * "…i said x = 7 or x = -2. is my answer right or not?" — a verdict request
+ * that RESTATES the answer it is about. Not a re-check (there is nothing to
+ * look back for: the claim is in the message), and not a bare question either.
+ * Returns the message without its closing question, to be graded as the
+ * submission it is; null for anything else. Live, 2026-11-26: this exact
+ * message went to the conceptual judge, came back "unclear", and the tutor
+ * answered "Start by expanding…".
+ * @param {string} text
+ * @returns {string|null}
+ */
+function restatedSubmission(text) {
+  if (!text || typeof text !== 'string') return null;
+  const t = text.trim();
+  if (t.length > 240) return null;
+  const closing = t.match(ASKS_ABOUT_EARLIER_ANSWER);
+  if (!closing || closing.index === 0) return null;
+  const rest = t.slice(0, closing.index).trim();
+  if (!carriesNewAnswer(rest)) return null;
+  // One statement per line, without the reporting words: "…x^2 - 5x - 14 = 0.
+  // i said x = 7 or x = -2." is a problem and an answer, which is how shown
+  // work is read. A "." between digits is a decimal point, not a full stop.
+  // As typed in the math field: "\\(x^{2}\\)" is x^2.
+  return rest
+    .replace(/\\[()[\]]/g, '').replace(/\^\{(-?\w+)\}/g, '^$1')
+    .split(/(?<!\d)[.!?]+\s+|(?<=\d)[.!?]+\s+(?=[a-z])/i)
+    .map((line) => line.trim().replace(/[.!?]+$/, '').replace(/^(?:and\s+|so\s+)?(?:i\s+(?:said|got|put|wrote|answered)|my\s+answer\s+(?:is|was))\s+(?:that\s+)?/i, '').trim())
+    .filter(Boolean)
+    .join('\n');
+}
+
+/**
  * Index (in `messages`) of the student's most recent mathematical submission,
  * looking back at most `maxUserTurns` student messages. Null when there is
  * none — then there is nothing to re-check and the turn proceeds as before.
@@ -106,4 +137,4 @@ function looksLikeSubmission(raw) {
   return text.trim().split(/\s+/).length <= 4;
 }
 
-module.exports = { isRecheckRequest, findRecheckTarget, looksLikeSubmission };
+module.exports = { isRecheckRequest, restatedSubmission, findRecheckTarget, looksLikeSubmission };

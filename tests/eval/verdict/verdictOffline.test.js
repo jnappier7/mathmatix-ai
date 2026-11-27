@@ -26,15 +26,6 @@ const { runAll, summarize } = require('./runner');
 // Wrong verdicts the deterministic tier gives today — each a real bug, found by
 // this eval on 2026-11-03. Key: `${problemId}|${answer}`.
 const KNOWN = new Set([
-  // No board pin, and the chain opens on the student's own (wrong) factoring.
-  // With nothing to anchor it, verifyDerivation can only check the chain
-  // against itself — and it IS self-consistent, so it is affirmed. Before
-  // 2026-11-25 the same chain was rejected for the wrong reason (the two-root
-  // last line read as one value), which rejected the CORRECT factoring too.
-  // Pinned — which is how production holds a problem the student brought — the
-  // wrong factoring is rejected against the pin. Closing this needs the
-  // student's own problem as the anchor when the board has none.
-  'sess-prose-factored|oh so mine is (x+7)(x-2)=0, x = -7 or x = 2',
 ]);
 
 // Follow-up turns ("are they correct?") left with no verdict AND no restriction.

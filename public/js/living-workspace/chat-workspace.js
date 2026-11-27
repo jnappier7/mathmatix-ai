@@ -114,7 +114,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261126c';
+  var ASSET_V = '?v=20261126d';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -200,6 +200,24 @@
     return side !== isSide;
   }
 
+  // "Showing" = the dock has work in it AND the student has not hidden it.
+  // While that holds, sealed cards stay out of the transcript
+  // (living-workspace.css, "No inline cards while the board is showing"). The
+  // dock changes parent on a wide screen, so no sibling selector can reach
+  // it — the state rides on <body>.
+  function syncBoardShowing() {
+    var slot = document.getElementById('cr-work-dock');
+    var body = document.body.classList;
+    var on = body.contains('mm-board-up') && !!slot && !slot.classList.contains('is-collapsed');
+    if (body.contains('mm-board-showing') === on) return;
+    // Cards entering or leaving the transcript move everything below them; a
+    // student reading the newest line keeps it.
+    var box = document.getElementById('chat-messages-container');
+    var atBottom = !!box && (box.scrollHeight - box.scrollTop - box.clientHeight) < 80;
+    body.toggle('mm-board-showing', on);
+    if (atBottom) requestAnimationFrame(function () { box.scrollTop = box.scrollHeight; });
+  }
+
   function watchBoardUp(root) {
     if (!root || !document.getElementById('cr-work-dock')) return;
     var was = null;
@@ -214,6 +232,7 @@
       if (up === was) return;
       was = up;
       document.body.classList.toggle('mm-board-up', up);
+      syncBoardShowing();
       if (!up) return;
       var face = document.querySelector('#cr-work-dock .lws-dock-face');
       var src = ['mm-cam-pill-avatar', 'cr-tutor-portrait'].map(function (id) {
@@ -434,6 +453,11 @@
       function setCollapsed(on) {
         slot.classList.toggle('is-collapsed', !!on);
         paintToggle(!!on);
+      }
+      // The transcript needs to know too (syncBoardShowing). Watched rather
+      // than set here, because the phone's swipe collapses the dock itself.
+      if (typeof MutationObserver === 'function') {
+        new MutationObserver(syncBoardShowing).observe(slot, { attributes: true, attributeFilter: ['class'] });
       }
       // On a phone the same change glides (wireDockSwipe hands back the
       // animated version); everywhere else it is the plain switch.
