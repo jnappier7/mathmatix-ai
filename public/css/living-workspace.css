@@ -1431,6 +1431,11 @@ html.mm-work-inline body #chat-messages-container { min-height: 120px; }
    panel there permanently. */
 .cr-work-dock .lws-dv-root.is-empty { display: none; }
 
+/* Board off (WORK_BOARD) and not in a call: the view is mounted and kept in
+   step with the conversation so voice mode can show it, but outside a call
+   none of it is on screen. chat-workspace.js stamps is-off (boardLive). */
+.cr-work-dock.is-off { display: none !important; }
+
 /* ── The derivation, docked ────────────────────────────────────────────── */
 /* It keeps its OWN opaque ground — do not make this transparent. The two theme
    systems can disagree: design-system.css is dark by default and only goes

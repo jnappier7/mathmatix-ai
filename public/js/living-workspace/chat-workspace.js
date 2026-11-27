@@ -69,6 +69,20 @@
   }
   var BOARD = resolveBoard();
 
+  // VOICE MODE ALWAYS HAS THE BOARD (owner 2026-11-27: "Board should always
+  // show during live voice mode"). A call has no message to put the math in —
+  // what the tutor says is gone the moment it is said — so the board is the
+  // only place the work can live, whatever WORK_BOARD says. The view is
+  // therefore ALWAYS mounted and kept in step with the conversation (the
+  // server keeps its ledger with the board off too, and seeds the voice
+  // session from that same ledger, so the tutor and the student are looking at
+  // the same work). What the switch decides is only whether the student SEES
+  // it outside a call: boardLive() is the one question every visible effect
+  // asks — the dock, the body classes that move the layout, sealed cards.
+  function inVoice() { return !!document.body && document.body.classList.contains('cr-voice'); }
+  function isLive(board, voice) { return !!(board || voice); }
+  function boardLive() { return isLive(BOARD, inVoice()); }
+
   // Chat context for the student-move loop (P7). Chat refines it via
   // window.LWS_CHAT.setContext({ conversationId, workspaceId }).
   var ctx = { conversationId: null, workspaceId: 'chat' };
@@ -114,7 +128,7 @@
   // public/ with a 7-day cache and no content hashing, so bump this whenever
   // any living-workspace asset changes (and the chat.html <script ?v=> tag to
   // match, so this file itself refreshes). See project_asset_cache_busting.
-  var ASSET_V = '?v=20261126d';
+  var ASSET_V = '?v=20261127a';
   var BASE = '/js/living-workspace/';
   var SCRIPTS = [
     'core/flags.js', 'core/viewport.js', 'core/elementRegistry.js',
@@ -184,6 +198,15 @@
   // moved into a hidden column would be work nobody can see, so there it stays
   // in the chat.
   function wantsSide(up, wide, voice, tutorHidden) { return !!(up && wide && !voice && !tutorHidden); }
+  // A PHONE IN A CALL: THE BOARD IS THE STAGE. In voice mode a phone hides the
+  // chat column outright (mobile-tutor-cam.css — the call is the cam, the
+  // work, and the mic), and the dock lives inside that column, so it went
+  // with it and the call was an empty screen. There the dock moves out to
+  // <body> and fills the space between the tutor's card and the mic
+  // (voice-mode.css "the board is the stage"), work or no work — an empty
+  // board says where the work will go. Leaving the call sends it home.
+  var PHONE_MQ = '(max-width: 768px)';
+  function wantsStage(voice, phone) { return !!(voice && phone); }
   function placeDock(up) {
     var slot = document.getElementById('cr-work-dock');
     var col = document.querySelector('.cr-hero-col');
@@ -191,13 +214,20 @@
     var home = document.getElementById('input-container');
     if (!slot || !col || !hero || !home || !home.parentNode) return false;
     var mq = window.matchMedia ? window.matchMedia(SIDE_MQ) : null;
+    var phone = window.matchMedia ? window.matchMedia(PHONE_MQ) : null;
     var body = document.body.classList;
+    var stage = wantsStage(body.contains('cr-voice'), !!(phone && phone.matches));
     var side = wantsSide(up, !!(mq && mq.matches), body.contains('cr-voice'), body.contains('cr-hero-min'));
-    var isSide = slot.parentNode === col;
-    if (side && !isSide) col.insertBefore(slot, hero.nextSibling);
-    else if (!side && isSide) home.parentNode.insertBefore(slot, home);
+    var was = slot.parentNode;
+    var to = stage ? document.body : (side ? col : home.parentNode);
+    if (was !== to) {
+      if (stage) document.body.appendChild(slot);
+      else if (side) col.insertBefore(slot, hero.nextSibling);
+      else home.parentNode.insertBefore(slot, home);
+    }
     document.body.classList.toggle('mm-board-side', side);
-    return side !== isSide;
+    document.body.classList.toggle('mm-board-stage', stage);
+    return was !== to;
   }
 
   // "Showing" = the dock has work in it AND the student has not hidden it.
@@ -226,7 +256,12 @@
       if (thread) requestAnimationFrame(function () { thread.scrollTop = thread.scrollHeight; });
     }
     function sync() {
-      var up = boardIsUp(root);
+      // Board off outside a call: the view may hold work, but none of it is
+      // showing, so nothing about the layout may move for it.
+      var live = boardLive();
+      var slot = document.getElementById('cr-work-dock');
+      if (slot) slot.classList.toggle('is-off', !live);
+      var up = live && boardIsUp(root);
       // The conversation's width or height just changed: keep its newest line.
       if (placeDock(up)) settleThread();
       if (up === was) return;
@@ -252,6 +287,8 @@
     // A window dragged across the breakpoint moves the board with it.
     var mq = window.matchMedia ? window.matchMedia(SIDE_MQ) : null;
     if (mq && mq.addEventListener) mq.addEventListener('change', sync);
+    var phone = window.matchMedia ? window.matchMedia(PHONE_MQ) : null;
+    if (phone && phone.addEventListener) phone.addEventListener('change', sync);
     // …and so does minimizing or restoring the tutor, or entering voice mode.
     // (sync only ever sets body classes to what they already are when nothing
     // changed, which records no mutation — so this cannot loop.)
@@ -624,6 +661,9 @@
     // now would render every card as a bare "Solved" and place it blind, so
     // hold the entries and paint them once the replay is annotated.
     if (sealDeferred) { sealDeferred.push(entry); return; }
+    // Board off and not in a call: the view is only being kept in step, and
+    // nothing of it shows — a finished problem must not surface as a card.
+    if (!boardLive()) return;
     sealToTranscript(entry);
   }
 
@@ -672,7 +712,6 @@
   }
 
   api.applyBoardCommands = function (cmds) {
-    if (!BOARD) return;
     if (!Array.isArray(cmds) || cmds.length === 0) return;
     render(cmds);
   };
@@ -682,7 +721,6 @@
   // during a voice session instead of freezing after the first (text-posed)
   // problem. No-op if the translator or payload is empty.
   api.applyVoiceBoard = function (payload) {
-    if (!BOARD) return;
     if (!window.LWS || typeof window.LWS.voiceToBoardCommands !== 'function') return;
     var cmds;
     try { cmds = window.LWS.voiceToBoardCommands(payload); }
@@ -938,7 +976,7 @@
     } finally {
       var held = sealDeferred;
       sealDeferred = null;              // before painting, so a seal can't re-queue
-      held.forEach(sealToTranscript);
+      if (boardLive()) held.forEach(sealToTranscript);
     }
     // The in-focus problem's source link survives the reload too.
     if (ledger.current && ledger.current.sourceRef) {
@@ -948,7 +986,6 @@
   }
 
   api.hydrate = function (ledger) {
-    if (!BOARD) return;             // no board → nothing to replay
     pending = null;                 // queued live turns belong to the old view
     if (!ready || !dv) { pendingLedger = ledger || null; return; }
     doHydrate(ledger);
@@ -959,14 +996,19 @@
     loadNext(0, function () {
       if (!window.LWS) { console.error('[LWS_CHAT] workspace modules not available after load'); return; }
       var mount = null;
-      if (BOARD) {
-        if (!window.LWS.DerivationView) { console.error('[LWS_CHAT] DerivationView not available after load'); return; }
+      // Mounted with the board off too: voice mode shows it (see boardLive).
+      // A missing view is fatal only where the board is the page's own
+      // surface; with it off the Notebook and Source Dock still mount.
+      if (window.LWS.DerivationView) {
         mount = buildDock();
         dv = new window.LWS.DerivationView(mount, {
           renderers: makeRenderers(),
           onOpenSource: openLinkedSource,
           onSeal: onSeal,
         });
+      } else {
+        console.error('[LWS_CHAT] DerivationView not available after load');
+        if (BOARD) return;
       }
       try { watchBoardUp(dv && dv.el && dv.el.root); } catch (e) { console.error('[LWS_CHAT] board-up watch failed', e); }
       // The derivation's A−/A+ text-size control pins itself to its own
@@ -1004,7 +1046,7 @@
       // arrived AFTER the hydrate and renders on top of the rebuilt board.
       if (pendingLedger !== undefined) { var l = pendingLedger; pendingLedger = undefined; doHydrate(l); }
       if (pending) { var p = pending; pending = null; render(p); }
-      console.log('[LWS_CHAT] mounted (' + (BOARD ? 'inline work dock' : 'notebook + sources only, board off') + ', mode=' + MODE + ')');
+      console.log('[LWS_CHAT] mounted (' + (BOARD ? 'inline work dock' : 'board off: work dock in voice mode only') + ', mode=' + MODE + ')');
     });
   }
 

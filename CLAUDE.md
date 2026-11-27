@@ -363,8 +363,17 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
   Notebook and Source Dock (`isOn()` stays true — `script.js` falls back to the legacy board
   otherwise). The server **still runs the board pipeline silently**: the synthesizer pins the problem
   from chat text, so `conversation.boardProblem` (the verifier's grading anchor) and the
-  `boardLedger` (teacher live view) keep working without a single model tag. Voice board actions
-  (shelved in chat) render nowhere with it off. The landing-page preview follows the same switch:
+  `boardLedger` (teacher live view) keep working without a single model tag. **Voice mode is the
+  exception: a call ALWAYS has the board** (owner 2026-11-27 — a call has no message to put the math
+  in). `chat-workspace.js` mounts the derivation view with the board off too and keeps it in step
+  with the conversation (no board call is gated on the flag any more); `boardLive()` = `BOARD ||
+  body.cr-voice` is the one question every VISIBLE effect asks — the dock (`.cr-work-dock.is-off`),
+  `mm-board-up` and the layouts hung on it, sealed cards. In a call the dock shows empty as well
+  (`voice-mode.css` "the board is ALWAYS there"), and on a phone — where the chat column is hidden
+  for a call — `placeDock` moves it to `<body>` (`body.mm-board-stage`) and it fills the space
+  between the tutor's card and the mic. `voice-mode.js` `holdCardOpen` keeps that card from
+  collapsing to the pill mid-call. Pinned by `tests/unit/workspace/voiceBoardAlways.test.js`;
+  checked by eye in headless Chromium at 390×844, 375×667 and 1366×800, not on a real phone. The landing-page preview follows the same switch:
   `routes/trialChat.js` forwards `board` only when `isWorkBoardEnabled()`, so its "Our work" dock
   (`#lp-work-dock`) never opens with the board off. The board's own suites opt in with `WORK_BOARD=on`;
   board-off is pinned by `tests/unit/workBoardOff.test.js`. The notes below describe the board ON.
