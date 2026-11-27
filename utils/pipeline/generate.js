@@ -113,6 +113,13 @@ const VISUAL_TOOLS_ENABLED = process.env.ENABLE_VISUAL_TOOLS === 'true';
  * Build the action-specific instruction for the LLM.
  * This replaces the monolithic system prompt with a focused directive.
  */
+// "9, 6" / "9 and 8" / "x = 7 or x = -2": more than one value in one answer.
+function isSeveralValues(value) {
+  if (value == null) return false;
+  const nums = String(value).match(/-?\d+(?:\.\d+)?(?:\s*\/\s*\d+)?/g) || [];
+  return nums.length >= 2 && /,|\band\b|\bor\b|;/i.test(String(value));
+}
+
 function buildActionPrompt(decision) {
   const { action, diagnosis, observation, directives } = decision;
 
@@ -154,7 +161,19 @@ function buildActionPrompt(decision) {
       break;
 
     case ACTIONS.GUIDE_INCORRECT:
-      parts.push(`The student answered "${observation.answer?.value}" but the correct answer is "${diagnosis.correctAnswer}". That is for YOUR diagnosis only.`);
+      if (isSeveralValues(observation.answer?.value) && !isSeveralValues(diagnosis.correctAnswer)) {
+        // "9, 6" against "1.4167": several values offered where the problem has
+        // one answer. Told only "the correct answer is 1.4167", the model read
+        // the pair as a step on the way and built its next question on it —
+        // "what do you get when you add the numerators 9 and 6?" — carrying the
+        // wrong 6 forward (live, 2026-11-26).
+        parts.push(`The student replied "${observation.answer?.value}". The answer to the problem is "${diagnosis.correctAnswer}", so this is not it — these look like values from a step along the way. That is for YOUR diagnosis only.`);
+        parts.push('Check EACH value they gave against the problem yourself. A value that is wrong is the first wrong step: ask about that one value and how they got it.');
+      } else {
+        parts.push(`The student answered "${observation.answer?.value}" but the correct answer is "${diagnosis.correctAnswer}". That is for YOUR diagnosis only.`);
+      }
+      // Whatever shape it took: a wrong answer is never the input to the next step.
+      parts.push('NEVER carry their answer forward. Your next question is about how they GOT it — not a step that USES it. Asking them to add, simplify, or continue from a value you have not confirmed teaches the mistake.');
       if (decision.repeatMiss) {
         // The last thing the model reads. It used to repeat the first-wrong-step ask here too,
         // on the turn whose whole point is that asking about that move has already failed.

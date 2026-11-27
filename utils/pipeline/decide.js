@@ -1228,6 +1228,16 @@ function decideCore(observation, diagnosis, context) {
       // on a perfectly correct answer — the documented spiral into "WHY ARE YOU
       // ASKING ME ABOUT 9+3! Do you think I am a 2nd grader?".
       decision.action = ACTIONS.CONTINUE_CONVERSATION;
+      if (diagnosis.builtOnMiss) {
+        // See index.js "A right answer to a question built on a wrong one".
+        decision.directives.push(
+          `DO NOT CONFIRM THIS AS THE ANSWER. The student's PREVIOUS answer was checked and was NOT correct, and it was never corrected. "${observation.answer?.value}" follows from it: it fits your last question, but it was checked against the problem on the board and it is NOT that problem's answer.`,
+          `Their earlier answer was "${diagnosis.builtOnMiss.previousAnswer}". The mistake is THERE, not in this step. Check each value in it against the original problem yourself, find the one that is wrong, and ask about that ONE value — how they got it. Do not ask about a value that is right.`,
+          'Do not say this answer is correct, do not say the problem is solved, and do not move to a new problem. Do not give the right value either: they find it.',
+          'Own it briefly if your last question used their wrong value ("I carried a number forward I should have checked").'
+        );
+        return decision;
+      }
       decision.directives.push(
         'ANSWER VERIFICATION REQUIRED: Our math engine could not auto-verify this answer (the problem was hard to parse). Work the whole thing out YOURSELF before responding.',
         'If you determine it is correct: confirm briefly and move on. Do NOT ask the student to explain, justify, or re-derive a correct answer.',
