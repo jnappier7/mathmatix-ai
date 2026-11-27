@@ -33,7 +33,7 @@ Live at https://www.mathmatix.ai (Render, Oregon). ~70 shipped features (see
 | DB | MongoDB + Mongoose 8 (`connect-mongo` session store) |
 | **LLM (runtime)** | **Dual-provider, split by role.** OpenAI for the tutor's generate stage (`TUTOR_MODEL`, **`gpt-4o-mini` as of 2026-08-18**), reading photos of handwritten work (`VISION_MODEL`, `gpt-6-sol`), the stronger text judge (`JUDGE_MODEL`, `gpt-6.1-terra`), and embeddings; **Anthropic for the answer verifier** (`claude-haiku-5-5` since 2026-11-22, `VERIFIER_MODEL` env overrides) so the model checking the tutor's answer isn't the model that wrote it. Both keys are required in prod. See §7. |
 | Voice STT | Deepgram (`nova-2`/`nova-3`), Whisper-1 fallback |
-| Voice TTS | Cartesia (`sonic-3.5`), streaming over WebSocket |
+| Voice TTS | Cartesia (`sonic-3.6` since 2026-11-27; `CARTESIA_MODEL` overrides — set it to `sonic-3.5` to go back), streaming over WebSocket |
 | Math OCR | Mathpix (`/v3/text`, `/v3/pdf`) |
 | Math render | KaTeX + MathLive (client); JSXGraph for interactive diagrams |
 | Auth | Passport (local, Google, Microsoft, Clever SSO) |
