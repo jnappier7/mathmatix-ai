@@ -47,7 +47,8 @@ describe('allowedBoardActionsFor — the alignment lever', () => {
 
   it('a normal move allows the full solving vocabulary, never diagram/model', () => {
     const allowed = allowedBoardActionsFor('guide_incorrect');
-    expect(allowed).toEqual(expect.arrayContaining(['pose', 'apply', 'resolve', 'verify', 'scaffold', 'clear', 'graph', 'image']));
+    expect(allowed).toEqual(expect.arrayContaining(['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image']));
+    expect(allowed).not.toContain('scaffold');   // fill-ins are retired (boardFillInsRetired.test.js)
     expect(allowed).not.toContain('diagram');
     expect(allowed).not.toContain('model');
   });

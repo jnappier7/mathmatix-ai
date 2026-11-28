@@ -731,6 +731,18 @@ npm run seed:all:dry   # preflight + plan, no writes
   `derivationView.renderTextAndMath` typesets (words wrap, everything between the groups is math),
   and leading praise ("Nice!") is not quoted as part of the problem. Pinned by
   `tests/unit/boardWrongPicture.test.js`; checked by eye in headless Chromium at 390×844 and 1366×800.
+- **Fill-in boxes are RETIRED (owner 2026-11-28: "weird and don't really work").** A `scaffold` card
+  was a line with an empty `\boxed{}` the student tapped and typed into (removed 2026-07-25, brought
+  back three days later, then a rule for every way it went wrong). Now: no prompt or schema offers
+  it (`MODEL_BOARD_ACTIONS` in `boardResponseSchema.js` is what every model-facing enum uses; all
+  four board prompts say "NO FILL-IN BOXES"), `boardSettle.dropFillIns` drops any that still arrive
+  (called in `pipeline/index.js` with or without a conversation), and `derivationView._addRow` skips
+  one on a board saved earlier (still counted, so "step N" keeps pointing at the same line). The
+  tap-to-type code, the `lws:blank-submit` listener and its chat reply are gone. Left in place and
+  now unreachable from a new turn: the guard's scaffold rules, `scaffoldBlankVerifier.js` and the
+  blank branch of `/api/student-moves` — delete them once nobody wants the feature back. Voice
+  turns an empty box into `?` (`voiceMathJson.tidyLatex`). Pinned by
+  `tests/unit/boardFillInsRetired.test.js`.
 - **One problem, one card — the board's tail lives in `pipeline/boardSettle.js`.** A `pose` of
   different tex SEALS the card in focus, and a `verify` closes it and drops the pin — so on
   2026-10-05 a model `verify` of `2x + 10 = 26` (not an answer) closed the card, and every

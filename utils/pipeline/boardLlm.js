@@ -60,7 +60,7 @@ const SKIP_MOVES = new Set([
 // expose). Derived from BOARD_ACTIONS so it can't silently drift from the
 // source of truth — when new actions land (e.g. the worked-example `example`
 // card on feat/workboard-worked-example-mirror), they flow in automatically.
-const TRANSLATABLE_ACTIONS = BOARD_ACTIONS.filter(a => a !== 'diagram' && a !== 'model');
+const TRANSLATABLE_ACTIONS = BOARD_ACTIONS.filter(a => a !== 'diagram' && a !== 'model' && a !== 'scaffold');
 
 /**
  * The whitelist of board actions valid for a given move — the alignment lever.
@@ -100,9 +100,7 @@ const BOARD_TRANSLATOR_SYSTEM = [
   '- apply:    { action:"apply", op:"subtract 4 from both sides" } an operation the student named',
   '- resolve:  { action:"resolve", tex:"2x=16" }                   ' + RESOLVE_RULE,
   '- verify:   { action:"verify", tex:"x=8", check:"2(8)+4=20" }   a confirmed solution',
-  '- scaffold: { action:"scaffold", tex:"x + \\\\boxed{} = 8" }       a hint; MUST contain an empty \\\\boxed{} blank.',
-  '            The blank is the value being asked for — never blank a known value while showing the result',
-  '            (NOT "0.3 \\\\times \\\\boxed{} = 300" when the chat asks for 0.3 × 1000), and never use "?" as the unknown.',
+  '  (There are NO fill-in cards: never an empty \\\\boxed{}, a blank or a "?" for the student to fill.)',
   '- graph:    { action:"graph", fn:"x^2-4", caption:"..." }       a function plot',
   '- image:    { action:"image", query:"unit circle labeled", caption:"..." } a reference image',
   '- tiles:    { action:"tiles", tex:"2x+3=7" }                    algebra tiles for a line already on the board,',

@@ -37,9 +37,9 @@ describe('BOARD_TOOL shape', () => {
     expect(BOARD_TOOLS).toEqual([BOARD_TOOL]);
   });
 
-  test('action enum is the single-source BOARD_ACTIONS vocabulary', () => {
+  test('action enum is the single-source BOARD_ACTIONS vocabulary, less the retired fill-in', () => {
     const enumActions = BOARD_TOOL.function.parameters.properties.commands.items.properties.action.enum;
-    expect(enumActions).toEqual(BOARD_ACTIONS);
+    expect(enumActions).toEqual(BOARD_ACTIONS.filter(a => a !== 'scaffold'));
   });
 });
 
