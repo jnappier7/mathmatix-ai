@@ -57,7 +57,7 @@ const { buildSidecar, mergeLlmSignals, getSignalStats } = require('./sidecar');
 const { computeSessionMood, buildMoodDirective } = require('./sessionMood');
 const { generateSuggestions } = require('./suggestions');
 const { assembleEvidence } = require('./evidenceAccumulator');
-const { settleBoardTurn } = require('./boardSettle');
+const { settleBoardTurn, dropFillIns } = require('./boardSettle');
 const { isWorkBoardEnabled } = require('../featureFlags');
 const { assistanceLevelForTurn } = require('./assistanceLadder');
 const { buildBoardStateBlock } = require('./boardStateBlock');
@@ -1854,6 +1854,15 @@ async function runPipeline(message, ctx) {
   // back into its card instead of sealing it (2026-10-05: one problem, five
   // cards); a genuinely new pose gets its `clear`; then lastBoardAction, the
   // pin and the persisted ledger follow. Non-fatal by design.
+  // No fill-in card leaves the pipeline, with or without a conversation to
+  // settle against (the landing-page preview has none).
+  if (Array.isArray(verified.boardCommands)) {
+    const fill = dropFillIns(verified.boardCommands);
+    if (fill.dropped) {
+      verified.boardCommands = fill.commands;
+      console.log(`[Pipeline] Dropped ${fill.dropped} fill-in card(s) — fill-ins are retired`);
+    }
+  }
   if (ctx.conversation) {
     try {
       const pinTexBefore = ctx.conversation?.boardProblem?.tex || null;

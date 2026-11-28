@@ -74,22 +74,14 @@ describe('sendMove reports a rejected move honestly', () => {
   });
 });
 
-describe('the blank-submit handler cannot speak an error envelope', () => {
-  test('it bails on a non-ok result before appending anything', () => {
-    expect(SRC).toMatch(/if\s*\(!result\s*\|\|\s*!result\.ok\)/);
-    const guard = SRC.search(/if\s*\(!result\s*\|\|\s*!result\.ok\)/);
-    const append = SRC.indexOf("window.appendMessage(text, 'ai')");
-    expect(guard).toBeGreaterThan(-1);
-    expect(append).toBeGreaterThan(guard);
-  });
-
-  test('`message` is not a source of tutor text anywhere in the module', () => {
-    // The whole defect in one line: resp.text || resp.message || ...
+describe('the blank-submit handler is gone with the fill-ins', () => {
+  // It was the one place a move's reply was spoken straight into chat, and
+  // the place an error envelope was once read aloud as the tutor. Fill-ins
+  // were retired on 2026-11-28 (boardFillInsRetired.test.js); what must stay
+  // true is that nothing brought the leak back with them.
+  test('no blank-submit listener, and no reply read off `message`', () => {
+    expect(SRC).not.toMatch(/lws:blank-submit/);
     expect(SRC).not.toMatch(/resp\.text\s*\|\|\s*resp\.message/);
     expect(SRC).not.toMatch(/\.message\s*\|\|\s*\(resp\.response/);
-  });
-
-  test('the tutor-text chain still reads the two real reply shapes', () => {
-    expect(SRC).toMatch(/resp\.text\s*\|\|\s*\(resp\.response\s*&&\s*resp\.response\.text\)/);
   });
 });

@@ -964,12 +964,18 @@
     // its line now that an operation shares a row with the step it produced.
     if (row.ordinals && row.ordinals.length) wrap.setAttribute('data-lws-ord', row.ordinals.join(' '));
 
+    // FILL-INS ARE RETIRED (owner 2026-11-28: "weird and don't really work").
+    // No new board has one; a board saved before that may. It is not drawn —
+    // a box nobody can fill is worse than no line — but it was still counted
+    // by the caller, so the lines after it keep the numbers the tutor's
+    // "look at step N" refers to.
+    if (kind === 'scaffold') return;
+
     var spine = d.createElement('div'); spine.className = 'lws-step-spine';
     var node = d.createElement('span'); node.className = 'lws-step-node';
     node.setAttribute('aria-hidden', 'true');
     if (kind === 'solution') { node.textContent = '✓'; node.className += ' is-answer'; }
     else if (kind === 'visual') node.textContent = '◈';
-    else if (kind === 'scaffold') node.textContent = '?';
     else if (kind === 'example') node.textContent = '↗';
     else if (kind === 'operation') node.textContent = '↳';
     else node.textContent = String(++ctx.stepNo);   // an actual worked step
@@ -996,12 +1002,6 @@
     } else if (kind === 'visual') {
       this._addBlock(element, main, blockSink);
     } else {
-      // Scaffold blanks (\boxed{}) are tappable (owner call, 2026-07-28 —
-      // interactive again, but through the StudentMove contract this time:
-      // tap → type → 'lws:blank-submit' event → chat-workspace POSTs it to
-      // /api/student-moves?tutor=true, the SAME pipe as a typed answer. The
-      // 2026-07-25 removal was of inputs that submitted through a side door
-      // chat had no concept of; this lane the tutor fully understands.)
       var tex = d.createElement('div'); tex.className = 'lws-step-tex';
       var latex = element.semantic && element.semantic.latex;
       typeset(tex, latex, true);
@@ -1017,105 +1017,10 @@
         // as a child of `main` it would take a row of its own in the grid.
         (tex.querySelector('.lws-eq-rhs') || main).appendChild(badge);
       }
-      if (latex && /\\boxed/.test(String(latex))) this._wireBlanks(wrap, tex, String(latex));
     }
 
     wrap.appendChild(main);
     (target || this.el.lines).appendChild(wrap);
-  };
-
-  // Make each rendered \boxed{} in a scaffold line a real input affordance.
-  // KaTeX renders \boxed as a span.fbox; if that markup ever changes, the
-  // fallback chip below still gives the row a working entry point.
-  DerivationView.prototype._wireBlanks = function (row, texEl, latex) {
-    var d = this.doc;
-    var boxes = toArray(texEl.querySelectorAll('.fbox'));
-    var self = this;
-
-    function submit(blankIndex, value, paint) {
-      value = String(value == null ? '' : value).trim();
-      if (!value) return;
-      paint(value);
-      var ev;
-      try {
-        ev = new CustomEvent('lws:blank-submit', {
-          bubbles: true,
-          detail: { stepTex: latex, blankIndex: blankIndex, value: value, row: row, paint: paint },
-        });
-      } catch (_) { return; }
-      row.dispatchEvent(ev);
-    }
-
-    function arm(box, blankIndex) {
-      box.classList.add('lws-blank');
-      box.setAttribute('role', 'button');
-      box.setAttribute('tabindex', '0');
-      box.setAttribute('aria-label', 'Fill in this blank');
-      function open() {
-        if (box.querySelector('input')) return;
-        var inp = d.createElement('input');
-        inp.className = 'lws-blank-input';
-        inp.setAttribute('aria-label', 'Your value for this blank');
-        inp.maxLength = 30;
-        box.textContent = '';
-        box.appendChild(inp);
-        inp.focus();
-        inp.addEventListener('keydown', function (e) {
-          // Without this, the Enter bubbles to the box's own keydown handler,
-          // which re-opens an empty input over the value just painted.
-          e.stopPropagation();
-          if (e.key === 'Enter') {
-            submit(blankIndex, inp.value, function (v) {
-              box.textContent = v;
-              box.classList.add('lws-blank-pending');
-            });
-          }
-          if (e.key === 'Escape') { box.textContent = ''; box.classList.remove('lws-blank-pending'); }
-        });
-      }
-      box.addEventListener('click', open);
-      box.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-    }
-
-    if (boxes.length) {
-      for (var i = 0; i < boxes.length; i++) arm(boxes[i], i);
-      return;
-    }
-    // Fallback: KaTeX markup not found — append a chip that opens an inline
-    // input for the FIRST blank so the affordance never silently dies.
-    //
-    // It goes into the tex element's COLUMN, never onto `row` itself. `.lws-step`
-    // is a two-track grid (26px spine | 1fr content) and `main` is appended by
-    // the caller AFTER this runs, so a chip parented to the row takes the content
-    // track and auto-placement drops `main` into the 26px spine track on the next
-    // grid row — where `overflow-wrap: anywhere` breaks the step one character
-    // per line. That is the vertical "d/e/t/(/A/)" column in the 2026-08-23
-    // production screenshot, and it only ever appears alongside this chip.
-    var chip = d.createElement('button');
-    chip.className = 'lws-blank-chip';
-    chip.type = 'button';
-    chip.textContent = 'Fill in the blank';
-    chip.addEventListener('click', function () {
-      if (row.querySelector('.lws-blank-input')) return;
-      var inp = d.createElement('input');
-      inp.className = 'lws-blank-input';
-      inp.setAttribute('aria-label', 'Your value for the blank');
-      inp.maxLength = 30;
-      chip.replaceWith(inp);
-      inp.focus();
-      inp.addEventListener('keydown', function (e) {
-        e.stopPropagation();
-        if (e.key === 'Enter') {
-          submit(0, inp.value, function (v) {
-            var done = d.createElement('span');
-            done.className = 'lws-blank lws-blank-pending';
-            done.textContent = v;
-            inp.replaceWith(done);
-          });
-        }
-      });
-    });
-    (texEl.parentNode || row).appendChild(chip);
   };
 
   // A graph / image / geometry block, framed and captioned so it reads as a

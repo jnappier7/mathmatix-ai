@@ -385,7 +385,16 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
   list into the ledger (interrupted turns too); `voice-controller.js` draws it instead of
   translating (chat-js2 bundle). math-steps mode only (what chat uses). Arithmetic and bare
   expressions are never split by the math — there the "Given" label is the only signal. Pinned by
-  `tests/unit/voiceBoardCards.test.js`. The landing-page preview follows the same switch:
+  `tests/unit/voiceBoardCards.test.js`. **The `<math>` array is LaTeX inside JSON** (same day:
+  "weird mark up"): written with ONE backslash, `\frac` parsed as a form feed + "rac", `\times` as
+  a tab + "imes", and `\sqrt`/`\cdot`/`\div` failed the parse so the board kept the last turn.
+  `utils/voiceMathJson.js` `parseMathArray` doubles every backslash that is not already a JSON
+  escape of `\`, `"` or `/` before parsing, and `tidyLatex` cleans each line (delimiters dropped, an
+  empty `\boxed{}` → `?` because a call has nothing to type with, "Subtract 2: …" → the words become
+  the label, a stray word wrapped in `\text`). The prompt shows doubled backslashes. Also fixed
+  there: `checkWorkSteps.parseLine` read `\frac{3}{4}x` as 3/(4x) and `2\frac{1}{2}` as 1 — it is
+  shared with the check-work step checker and board continuity. Pinned by
+  `tests/unit/voiceMathJson.test.js`. The landing-page preview follows the same switch:
   `routes/trialChat.js` forwards `board` only when `isWorkBoardEnabled()`, so its "Our work" dock
   (`#lp-work-dock`) never opens with the board off. The board's own suites opt in with `WORK_BOARD=on`;
   board-off is pinned by `tests/unit/workBoardOff.test.js`. The notes below describe the board ON.
@@ -722,6 +731,18 @@ npm run seed:all:dry   # preflight + plan, no writes
   `derivationView.renderTextAndMath` typesets (words wrap, everything between the groups is math),
   and leading praise ("Nice!") is not quoted as part of the problem. Pinned by
   `tests/unit/boardWrongPicture.test.js`; checked by eye in headless Chromium at 390×844 and 1366×800.
+- **Fill-in boxes are RETIRED (owner 2026-11-28: "weird and don't really work").** A `scaffold` card
+  was a line with an empty `\boxed{}` the student tapped and typed into (removed 2026-07-25, brought
+  back three days later, then a rule for every way it went wrong). Now: no prompt or schema offers
+  it (`MODEL_BOARD_ACTIONS` in `boardResponseSchema.js` is what every model-facing enum uses; all
+  four board prompts say "NO FILL-IN BOXES"), `boardSettle.dropFillIns` drops any that still arrive
+  (called in `pipeline/index.js` with or without a conversation), and `derivationView._addRow` skips
+  one on a board saved earlier (still counted, so "step N" keeps pointing at the same line). The
+  tap-to-type code, the `lws:blank-submit` listener and its chat reply are gone. Left in place and
+  now unreachable from a new turn: the guard's scaffold rules, `scaffoldBlankVerifier.js` and the
+  blank branch of `/api/student-moves` — delete them once nobody wants the feature back. Voice
+  turns an empty box into `?` (`voiceMathJson.tidyLatex`). Pinned by
+  `tests/unit/boardFillInsRetired.test.js`.
 - **One problem, one card — the board's tail lives in `pipeline/boardSettle.js`.** A `pose` of
   different tex SEALS the card in focus, and a `verify` closes it and drops the pin — so on
   2026-10-05 a model `verify` of `2x + 10 = 26` (not an answer) closed the card, and every

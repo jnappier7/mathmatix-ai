@@ -31,7 +31,12 @@ function normalizeLine(raw) {
     s = s
         .replace(/\$|\\\(|\\\)|\\\[|\\\]/g, '')
         .replace(/\\left|\\right/g, '')
-        .replace(/\\frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, '($1)/($2)')
+        // A mixed number: 2\frac{1}{2} is two and a half, not two halves.
+        .replace(/(\d)\s*\\[dt]?frac\s*\{(\d+)\}\s*\{(\d+)\}/g, '($1+($2)/($3))')
+        // The fraction is ONE factor. Bare "(3)/(4)x" is read by mathjs as
+        // 3/(4x) — implicit multiplication binds tighter than division — so
+        // \frac{3}{4}x = 3 was solved as x = 1/4 (found 2026-11-28).
+        .replace(/\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, '(($1)/($2))')
         .replace(/\\sqrt\s*\{([^{}]*)\}/g, 'sqrt($1)')
         .replace(/\\cdot|\\times|[×·∙⋅]/g, '*')
         .replace(/\\div|÷/g, '/')

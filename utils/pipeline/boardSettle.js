@@ -102,11 +102,25 @@ function keepTheStudentsProblem(cmds, { message, tutorText, focusOpen }) {
   return { commands, examples, dropped };
 }
 
+/**
+ * FILL-INS ARE RETIRED (owner 2026-11-28; the why is beside
+ * MODEL_BOARD_ACTIONS in boardResponseSchema.js). No prompt offers a
+ * `scaffold` card any more; this is the backstop for one that arrives anyway
+ * — an old habit of the model's, a cached prompt, the synthesizer. Dropped
+ * whole: a fill-in with its box removed is a half-written step the student
+ * did not write.
+ */
+function dropFillIns(commands) {
+  const list = Array.isArray(commands) ? commands : [];
+  const kept = list.filter(c => !(c && c.action === 'scaffold'));
+  return { commands: kept, dropped: list.length - kept.length };
+}
+
 function settleBoardTurn({
   commands, message = '', pinTex = null, lastBoardAction = null, ledger = null,
   now = new Date(), assistanceFor = null, sourceRef = null, tutorText = null,
 } = {}) {
-  let cmds = Array.isArray(commands) ? commands.slice() : [];
+  let cmds = dropFillIns(commands).commands;
   const events = { demoted: [], promoted: [], answerPoses: [], scratchDropped: [], folded: [], autoCleared: false, examples: [], ungroundedPoses: [] };
 
   // 0. The problem in focus is the student's (see keepTheStudentsProblem).
@@ -165,4 +179,4 @@ function settleBoardTurn({
   return { commands: cmds, lastBoardAction: nextLast, pin, ledger: nextLedger, events };
 }
 
-module.exports = { settleBoardTurn };
+module.exports = { settleBoardTurn, dropFillIns };

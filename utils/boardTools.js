@@ -31,7 +31,7 @@ const { isWorkBoardEnabled } = require('./featureFlags');
 const { RESOLVE_RULE, MIRROR_RULE } = require('./boardStepRule');
 const LIBRARY_HINT = require('./visualLibrary').promptHint();
 
-const { BOARD_ACTIONS, normalizeBoardCommand } = require('./boardResponseSchema');
+const { MODEL_BOARD_ACTIONS, normalizeBoardCommand } = require('./boardResponseSchema');
 
 const BOARD_TOOL_NAME = 'update_board';
 
@@ -57,12 +57,12 @@ const BOARD_TOOL = {
             properties: {
               action: {
                 type: 'string',
-                enum: BOARD_ACTIONS,
+                enum: MODEL_BOARD_ACTIONS,
                 description: 'Which card to render.',
               },
               tex: {
                 type: 'string',
-                description: 'LaTeX. Required for pose/resolve/verify/scaffold/example/tiles. A scaffold MUST contain at least one empty \\boxed{} slot for the student to fill.',
+                description: 'LaTeX. Required for pose/resolve/verify/example/tiles. Never an empty \\boxed{} or a blank for the student to fill.',
               },
               op: {
                 type: 'string',
@@ -167,7 +167,7 @@ The pedagogy is unchanged:
 - clear — only on a new problem or right after a verify lands.
 - graph / image — reference aids (fn of x, or a safe image query) with an optional caption. ${LIBRARY_HINT}
 - tiles — algebra tiles for a line ALREADY on the board (the problem, or a line the student stated): { action: "tiles", tex: "2x + 3 = 7" }. You only name the line; the board lays out the tiles, and the student can drag them, flip them and cancel zero pairs. Plain terms in one variable, whole-number coefficients, nothing above x^2, no brackets or fractions. Use it for zero pairs, like terms, keeping an equation balanced, a quadratic as an area.
-- scaffold — the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. Every scaffold MUST contain at least one \\boxed{} blank; never fill the blanks yourself. The blank marks EXACTLY what you are asking them to produce: never blank a known value while displaying the result (asking "what's 0.3 × 1000?" → "0.3 \\times 1000 = \\boxed{}", NOT "0.3 \\times \\boxed{} = 300"), and never write "?" as the unknown — the empty box IS the unknown.
+- NO FILL-IN BOXES. Never put an empty box, a blank or a "?" on the board for the student to fill (no \\boxed{} with nothing in it, no scaffold card). When the student is stuck, ask the question in your words and let them answer; the line goes on the board once they have said it.
 - example — ONE step of a derivation YOU are teaching, in order, one card per step — only on a teaching example that is NOT the student's graded problem.
 
 ${MIRROR_RULE} If the student references the board ("show me on the board", "draw it"), you MUST call the tool with a relevant card. Small-talk and pure-feedback turns need no tool call at all.`;

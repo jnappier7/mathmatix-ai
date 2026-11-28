@@ -64,6 +64,19 @@ const LIBRARY_HINT = require('./visualLibrary').promptHint();
 // "worked example" can never become a cover for solving the graded problem.
 const BOARD_ACTIONS = ['pose', 'apply', 'resolve', 'verify', 'clear', 'graph', 'image', 'scaffold', 'diagram', 'model', 'example', 'tiles'];
 
+// FILL-INS ARE RETIRED (owner 2026-11-28: "Those fill ins are weird and don't
+// really work. Let's either retire them or make them better."). A `scaffold`
+// card was a line with an empty \boxed{} the student tapped and typed into.
+// It needed a rule for every way it went wrong — the blank on the wrong side,
+// a given blanked while the answer showed, "?" for the unknown, a box nobody
+// captioned — and still shipped "[ ] = 5π/6" with no problem above it; with
+// the board off or in a call there was nothing to type into at all. The
+// question belongs in the tutor's words. `scaffold` stays in BOARD_ACTIONS so
+// boards saved before this still read back, but the model is not offered it
+// (this list is what every model-facing schema uses) and boardSettle drops
+// any that arrive.
+const MODEL_BOARD_ACTIONS = BOARD_ACTIONS.filter(a => a !== 'scaffold');
+
 // The kind of turn Maya is serving. The model self-declares this
 // on every structured response. Server-side audit (utils/turnTypeAudit.js)
 // flags pedagogical mismatches between the declared turn_type and
@@ -93,12 +106,12 @@ const BOARD_COMMAND_SCHEMA = {
   properties: {
     action: {
       type: 'string',
-      enum: BOARD_ACTIONS,
+      enum: MODEL_BOARD_ACTIONS,
       description: 'Which card the WorkBoard renders for this command.',
     },
     tex: {
       type: ['string', 'null'],
-      description: 'LaTeX expression. Required for pose, resolve, verify, scaffold, and example. For scaffold it MUST contain at least one empty slot the student fills, written as \\boxed{} (e.g. "x^2 + 4x + \\boxed{} = 12 + \\boxed{}"). For example it is one step of the tutor\'s derivation. For tiles it is the expression or equation to lay out in algebra tiles, a plain sum of terms in one variable (e.g. "2x + 3 = 7"). Null for apply, clear, graph, image.',
+      description: 'LaTeX expression. Required for pose, resolve, verify, and example. Never an empty \\boxed{} or a blank for the student to fill. For example it is one step of the tutor\'s derivation. For tiles it is the expression or equation to lay out in algebra tiles, a plain sum of terms in one variable (e.g. "2x + 3 = 7"). Null for apply, clear, graph, image.',
     },
     op: {
       type: ['string', 'null'],
@@ -300,7 +313,7 @@ Your reply is a structured object, not free text. You fill three fields:
   • verification — the student stated a final answer. board_commands SHOULD include a verify card.
   • concept_reference — the student asked about a concept and you're showing reference content. board_commands SHOULD include an image or graph card.
   • feedback — praise or correction that does NOT advance the work. board_commands SHOULD be empty (an image/graph reference aid is fine; a pose/apply/resolve/verify here usually means you mislabeled the turn).
-  • scaffold — you lowered difficulty, hinted, or broke the problem into a sub-question. Pair it with a scaffold card when a visual hint helps (see below); never an apply/resolve/verify that does the step for them.
+  • scaffold — you lowered difficulty, hinted, or broke the problem into a sub-question. The hint is in your words (a graph or picture may go with it); never an apply/resolve/verify that does the step for them.
   • worked_example — you are DEMONSTRATING or DERIVING on a teaching example (a parallel problem with DIFFERENT numbers, or a general concept derivation) — NOT the student's graded problem. board_commands SHOULD mirror your derivation as ordered example cards, one per step. This is the one place you may write the full worked steps on the board, BECAUSE the work is yours on a teaching example, not the student's graded problem — never put the student's own problem or its answer in an example card.
   • redirect — steering an off-topic student back to math. Usually no cards.
   • small_talk — greeting, closing, or off-task chitchat. board_commands empty.
@@ -314,7 +327,7 @@ CARD SHAPE (fields not used for an action are null):
 - graph:   { action: "graph", fn: "x^2 - 4", caption: "Where it crosses zero" } — reference plot in the board timeline.
 - image:   { action: "image", query: "unit circle labeled", caption: "Reference" } — reference diagram from the safe whitelist. ${LIBRARY_HINT}
 - tiles:   { action: "tiles", tex: "2x + 3 = 7" }                       — algebra tiles for a line ALREADY on the board (the problem, or a line the student stated). You only name the line; the board lays out the tiles and the student can drag them, flip them and cancel zero pairs. Plain terms in one variable, whole-number coefficients, nothing above x^2, no brackets or fractions — anything else is dropped. Reach for it for zero pairs, combining like terms, keeping an equation balanced, or seeing a quadratic as an area.
-- scaffold:{ action: "scaffold", tex: "x^2 + 4x + \\boxed{} = 12 + \\boxed{}" } — show the NEXT step's structure on the student's own problem with the new terms left as empty \\boxed{} slots for THEM to fill. This is the one card you may put on the student's own problem without them stating it first, BECAUSE the blanks reveal nothing — they're a hint, not the answer. Every scaffold MUST contain at least one \\boxed{} blank; never fill the boxes in yourself (that would be handing over the answer). Use it when a student is stuck and a partially-drawn step would unstick them. The blank marks EXACTLY what you are asking them to produce: never blank an already-known value while displaying the result (asking "what's 0.3 × 1000?" the card is "0.3 \\times 1000 = \\boxed{}", NOT "0.3 \\times \\boxed{} = 300"), and never write "?" as the unknown — the empty box IS the unknown ("0 + 50 + 300 = \\boxed{}", never "0 + \\boxed{} + \\boxed{} = ?"). The server drops backwards or "?"-marked scaffolds.
+- NO FILL-IN BOXES. Never put an empty box, a blank or a "?" on the board for the student to fill (no \\boxed{} with nothing in it, no scaffold card). When the student is stuck, ask the question in your words and let them answer; the line goes on the board once they have said it.
 - example: { action: "example", tex: "\\int x^2\\,dx = \\tfrac{1}{3}x^3 + C", caption: "Power rule" } — ONE step of a derivation YOU are teaching (worked_example turns only). Emit them in order, one card per step; caption is an optional short label. These carry your full worked steps, which is allowed ONLY because the work is yours on a teaching example — never put the student's graded problem or its answer in an example card.
 
 If the student references the board ("show me on the board", "draw it", "use the board"), you MUST include a relevant card (pose for an equation, graph for a function, image for a geometry concept). An empty board while a problem is on screen is the worst-case defect.`;
@@ -322,6 +335,7 @@ If the student references the board ("show me on the board", "draw it", "use the
 
 module.exports = {
   BOARD_ACTIONS,
+  MODEL_BOARD_ACTIONS,
   TURN_TYPES,
   BOARD_COMMAND_SCHEMA,
   BOARD_RESPONSE_SCHEMA,
