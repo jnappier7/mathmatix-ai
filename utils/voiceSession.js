@@ -24,6 +24,7 @@ const { voiceToBoardCommands } = require('../public/js/living-workspace/dom/voic
 const { applyTurnToLedger, promoteLeadingResolveToPose, promoteSwitchedProblemToPose, dedupeCumulativeResolves } = require('./pipeline/boardLedger');
 const { assistanceLevelForTurn } = require('./pipeline/assistanceLadder');
 const { cardVoiceLines, givenTexes } = require('./voiceBoardCards');
+const { parseMathArray } = require('./voiceMathJson');
 const { buildBoardStateBlock } = require('./pipeline/boardStateBlock');
 const { loadActiveBoardLedger } = require('./activeConversation');
 const sttStream = require('./sttStream');
@@ -156,6 +157,10 @@ PEDAGOGY (CRITICAL):
 - Wrong answer: do NOT add the wrong step. Repeat the prior steps unchanged.
 - A NEW problem starts a NEW array: its "Given" is the only thing in it. The
   finished problem's steps do not come along — the board keeps them itself.
+- The "latex" value is LaTeX with NO delimiters (no $, no \\( \\)), one
+  line of math per entry, and no words in it — words belong in "label".
+  Fractions are \\\\frac{3}{4}, roots \\\\sqrt{16}, times \\\\times, powers x^2.
+  Inside this JSON every LaTeX backslash is written TWICE, as shown.
 - Pure small talk: include the most recent prior board state (or [] if
   no math has happened yet this session).
 
@@ -172,6 +177,9 @@ Hmm, not quite. We have 2 times x. What's the opposite of multiplying by 2? <mat
 
 User: "it's 2... ok give me another one" (after x = 2 was reached)
 Nice work, that one's done! Here's a new one: three x plus 5 equals 20. What would you do first? <math>[{"label":"Given","latex":"3x + 5 = 20"}]</math>
+
+User: "what's three fourths plus one eighth"
+Good one. To add them we need the same size pieces. How many eighths is three fourths? <math>[{"label":"Given","latex":"\\\\frac{3}{4} + \\\\frac{1}{8}"}]</math>
 
 User: "can you help me with fractions?"
 Of course! What problem are you working on? Read it to me and we'll start there. <math>[]</math>
@@ -1549,21 +1557,11 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
         const trimmed = buf.trim();
         if (!trimmed) return this.lastBoardSteps;
         const isUsableStep = (s) => s && (s.latex || s.visual || s.text);
-        try {
-            const parsed = JSON.parse(trimmed);
-            if (Array.isArray(parsed)) {
-                return parsed.filter(isUsableStep);
-            }
-        } catch (_) {
-            // Try common LLM JSON quirks
-            try {
-                const fixed = trimmed.replace(/,\s*([}\]])/g, '$1').replace(/'/g, '"');
-                const parsed = JSON.parse(fixed);
-                if (Array.isArray(parsed)) return parsed.filter(isUsableStep);
-            } catch (_) {
-                logger.warn('math buffer parse failed', { snippet: trimmed.slice(0, 80) });
-            }
-        }
+        // LaTeX inside JSON: a model writes "\frac" with ONE backslash, which
+        // JSON reads as a form feed (or rejects outright) — voiceMathJson.js.
+        const parsed = parseMathArray(trimmed);
+        if (parsed) return parsed.filter(isUsableStep);
+        logger.warn('math buffer parse failed', { snippet: trimmed.slice(0, 80) });
         return this.lastBoardSteps;
     }
 

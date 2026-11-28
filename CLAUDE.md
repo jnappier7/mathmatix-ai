@@ -385,7 +385,16 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
   list into the ledger (interrupted turns too); `voice-controller.js` draws it instead of
   translating (chat-js2 bundle). math-steps mode only (what chat uses). Arithmetic and bare
   expressions are never split by the math — there the "Given" label is the only signal. Pinned by
-  `tests/unit/voiceBoardCards.test.js`. The landing-page preview follows the same switch:
+  `tests/unit/voiceBoardCards.test.js`. **The `<math>` array is LaTeX inside JSON** (same day:
+  "weird mark up"): written with ONE backslash, `\frac` parsed as a form feed + "rac", `\times` as
+  a tab + "imes", and `\sqrt`/`\cdot`/`\div` failed the parse so the board kept the last turn.
+  `utils/voiceMathJson.js` `parseMathArray` doubles every backslash that is not already a JSON
+  escape of `\`, `"` or `/` before parsing, and `tidyLatex` cleans each line (delimiters dropped, an
+  empty `\boxed{}` → `?` because a call has nothing to type with, "Subtract 2: …" → the words become
+  the label, a stray word wrapped in `\text`). The prompt shows doubled backslashes. Also fixed
+  there: `checkWorkSteps.parseLine` read `\frac{3}{4}x` as 3/(4x) and `2\frac{1}{2}` as 1 — it is
+  shared with the check-work step checker and board continuity. Pinned by
+  `tests/unit/voiceMathJson.test.js`. The landing-page preview follows the same switch:
   `routes/trialChat.js` forwards `board` only when `isWorkBoardEnabled()`, so its "Our work" dock
   (`#lp-work-dock`) never opens with the board off. The board's own suites opt in with `WORK_BOARD=on`;
   board-off is pinned by `tests/unit/workBoardOff.test.js`. The notes below describe the board ON.
