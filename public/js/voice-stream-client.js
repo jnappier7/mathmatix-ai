@@ -611,6 +611,10 @@
                         text: msg.text,
                         mathSteps: msg.mathSteps,
                         boardActions: msg.boardActions,
+                        // The same board, already sorted onto cards by
+                        // the server (utils/voiceBoardCards.js): which line
+                        // continues the problem, which starts a new one.
+                        boardCommands: msg.boardCommands,
                     });
                     break;
                 case 'tts_flush':

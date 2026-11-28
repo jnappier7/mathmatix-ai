@@ -373,7 +373,19 @@ only — HTML is served as-is, so i18n/feature-flags/user-data are injected clie
   for a call — `placeDock` moves it to `<body>` (`body.mm-board-stage`) and it fills the space
   between the tutor's card and the mic. `voice-mode.js` `holdCardOpen` keeps that card from
   collapsing to the pill mid-call. Pinned by `tests/unit/workspace/voiceBoardAlways.test.js`;
-  checked by eye in headless Chromium at 390×844, 375×667 and 1366×800, not on a real phone. The landing-page preview follows the same switch:
+  checked by eye in headless Chromium at 390×844, 375×667 and 1366×800, not on a real phone.
+  **A new problem gets a new card in a call** (owner 2026-11-28: "4 problems and was on line 23"):
+  voice sends the board as a list of lines and the client translated every one to a `resolve`, so
+  one card took every problem. `utils/voiceBoardCards.js` `cardVoiceLines` sorts each line against
+  the card in focus by the math — already there (or on a finished card the cumulative `<math>`
+  array keeps re-sending) → dropped; the answer → `verify`; same work → `resolve`; provably
+  different (one-variable equations only: another variable, another root, anything new once
+  solved) or a new line the tutor labelled "Given" → `pose`; cannot tell → stays. `voiceSession`
+  `_cardCommands` sends that list as `response_final.boardCommands` and `_foldBoard` folds the SAME
+  list into the ledger (interrupted turns too); `voice-controller.js` draws it instead of
+  translating (chat-js2 bundle). math-steps mode only (what chat uses). Arithmetic and bare
+  expressions are never split by the math — there the "Given" label is the only signal. Pinned by
+  `tests/unit/voiceBoardCards.test.js`. The landing-page preview follows the same switch:
   `routes/trialChat.js` forwards `board` only when `isWorkBoardEnabled()`, so its "Our work" dock
   (`#lp-work-dock`) never opens with the board off. The board's own suites opt in with `WORK_BOARD=on`;
   board-off is pinned by `tests/unit/workBoardOff.test.js`. The notes below describe the board ON.

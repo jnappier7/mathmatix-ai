@@ -23,6 +23,7 @@ const { createToolCallAccumulator } = require('./toolCallStream');
 const { voiceToBoardCommands } = require('../public/js/living-workspace/dom/voiceBoardTranslate');
 const { applyTurnToLedger, promoteLeadingResolveToPose, promoteSwitchedProblemToPose, dedupeCumulativeResolves } = require('./pipeline/boardLedger');
 const { assistanceLevelForTurn } = require('./pipeline/assistanceLadder');
+const { cardVoiceLines, givenTexes } = require('./voiceBoardCards');
 const { buildBoardStateBlock } = require('./pipeline/boardStateBlock');
 const { loadActiveBoardLedger } = require('./activeConversation');
 const sttStream = require('./sttStream');
@@ -153,6 +154,8 @@ PEDAGOGY (CRITICAL):
 - The FIRST entry is always the problem itself, labelled "Given". Keep it
   first, unchanged, on every turn until that problem is finished.
 - Wrong answer: do NOT add the wrong step. Repeat the prior steps unchanged.
+- A NEW problem starts a NEW array: its "Given" is the only thing in it. The
+  finished problem's steps do not come along — the board keeps them itself.
 - Pure small talk: include the most recent prior board state (or [] if
   no math has happened yet this session).
 
@@ -166,6 +169,9 @@ Exactly right! Now we have 2x equals 4. What's next? <math>[{"label":"Given","la
 
 User: "multiply by 2" (WRONG)
 Hmm, not quite. We have 2 times x. What's the opposite of multiplying by 2? <math>[{"label":"Given","latex":"2x - 4 = 0"},{"label":"Add 4","latex":"2x = 4"}]</math>
+
+User: "it's 2... ok give me another one" (after x = 2 was reached)
+Nice work, that one's done! Here's a new one: three x plus 5 equals 20. What would you do first? <math>[{"label":"Given","latex":"3x + 5 = 20"}]</math>
 
 User: "can you help me with fractions?"
 Of course! What problem are you working on? Read it to me and we'll start there. <math>[]</math>
@@ -1025,9 +1031,15 @@ class VoiceSession {
         // already flushed whatever this turn legitimately delivered.
         if (turn.ac.signal.aborted) return;
 
+        // The board, as cards: which line continues the problem in focus,
+        // which is its answer, which opens a new one (voiceBoardCards.js).
+        // Sent to the client AND folded into the ledger below — one list.
+        const boardCommands = this._cardCommands(mathStepsForBoard, boardActionsForFinal);
+
         this._send({
             type: 'response_final',
             turnId: turn.metric.turnId,
+            boardCommands,
             // Inline renderers read the tags out of the text, so they ride along
             // with it. They are appended AFTER verify (which reasons about prose)
             // and after the spoken text was already synthesized, so nothing here
@@ -1071,21 +1083,7 @@ class VoiceSession {
         // Fold this turn's board output into the shared ledger (Live Workspace):
         // the same translation the client renders is what gets remembered, so a
         // voice session's board survives reloads exactly like a typed one.
-        try {
-            let cmds = voiceToBoardCommands({ mathSteps: mathStepsForBoard, boardActions: boardActionsForFinal });
-            cmds = promoteLeadingResolveToPose(this.boardLedger, cmds);
-            cmds = promoteSwitchedProblemToPose(this.boardLedger, cmds, mathStepsForBoard[0]);
-            // Voice's protocol is cumulative (full board re-sent each turn) —
-            // only genuinely new lines may fold, or steps duplicate every turn.
-            cmds = dedupeCumulativeResolves(this.boardLedger, cmds);
-            if (cmds.length) {
-                this.boardLedger = applyTurnToLedger(this.boardLedger, cmds, new Date(), {
-                    assistance: assistanceLevelForTurn({ boardCommands: cmds }),
-                });
-            }
-        } catch (err) {
-            logger.warn('voice board ledger fold failed (non-fatal)', { error: err.message });
-        }
+        this._foldBoard(boardCommands, { mathSteps: mathStepsForBoard, boardActions: boardActionsForFinal });
 
         this._persistTurn(turn.userMessage, assistantContent).catch(err => {
             logger.warn('persist failed', { error: err.message });
@@ -1673,9 +1671,15 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
                 this.lastBoardSteps = mathSteps;
             }
             if (!spoken && !mathSteps.length && !boardActions.length) return;
+            // What the client draws must be what the ledger remembers, cut
+            // short or not — otherwise the next turn sorts its lines against
+            // a card the student is not looking at.
+            const boardCommands = this._cardCommands(mathSteps, boardActions);
+            this._foldBoard(boardCommands);
             this._send({
                 type: 'response_final',
                 turnId: turn.metric.turnId,
+                boardCommands,
                 text: spoken,
                 mathSteps,
                 boardActions,
@@ -1684,6 +1688,52 @@ Never speak math notation. Never include system tags. Always valid JSON.`;
             });
         } catch (err) {
             logger.warn('interrupted final flush failed (non-fatal)', { error: err.message });
+        }
+    }
+
+    // ─── The board as cards ──────────────────────────────────────────────
+
+    /**
+     * One turn's board output as Living Workspace commands, sorted onto cards.
+     * math-steps mode only: there the whole board arrives at the end of the
+     * turn. In board-actions mode lines are drawn one by one as partials, so
+     * the client keeps translating those itself (null = "translate it
+     * yourself"). Never throws.
+     */
+    _cardCommands(mathSteps, boardActions) {
+        if (this.mode !== 'math-steps') return null;
+        try {
+            let cmds = voiceToBoardCommands({ mathSteps, boardActions });
+            cmds = promoteLeadingResolveToPose(this.boardLedger, cmds);
+            cmds = promoteSwitchedProblemToPose(this.boardLedger, cmds, (mathSteps || [])[0]);
+            return cardVoiceLines(this.boardLedger, cmds, { given: givenTexes(mathSteps) });
+        } catch (err) {
+            logger.warn('voice board cards failed (non-fatal)', { error: err.message });
+            return null;
+        }
+    }
+
+    /**
+     * Fold a turn's board into the shared ledger (Live Workspace), so a voice
+     * session's board survives reloads exactly like a typed one. With no card
+     * list (board-actions mode, or a failure above) it falls back to the
+     * plain translation of that mode's cumulative lines.
+     */
+    _foldBoard(boardCommands, fallback = null) {
+        try {
+            let cmds = boardCommands;
+            if (!Array.isArray(cmds)) {
+                if (!fallback) return;
+                cmds = voiceToBoardCommands(fallback);
+                cmds = promoteLeadingResolveToPose(this.boardLedger, cmds);
+                cmds = dedupeCumulativeResolves(this.boardLedger, cmds);
+            }
+            if (!cmds.length) return;
+            this.boardLedger = applyTurnToLedger(this.boardLedger, cmds, new Date(), {
+                assistance: assistanceLevelForTurn({ boardCommands: cmds }),
+            });
+        } catch (err) {
+            logger.warn('voice board ledger fold failed (non-fatal)', { error: err.message });
         }
     }
 
