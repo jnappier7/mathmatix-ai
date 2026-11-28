@@ -392,7 +392,16 @@ class VoiceController {
                     window.appendMessage(ev.interrupted ? `${ev.text}…` : ev.text, 'ai');
                 }
                 if (this.config.enableBoardCommands) {
-                    if (this._lwsOwnsBoard()) {
+                    if (this._lwsOwnsBoard() && Array.isArray(ev.boardCommands)) {
+                        // The server has sorted this turn's lines onto cards:
+                        // a step of the problem in focus, its answer, or a NEW
+                        // problem (which seals the card and opens the next).
+                        // Translating the raw lines here made every one of
+                        // them "another step" — four problems, one card,
+                        // line 23.
+                        try { window.LWS_CHAT.applyBoardCommands(ev.boardCommands); }
+                        catch (e) { console.error('[Voice] LWS board render failed', e); }
+                    } else if (this._lwsOwnsBoard()) {
                         // boardActions is cumulative for the turn — hand LWS
                         // only the tail the streaming partials didn't already
                         // draw. mathSteps are never streamed, so they pass

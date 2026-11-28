@@ -204,6 +204,11 @@ describe('_sendInterruptedFinal — an interrupted turn keeps its work', () => {
             mode: 'board-actions',
             _send: jest.fn(),
             _parseMathBuffer: jest.fn(() => []),
+            // The real card sorter and ledger fold (voiceBoardCards.js): an
+            // interrupted turn's board is sorted and remembered like any other.
+            boardLedger: null,
+            _cardCommands: VoiceSession.prototype._cardCommands,
+            _foldBoard: VoiceSession.prototype._foldBoard,
             ...overrides,
         };
     }
@@ -252,6 +257,9 @@ describe('_sendInterruptedFinal — an interrupted turn keeps its work', () => {
         _sendInterruptedFinal.call(s, turn({ spokenAcc: 'Start here', mathBuffer: '[]' }));
 
         expect(s._send.mock.calls[0][0].mathSteps).toEqual(steps);
+        // …sorted onto a card, and remembered as that card.
+        expect(s._send.mock.calls[0][0].boardCommands).toEqual([{ action: 'pose', tex: '2x-4=0' }]);
+        expect(s.boardLedger.current.problemTex).toBe('2x-4=0');
     });
 
     test('a parse failure cannot cost the student their interrupt', () => {
